@@ -7,6 +7,7 @@
 	nomodels 0
 	nohimodel 1
 	nocrosshair 1
+	extracontent 0
 	hidden_maps
 	{
 		"test_speakers"		1
@@ -21,7 +22,6 @@
 		
 		SearchPaths
 		{
-			
 			game+mod			hl2mp/custom/*
 			game+mod			hl2/custom/*
 
