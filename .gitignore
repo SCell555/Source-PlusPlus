@@ -32,6 +32,7 @@ user_custom
 mathlib.lib
 tier1.lib
 vgui_controls.lib
+raytrace.lib
 
 *.vcxproj.filters
 *.pdb
