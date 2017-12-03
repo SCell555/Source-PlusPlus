@@ -608,10 +608,11 @@ public:
 	{
 		if (m_bSelected != state)
 		{
-            if (state)
+			// Don't need focus.
+           /*if (state)
             {
                 RequestFocus();
-            }
+            }*/
 			m_bSelected = state;
 			SetPaintBackgroundEnabled( state );
 			InvalidateLayout();
