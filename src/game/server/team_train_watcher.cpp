@@ -62,6 +62,8 @@ EHANDLE g_hTeamTrainWatcherMaster = NULL;
 */
 #define MAX_ALARM_TIME_NO_RECEDE 18 // max amount of time to play the alarm if the train isn't going to recede
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CTeamTrainWatcher )
 
 	// Inputs.
@@ -127,7 +129,7 @@ BEGIN_DATADESC( CTeamTrainWatcher )
 	DEFINE_KEYFIELD( m_nTrainRecedeTime, FIELD_INTEGER, "train_recede_time" ),
 
 END_DATADESC()
-
+#pragma warning( pop )
 
 IMPLEMENT_SERVERCLASS_ST(CTeamTrainWatcher, DT_TeamTrainWatcher)
 

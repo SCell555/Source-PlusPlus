@@ -748,7 +748,7 @@ void CNPC_BaseScanner::AttackDivebombCollide(float flInterval)
 			if (vBounceVel.z < 0)
 			{
 				float floorZ = GetFloorZ(GetAbsOrigin());
-				if (abs(GetAbsOrigin().z - floorZ) < 36)
+				if (fabsf(GetAbsOrigin().z - floorZ) < 36.0f)
 				{
 					vBounceVel.z = 0;
 				}

@@ -103,6 +103,8 @@ class CFilterMultiple : public CBaseFilter
 
 LINK_ENTITY_TO_CLASS(filter_multi, CFilterMultiple);
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CFilterMultiple )
 
 
@@ -120,8 +122,7 @@ BEGIN_DATADESC( CFilterMultiple )
 	DEFINE_ARRAY( m_hFilter, FIELD_EHANDLE, MAX_FILTERS ),
 
 END_DATADESC()
-
-
+#pragma warning( pop )
 
 //------------------------------------------------------------------------------
 // Purpose : Called after all entities have been loaded

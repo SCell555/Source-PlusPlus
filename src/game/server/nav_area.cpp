@@ -2984,8 +2984,8 @@ void CNavArea::Draw( void ) const
 		float westZ = ( GetCorner( NORTH_WEST ).z + GetCorner( SOUTH_WEST ).z ) / 2.0f;
 		float eastZ = ( GetCorner( NORTH_EAST ).z + GetCorner( SOUTH_EAST ).z ) / 2.0f;
 
-		float deltaEastWest = abs( westZ - eastZ );
-		float deltaNorthSouth = abs( northZ - southZ );
+		float deltaEastWest = fabsf( westZ - eastZ );
+		float deltaNorthSouth = fabsf( northZ - southZ );
 
 		float stepSize = StepHeight / 2.0f;
 		float t;

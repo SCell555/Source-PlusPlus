@@ -5334,6 +5334,8 @@ bool IsRunningScriptedSceneWithSpeechAndNotPaused( CBaseFlex *pActor, bool bIgno
 //===========================================================================================================
 LINK_ENTITY_TO_CLASS( logic_scene_list_manager, CSceneListManager );
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CSceneListManager )
 	DEFINE_UTLVECTOR( m_hListManagers, FIELD_EHANDLE ),
 
@@ -5375,7 +5377,7 @@ BEGIN_DATADESC( CSceneListManager )
 	// Inputs
 	DEFINE_INPUTFUNC( FIELD_VOID, "Shutdown", InputShutdown ),
 END_DATADESC()
-
+#pragma warning( pop )
 
 //-----------------------------------------------------------------------------
 // Purpose: 

@@ -2658,6 +2658,8 @@ void CAI_ActBusyGoal::NPCSeeEnemy( CAI_BaseNPC *pNPC )
 //-----------------------------------------------------------------------------
 LINK_ENTITY_TO_CLASS( ai_goal_actbusy_queue, CAI_ActBusyQueueGoal );
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CAI_ActBusyQueueGoal )
 	// Keys
 	DEFINE_FIELD( m_iCurrentQueueCount, FIELD_INTEGER ),
@@ -2703,6 +2705,7 @@ BEGIN_DATADESC( CAI_ActBusyQueueGoal )
 	DEFINE_THINKFUNC( MoveQueueUpThink ),
 
 END_DATADESC()
+#pragma warning( pop )
 
 #define QUEUE_THINK_CONTEXT			"ActBusyQueueThinkContext"
 #define QUEUE_MOVEUP_THINK_CONTEXT	"ActBusyQueueMoveUpThinkContext"

@@ -1299,7 +1299,7 @@ StairTestType IsStairs( const Vector &start, const Vector &end, StairTestType re
 	Vector traceOffset( 0, 0, VEC_DUCK_HULL_MAX.z );
 
 	// total height change must exceed a single step to be stairs
-	if ( abs( start.z - end.z ) > StepHeight )
+	if ( fabsf( start.z - end.z ) > StepHeight )
 	{
 		// initialize the height delta
 		UTIL_TraceHull( start + traceOffset, start - traceOffset, hullMins, hullMaxs, MASK_NPCSOLID, &filter, &trace );
@@ -1351,7 +1351,7 @@ StairTestType IsStairs( const Vector &start, const Vector &end, StairTestType re
 			}
 
 
-			float deltaZ = abs( height - priorHeight );
+			float deltaZ = fabsf( height - priorHeight );
 
 			if ( deltaZ >= minStepZ && deltaZ <= StepHeight )
 			{

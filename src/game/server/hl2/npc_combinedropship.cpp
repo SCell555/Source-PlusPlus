@@ -737,6 +737,8 @@ void CCombineDropshipContainer::AddSmokeTrail( const Vector &vecPos )
 //------------------------------------------------------------------------------
 LINK_ENTITY_TO_CLASS( npc_combinedropship, CNPC_CombineDropship );
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CNPC_CombineDropship )
 
 	DEFINE_FIELD( m_flTimeTakeOff, FIELD_TIME ),
@@ -824,7 +826,7 @@ BEGIN_DATADESC( CNPC_CombineDropship )
 	DEFINE_OUTPUT( m_OnContainerShotDownAfterDropoff, "OnCrateShotDownAfterDropoff" ),
 
 END_DATADESC()
-
+#pragma warning( pop )
 
 //------------------------------------------------------------------------------
 // Purpose : Destructor
