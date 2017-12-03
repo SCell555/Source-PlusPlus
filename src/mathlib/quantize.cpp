@@ -197,8 +197,8 @@ static void UpdateStats(struct QuantizedValue *v)
 		N+=s->Count;
 		for(j=0;j<current_ndims;j++)
 		{
-			uint8 v=s->Value[j];
-			Means[j]+=v*s->Count;
+			uint8 v2=s->Value[j];
+			Means[j]+=v2*s->Count;
 		}
 	}
 	for(j=0;j<current_ndims;j++)

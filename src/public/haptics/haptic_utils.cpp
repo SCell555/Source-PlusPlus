@@ -250,7 +250,7 @@ void UpdateAvatarEffect(void)
 	Vector PlayerVel = pPlayer->GetAbsVelocity();
 
 	//Choreo vehicles use player avatar and don't produce their own velocity
-	if(!pPlayer->GetVehicle() || abs(vvel.Length()) == 0 )
+	if(!pPlayer->GetVehicle() || fabsf(vvel.Length()) == 0 )
 	{
 		vel = PlayerVel;
 	}

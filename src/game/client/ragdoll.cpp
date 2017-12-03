@@ -38,6 +38,8 @@ CRagdoll::CRagdoll()
 	DEFINE_PHYSPTR( m_ragdoll.list[i].pConstraint ), \
 	DEFINE_FIELD( m_ragdoll.list[i].parentIndex, FIELD_INTEGER )
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_SIMPLE_DATADESC( CRagdoll )
 
 	DEFINE_AUTO_ARRAY( m_ragdoll.boneIndex,	FIELD_INTEGER ),
@@ -71,6 +73,7 @@ BEGIN_SIMPLE_DATADESC( CRagdoll )
 	DEFINE_RAGDOLL_ELEMENT( 23 ),
 
 END_DATADESC()
+#pragma warning( pop )
 
 IPhysicsObject *CRagdoll::GetElement( int elementNum )
 { 

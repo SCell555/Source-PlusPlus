@@ -20,6 +20,18 @@ ipch
 *.vcxproj
 *.sln
 
+mathlib.lib
+tier1.lib
+vgui_controls.lib
+
+*.vcxproj.filters
+*.pdb
+*.vpc_crc
+*.vpc.sentinel
+vpc.exe.bak
+
+src/.vs
+
 # OSX/Linux build products
 *.mak
 *.mak.vpc_crc

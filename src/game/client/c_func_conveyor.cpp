@@ -113,7 +113,7 @@ void CConveyorMaterialProxy::OnBind( void *pC_BaseEntity )
 	}
 
 	float flConveyorSpeed	= pConveyor->GetConveyorSpeed();
-	float flRate			= abs( flConveyorSpeed ) / 128.0;
+	float flRate			= fabsf( flConveyorSpeed ) / 128.0;
 	float flAngle			= (flConveyorSpeed >= 0) ? 180 : 0;
 
 	float sOffset = gpGlobals->curtime * cos( flAngle * ( M_PI / 180.0f ) ) * flRate;
