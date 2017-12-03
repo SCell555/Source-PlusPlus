@@ -853,6 +853,7 @@ CHLClient::CHLClient()
 
 extern IGameSystem *ViewportClientSystem();
 
+#include "content_mounter.h"
 
 //-----------------------------------------------------------------------------
 ISourceVirtualReality *g_pSourceVR = NULL;
@@ -988,6 +989,8 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	ConVar_Register( FCVAR_CLIENTDLL );
 
 	g_pcv_ThreadMode = g_pCVar->FindVar( "host_thread_mode" );
+
+	MountExtraContent();
 
 	if (!Initializer::InitializeAllObjects())
 		return false;
