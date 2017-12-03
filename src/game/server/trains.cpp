@@ -1958,7 +1958,7 @@ void CFuncTrackTrain::UpdateTrainVelocity( CPathTrack *pPrev, CPathTrack *pNext,
 
 				if ( flPrevSpeed != flNextSpeed )
 				{
-					float flSpeedChangeTime = ( abs(flNextSpeed) > abs(flPrevSpeed) ) ? m_flAccelSpeed : m_flDecelSpeed;
+					float flSpeedChangeTime = ( fabsf(flNextSpeed) > fabsf(flPrevSpeed) ) ? m_flAccelSpeed : m_flDecelSpeed;
 					m_flSpeed = UTIL_Approach( m_flDesiredSpeed, m_flSpeed, flSpeedChangeTime * gpGlobals->frametime );
 				}
 			}

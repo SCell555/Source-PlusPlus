@@ -32,6 +32,8 @@ BEGIN_SIMPLE_DATADESC( template_t )
 	DEFINE_FIELD( matEntityToTemplate, FIELD_VMATRIX ),
 END_DATADESC()
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CPointTemplate )
 	// Keys
 
@@ -65,6 +67,7 @@ BEGIN_DATADESC( CPointTemplate )
 	DEFINE_OUTPUT( m_pOutputOnSpawned, "OnEntitySpawned" ),
 
 END_DATADESC()
+#pragma warning( pop )
 
 //-----------------------------------------------------------------------------
 // Purpose: A simple system to help precache point_template entities ... ywb

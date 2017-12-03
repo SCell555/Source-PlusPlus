@@ -15,6 +15,8 @@
 
 LINK_ENTITY_TO_CLASS( point_tesla, CTesla );
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CTesla )
 
 	DEFINE_KEYFIELD( m_SourceEntityName,FIELD_STRING,	"m_SourceEntityName" ),
@@ -49,7 +51,7 @@ BEGIN_DATADESC( CTesla )
 	DEFINE_FUNCTION( ShootArcThink )
 
 END_DATADESC()
-
+#pragma warning ( pop )
 
 IMPLEMENT_SERVERCLASS_ST( CTesla, DT_Tesla )
 	SendPropStringT( SENDINFO( m_SoundName ) ),

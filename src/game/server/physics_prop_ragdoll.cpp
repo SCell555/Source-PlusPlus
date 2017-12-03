@@ -70,6 +70,8 @@ END_SEND_TABLE()
 	DEFINE_PHYSPTR( m_ragdoll.list[i].pConstraint ), \
 	DEFINE_FIELD( m_ragdoll.list[i].parentIndex, FIELD_INTEGER )
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC(CRagdollProp)
 //					m_ragdoll (custom handling)
 	DEFINE_AUTO_ARRAY	( m_ragdoll.boneIndex,	FIELD_INTEGER	),
@@ -142,6 +144,7 @@ BEGIN_DATADESC(CRagdollProp)
 	DEFINE_RAGDOLL_ELEMENT( 23 ),
 
 END_DATADESC()
+#pragma warning( pop )
 
 //-----------------------------------------------------------------------------
 // Disable auto fading under dx7 or when level fades are specified

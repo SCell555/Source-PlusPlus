@@ -43,6 +43,8 @@ protected:
 
 LINK_ENTITY_TO_CLASS( env_screenoverlay, CEnvScreenOverlay );
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CEnvScreenOverlay )
 
 // Silence, Classcheck!
@@ -80,6 +82,7 @@ BEGIN_DATADESC( CEnvScreenOverlay )
 	DEFINE_INPUTFUNC( FIELD_INTEGER, "SwitchOverlay", InputSwitchOverlay ),
 
 END_DATADESC()
+#pragma warning( pop )
 
 void SendProxy_String_tToString( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID )
 {

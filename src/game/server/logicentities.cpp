@@ -1700,7 +1700,8 @@ private:
 
 LINK_ENTITY_TO_CLASS(logic_case, CLogicCase);
 
-
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CLogicCase )
 
 // Silence, Classcheck!
@@ -1754,9 +1755,7 @@ BEGIN_DATADESC( CLogicCase )
 	DEFINE_OUTPUT(m_OnDefault, "OnDefault"),
 
 END_DATADESC()
-
-
-
+#pragma warning( pop )
 
 //-----------------------------------------------------------------------------
 // Purpose: Called before spawning, after key values have been set.
@@ -2559,7 +2558,8 @@ private:
 
 LINK_ENTITY_TO_CLASS(logic_branch_listener, CLogicBranchList);
 
-
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CLogicBranchList )
 
 	// Silence, classcheck!
@@ -2598,7 +2598,7 @@ BEGIN_DATADESC( CLogicBranchList )
 	DEFINE_OUTPUT( m_OnMixed, "OnMixed" ),
 
 END_DATADESC()
-
+#pragma warning( pop )
 
 //-----------------------------------------------------------------------------
 // Purpose: Called before spawning, after key values have been set.

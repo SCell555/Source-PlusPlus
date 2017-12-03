@@ -1590,7 +1590,7 @@ void CNPC_Manhack::Bump( CBaseEntity *pHitEntity, float flInterval, trace_t &tr 
 		if (moveVec.z < 0)
 		{
 			float floorZ = GetFloorZ(GetAbsOrigin());
-			if (abs(GetAbsOrigin().z - floorZ) < 36)
+			if (fabsf(GetAbsOrigin().z - floorZ) < 36.0f)
 			{
 				moveVec.z = 0;
 			}
