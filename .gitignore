@@ -20,6 +20,15 @@ ipch
 *.vcxproj
 *.sln
 
+modelsounds.cache
+stats.txt
+textwindow_temp.html
+voice_ban.dt
+server_blacklist.txt
+*.ain
+sound.cache
+user_custom
+
 mathlib.lib
 tier1.lib
 vgui_controls.lib
