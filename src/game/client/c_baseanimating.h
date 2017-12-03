@@ -78,8 +78,8 @@ public:
 	matrix3x4_t	m_AttachmentToWorld;
 	QAngle	m_angRotation;
 	Vector	m_vOriginVelocity;
-	int		m_nLastFramecount : 31;
-	int		m_bAnglesComputed : 1;
+	int		m_nLastFramecount = 31;
+	int		m_bAnglesComputed = 1;
 };
 
 

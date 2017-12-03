@@ -34,8 +34,12 @@ $Configuration
 		$MultiProcessorCompilation "True"
 
 		// warning C4316: object allocated on the heap may not be aligned 16
+		// warning C4594: stupid can never be instantiated crap where it thinks parents are inaccessable but it doesn't matter.
+		// warning C4457 & C4456 & C4458 & C4459: variable shadowing (hiding functions/variables with new var with same name.)
+		// warning C4624: destructor was implicitly defined as deleted.
+		// warning C4577: some exception crap. We disable exceptions so this can bugger off.
 		// Force disable this warning...
-		$DisableSpecificWarnings	"$BASE;4316" //[$VS2013]
+		$DisableSpecificWarnings	"$BASE;4316;4594;4457;4456;4458;4459;4624;4577" //[$VS2013]
 
 		// Having lots of warnings makes it harder to notice new, and possibly
 		// important warnings, both on buildbot and in the output window. Lots
