@@ -170,6 +170,10 @@ extern vgui::IInputInternal *g_InputInternal;
 #include "sixense/in_sixense.h"
 #endif
 
+#ifdef DEFERREd
+#include "deferred/deferred_shared_common.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -1664,6 +1668,10 @@ void CHLClient::ResetStringTablePointers()
 	g_pStringTableClientSideChoreoScenes = NULL;
 	g_pStringTableServerMapCycle = NULL;
 
+#ifdef DEFERRED
+	g_pStringTable_LightCookies = NULL;
+#endif
+
 #ifdef TF_CLIENT_DLL
 	g_pStringTableServerPopFiles = NULL;
 	g_pStringTableServerMapCycleMvM = NULL;
@@ -1894,6 +1902,14 @@ void CHLClient::InstallStringTableCallback( const char *tableName )
 	{
 		g_pStringTableServerMapCycle = networkstringtable->FindTable( tableName );
 	}
+#ifdef DEFERRED
+	else if ( !Q_strcasecmp( tableName, COOKIE_STRINGTBL_NAME ) )
+	{
+		g_pStringTable_LightCookies = networkstringtable->FindTable( tableName );
+
+		g_pStringTable_LightCookies->SetStringChangedCallback( NULL, OnCookieTableChanged );
+	}
+#endif
 #ifdef TF_CLIENT_DLL
 	else if ( !Q_strcasecmp( tableName, "ServerPopFiles" ) )
 	{
