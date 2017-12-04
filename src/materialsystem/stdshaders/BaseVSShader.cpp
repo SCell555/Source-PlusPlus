@@ -52,6 +52,11 @@
 
 ConVar mat_fullbright( "mat_fullbright","0", FCVAR_CHEAT );
 
+CON_COMMAND(game_shader_loaded, "Shows that game shader loaded.")
+{
+
+}
+
 // These functions are to be called from the shaders.
 
 //-----------------------------------------------------------------------------
