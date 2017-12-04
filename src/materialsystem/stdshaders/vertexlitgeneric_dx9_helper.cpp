@@ -496,14 +496,8 @@ static void DrawVertexLitGeneric_DX9_Internal( CBaseVSShader *pShader, IMaterial
 				pShaderShadow->AlphaFunc( SHADER_ALPHAFUNC_GEQUAL, params[info.m_nAlphaTestReference]->GetFloatValue() );
 			}
 
-			int nShadowFilterMode = 0;
 			if ( bHasFlashlight && bVertexLitGeneric )
 			{
-				if ( g_pHardwareConfig->SupportsPixelShaders_2_b() )
-				{
-					nShadowFilterMode = g_pHardwareConfig->GetShadowFilterMode();	// Based upon vendor and device dependent formats
-				}
-
 				if ( !IsX360() )
 				{
 					if (params[info.m_nBaseTexture]->IsTexture())
@@ -709,7 +703,7 @@ static void DrawVertexLitGeneric_DX9_Internal( CBaseVSShader *pShader, IMaterial
 						SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHT,  bHasFlashlight );
 						SET_STATIC_PIXEL_SHADER_COMBO( DETAILTEXTURE,  bHasDetailTexture );
 						SET_STATIC_PIXEL_SHADER_COMBO( DETAIL_BLEND_MODE, nDetailBlendMode );
-						SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, nShadowFilterMode );
+						SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, 0 );
 						SET_STATIC_PIXEL_SHADER_COMBO( BLENDTINTBYBASEALPHA, bBlendTintByBaseAlpha );
 						SET_STATIC_PIXEL_SHADER_COMBO( SELFILLUMMASK, bHasSelfIllumMask );
 						SET_STATIC_PIXEL_SHADER( pp_vertexlit_and_unlit_generic_bump_ps20b );
@@ -756,7 +750,7 @@ static void DrawVertexLitGeneric_DX9_Internal( CBaseVSShader *pShader, IMaterial
 					SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHT,  bHasFlashlight );
 					SET_STATIC_PIXEL_SHADER_COMBO( DETAILTEXTURE,  bHasDetailTexture );
 					SET_STATIC_PIXEL_SHADER_COMBO( DETAIL_BLEND_MODE, nDetailBlendMode );
-					SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, nShadowFilterMode );
+					SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, 0 );
 					SET_STATIC_PIXEL_SHADER_COMBO( BLENDTINTBYBASEALPHA, bBlendTintByBaseAlpha );
 					SET_STATIC_PIXEL_SHADER_COMBO( SELFILLUMMASK, bHasSelfIllumMask );
 					SET_STATIC_PIXEL_SHADER( pp_vertexlit_and_unlit_generic_bump_ps30 );
@@ -821,7 +815,7 @@ static void DrawVertexLitGeneric_DX9_Internal( CBaseVSShader *pShader, IMaterial
 						SET_STATIC_PIXEL_SHADER_COMBO( SOFT_MASK, bSoftMask );
 						SET_STATIC_PIXEL_SHADER_COMBO( OUTLINE, bOutline );
 						SET_STATIC_PIXEL_SHADER_COMBO( OUTER_GLOW, bGlow );
-						SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, nShadowFilterMode );
+						SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, 0 );
 						SET_STATIC_PIXEL_SHADER_COMBO( DEPTHBLEND, bDoDepthBlend );
 						SET_STATIC_PIXEL_SHADER_COMBO( SRGB_INPUT_ADAPTER, bSRGBInputAdapter ? 1 : 0 );
 						SET_STATIC_PIXEL_SHADER_COMBO( BLENDTINTBYBASEALPHA, bBlendTintByBaseAlpha );
@@ -896,7 +890,7 @@ static void DrawVertexLitGeneric_DX9_Internal( CBaseVSShader *pShader, IMaterial
 					SET_STATIC_PIXEL_SHADER_COMBO( SOFT_MASK, bSoftMask );
 					SET_STATIC_PIXEL_SHADER_COMBO( OUTLINE, bOutline );
 					SET_STATIC_PIXEL_SHADER_COMBO( OUTER_GLOW, bGlow );
-					SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, nShadowFilterMode );
+					SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, 0 );
 					SET_STATIC_PIXEL_SHADER_COMBO( DEPTHBLEND, bDoDepthBlend );
 					SET_STATIC_PIXEL_SHADER_COMBO( BLENDTINTBYBASEALPHA, bBlendTintByBaseAlpha );
 					SET_STATIC_PIXEL_SHADER_COMBO( SELFILLUM_TWOTEXTURE_BLEND, bHasSelfIllum && bHasSelfIllumTwoTexture );

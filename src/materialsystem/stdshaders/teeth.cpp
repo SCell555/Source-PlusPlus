@@ -408,7 +408,7 @@ BEGIN_VS_SHADER( PP_Teeth_DX9, "Help for Teeth_DX9" )
 				if( g_pHardwareConfig->SupportsPixelShaders_2_b() )
 				{
 					DECLARE_STATIC_PIXEL_SHADER( pp_teeth_flashlight_ps20b );
-					SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, nShadowFilterMode );
+					SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, 0 );
 					SET_STATIC_PIXEL_SHADER( pp_teeth_flashlight_ps20b );
 				}
 				else
@@ -429,7 +429,7 @@ BEGIN_VS_SHADER( PP_Teeth_DX9, "Help for Teeth_DX9" )
 				SET_STATIC_VERTEX_SHADER( pp_teeth_flashlight_vs30 );
 
 				DECLARE_STATIC_PIXEL_SHADER( pp_teeth_flashlight_ps30 );
-				SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, nShadowFilterMode );
+				SET_STATIC_PIXEL_SHADER_COMBO( FLASHLIGHTDEPTHFILTERMODE, 0 );
 				SET_STATIC_PIXEL_SHADER( pp_teeth_flashlight_ps30 );
 			}
 #endif
