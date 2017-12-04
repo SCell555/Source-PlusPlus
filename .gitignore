@@ -23,6 +23,8 @@ ipch
 *.scr
 *.lst
 ServerConfig.vdf
+*.sav
+*.hl*
 
 modelsounds.cache
 stats.txt
