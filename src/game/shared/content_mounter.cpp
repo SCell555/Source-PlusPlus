@@ -8,11 +8,18 @@
 
 #include "content_mounter.h"
 
+#include "ienginevgui.h"
+#include <vgui/ISurface.h>
+#include <vgui/IVGui.h>
+#include <vgui/ILocalize.h>
+#include "tier3/tier3.h"
+
 void AddEP2(const char* path)
 {
 	filesystem->AddSearchPath(CFmtStr("%s/ep2", path), "GAME");
 	filesystem->AddPackFile(CFmtStr("%s/ep2/ep2_sound_vo_english.vpk", path), "GAME");
 	filesystem->AddPackFile(CFmtStr("%s/ep2/ep2_pak.vpk", path), "GAME");
+	g_pVGuiLocalize->AddFile("resource/ep2_%language%.txt");
 }
 
 void AddEP1(const char* path)
@@ -20,6 +27,7 @@ void AddEP1(const char* path)
 	filesystem->AddSearchPath(CFmtStr("%s/episodic", path), "GAME");
 	filesystem->AddPackFile(CFmtStr("%s/episodic/ep1_sound_vo_english.vpk", path), "GAME");
 	filesystem->AddPackFile(CFmtStr("%s/episodic/ep1_pak.vpk", path), "GAME");
+	g_pVGuiLocalize->AddFile("resource/episodic_%language%.txt");
 }
 
 void AddHL2(const char* path)
@@ -30,6 +38,7 @@ void AddHL2(const char* path)
 	filesystem->AddPackFile(CFmtStr("%s/hl2/hl2_textures.vpk", path), "GAME");
 	filesystem->AddPackFile(CFmtStr("%s/hl2/hl2_sound_misc.vpk", path), "GAME");
 	filesystem->AddPackFile(CFmtStr("%s/hl2/hl2_misc.vpk", path), "GAME");
+	g_pVGuiLocalize->AddFile("resource/hl2_%language%.txt");
 }
 
 void AddHL2MP(const char* path)
@@ -37,6 +46,7 @@ void AddHL2MP(const char* path)
 	filesystem->AddSearchPath(CFmtStr("%s/hl2mp", path), "GAME");
 	filesystem->AddPackFile(CFmtStr("%s/hl2mp/hl2mp_english.vpk", path), "GAME");
 	filesystem->AddPackFile(CFmtStr("%s/hl2mp/hl2mp_pak.vpk", path), "GAME");
+	g_pVGuiLocalize->AddFile("resource/hl2mp_%language%.txt");
 }
 
 void MountExtraContent()
