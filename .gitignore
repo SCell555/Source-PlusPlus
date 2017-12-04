@@ -20,6 +20,13 @@ ipch
 *.vcxproj
 *.sln
 
+vcslist.txt
+uniquefilestocopy.txt
+makefil*
+inclist.txt
+filestocopy.txt
+*.enc
+
 GameState.txt
 ep1_gamestats.dat
 
