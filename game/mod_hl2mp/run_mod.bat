@@ -1,1 +1,0 @@
-"C:\Program Files (x86)\Steam\steamapps\common\Source SDK Base 2013 Multiplayer\hl2.exe" -game %~dp0

@@ -20,6 +20,15 @@ ipch
 *.vcxproj
 *.sln
 
+GameState.txt
+ep1_gamestats.dat
+
+*.scr
+downloadlists
+ServerConfig.vdf
+*.sav
+*.hl*
+
 modelsounds.cache
 stats.txt
 textwindow_temp.html
@@ -32,6 +41,7 @@ user_custom
 mathlib.lib
 tier1.lib
 vgui_controls.lib
+raytrace.lib
 
 *.vcxproj.filters
 *.pdb

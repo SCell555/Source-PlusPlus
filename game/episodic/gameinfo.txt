@@ -1,0 +1,38 @@
+"GameInfo"
+{
+	game	"Half-Life 2: Episode 2"
+	title	"HALF-LIFE'"
+	title2	"== episode two =="
+	type singleplayer_only
+	
+	ep2content 1
+	supportsvr	1
+
+	FileSystem
+	{
+		SteamAppId				243750
+		
+		SearchPaths
+		{
+			// Our Crap
+			game+mod+mod_write+default_write_path		|gameinfo_path|.
+			gamebin				|gameinfo_path|bin
+
+			// Needed Crap
+			game				|all_source_engine_paths|hl2/hl2_english.vpk
+			game				|all_source_engine_paths|hl2/hl2_pak.vpk
+			game				|all_source_engine_paths|hl2/hl2_textures.vpk
+			game				|all_source_engine_paths|hl2/hl2_sound_vo_english.vpk
+			game				|all_source_engine_paths|hl2/hl2_sound_misc.vpk
+			game				|all_source_engine_paths|hl2/hl2_misc.vpk
+			game+game_write		hl2
+			gamebin				hl2/bin
+			game				|all_source_engine_paths|hl2
+			platform			|all_source_engine_paths|platform
+			
+			// Engine Crap
+			platform			|all_source_engine_paths|platform/platform_misc.vpk
+			platform			|all_source_engine_paths|platform
+		}
+	}
+}
