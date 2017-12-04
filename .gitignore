@@ -20,6 +20,10 @@ ipch
 *.vcxproj
 *.sln
 
+*.scr
+*.lst
+ServerConfig.vdf
+
 modelsounds.cache
 stats.txt
 textwindow_temp.html
