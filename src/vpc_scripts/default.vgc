@@ -14,7 +14,7 @@ $Games
 	"DEFERRED"
 	"HL2"
 	"EPISODIC"
->>>>>>> 111ebf0... Push sp vpcs
+	"DEFERRED"
 }
 
 // Makes the VPC scripts work in the SDK's context
