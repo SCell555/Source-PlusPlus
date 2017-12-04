@@ -16,8 +16,8 @@ CDeferredManagerClient *GetDeferredManager()
 
 static IViewRender *g_pCurrentViewRender = NULL;
 
-//static CDeferredMaterialSystem g_DeferredMaterialSystem;
-//static IMaterialSystem *g_pOldMatSystem;
+static CDeferredMaterialSystem g_DeferredMaterialSystem;
+static IMaterialSystem *g_pOldMatSystem;
 
 
 CDeferredManagerClient::CDeferredManagerClient() : BaseClass( "DeferredManagerClient" )
@@ -26,15 +26,6 @@ CDeferredManagerClient::CDeferredManagerClient() : BaseClass( "DeferredManagerCl
 
 	Q_memset( m_pMat_Def, 0, sizeof(IMaterial*) * DEF_MAT_COUNT );
 	Q_memset( m_pKV_Def, 0, sizeof(KeyValues*) * DEF_MAT_COUNT );
-}
-
-CDeferredManagerClient::~CDeferredManagerClient()
-{
-	for ( KeyValues* &values : m_pKV_Def )
-	{
-		values->deleteThis();
-		values = NULL;
-	}
 }
 
 bool CDeferredManagerClient::Init()
@@ -56,11 +47,11 @@ bool CDeferredManagerClient::Init()
 
 		if ( bGotDefShaderDll )
 		{
-			//g_pOldMatSystem = materials;
+			g_pOldMatSystem = materials;
 
-			//g_DeferredMaterialSystem.InitPassThru( materials );
-			//materials = &g_DeferredMaterialSystem;
-			//engine->Mat_Stub( &g_DeferredMaterialSystem );
+			g_DeferredMaterialSystem.InitPassThru( materials );
+			materials = &g_DeferredMaterialSystem;
+			engine->Mat_Stub( &g_DeferredMaterialSystem );
 
 			m_bDefRenderingEnabled = true;
 			GetDeferredExt()->EnableDeferredLighting();
@@ -124,8 +115,8 @@ void CDeferredManagerClient::Shutdown()
 	{
 		materials->RemoveModeChangeCallBack( &DefRTsOnModeChanged );
 
-		//materials = g_pOldMatSystem;
-		//engine->Mat_Stub( g_pOldMatSystem );
+		materials = g_pOldMatSystem;
+		engine->Mat_Stub( g_pOldMatSystem );
 	}
 
 	if ( m_bDefRenderingEnabled )
@@ -561,11 +552,13 @@ void CDeferredManagerClient::InitializeDeferredMaterials()
 
 void CDeferredManagerClient::ShutdownDeferredMaterials()
 {
-	// not deleted on purpose!!!!!
 	for ( int i = 0; i < DEF_MAT_COUNT; i++ )
 	{
 		if ( m_pKV_Def[ i ] != NULL )
+		{
 			m_pKV_Def[ i ]->Clear();
+			m_pKV_Def[ i ]->deleteThis();
+		}
 		m_pKV_Def[ i ] = NULL;
 	}
 }

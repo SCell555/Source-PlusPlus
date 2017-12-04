@@ -3,9 +3,6 @@
 
 #include "tier0/memdbgon.h"
 
-DEFINE_FALLBACK_SHADER( WorldVertexTransition, DEFERRED_BRUSH )
-DEFINE_FALLBACK_SHADER( LightmappedGeneric, DEFERRED_BRUSH )
-
 BEGIN_VS_SHADER( DEFERRED_BRUSH, "" )
 	BEGIN_SHADER_PARAMS
 

@@ -3,8 +3,6 @@
 
 #include "tier0/memdbgon.h"
 
-DEFINE_FALLBACK_SHADER( VertexLitGeneric, DEFERRED_MODEL )
-
 BEGIN_VS_SHADER( DEFERRED_MODEL, "" )
 	BEGIN_SHADER_PARAMS
 

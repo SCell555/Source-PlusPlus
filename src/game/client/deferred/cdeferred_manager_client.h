@@ -46,7 +46,6 @@ class CDeferredManagerClient : public CAutoGameSystem
 public:
 
 	CDeferredManagerClient();
-	~CDeferredManagerClient();
 
 	virtual bool Init();
 	virtual void Shutdown();
