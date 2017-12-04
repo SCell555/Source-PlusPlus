@@ -26,7 +26,6 @@
 			game				|all_source_engine_paths|hl2/hl2_sound_misc.vpk
 			game				|all_source_engine_paths|hl2/hl2_misc.vpk
 			game+game_write		hl2
-			gamebin				hl2/bin
 			game				|all_source_engine_paths|hl2
 			platform			|all_source_engine_paths|platform
 			
