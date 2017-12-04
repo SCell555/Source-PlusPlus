@@ -739,7 +739,7 @@ BEGIN_VS_SHADER( Water_DX90,
 
 			if( params[SCROLL1]->IsDefined())
 			{
-				float curtime=pShaderAPI->CurrentTime();
+				float curtime = (float) pShaderAPI->CurrentTime();
 				float vc0[4];
 				float v0[4];
 				params[SCROLL1]->GetVecValue(v0,4);
