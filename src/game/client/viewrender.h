@@ -353,7 +353,7 @@ protected:
 
 	virtual IReplayScreenshotSystem *GetReplayScreenshotSystem() { return this; }
 
-	virtual void	PostSimulate();
+	//virtual void	PostSimulate();
 
 	// IReplayScreenshot implementation
 	virtual void	WriteReplayScreenshot( WriteReplayScreenshotParams_t &params );
@@ -455,6 +455,7 @@ private:
 // General draw methods
 	// baseDrawFlags is a combination of DF_ defines. DF_MONITOR is passed into here while drawing a monitor.
 	void			ViewDrawScene( bool bDrew3dSkybox, SkyboxVisibility_t nSkyboxVisible, const CViewSetup &view, int nClearFlags, view_id_t viewID, bool bDrawViewModel = false, int baseDrawFlags = 0, ViewCustomVisibility_t *pCustomVisibility = NULL );
+	void			ViewDrawScene_Intro(const CViewSetup &view, int nClearFlags, const IntroData_t &introData);
 
 	void			DrawMonitors( const CViewSetup &cameraView );
 
