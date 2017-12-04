@@ -1337,7 +1337,7 @@ static void ShadowRestoreFunc( int nChangeFlags )
 	s_ClientShadowMgr.RestoreRenderState();
 }
 
-CSysModule* shaderDLL;
+CSysModule* shaderDLL = nullptr;
 IShaderExtension* g_pShaderExtension;
 
 //-----------------------------------------------------------------------------
