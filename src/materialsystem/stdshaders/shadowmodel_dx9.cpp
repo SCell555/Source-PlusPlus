@@ -17,13 +17,13 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-DEFINE_FALLBACK_SHADER( ShadowModel, ShadowModel_DX9 )
+DEFINE_FALLBACK_SHADER( PP_ShadowModel, PP_ShadowModel_DX9 )
 
 
 #if !defined( _X360 ) //not used for anything at time of 360 ship, and we want to avoid storing/loading assembly shaders
 
 //PC version
-BEGIN_VS_SHADER_FLAGS( ShadowModel_DX9, "Help for ShadowModel", SHADER_NOT_EDITABLE )
+BEGIN_VS_SHADER_FLAGS( PP_ShadowModel_DX9, "Help for ShadowModel", SHADER_NOT_EDITABLE )
 
 BEGIN_SHADER_PARAMS
 SHADER_PARAM( BASETEXTUREOFFSET, SHADER_PARAM_TYPE_VEC2, "[0 0]", "$baseTexture texcoord offset" )

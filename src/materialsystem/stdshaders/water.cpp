@@ -23,9 +23,9 @@
 #include "tier0/memdbgon.h"
 
 
-DEFINE_FALLBACK_SHADER( Water, Water_DX9_HDR )
+DEFINE_FALLBACK_SHADER( PP_Water, PP_Water_DX9_HDR )
 
-BEGIN_VS_SHADER( Water_DX90, 
+BEGIN_VS_SHADER(PP_Water_DX90,
 			  "Help for Water" )
 
 	BEGIN_SHADER_PARAMS
@@ -793,14 +793,14 @@ END_SHADER
 //-----------------------------------------------------------------------------
 // This allows us to use a block labelled 'Water_DX9_HDR' in the water materials
 //-----------------------------------------------------------------------------
-BEGIN_INHERITED_SHADER( Water_DX9_HDR, Water_DX90,
+BEGIN_INHERITED_SHADER( PP_Water_DX9_HDR, PP_Water_DX90,
 			  "Help for Water_DX9_HDR" )
 
 	SHADER_FALLBACK
 	{
 		if( g_pHardwareConfig->GetHDRType() == HDR_TYPE_NONE )
 		{
-			return "WATER_DX90";
+			return "PP_WATER_DX90";
 		}
 		return 0;
 	}

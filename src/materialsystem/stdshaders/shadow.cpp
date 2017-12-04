@@ -12,7 +12,7 @@
 #include "shadow_ps20b.inc"
 #include "shadow_vs20.inc"
 
-BEGIN_VS_SHADER_FLAGS( Shadow, "Help for Shadow", SHADER_NOT_EDITABLE )
+BEGIN_VS_SHADER_FLAGS( PP_Shadow, "Help for Shadow", SHADER_NOT_EDITABLE )
 
 	BEGIN_SHADER_PARAMS
 	END_SHADER_PARAMS

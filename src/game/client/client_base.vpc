@@ -179,6 +179,7 @@ $Project
 		$File	"c_lights.cpp"
 		$File	"worldlight.cpp"
 		$File	"vis_tester.cpp"
+		$File	"replmats.cpp"
 		
 		$File	"$SRCDIR\vgui2\game_controls\FloatSlider.cpp"
 		

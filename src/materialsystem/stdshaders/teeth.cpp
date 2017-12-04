@@ -29,9 +29,9 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-DEFINE_FALLBACK_SHADER( Teeth, Teeth_DX9 )
+DEFINE_FALLBACK_SHADER( PP_Teeth, PP_Teeth_DX9 )
 
-BEGIN_VS_SHADER( Teeth_DX9, "Help for Teeth_DX9" )
+BEGIN_VS_SHADER( PP_Teeth_DX9, "Help for Teeth_DX9" )
 
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( ILLUMFACTOR, SHADER_PARAM_TYPE_FLOAT, "1", "Amount to darken or brighten the teeth" )

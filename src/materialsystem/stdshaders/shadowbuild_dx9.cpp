@@ -16,9 +16,9 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-DEFINE_FALLBACK_SHADER( ShadowBuild, ShadowBuild_DX9 )
+DEFINE_FALLBACK_SHADER( PP_ShadowBuild, PP_ShadowBuild_DX9 )
 
-BEGIN_VS_SHADER_FLAGS( ShadowBuild_DX9, "Help for ShadowBuild", SHADER_NOT_EDITABLE )
+BEGIN_VS_SHADER_FLAGS( PP_ShadowBuild_DX9, "Help for ShadowBuild", SHADER_NOT_EDITABLE )
 
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( TRANSLUCENT_MATERIAL, SHADER_PARAM_TYPE_MATERIAL, "", "Points to a material to grab translucency from" )
