@@ -2024,6 +2024,10 @@ public:
 				continue;
 
 			// Lookup the data
+
+			if (directories[nFileIndex].m_CaptionDirectory.Size() <= caption->dirindex)
+				return;
+
 			CaptionLookup_t &entry = directories[ nFileIndex ].m_CaptionDirectory[ caption->dirindex ];
 			if ( entry.blockNum != nBlockNum )
 				continue;
