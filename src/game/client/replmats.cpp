@@ -31,23 +31,15 @@ static const char * const pszShaderReplaceDict[][2] = {
 	"VertexLitGeneric",			"PP_VertexLitGeneric",
 	"LightmappedGeneric",		"PP_LightmappedGeneric",
 	"WorldVertexTransition",	"PP_WorldVertexTransition",
-	"WorldVertexTransition_DX9",	"PP_WorldVertexTransition_DX9",
 	"Teeth",					"PP_Teeth",
-	"Teeth_DX9",				"PP_Teeth_DX9",
 	//"Cable",					"PP_Cable",
 	"DepthWrite",				"PP_DepthWrite",
 	//"SplineRope",				"PP_SplineRope",
 	"Refract",					"PP_Refract",
-	"Refract_DX90",				"PP_Refract_DX90",
 	"Shadow",					"PP_Shadow",
 	"ShadowBuild",				"PP_ShadowBuild",
-	"ShadowBuild_DX9",			"PP_ShadowBuild_DX9",
 	"ShadowModel",				"PP_ShadowModel",
-	"ShadowModel_DX9",			"PP_ShadowModel_DX9",
 	"Water",					"PP_Water",
-	"Water_HDR",				"PP_Water_HDR"
-	"Water_DX9",				"PP_Water_DX9"
-	"Water_DX9_HDR",			"PP_Water_DX9_HDR" //*/
 	//"TEMP",						"PP_TEMP"
 };
 static const int iNumShaderReplaceDict = ARRAYSIZE( pszShaderReplaceDict );
