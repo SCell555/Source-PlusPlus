@@ -24,7 +24,7 @@ GameState.txt
 ep1_gamestats.dat
 
 *.scr
-*.lst
+downloadlists
 ServerConfig.vdf
 *.sav
 *.hl*
