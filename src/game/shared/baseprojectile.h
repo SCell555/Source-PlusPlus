@@ -37,6 +37,9 @@ class CBaseProjectile : public CBaseAnimating, public IBaseProjectileAutoList
 {
 public:
 	DECLARE_CLASS( CBaseProjectile, CBaseAnimating );
+#ifdef GAME_DLL
+	DECLARE_DATADESC();
+#endif
 	DECLARE_NETWORKCLASS();
 
 	CBaseProjectile();
