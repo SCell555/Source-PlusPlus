@@ -866,6 +866,8 @@ private:
 	bool IsWorldHinge( const hl_constraint_info_t &info, int *pAxisOut );
 };
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CPhysHinge )
 
 // Quiet down classcheck
@@ -896,7 +898,7 @@ BEGIN_DATADESC( CPhysHinge )
 #endif
 
 END_DATADESC()
-
+#pragma warning( pop )
 
 LINK_ENTITY_TO_CLASS( phys_hinge, CPhysHinge );
 
@@ -1169,6 +1171,8 @@ protected:
 
 LINK_ENTITY_TO_CLASS( phys_slideconstraint, CPhysSlideConstraint );
 
+#pragma warning( push )
+#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CPhysSlideConstraint )
 
 	DEFINE_KEYFIELD( m_axisEnd, FIELD_POSITION_VECTOR, "slideaxis" ),
@@ -1194,7 +1198,7 @@ BEGIN_DATADESC( CPhysSlideConstraint )
 #endif
 
 END_DATADESC()
-
+#pragma warning( pop )
 
 
 IPhysicsConstraint *CPhysSlideConstraint::CreateConstraint( IPhysicsConstraintGroup *pGroup, const hl_constraint_info_t &info )
