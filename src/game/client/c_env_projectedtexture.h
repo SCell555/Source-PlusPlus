@@ -13,7 +13,7 @@
 
 #include "c_baseentity.h"
 #include "basetypes.h"
-
+#include "../../materialsystem/stdshaders/IShaderExtension.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: 
