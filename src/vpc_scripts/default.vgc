@@ -14,7 +14,8 @@ $Games
 	"HL2"
 	"EPISODIC"
 
-	"DEFERRED"}
+	"DEFERRED"
+}
 
 // Makes the VPC scripts work in the SDK's context
 $Conditional "SOURCESDK" "1"
