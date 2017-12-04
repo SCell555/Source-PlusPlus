@@ -20,6 +20,9 @@ ipch
 *.vcxproj
 *.sln
 
+GameState.txt
+ep1_gamestats.dat
+
 *.scr
 *.lst
 ServerConfig.vdf
