@@ -62,6 +62,7 @@ $Project
 		$File	"flesh_interior_blended_pass_helper.cpp"
 		$File	"lightmappedgeneric_dx9.cpp"
 		$File	"lightmappedgeneric_dx9_helper.cpp"
+		$File	"depthwrite.cpp"
 		$File	"refract.cpp"
 		$File	"refract_dx9_helper.cpp"
 		$File	"shadow.cpp"
@@ -103,6 +104,4 @@ $Project
 	$File	"buildsdkshaders.bat"
 	$File	"buildshaders.bat"
 
-	$Shaders	"stdshader_dx9_20b.txt"
-	$Shaders	"stdshader_dx9_30.txt"
 }
