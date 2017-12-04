@@ -35,7 +35,7 @@ inline void SetCustomPixelLightingState( CCommandBufferBuilder< S > &DynamicCmds
 			const LightDesc_t &lightDesc = pShaderAPI->GetLight( i );
 			const int iConstantOffset = 2 * i;
 			Vector &vecPosition = s_PixelLightingState[ iConstantOffset + 1 ].AsVector3D();
-			s_PixelLightingState[ iConstantOffset ].Init( lightDesc.m_Color, 0.0f );
+			s_PixelLightingState[ iConstantOffset ].Init( lightDesc.m_Color.x, lightDesc.m_Color.y, lightDesc.m_Color.z, 0.0f );
 			if ( lightDesc.m_Type == MATERIAL_LIGHT_DIRECTIONAL )
 			{
 				vecPosition = lightDesc.m_Position - lightDesc.m_Direction * 10000.0f;
@@ -88,13 +88,13 @@ inline void SetCustomVertexLightingState( CCommandBufferBuilder< S > &DynamicCmd
 			Vector4D *pDest = &s_VertexLightingState[ i * 5 ];
 
 			float w = ( lightDesc.m_Type == MATERIAL_LIGHT_DIRECTIONAL ) ? 1.0f : 0.0f;
-			pDest[0].Init( lightDesc.m_Color, w);
+			pDest[0].Init( lightDesc.m_Color.x, lightDesc.m_Color.y, lightDesc.m_Color.z, w);
 
 			vDirectionalLights[i] = w;
 
 			w = ( lightDesc.m_Type == MATERIAL_LIGHT_SPOT ) ? 1.0f : 0.0f;
-			pDest[1].Init( lightDesc.m_Direction, w );
-			pDest[2].Init( lightDesc.m_Position, 1.0f );
+			pDest[1].Init( lightDesc.m_Direction.x, lightDesc.m_Direction.y, lightDesc.m_Direction.z, w );
+			pDest[2].Init( lightDesc.m_Position.x, lightDesc.m_Position.y, lightDesc.m_Position.z, 1.0f );
 
 			if ( lightDesc.m_Type == MATERIAL_LIGHT_SPOT )
 			{

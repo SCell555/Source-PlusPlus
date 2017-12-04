@@ -9,11 +9,11 @@
 #define COMMON_HLSL_CONSTS_H_
 
 #ifdef NV3X
-  #define PSHADER_VECT_SCALE 20.0
-  #define VSHADER_VECT_SCALE (1.0 / (PSHADER_VECT_SCALE) )
+  #define PSHADER_VECT_SCALE 20.0f
+  #define VSHADER_VECT_SCALE (1.0f / (PSHADER_VECT_SCALE) )
 #else
-  #define PSHADER_VECT_SCALE 1.0
-  #define VSHADER_VECT_SCALE 1.0
+  #define PSHADER_VECT_SCALE 1.0f
+  #define VSHADER_VECT_SCALE 1.0f
 #endif
 
 // GR - HDR luminance maps to 0..n range
