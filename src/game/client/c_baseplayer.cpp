@@ -57,6 +57,10 @@
 // NVNT haptics system interface
 #include "haptics/ihaptics.h"
 
+#ifdef DEFERRED
+#include "deferred/deferred_shared_common.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -1227,7 +1231,11 @@ void C_BasePlayer::UpdateFlashlight()
 		if (!m_pFlashlight)
 		{
 			// Turned on the headlight; create it.
+		#ifdef DEFERRED
+			m_pFlashlight = new CFlashlightEffectDeferred(index);
+		#else
 			m_pFlashlight = new CFlashlightEffect(index);
+		#endif
 
 			if (!m_pFlashlight)
 				return;

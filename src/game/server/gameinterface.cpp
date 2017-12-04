@@ -130,6 +130,10 @@ extern ConVar tf_mm_servermode;
 #include "replay/ireplaysystem.h"
 #endif
 
+#ifdef DEFERRED
+#include "deferred/deferred_shared_common.h"
+#endif
+
 extern IToolFrameworkServer *g_pToolFrameworkServer;
 extern IParticleSystemQuery *g_pParticleSystemQuery;
 
@@ -1436,6 +1440,9 @@ void CServerGameDLL::CreateNetworkStringTables( void )
 	g_pStringTableClientSideChoreoScenes = networkstringtable->CreateStringTable( "Scenes", MAX_CHOREO_SCENES_STRINGS );
 	g_pStringTableServerMapCycle = networkstringtable->CreateStringTable( "ServerMapCycle", 128 );
 
+#ifdef DEFERRED
+	g_pStringTable_LightCookies = networkstringtable->CreateStringTable( COOKIE_STRINGTBL_NAME, MAX_COOKIE_TEXTURES );
+#endif
 #ifdef TF_DLL
 	g_pStringTableServerPopFiles = networkstringtable->CreateStringTable( "ServerPopFiles", 128 );
 	g_pStringTableServerMapCycleMvM = networkstringtable->CreateStringTable( "ServerMapCycleMvM", 128 );
@@ -1458,6 +1465,10 @@ void CServerGameDLL::CreateNetworkStringTables( void )
 			bPopFilesValid
 			);
 
+#ifdef DEFERRED
+	Assert( g_pStringTable_LightCookies );
+#endif
+			
 	// Need this so we have the error material always handy
 	PrecacheMaterial( "debug/debugempty" );
 	Assert( GetMaterialIndex( "debug/debugempty" ) == 0 );

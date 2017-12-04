@@ -28,10 +28,11 @@ $Project "fgdlib"
 
 $Project "game_shader_dx9"
 {
-	"materialsystem\stdshaders\game_shader_dx9_hl2mp.vpc" 		[$HL2MP]
-	"materialsystem\stdshaders\game_shader_dx9_hl2.vpc"			[$HL2]
-	"materialsystem\stdshaders\game_shader_dx9_episodic.vpc"	[$EPISODIC]
-}
+	"materialsystem\stdshaders\game_shader_dx9_hl2mp.vpc"		[$HL2MP && !$DEFERRED]
+	"materialsystem\stdshaders\game_shader_dx9_hl2.vpc"			[$HL2 && !$DEFERRED]
+	"materialsystem\stdshaders\game_shader_dx9_episodic.vpc"	[$EPISODIC && !$DEFERRED]
+
+	"materialsystem\defshaders\game_shader_dx9_deferred.vpc" [$DEFERRED]}
 
 $Project "glview"
 {

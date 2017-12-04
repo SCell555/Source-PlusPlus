@@ -13,6 +13,8 @@ $Games
 	"HL2MP"
 	"HL2"
 	"EPISODIC"
+
+	"DEFERRED"
 }
 
 // Makes the VPC scripts work in the SDK's context
