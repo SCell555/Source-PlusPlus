@@ -986,8 +986,6 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	g_pcv_ThreadMode = g_pCVar->FindVar( "host_thread_mode" );
 
-	MountExtraContent();
-
 	if (!Initializer::InitializeAllObjects())
 		return false;
 
@@ -1091,6 +1089,8 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 #ifndef _X360
 	HookHapticMessages(); // Always hook the messages
 #endif
+
+	MountExtraContent();
 
 	return true;
 }

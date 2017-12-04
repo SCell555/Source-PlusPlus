@@ -1,13 +1,15 @@
 "GameInfo"
 {
 	game	"Half-Life 2: Deathmatch"
-	title	"HALF-LIFE'"
+	title	"HALF+LIFE'"
 	title2	"deathmatch"
 	type multiplayer_only
 	nomodels 0
 	nohimodel 1
 	nocrosshair 1
-	extracontent 0
+	
+	hl2mpcontent 1
+	
 	hidden_maps
 	{
 		"test_speakers"		1
@@ -15,20 +17,17 @@
 	}
 	supportsvr	1
 
-
 	FileSystem
 	{
 		SteamAppId				243750
 		
 		SearchPaths
 		{
-			game+mod			hl2mp/custom/*
-			game+mod			hl2/custom/*
-
+			// Our Crap
 			game+mod+mod_write+default_write_path		|gameinfo_path|.
 			gamebin				|gameinfo_path|bin
 
-			game_lv				hl2/hl2_lv.vpk
+			// Needed Crap
 			game+mod			hl2mp/hl2mp_english.vpk
 			game+mod			hl2mp/hl2mp_pak.vpk
 			game				|all_source_engine_paths|hl2/hl2_english.vpk
@@ -37,14 +36,14 @@
 			game				|all_source_engine_paths|hl2/hl2_sound_vo_english.vpk
 			game				|all_source_engine_paths|hl2/hl2_sound_misc.vpk
 			game				|all_source_engine_paths|hl2/hl2_misc.vpk
-			platform			|all_source_engine_paths|platform/platform_misc.vpk
-
 			game+game_write		hl2mp
-
 			gamebin				hl2mp/bin
-
 			game				|all_source_engine_paths|hl2mp
 			game				|all_source_engine_paths|hl2
+			platform			|all_source_engine_paths|platform
+			
+			// Engine Crap
+			platform			|all_source_engine_paths|platform/platform_misc.vpk
 			platform			|all_source_engine_paths|platform
 		}
 	}
