@@ -5,7 +5,7 @@
 	title2	""
 	type singleplayer_only
 	
-	ep2content 1
+	hl2content 1
 	supportsvr	1
 
 	FileSystem
