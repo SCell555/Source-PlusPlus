@@ -14,9 +14,9 @@
 static LightmappedGeneric_DX9_Vars_t s_info;
 static LightmappedGeneric_DX9_Vars_t s_info_editor;
 
-DEFINE_FALLBACK_SHADER( WorldVertexTransition, WorldVertexTransition_DX9 )
+DEFINE_FALLBACK_SHADER( PP_WorldVertexTransition, PP_WorldVertexTransition_DX9 )
 
-BEGIN_VS_SHADER( WorldVertexTransition_DX9, "Help for WorldVertexTransition" )
+BEGIN_VS_SHADER( PP_WorldVertexTransition_DX9, "Help for WorldVertexTransition" )
 
 	BEGIN_SHADER_PARAMS
 		SHADER_PARAM( ALBEDO, SHADER_PARAM_TYPE_TEXTURE, "shadertest/BaseTexture", "albedo (Base texture with no baked lighting)" )

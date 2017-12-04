@@ -303,19 +303,25 @@ void CCSMTweakPanel::OnMessage( const KeyValues *params, vgui::VPANEL fromPanel 
 
 void CCSMTweakPanel::LoadSettings()
 {
-	const auto& data = g_pCSMEnvLight->shadowConfigs;
-	near.pForwardOffset->SetValue( data[0].flForwardOffset, false );
-	near.pOrthoSize->SetValue( data[0].flOrthoSize, false );
-	near.pUVOffsetX->SetValue( data[0].flUVOffsetX, false );
-	near.pViewDepthBiasHack->SetValue( data[0].flViewDepthBiasHack, false );
+	if (g_pCSMEnvLight)
+	{
+		const auto& data = g_pCSMEnvLight->shadowConfigs;
+		near.pForwardOffset->SetValue(data[0].flForwardOffset, false);
+		near.pOrthoSize->SetValue(data[0].flOrthoSize, false);
+		near.pUVOffsetX->SetValue(data[0].flUVOffsetX, false);
+		near.pViewDepthBiasHack->SetValue(data[0].flViewDepthBiasHack, false);
 
-	far.pForwardOffset->SetValue( data[1].flForwardOffset, false );
-	far.pOrthoSize->SetValue( data[1].flOrthoSize, false );
-	far.pUVOffsetX->SetValue( data[1].flUVOffsetX, false );
-	far.pViewDepthBiasHack->SetValue( data[1].flViewDepthBiasHack, false );
+		far.pForwardOffset->SetValue(data[1].flForwardOffset, false);
+		far.pOrthoSize->SetValue(data[1].flOrthoSize, false);
+		far.pUVOffsetX->SetValue(data[1].flUVOffsetX, false);
+		far.pViewDepthBiasHack->SetValue(data[1].flViewDepthBiasHack, false);
+	}
 }
 
 CON_COMMAND( csm_tweak, "" )
 {
-	new CCSMTweakPanel( enginevgui->GetPanel( PANEL_CLIENTDLL ) );
+	if (g_pCSMEnvLight)
+	{
+		new CCSMTweakPanel(enginevgui->GetPanel(PANEL_CLIENTDLL));
+	}
 }
