@@ -44,7 +44,7 @@ static const char * const pszShaderReplaceDict[][2] = {
 	"ShadowBuild_DX9",			"PP_ShadowBuild_DX9",
 	"ShadowModel",				"PP_ShadowModel",
 	"ShadowModel_DX9",			"PP_ShadowModel_DX9",
-	"Water",					"PP_Water"
+	"Water",					"PP_Water",
 	"Water_HDR",				"PP_Water_HDR"
 	"Water_DX9",				"PP_Water_DX9"
 	"Water_DX9_HDR",			"PP_Water_DX9_HDR" //*/
