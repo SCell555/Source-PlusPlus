@@ -28,7 +28,6 @@ CON_COMMAND(print_num_replaced_mats, "")
 //-----------------------------------------------------------------------------
 static const char * const pszShaderReplaceDict[][2] = {
 	///*
-#ifndef PORTAL
 	"VertexLitGeneric",			"PP_VertexLitGeneric",
 	"LightmappedGeneric",		"PP_LightmappedGeneric",
 	"WorldVertexTransition",	"PP_WorldVertexTransition",
@@ -41,7 +40,6 @@ static const char * const pszShaderReplaceDict[][2] = {
 	"ShadowBuild",				"PP_ShadowBuild",
 	"ShadowModel",				"PP_ShadowModel",
 	"Water",					"PP_Water",
-#endif
 	"TEMP",						"PP_TEMP"
 };
 static const int iNumShaderReplaceDict = ARRAYSIZE( pszShaderReplaceDict );
@@ -138,7 +136,7 @@ static void ShaderReplaceReplMat( const char *szNewShadername, IMaterial *pMat )
 	}
 
 	bool alphaBlending = pMat->IsTranslucent() || pMat->GetMaterialVarFlag( MATERIAL_VAR_TRANSLUCENT );
-	bool translucentOverride = pMat->IsAlphaTested() || pMat->GetMaterialVarFlag( MATERIAL_VAR_ALPHATEST ) || alphaBlending;
+	bool translucentOverride = pMat->IsAlphaTested() || pMat->GetMaterialVarFlag( MATERIAL_VAR_ALPHATEST );
 
 	bool bDecal = pszOldShadername != NULL && Q_stristr( pszOldShadername, "decal" ) != NULL ||
 		pszMatname != NULL && Q_stristr( pszMatname, "decal" ) != NULL ||
@@ -153,8 +151,23 @@ static void ShaderReplaceReplMat( const char *szNewShadername, IMaterial *pMat )
 	if ( translucentOverride )
 		msg->SetInt( "$alphatest", 1 );
 
-	if ( pMat->IsTwoSided() )
+	if ( pMat->IsTwoSided() || pMat->GetMaterialVarFlag(MATERIAL_VAR_NOCULL))
 		msg->SetInt( "$nocull", 1 );
+
+	if (pMat->GetMaterialVarFlag(MATERIAL_VAR_ADDITIVE))
+		msg->SetInt("$additive", 1);
+
+	if (pMat->GetMaterialVarFlag(MATERIAL_VAR_MODEL))
+		msg->SetInt("$model", 1);
+
+	if (pMat->GetMaterialVarFlag(MATERIAL_VAR_NOFOG))
+		msg->SetInt("$nofog", 1);
+
+	if (pMat->GetMaterialVarFlag(MATERIAL_VAR_IGNOREZ))
+		msg->SetInt("$ignorez", 1);
+
+	if (pMat->GetMaterialVarFlag(MATERIAL_VAR_HALFLAMBERT))
+		msg->SetInt("$halflambert", 1);
 
 	pMat->SetShaderAndParams(msg);
 
@@ -245,10 +258,7 @@ public:
 
 	virtual bool Init() 
 	{ 
-#ifndef PORTAL
-		Enable();
-#endif
-		return true;
+		Enable(); return true; 
 	}
 	virtual void Shutdown() { Disable(); }
 	virtual void LevelShutdownPostEntity() { /*matCount = 0;*/ }
