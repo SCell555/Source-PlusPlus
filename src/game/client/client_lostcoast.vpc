@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 $Macro SRCDIR		"..\.."
-$Macro GAMENAME 	"lostcoast"
+$Macro GAMENAME 	"mod_lostcoast"
 
 $Include "$SRCDIR\game\client\client_base.vpc"
 
