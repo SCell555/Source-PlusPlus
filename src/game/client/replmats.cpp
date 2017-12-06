@@ -243,7 +243,13 @@ class ReplacementSystem : public CAutoGameSystem
 public:
 	ReplacementSystem() : m_pOldMaterialSystem(NULL) {}
 
-	virtual bool Init() { Enable(); return true; }
+	virtual bool Init() 
+	{ 
+#ifndef PORTAL
+		Enable();
+#endif
+		return true;
+	}
 	virtual void Shutdown() { Disable(); }
 	virtual void LevelShutdownPostEntity() { /*matCount = 0;*/ }
 

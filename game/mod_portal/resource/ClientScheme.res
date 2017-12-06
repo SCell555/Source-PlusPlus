@@ -23,8 +23,12 @@ Scheme
 	// controls use these to determine their settings
 	BaseSettings
 	{
+		FrameSystemButton.FgColor		"Blank"
+		FrameSystemButton.BgColor		"Blank"
+		FrameSystemButton.Icon			""
+		FrameSystemButton.DisabledIcon	""
+		
 		"FgColor"			"255 220 0 100"
-		"FgColor_vrmode"	"255 220 0 200"
 		"BgColor"			"0 0 0 76"
 
 		"Panel.FgColor"			"255 220 0 100"
@@ -51,14 +55,16 @@ Scheme
 		"Caution"			"255 48 0 255"
 
 		// Top-left corner of the "Half-Life 2" on the main screen
-		"Main.Title1.X"			"53"
-		"Main.Title1.Y"			"190"
-		"Main.Title1.Y_hidef"	"184"
+		"Main.Title1.X"		"30"	[$WIN32]
+		"Main.Title1.Y"		"160"	[$WIN32]
+		"Main.Title1.X"			"76"	[$X360]
+		"Main.Title1.Y"			"165"	[$X360]
+		"Main.Title1.Y_hidef"	"150"	[$X360]
 		"Main.Title1.Color"	"255 255 255 255"
 
 		// Top-left corner of secondary title e.g. "DEMO" on the main screen
-		"Main.Title2.X"				"291"
-		"Main.Title2.Y"				"207"
+		"Main.Title2.X"				"314"
+		"Main.Title2.Y"				"257"
 		"Main.Title2.Y_hidef"		"242"
 		"Main.Title2.Color"	"255 255 255 200"
 
@@ -79,7 +85,6 @@ Scheme
 		// UI buttons, custom font, (256x64)
 		"Buttons"		"materials/vgui/fonts/buttons_32.vbf"
 	}
-
 	
 	//////////////////////// FONTS /////////////////////////////
 	//
@@ -281,7 +286,6 @@ Scheme
 			{
 				"name"		"HalfLife2"
 				"tall"		"64"
-				"tall_hidef"	"58"
 				"weight"	"0"
 				"antialias" "1"
 				"additive"	"1"
@@ -294,23 +298,10 @@ Scheme
 			{
 				"name"		"HalfLife2"
 				"tall"		"64"
-				"tall_hidef"	"58"
 				"weight"	"0"
 				"antialias" "1"
 				"blur"		"5"
 				"scanlines"	"2"
-				"additive"	"1"
-				"custom"	"1"
-			}
-		}
-		WeaponIconsSmall
-		{
-			"1"
-			{
-				"name"		"HalfLife2"
-				"tall"		"32"
-				"weight"	"0"
-				"antialias" "1"
 				"additive"	"1"
 				"custom"	"1"
 			}
@@ -331,45 +322,26 @@ Scheme
 		}
 		QuickInfo
 		{
-			"1"	[$X360]
+			"1"
 			{
 				"name"		"HL2cross"
-				"tall"		"57"
-				"weight"	"0"
+				"tall"		"28"	[$WIN32]
+				"tall"		"60"	[$X360]
 				"antialias" 	"1"
+				"blur"		"0"
+				"weight"	"0"				
 				"additive"	"1"
 				"custom"	"1"
-			}
-			"1"	[$WIN32]
-			{
-				"name"		"HL2cross"
-				"tall"		"28" [!$OSX]
-				"tall"		"50" [$OSX]
-				"weight"	"0"
-				"antialias" "1"
-				"additive"	"1"
-				"custom"	"1" [!$OSX]
 			}
 		}
 		HudNumbers
 		{
 			"1"
 			{
-				"name"		"HalfLife2"
+				"name"		"Verdana" [!$OSX]
+				"name"		"Helvetica" [$OSX]
 				"tall"		"32"	[$WIN32]
 				"tall"		"38"	[$X360]
-				"weight"	"0"
-				"antialias" "1"
-				"additive"	"1"
-				"custom"	"1"
-			}
-		}
-		SquadIcon	[$X360]
-		{
-			"1"
-			{
-				"name"		"HalfLife2"
-				"tall"		"50"
 				"weight"	"0"
 				"antialias" "1"
 				"additive"	"1"
@@ -380,7 +352,8 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"HalfLife2"
+				"name"		"Verdana" [!$OSX]
+				"name"		"Helvetica" [$OSX]
 				"tall"		"32"	[$WIN32]
 				"tall"		"38"	[$X360]
 				"weight"	"0"
@@ -395,7 +368,7 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"HalfLife2" [!$OSX]
+				"name"		"Verdana" [!$OSX]
 				"name"		"Helvetica Bold" [$OSX]
 				"tall"		"16"	[$WIN32]
 				"tall"		"22"	[$X360]
@@ -591,7 +564,7 @@ Scheme
 				"name"		"Verdana" [$OSX]
 				"tall"		"16" [!$OSX]
 				"tall"		"14" [$OSX]
- 				"tall_hidef"	"24"
+				"tall_hidef"	"24"
 				"weight"	"900"
 				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
 			}
@@ -632,20 +605,20 @@ Scheme
 		{
 			"1"
 			{
-				"name"  "HalfLife2"
-				"tall"			"32"
-				"tall_hidef"	"46"
+				"name"  "Trebuchet MS"
+				"tall"			"51"
+				"tall_hidef"	"72"
 				"weight" "0"
 				"additive" "0"
 				"antialias" "1"
-				"custom"	"1" [$OSX]
+				"blur" "2"
 			}
 		}
 		CreditsLogo
 		{
 			"1"
 			{
-				"name"		"HalfLife2"
+				"name"		"Trebuchet MS"
 				"tall"		"128"
 				"weight"	"0"
 				"antialias" "1"
@@ -668,7 +641,7 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"HalfLife2"
+				"name"		"Trebuchet MS"
 				"tall"		"48"
 				"weight"	"0"
 				"antialias" "1"
@@ -680,9 +653,10 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Verdana" [!$OSX]
+				"name"		"Courier New" [!$OSX]
 				"name"		"Courier Bold" [$OSX]
-				"tall"		"9"
+				"tall"		"12" [!$OSX]
+				"tall"		"11" [$OSX]
 				"weight"	"900"
 				"antialias" "1"
 			}
@@ -692,8 +666,7 @@ Scheme
 			// note that this scales with the screen resolution
 			"1"
 			{
-				"name"		"Trebuchet MS" [!$OSX]
-				"name"		"Helvetica" [$OSX]
+				"name"		"Trebuchet MS"
 				"tall"		"18"
 				"weight"	"900"
 				"antialias" "1"
