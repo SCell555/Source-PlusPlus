@@ -143,22 +143,17 @@ static void ShaderReplaceReplMat( const char *szNewShadername, IMaterial *pMat )
 		pMat->GetMaterialVarFlag( MATERIAL_VAR_DECAL );
 
 	if ( bDecal )
-	{
 		msg->SetInt( "$decal", 1 );
+	
+	if ( alphaBlending )
+		msg->SetInt("$translucent", 1);
 
-		if ( alphaBlending )
-			msg->SetInt( "$translucent", 1 );
-	}
-	else if ( translucentOverride )
-	{
+	if ( translucentOverride )
 		msg->SetInt( "$alphatest", 1 );
-	}
 
 	if ( pMat->IsTwoSided() )
-	{
 		msg->SetInt( "$nocull", 1 );
-	}
-	
+
 	pMat->SetShaderAndParams(msg);
 
 	pMat->RefreshPreservingMaterialVars();
