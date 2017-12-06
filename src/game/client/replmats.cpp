@@ -247,6 +247,7 @@ private:
 	}
 };
 
+#include "icommandline.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -258,6 +259,9 @@ public:
 
 	virtual bool Init() 
 	{ 
+		if (CommandLine()->CheckParm("-experimental"))
+			return true;
+
 		Enable(); return true; 
 	}
 	virtual void Shutdown() { Disable(); }
