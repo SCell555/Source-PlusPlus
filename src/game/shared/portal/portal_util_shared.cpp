@@ -54,6 +54,8 @@ public:
 	virtual IHandleEntity	*GetEntityHandle() { return m_pWrappedCollideable->GetEntityHandle(); }
 	virtual const Vector&	OBBMins() const { return m_pWrappedCollideable->OBBMins(); };
 	virtual const Vector&	OBBMaxs() const { return m_pWrappedCollideable->OBBMaxs(); };
+	virtual const Vector&	OBBMinsPreScaled() const { return m_pWrappedCollideable->OBBMinsPreScaled(); };
+	virtual const Vector&	OBBMaxsPreScaled() const { return m_pWrappedCollideable->OBBMaxsPreScaled(); };
 	virtual int				GetCollisionModelIndex() { return m_pWrappedCollideable->GetCollisionModelIndex(); };
 	virtual const model_t*	GetCollisionModel() { return m_pWrappedCollideable->GetCollisionModel(); };
 	virtual SolidType_t		GetSolid() const { return m_pWrappedCollideable->GetSolid(); };

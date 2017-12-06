@@ -279,6 +279,7 @@ RecvPropEHandle( RECVINFO( m_pHeldObjectPortal ) ),
 RecvPropBool( RECVINFO( m_bPitchReorientation ) ),
 RecvPropEHandle( RECVINFO( m_hPortalEnvironment ) ),
 RecvPropEHandle( RECVINFO( m_hSurroundingLiquidPortal ) ),
+RecvPropBool( RECVINFO ( m_bSuppressCrosshair ) ),
 END_RECV_TABLE()
 
 
