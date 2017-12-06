@@ -28,6 +28,7 @@ CON_COMMAND(print_num_replaced_mats, "")
 //-----------------------------------------------------------------------------
 static const char * const pszShaderReplaceDict[][2] = {
 	///*
+#ifndef PORTAL
 	"VertexLitGeneric",			"PP_VertexLitGeneric",
 	"LightmappedGeneric",		"PP_LightmappedGeneric",
 	"WorldVertexTransition",	"PP_WorldVertexTransition",
@@ -40,7 +41,8 @@ static const char * const pszShaderReplaceDict[][2] = {
 	"ShadowBuild",				"PP_ShadowBuild",
 	"ShadowModel",				"PP_ShadowModel",
 	"Water",					"PP_Water",
-	//"TEMP",						"PP_TEMP"
+#endif
+	"TEMP",						"PP_TEMP"
 };
 static const int iNumShaderReplaceDict = ARRAYSIZE( pszShaderReplaceDict );
 

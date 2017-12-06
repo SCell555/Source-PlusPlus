@@ -23,6 +23,14 @@ void AddEP2(const char* path)
 	g_pVGuiLocalize->AddFile("resource/ep2_%language%.txt");
 }
 
+void AddPortal(const char* path)
+{
+	filesystem->AddSearchPath(CFmtStr("%s/portal/portal_pak.vpk", path), "GAME", PATH_ADD_TO_HEAD);
+	filesystem->AddSearchPath(CFmtStr("%s/portal/portal_sound_vo_english.vpk", path), "GAME", PATH_ADD_TO_HEAD);
+	filesystem->AddSearchPath(CFmtStr("%s/portal", path), "GAME", PATH_ADD_TO_HEAD);
+	g_pVGuiLocalize->AddFile("resource/portal_%language%.txt");
+}
+
 void AddEP1(const char* path)
 {
 	filesystem->AddSearchPath(CFmtStr("%s/episodic/ep1_pak.vpk", path), "GAME", PATH_ADD_TO_HEAD);
@@ -113,6 +121,13 @@ void MountExtraContent()
 		char ep2Path[MAX_PATH];
 		steamapicontext->SteamApps()->GetAppInstallDir(420, ep2Path, sizeof(ep2Path));
 		AddEP2(ep2Path);
+	}
+
+	if (steamapicontext->SteamApps()->BIsAppInstalled(400) && gameinfo->GetBool("portalcontent"))
+	{
+		char portalPath[MAX_PATH];
+		steamapicontext->SteamApps()->GetAppInstallDir(400, portalPath, sizeof(portalPath));
+		AddPortal(portalPath);
 	}
 
 	if (steamapicontext->SteamApps()->BIsAppInstalled(243750))

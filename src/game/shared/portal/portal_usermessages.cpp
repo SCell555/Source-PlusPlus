@@ -8,6 +8,7 @@
 #include "usermessages.h"
 #include "shake.h"
 #include "voice_gamemgr.h"
+#include "haptics/haptic_msgs.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -44,6 +45,7 @@ void RegisterUserMessages()
 	usermessages->Register( "LogoTimeMsg", 4 );
 	usermessages->Register( "AchievementEvent", -1 );
 
+	RegisterHapticMessages();
 
 	//new stuff for portal
 	usermessages->Register( "EntityPortalled", sizeof( long ) + sizeof( long ) + sizeof( Vector ) + sizeof( QAngle ) ); //something got teleported through a portal
