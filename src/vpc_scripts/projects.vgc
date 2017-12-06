@@ -19,6 +19,12 @@ $Project "client"
 	"game\client\client_hl2mp.vpc"		[($WIN32||$POSIX) && $HL2MP]
 	"game\client\client_hl2.vpc"		[($WIN32||$POSIX) && $HL2]
 	"game\client\client_episodic.vpc"	[($WIN32||$POSIX) && $EPISODIC]
+	
+	"game\client\client_lostcoast.vpc"	[($WIN32||$POSIX) && $LOSTCOAST]
+	"game\client\client_cstrike.vpc"	[($WIN32||$POSIX) && $CSTRIKE]
+	"game\client\client_dod.vpc"		[($WIN32||$POSIX) && $DOD]
+	"game\client\client_hl1.vpc"		[($WIN32||$POSIX) && $HL1]
+	"game\client\client_portal.vpc"		[($WIN32||$POSIX) && $PORTAL]
 }
 
 $Project "fgdlib"
@@ -32,7 +38,8 @@ $Project "game_shader_dx9"
 	"materialsystem\stdshaders\game_shader_dx9_hl2.vpc"			[$HL2 && !$DEFERRED]
 	"materialsystem\stdshaders\game_shader_dx9_episodic.vpc"	[$EPISODIC && !$DEFERRED]
 
-	"materialsystem\defshaders\game_shader_dx9_deferred.vpc" [$DEFERRED]}
+	"materialsystem\defshaders\game_shader_dx9_deferred.vpc" [$DEFERRED]
+}
 
 $Project "glview"
 {
@@ -48,7 +55,13 @@ $Project "server"
 {
 	"game\server\server_hl2mp.vpc"		[($WIN32||$POSIX) && $HL2MP]
 	"game\server\server_hl2.vpc"		[($WIN32||$POSIX) && $HL2]
-	"game\server\server_episodic.vpc"		[($WIN32||$POSIX) && $EPISODIC]
+	"game\server\server_episodic.vpc"	[($WIN32||$POSIX) && $EPISODIC]
+	
+	"game\server\server_lostcoast.vpc"	[($WIN32||$POSIX) && $LOSTCOAST]
+	"game\server\server_cstrike.vpc"	[($WIN32||$POSIX) && $CSTRIKE]
+	"game\server\server_dod.vpc"		[($WIN32||$POSIX) && $DOD]
+	"game\server\server_hl1.vpc"		[($WIN32||$POSIX) && $HL1]
+	"game\server\server_portal.vpc"		[($WIN32||$POSIX) && $PORTAL]
 }
 
 $Project "mathlib"
