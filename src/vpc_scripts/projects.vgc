@@ -38,7 +38,13 @@ $Project "game_shader_dx9"
 	"materialsystem\stdshaders\game_shader_dx9_hl2.vpc"			[$HL2 && !$DEFERRED]
 	"materialsystem\stdshaders\game_shader_dx9_episodic.vpc"	[$EPISODIC && !$DEFERRED]
 
-	"materialsystem\defshaders\game_shader_dx9_deferred.vpc" [$DEFERRED]
+	"materialsystem\stdshaders\game_shader_dx9_lostcoast.vpc"	[!$DEFERRED && $LOSTCOAST]
+	"materialsystem\stdshaders\game_shader_dx9_cstrike.vpc"		[!$DEFERRED && $CSTRIKE]
+	"materialsystem\stdshaders\game_shader_dx9_dod.vpc"			[!$DEFERRED && $DOD]
+	"materialsystem\stdshaders\game_shader_dx9_hl1.vpc"			[!$DEFERRED && $HL1]
+	"materialsystem\stdshaders\game_shader_dx9_portal.vpc"		[!$DEFERRED && $PORTAL]
+	
+	"materialsystem\defshaders\game_shader_dx9_deferred.vpc" 	[$DEFERRED]
 }
 
 $Project "glview"
