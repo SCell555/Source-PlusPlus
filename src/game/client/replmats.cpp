@@ -23,6 +23,8 @@ CON_COMMAND(print_num_replaced_mats, "")
 	ConColorMsg( COLOR_GREEN, "%d replaced materials\n", matCount );
 }
 
+bool replMatPossible = false;
+
 //-----------------------------------------------------------------------------
 // List of materials that should be replaced
 //-----------------------------------------------------------------------------
@@ -43,6 +45,8 @@ static const char * const pszShaderReplaceDict[][2] = {
 	"TEMP",						"PP_TEMP"
 };
 static const int iNumShaderReplaceDict = ARRAYSIZE( pszShaderReplaceDict );
+
+#include "icommandline.h"
 
 // Copied from cdeferred_manager_client.cpp
 static void ShaderReplaceReplMat( const char *szNewShadername, IMaterial *pMat )
@@ -197,37 +201,45 @@ public:
 
 	IMaterial* FindProceduralMaterial( const char *pMaterialName, const char *pTextureGroupName, KeyValues *pVMTKeyValues )	OVERRIDE
 	{
-		const char* pShaderName = pVMTKeyValues->GetName();
-		for ( int i = 0; i < iNumShaderReplaceDict; i++ )
+		if (replMatPossible)
 		{
-			if ( Q_stristr( pShaderName, pszShaderReplaceDict[i][0] ) == pShaderName )
+			const char* pShaderName = pVMTKeyValues->GetName();
+			for (int i = 0; i < iNumShaderReplaceDict; i++)
 			{
-				pVMTKeyValues->SetName( pszShaderReplaceDict[i][1] );
-				matCount++;
-				break;
+				if (Q_stristr(pShaderName, pszShaderReplaceDict[i][0]) == pShaderName)
+				{
+					pVMTKeyValues->SetName(pszShaderReplaceDict[i][1]);
+					matCount++;
+					break;
+				}
 			}
 		}
+
 		return BaseClass::FindProceduralMaterial( pMaterialName, pTextureGroupName, pVMTKeyValues );
 	}
 
 	IMaterial* CreateMaterial( const char *pMaterialName, KeyValues *pVMTKeyValues ) OVERRIDE
 	{
-		const char* pShaderName = pVMTKeyValues->GetName();
-		for ( int i = 0; i < iNumShaderReplaceDict; i++ )
+		if (replMatPossible)
 		{
-			if ( Q_stristr( pShaderName, pszShaderReplaceDict[i][0] ) == pShaderName )
+			const char* pShaderName = pVMTKeyValues->GetName();
+			for (int i = 0; i < iNumShaderReplaceDict; i++)
 			{
-				pVMTKeyValues->SetName( pszShaderReplaceDict[i][1] );
-				matCount++;
-				break;
+				if (Q_stristr(pShaderName, pszShaderReplaceDict[i][0]) == pShaderName)
+				{
+					pVMTKeyValues->SetName(pszShaderReplaceDict[i][1]);
+					matCount++;
+					break;
+				}
 			}
 		}
+
 		return BaseClass::CreateMaterial( pMaterialName, pVMTKeyValues );
 	}
 private:
 	IMaterial* ReplaceMaterialInternal( IMaterial* pMat ) const
 	{
-		if ( !pMat || pMat->IsErrorMaterial() )
+		if ( !pMat || pMat->IsErrorMaterial() || !replMatPossible)
 			return pMat;
 
 		const char *pShaderName = pMat->GetShaderName();
@@ -247,8 +259,6 @@ private:
 	}
 };
 
-#include "icommandline.h"
-
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -259,10 +269,8 @@ public:
 
 	virtual bool Init() 
 	{ 
-		if (CommandLine()->CheckParm("-experimental"))
-			return true;
-
-		Enable(); return true; 
+		Enable(); 
+		return true; 
 	}
 	virtual void Shutdown() { Disable(); }
 	virtual void LevelShutdownPostEntity() { /*matCount = 0;*/ }
@@ -280,7 +288,9 @@ static ReplacementSystem s_ReplacementSystem;
 
 void ReplacementSystem::Enable()
 {
-	if( m_pOldMaterialSystem )
+	replMatPossible = CommandLine()->CheckParm("-experimental");
+
+	if( m_pOldMaterialSystem || !replMatPossible )
 		return;
 
 	DevMsg("Enabled material replacement system\n");
