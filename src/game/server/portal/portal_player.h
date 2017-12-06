@@ -188,6 +188,12 @@ private:
 	CNetworkVar( int, m_iSpawnInterpCounter );
 	CNetworkVar( int, m_iPlayerSoundType );
 
+public:
+	void SuppressCrosshair(bool surpress) { m_bSuppressCrosshair = surpress; }
+private:
+
+	CNetworkVar( bool, m_bSuppressCrosshair );
+
 	CNetworkVar( bool, m_bHeldObjectOnOppositeSideOfPortal );
 	CNetworkHandle( CProp_Portal, m_pHeldObjectPortal );	// networked entity handle
 

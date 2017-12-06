@@ -117,7 +117,11 @@ public:
 	Activity TranslateActivity( Activity baseAct, bool *pRequired = NULL );
 	CWeaponPortalBase* GetActivePortalWeapon() const;
 
+	bool IsSuppressingCrosshair() { return m_bSuppressCrosshair; }
+
 private:
+
+	bool m_bSuppressCrosshair;
 
 	C_Portal_Player( const C_Portal_Player & );
 

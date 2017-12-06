@@ -167,6 +167,7 @@ SendPropEHandle( SENDINFO( m_pHeldObjectPortal ) ),
 SendPropBool( SENDINFO( m_bPitchReorientation ) ),
 SendPropEHandle( SENDINFO( m_hPortalEnvironment ) ),
 SendPropEHandle( SENDINFO( m_hSurroundingLiquidPortal ) ),
+SendPropBool( SENDINFO( m_bSuppressCrosshair ) ),
 
 SendPropExclude( "DT_BaseAnimating", "m_flPoseParameter" ),
 
@@ -546,15 +547,15 @@ void CPortal_Player::UpdateExpression( void )
 	GetExpresser()->SetOuter( this );
 
 	ClearExpression();
-	AI_Response *result = SpeakFindResponse( g_pszChellConcepts[iConcept] );
+	AI_Response response;
+	bool result = SpeakFindResponse( response, g_pszChellConcepts[iConcept] );
 	if ( !result )
 	{
 		m_flExpressionLoopTime = gpGlobals->curtime + RandomFloat(30,40);
 		return;
 	}
 
-	char szScene[ MAX_PATH ];
-	result->GetResponse( szScene, sizeof( szScene ) );
+	const char* szScene = response.GetResponsePtr();
 
 	// Ignore updates that choose the same scene
 	if ( m_iszExpressionScene != NULL_STRING && stricmp( STRING(m_iszExpressionScene), szScene ) == 0 )
@@ -983,13 +984,14 @@ void CPortal_Player::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 		}
 	}
 
-	Studio_BuildMatrices( 
+	Studio_BuildMatrices(
 		pStudioHdr, 
 		m_PlayerAnimState->GetRenderAngles(),
 		adjOrigin, 
 		pos, 
 		q, 
 		-1,
+		GetModelScale(),
 		pBoneToWorld,
 		boneMask );
 }
