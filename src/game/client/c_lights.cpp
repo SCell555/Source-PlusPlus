@@ -11,11 +11,7 @@
 
 C_EnvLight *g_pCSMEnvLight = NULL;
 
-#ifdef PORTAL
-static ConVar r_csm_enabled( "r_csm_enabled", "0", FCVAR_HIDDEN, "0 = off, 1 = on, 2 = force" );
-#else
 static ConVar r_csm_enabled( "r_csm_enabled", "2", FCVAR_HIDDEN, "0 = off, 1 = on, 2 = force" );
-#endif
 
 IMPLEMENT_CLIENTCLASS_DT_NOBASE( C_EnvLight, DT_CEnvLight, CEnvLight )
 	RecvPropQAngles( RECVINFO( m_angSunAngles ) ),
