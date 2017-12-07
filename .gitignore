@@ -65,6 +65,7 @@ src/.vs
 *.mak
 *.mak.vpc_crc
 *.xcodeproj/
+*.project
 obj*/
 !devtools/*.mak
 !utils/smdlexp/smdlexp.mak
