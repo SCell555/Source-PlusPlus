@@ -106,9 +106,9 @@ ConVar r_flashlightdepthtexture( "r_flashlightdepthtexture", "1" );
 ConVar r_max_shadowtextures( "r_max_shadowtextures", "8" );
 
 #if defined( _X360 )
-ConVar r_flashlightdepthres( "r_flashlightdepthres", "512" );
+ConVar r_flashlightdepthres( "r_flashlightdepthres", "2048" );
 #else
-ConVar r_flashlightdepthres( "r_flashlightdepthres", "1024" );
+ConVar r_flashlightdepthres( "r_flashlightdepthres", "2048" );
 #endif
 
 static void ThreadedShadowMGRCallback(IConVar *var, const char *pOldValue, float flOldValue);
