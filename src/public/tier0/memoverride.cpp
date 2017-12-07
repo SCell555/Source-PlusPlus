@@ -151,8 +151,8 @@ void * __cdecl _calloc_base( size_t nSize )
 #else
 _CRTRESTRICT void * __cdecl _calloc_base( size_t nCount, size_t nSize )
 {
-	void *pMem = AllocUnattributed( nSize );
-	memset(pMem, 0, nSize);
+	void *pMem = AllocUnattributed( nCount * nSize );
+	memset(pMem, 0, nCount * nSize);
 	return pMem;
 }
 #endif
@@ -172,8 +172,8 @@ void * __cdecl _recalloc_base( void *pMem, size_t nSize )
 #else
 void * __cdecl _recalloc_base( void *pMem, size_t nCount, size_t nSize )
 {
-	void *pMemOut = ReallocUnattributed( pMem, nSize );
-	memset(pMemOut, 0, nSize);
+	void *pMemOut = ReallocUnattributed( pMem, nCount * nSize );
+	memset(pMemOut, 0, nCount * nSize);
 	return pMemOut;
 }
 #endif
