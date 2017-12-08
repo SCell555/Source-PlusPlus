@@ -2265,11 +2265,6 @@ void CBaseVSShader::DrawEqualDepthToDestAlpha( void )
 #endif
 }
 
-static unsigned int HashFlashLightState( const FlashlightState_t& stateToHash )
-{
-	
-}
-
 class CShaderExtension : public IShaderExtension
 {
 public:

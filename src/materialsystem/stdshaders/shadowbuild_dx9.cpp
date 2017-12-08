@@ -7,7 +7,7 @@
 //=============================================================================//
 
 #include "BaseVSShader.h"
-#include "mathlib/VMatrix.h"
+#include "mathlib/vmatrix.h"
 
 #include "pp_unlitgeneric_vs20.inc"
 #include "pp_shadowbuildtexture_ps20.inc"
