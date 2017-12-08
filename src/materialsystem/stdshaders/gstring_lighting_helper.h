@@ -101,7 +101,12 @@ inline void SetCustomVertexLightingState( CCommandBufferBuilder< S > &DynamicCmd
 				// No, thanks.
 				//const_cast< LightDesc_t* >( &lightDesc )->RecalculateDerivedValues();
 
-				float spotParamW;
+				float stopdot = cos( lightDesc.m_Theta * 0.5f );
+				float stopdot2 = cos( lightDesc.m_Phi * 0.5f );
+				float oodot = (stopdot > stopdot2) ? 1.0f / (stopdot - stopdot2) : 0.0f;
+				pDest[3].Init( lightDesc.m_Falloff, stopdot, stopdot2, oodot );
+				
+				/*float spotParamW;
 				const float flThetaPhiDelta = lightDesc.m_ThetaDot - lightDesc.m_PhiDot;
 				if ( flThetaPhiDelta > 1.0e-10f )
 				{
@@ -111,7 +116,7 @@ inline void SetCustomVertexLightingState( CCommandBufferBuilder< S > &DynamicCmd
 				{
 					spotParamW = 1.0f;
 				}
-				pDest[3].Init( lightDesc.m_Falloff, lightDesc.m_ThetaDot, lightDesc.m_PhiDot, spotParamW );
+				pDest[3].Init( lightDesc.m_Falloff, lightDesc.m_ThetaDot, lightDesc.m_PhiDot, spotParamW );*/
 			}
 			else
 			{
