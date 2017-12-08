@@ -55,7 +55,7 @@ BEGIN_VS_SHADER( light_volumetrics, "" )
 			SET_STATIC_VERTEX_SHADER( light_volumetrics_vs30 );
 
 			DECLARE_STATIC_PIXEL_SHADER( light_volumetrics_ps30 );
-			SET_STATIC_PIXEL_SHADER( light_volumetrics_ps30b );
+			SET_STATIC_PIXEL_SHADER( light_volumetrics_ps30 );
 		}
 		DYNAMIC_STATE
 		{
