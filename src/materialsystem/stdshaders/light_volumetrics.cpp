@@ -3,8 +3,8 @@
 #include "mathlib/vmatrix.h"
 #include "convar.h"
 
-#include "light_volumetrics_ps20b.inc"
-#include "light_volumetrics_vs20.inc"
+#include "light_volumetrics_ps30.inc"
+#include "light_volumetrics_vs30.inc"
 
 BEGIN_VS_SHADER( light_volumetrics, "" )
 
@@ -51,11 +51,11 @@ BEGIN_VS_SHADER( light_volumetrics, "" )
 			pShaderShadow->VertexShaderVertexFormat( flags, nTexCoordCount, NULL, userDataSize );
 
 			// Vertex Shader
-			DECLARE_STATIC_VERTEX_SHADER( light_volumetrics_vs20 );
-			SET_STATIC_VERTEX_SHADER( light_volumetrics_vs20 );
+			DECLARE_STATIC_VERTEX_SHADER( light_volumetrics_vs30 );
+			SET_STATIC_VERTEX_SHADER( light_volumetrics_vs30 );
 
-			DECLARE_STATIC_PIXEL_SHADER( light_volumetrics_ps20b );
-			SET_STATIC_PIXEL_SHADER( light_volumetrics_ps20b );
+			DECLARE_STATIC_PIXEL_SHADER( light_volumetrics_ps30 );
+			SET_STATIC_PIXEL_SHADER( light_volumetrics_ps30b );
 		}
 		DYNAMIC_STATE
 		{
@@ -63,11 +63,11 @@ BEGIN_VS_SHADER( light_volumetrics, "" )
 			pShaderAPI->SetDefaultState();
 
 			// Set Vertex Shader Combos
-			DECLARE_DYNAMIC_VERTEX_SHADER( light_volumetrics_vs20 );
-			SET_DYNAMIC_VERTEX_SHADER( light_volumetrics_vs20 );
+			DECLARE_DYNAMIC_VERTEX_SHADER( light_volumetrics_vs30 );
+			SET_DYNAMIC_VERTEX_SHADER( light_volumetrics_vs30 );
 
-			DECLARE_DYNAMIC_PIXEL_SHADER( light_volumetrics_ps20b );
-			SET_DYNAMIC_PIXEL_SHADER( light_volumetrics_ps20b );
+			DECLARE_DYNAMIC_PIXEL_SHADER( light_volumetrics_ps30 );
+			SET_DYNAMIC_PIXEL_SHADER( light_volumetrics_ps30 );
 
 			VMatrix worldToTexture;
 			ITexture *pFlashlightDepthTexture;
