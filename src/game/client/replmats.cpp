@@ -288,7 +288,7 @@ static ReplacementSystem s_ReplacementSystem;
 
 void ReplacementSystem::Enable()
 {
-	replMatPossible = CommandLine()->CheckParm("-experimental");
+	replMatPossible = true; //CommandLine()->CheckParm("-experimental");
 
 	if( m_pOldMaterialSystem || !replMatPossible )
 		return;
