@@ -64,6 +64,7 @@ $Project
 		$File	"lightmappedgeneric_dx9_helper.cpp"
 		$File	"depthwrite.cpp"
 		$File	"refract.cpp"
+		$File	"light_volumetrics.cpp"
 		$File	"refract_dx9_helper.cpp"
 		$File	"shadow.cpp"
 		$File	"shadowbuild_dx9.cpp"
