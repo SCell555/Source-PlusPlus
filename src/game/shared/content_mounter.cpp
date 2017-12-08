@@ -23,6 +23,14 @@ void AddEP2(const char* path)
 	g_pVGuiLocalize->AddFile("resource/ep2_%language%.txt");
 }
 
+void AddLostCoast(const char* path)
+{
+	filesystem->AddSearchPath(CFmtStr("%s/lostcoast/lostcoast_pak.vpk", path), "GAME", PATH_ADD_TO_HEAD);
+	filesystem->AddSearchPath(CFmtStr("%s/lostcoast/lostcoast_sound_vo_english.vpk", path), "GAME", PATH_ADD_TO_HEAD);
+	filesystem->AddSearchPath(CFmtStr("%s/lostcoast", path), "GAME", PATH_ADD_TO_HEAD);
+	g_pVGuiLocalize->AddFile("resource/lostcoast_%language%.txt");
+}
+
 void AddPortal(const char* path)
 {
 	filesystem->AddSearchPath(CFmtStr("%s/portal/portal_pak.vpk", path), "GAME", PATH_ADD_TO_HEAD);
@@ -84,6 +92,9 @@ void MountExtraContent()
 
 		if (gameinfo->GetBool("ep2content"))
 			AddEP2(sdk2013SPPath);
+
+		if (gameinfo->GetBool("lostcoastcontent"))
+			AddLostCoast(sdk2013SPPath);
 	}
 
 	if (steamapicontext->SteamApps()->BIsAppInstalled(243750) && gameinfo->GetBool("hl2mpcontent"))
@@ -97,7 +108,7 @@ void MountExtraContent()
 	if (steamapicontext->SteamApps()->BIsAppInstalled(220) && (gameinfo->GetBool("hl2content") || gameinfo->GetBool("ep1content") || gameinfo->GetBool("ep2content")))
 	{
 		char hl2Path[MAX_PATH];
-		steamapicontext->SteamApps()->GetAppInstallDir(420, hl2Path, sizeof(hl2Path));
+		steamapicontext->SteamApps()->GetAppInstallDir(220, hl2Path, sizeof(hl2Path));
 		AddHL2(hl2Path);
 	}
 
@@ -121,6 +132,13 @@ void MountExtraContent()
 		char ep2Path[MAX_PATH];
 		steamapicontext->SteamApps()->GetAppInstallDir(420, ep2Path, sizeof(ep2Path));
 		AddEP2(ep2Path);
+	}
+
+	if (steamapicontext->SteamApps()->BIsAppInstalled(340) && gameinfo->GetBool("lostcoastcontent"))
+	{
+		char lostCoastPath[MAX_PATH];
+		steamapicontext->SteamApps()->GetAppInstallDir(340, lostCoastPath, sizeof(lostCoastPath));
+		AddLostCoast(lostCoastPath);
 	}
 
 	if (steamapicontext->SteamApps()->BIsAppInstalled(400) && gameinfo->GetBool("portalcontent"))
