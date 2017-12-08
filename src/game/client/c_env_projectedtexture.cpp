@@ -220,7 +220,7 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 	}
 	else
 	{
-		if ( m_hTargetEntity != NULL || bForceUpdate == true )
+		//if ( m_hTargetEntity != NULL || bForceUpdate == true )
 		{
 			g_pClientShadowMgr->UpdateUberlightState( m_FlashlightState, m_UberlightState );
 			g_pClientShadowMgr->UpdateFlashlightState( m_LightHandle, m_FlashlightState );
