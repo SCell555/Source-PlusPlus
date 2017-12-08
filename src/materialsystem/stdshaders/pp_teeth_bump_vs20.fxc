@@ -25,13 +25,13 @@ const float4 const4	:  register( SHADER_SPECIFIC_CONST_1 );
 #define modelOrigin const4.xyz
 #endif
 
-#ifdef SHADER_MODEL_VS_3_0
+#if defined(SHADER_MODEL_VS_3_0) && MORPHING
 // NOTE: cMorphTargetTextureDim.xy = target dimensions,
 //		 cMorphTargetTextureDim.z = 4tuples/morph
 const float3 cMorphTargetTextureDim			: register( SHADER_SPECIFIC_CONST_6 );
 const float4 cMorphSubrect					: register( SHADER_SPECIFIC_CONST_7 );
 
-sampler2D morphSampler : register( D3DVERTEXTEXTURESAMPLER0, s0 );
+sampler2D morphSampler : register( s0 );
 #endif
 
 struct VS_INPUT
