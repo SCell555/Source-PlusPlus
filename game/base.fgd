@@ -6453,6 +6453,8 @@
 	spawnflags(flags) =
 	[
 		1  : "Enabled"				: 1
+		2  : "Volumetrics Enabled"				: 2
+		4  : "Uberlight Enabled"				: 4
 	]
 
 	target(target_destination)	: "target" : : "target"	
@@ -6475,6 +6477,8 @@
 		0 : "No"
 		1 : "Yes"
 	]
+	texturename(string) : "Spotlight Texture" : "effects/flashlight001" : "The texture of the proj tex."
+	textureframe(integer) : "Texture Frame" : 0 : "Frame of texture."
 	lightworld(Choices) : "Light World" : 1 : "Control whether flashlight effects static world geometry." =
 	[
 		0 : "No"
@@ -6482,11 +6486,51 @@
 	]
 	lightcolor(color255)		: "Light Color" : "255 255 255 200" : "Light Color RGB-Intensity"
 	cameraspace(integer)		: "Camera Space" : 0 : "Angles are interpreted as being relative to camera."
+	ambient(float)				: "Ambient" : 0 : "Ambient Light"
+	flicker(Choices)			: "Flicker" : 0 : "Should this light flicker?" =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
 
 	// Inputs
 	input TurnOn(void)		: "Turn on the texture"
 	input TurnOff(void)		: "Turn off the texture"
 	input SetFOV(float)		: "Set FOV"
+	
+	input Target(string) : "Set Target"
+	input CameraSpace(bool) : "Set CameraSpace"
+	input LightOnlyTarget(bool) : "Set LightOnlyTarget"
+	input LightWorld(bool) : "Set LightWorld"
+	input EnableShadows(bool) : "Set EnableShadows"
+	input LightColor(string) : "Set LightColor"
+	input Ambient(float) : "Set Ambient"
+	input SpotlightTexture(string) : "Set SpotlightTexture"
+	input EnableVolumetrics(void)		: "Enable Volumetrics"
+	input EnableUberLight(void)		: "Enable Uberlight"
+	input DisableUberLight(void)		: "Disable Uberlight"
+	
+	volumetricslod(Choices) : "Volumetrics LOD" : 1 : "Enable LOD for Volumetrics" =
+	[
+		0 : "No"
+		1 : "Yes"
+	]
+	
+	volumetricsmultiplier(float) : "Volumetrics Multiplier" : 2 : "Multiplier for strength of Volumetrics"
+	volumetricsquality(float) : "Volumetrics Quality" : 20 : "Quality of volumetrics"
+	volumetricsqualitybias(float) : "Volumetrics Quality Bias" : 1 : "Volumetrics Quality Bias"
+	
+	uberlight_near(float) : "Uberlight Near Edge" : 2 : ""
+	uberlight_far(float) : "Uberlight Far Edge" : 100 : ""
+	uberlight_cuton(float) : "Uberlight Cut On" : 10 : ""
+	uberlight_cutoff(float) : "Uberlight Cut Off" : 650 : ""
+	uberlight_shearx(float) : "Uberlight Shear X" : 0 : ""
+	uberlight_sheary(float) : "Uberlight Shear Y" : 0 : ""
+	uberlight_width(float) : "Uberlight Width" : "0.3" : ""
+	uberlight_wedge(float) : "Uberlight Wedge" : "0.05" : ""
+	uberlight_height(float) : "Uberlight Height" : "0.3" : ""
+	uberlight_hedge(float) : "Uberlight Hedge" : "0.05" : ""
+	uberlight_roundness(float) : "Uberlight Roundness" : "0.8" : ""
 ]
 
 
