@@ -66,6 +66,7 @@ src/.vs
 *.mak.vpc_crc
 *.xcodeproj/
 *.project
+*.a
 obj*/
 !devtools/*.mak
 !utils/smdlexp/smdlexp.mak
@@ -96,3 +97,6 @@ config.cfg
 # shader files
 *.tmp
 
+# Game bin directories
+game/bin/*
+game/*/bin/*
