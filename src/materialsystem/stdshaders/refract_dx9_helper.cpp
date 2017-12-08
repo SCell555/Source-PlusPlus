@@ -9,8 +9,8 @@
 #include "refract_dx9_helper.h"
 #include "convar.h"
 #include "pp_Refract_vs20.inc"
-#include "pp_Refract_ps20.inc"
-#include "pp_Refract_ps20b.inc"
+#include "pp_refract_ps20.inc"
+#include "pp_refract_ps20b.inc"
 #include "cpp_shader_constant_register_map.h"
 
 #define MAXBLUR 1

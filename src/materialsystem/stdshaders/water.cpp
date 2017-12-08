@@ -1,21 +1,21 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
 // $NoKeywords: $
 //=============================================================================//
 
-#include "basevsshader.h"
+#include "BaseVSShader.h"
 #include "mathlib/vmatrix.h"
 #include "common_hlsl_cpp_consts.h" // hack hack hack!
 #include "convar.h"
 #include "cpp_shader_constant_register_map.h"
 #include "commandbuilder.h"
 
-#include "pp_watercheap_vs20.inc"
-#include "pp_watercheap_ps20.inc"
-#include "pp_watercheap_ps20b.inc"
-#include "pp_water_vs20.inc"
+#include "pp_WaterCheap_vs20.inc"
+#include "pp_WaterCheap_ps20.inc"
+#include "pp_WaterCheap_ps20b.inc"
+#include "pp_Water_vs20.inc"
 #include "pp_water_ps20.inc"
 #include "pp_water_ps20b.inc"
 
