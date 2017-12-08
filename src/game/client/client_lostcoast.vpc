@@ -28,6 +28,11 @@ $Project "Client (LostCoast)"
 
 		$Folder	"HL2 DLL"
 		{
+			$Folder "Episodic"
+			{
+				$File	"episodic\flesh_internal_material_proxy.cpp"
+			}
+		
 			$File	"$SRCDIR\game\shared\hl2\basehlcombatweapon_shared.cpp"
 			$File	"hl2\c_antlion_dust.cpp"
 			$File	"hl2\c_ar2_explosion.cpp"
