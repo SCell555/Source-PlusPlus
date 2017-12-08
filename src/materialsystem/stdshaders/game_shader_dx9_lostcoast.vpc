@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 $Macro SRCDIR		"..\.."
-$Macro GAMENAME "mod_portal"
+$Macro GAMENAME "mod_lostcoast"
 $Include "$SRCDIR\materialsystem\stdshaders\game_shader_dx9_base.vpc"
 
 $Project "Shaders (LostCoast)"
