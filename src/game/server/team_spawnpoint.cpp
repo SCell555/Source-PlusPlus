@@ -39,9 +39,10 @@ END_DATADESC()
 void CTeamSpawnPoint::Activate( void )
 {
 	BaseClass::Activate();
-	if ( GetTeamNumber() > 0 && GetTeamNumber() <= MAX_TEAMS )
+	CTeam* team = GetGlobalTeam(GetTeamNumber());
+	if ( team && GetTeamNumber() > 0 && GetTeamNumber() <= MAX_TEAMS )
 	{
-		GetGlobalTeam( GetTeamNumber() )->AddSpawnpoint( this );
+		team->AddSpawnpoint( this );
 	}
 	else
 	{
