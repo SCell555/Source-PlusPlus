@@ -445,7 +445,7 @@ void CCSPlayer::Precache()
 
 	// Sigh - have to force identical VMTs for the player models.  I'm just going to hard-code these
 	// strings here, rather than have char***'s or the CUtlVector<CUtlVector<>> equivalent.
-	engine->ForceSimpleMaterial( "materials/models/player/ct_urban/ct_urban.vmt" );
+	/*engine->ForceSimpleMaterial( "materials/models/player/ct_urban/ct_urban.vmt" );
 	engine->ForceSimpleMaterial( "materials/models/player/ct_urban/ct_urban_glass.vmt" );
 	engine->ForceSimpleMaterial( "materials/models/player/ct_sas/ct_sas.vmt" );
 	engine->ForceSimpleMaterial( "materials/models/player/ct_sas/ct_sas_glass.vmt" );
@@ -456,7 +456,7 @@ void CCSPlayer::Precache()
 	engine->ForceSimpleMaterial( "materials/models/player/t_guerilla/t_guerilla.vmt" );
 	engine->ForceSimpleMaterial( "materials/models/player/t_leet/t_leet.vmt" );
 	engine->ForceSimpleMaterial( "materials/models/player/t_leet/t_leet_glass.vmt" );
-	engine->ForceSimpleMaterial( "materials/models/player/t_arctic/t_arctic.vmt" );
+	engine->ForceSimpleMaterial( "materials/models/player/t_arctic/t_arctic.vmt" );*/
 
 #ifdef CS_SHIELD_ENABLED
 	PrecacheModel( SHIELD_VIEW_MODEL );
