@@ -1,0 +1,48 @@
+"GameInfo"
+{
+game	"Counter-Strike Source"
+	title	"COUNTER-STRIKE'"
+	title2	"source"
+	type multiplayer_only
+	nomodels 1
+	nohimodel 1
+	nocrosshair 0
+	advcrosshair 3
+	bots 1
+	hidden_maps
+	{
+		"test_speakers"		1
+		"test_hardware"		1
+	}
+	nodegraph 0
+	
+	csscontent 1
+	supportsvr	0
+
+	FileSystem
+	{
+		SteamAppId				243750
+		
+		SearchPaths
+		{
+			// Our Crap
+			game+mod+mod_write+default_write_path		|gameinfo_path|.
+			gamebin				|gameinfo_path|bin
+
+			// Needed Crap
+			game				|all_source_engine_paths|hl2/hl2_english.vpk
+			game				|all_source_engine_paths|hl2/hl2_pak.vpk
+			game				|all_source_engine_paths|hl2/hl2_textures.vpk
+			game				|all_source_engine_paths|hl2/hl2_sound_vo_english.vpk
+			game				|all_source_engine_paths|hl2/hl2_sound_misc.vpk
+			game				|all_source_engine_paths|hl2/hl2_misc.vpk
+			game+game_write		hl2
+			game				|all_source_engine_paths|hl2
+			platform			|all_source_engine_paths|platform
+			
+			// Engine Crap
+			platform			|all_source_engine_paths|platform/platform_misc.vpk
+			platform			|all_source_engine_paths|platform
+		}
+	}
+}
