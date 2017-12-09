@@ -914,7 +914,7 @@ bool CCSBotManager::ClientCommand( CBasePlayer *player, const CCommand &args )
  */
 bool CCSBotManager::BotAddCommand( int team, bool isFromConsole, const char *profileName, CSWeaponType weaponType, BotDifficultyType difficulty )
 {
-	if ( !TheNavMesh->IsLoaded() )
+	/*if ( !TheNavMesh->IsLoaded() )
 	{
 		// If there isn't a Navigation Mesh in memory, create one
 		if ( !TheNavMesh->IsGenerating() )
@@ -926,7 +926,7 @@ bool CCSBotManager::BotAddCommand( int team, bool isFromConsole, const char *pro
 			}
 			return false;
 		}
-	}
+	}*/
 
 	// dont allow bots to join if the Navigation Mesh is being generated
 	if (TheNavMesh->IsGenerating())
