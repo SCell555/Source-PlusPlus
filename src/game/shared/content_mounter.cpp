@@ -23,6 +23,14 @@ void AddEP2(const char* path)
 	g_pVGuiLocalize->AddFile("resource/ep2_%language%.txt");
 }
 
+void AddCSS(const char* path)
+{
+	filesystem->AddSearchPath(CFmtStr("%s/cstrike/cstrike_pak.vpk", path), "GAME", PATH_ADD_TO_HEAD);
+	filesystem->AddSearchPath(CFmtStr("%s/cstrike/cstrike_english.vpk", path), "GAME", PATH_ADD_TO_HEAD);
+	filesystem->AddSearchPath(CFmtStr("%s/cstrike", path), "GAME", PATH_ADD_TO_HEAD);
+	g_pVGuiLocalize->AddFile("resource/cstrike_%language%.txt");
+}
+
 void AddLostCoast(const char* path)
 {
 	filesystem->AddSearchPath(CFmtStr("%s/lostcoast/lostcoast_pak.vpk", path), "GAME", PATH_ADD_TO_HEAD);
@@ -146,6 +154,13 @@ void MountExtraContent()
 		char portalPath[MAX_PATH];
 		steamapicontext->SteamApps()->GetAppInstallDir(400, portalPath, sizeof(portalPath));
 		AddPortal(portalPath);
+	}
+
+	if (steamapicontext->SteamApps()->BIsAppInstalled(240) && gameinfo->GetBool("csscontent"))
+	{
+		char cssPath[MAX_PATH];
+		steamapicontext->SteamApps()->GetAppInstallDir(240, cssPath, sizeof(cssPath));
+		AddCSS(cssPath);
 	}
 
 	if (steamapicontext->SteamApps()->BIsAppInstalled(243750))
