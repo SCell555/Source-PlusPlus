@@ -42,6 +42,27 @@ public:
 		}
 	}
 
+	bool Evict()
+	{
+		return false;
+	}
+
+	int GetNumFrames()
+	{
+		return 0;
+	}
+
+	void SetFrame(int nFrame)
+	{
+	}
+
+	virtual void SetRotation(int iRotation) { return; }
+
+	vgui::HTexture GetID()
+	{
+		return 0;
+	}
+
 	// Call to Paint the image
 	// Image will draw within the current panel context at the specified position
 	virtual void Paint()

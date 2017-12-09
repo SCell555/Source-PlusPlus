@@ -174,7 +174,7 @@ private:
 class HostagePathCost
 {
 public:
-	float operator() ( CNavArea *area, CNavArea *fromArea, const CNavLadder *ladder )
+	float operator() ( CNavArea *area, CNavArea *fromArea, const CNavLadder *ladder, const CFuncElevator *elevator, float length)
 	{
 		if (fromArea == NULL)
 		{

@@ -30,7 +30,9 @@ const Vector *GetRandomSpotAtPlace( Place place )
 {
 	int count = 0;
 
-	FOR_EACH_LL( TheNavAreaList, it )
+	auto& TheNavAreaList = TheNavAreas;
+
+	FOR_EACH_VEC( TheNavAreaList, it )
 	{
 		CNavArea *area = TheNavAreaList[ it ];
 
@@ -43,7 +45,7 @@ const Vector *GetRandomSpotAtPlace( Place place )
 
 	int which = RandomInt( 0, count-1 );
 
-	FOR_EACH_LL( TheNavAreaList, rit )
+	FOR_EACH_VEC( TheNavAreaList, rit )
 	{
 		CNavArea *area = TheNavAreaList[ rit ];
 

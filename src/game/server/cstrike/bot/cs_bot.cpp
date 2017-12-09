@@ -879,7 +879,7 @@ bool CCSBot::GuardRandomZone( float range )
 	return false;
 }
 
-
+#include "nav_area.h"
 
 //--------------------------------------------------------------------------------------------------------------
 class CollectRetreatSpotsFunctor
@@ -897,9 +897,9 @@ public:
 	bool operator() ( CNavArea *area )
 	{
 		// collect all the hiding spots in this area
-		const HidingSpotList *list = area->GetHidingSpotList();
+		auto* list = &TheHidingSpots;
 
-		FOR_EACH_LL( (*list), it )
+		FOR_EACH_VEC( (*list), it )
 		{
 			const HidingSpot *spot = (*list)[ it ];
 

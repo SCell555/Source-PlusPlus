@@ -407,7 +407,7 @@ inline bool CBot<T>::IsLookingAtPosition( const Vector &pos, float angleToleranc
 	float deltaYaw = AngleNormalize( idealAngles.y - viewAngles.y );
 	float deltaPitch = AngleNormalize( idealAngles.x - viewAngles.x );
 
-	if (fabs( deltaYaw ) < angleTolerance && abs( deltaPitch ) < angleTolerance)
+	if (fabsf( deltaYaw ) < angleTolerance && fabsf( deltaPitch ) < angleTolerance)
 		return true;
 
 	return false;

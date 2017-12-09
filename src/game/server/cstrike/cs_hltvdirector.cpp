@@ -15,7 +15,7 @@ public:
 
 	const char** GetModEvents();
 	void SetHLTVServer( IHLTVServer *hltv );
-	void CreateShotFromEvent( CGameEvent *event );
+	void CreateShotFromEvent( CHLTVGameEvent *event );
 
 };
 
@@ -40,7 +40,9 @@ void CCSHLTVDirector::SetHLTVServer( IHLTVServer *hltv )
 	}
 }
 
-void CCSHLTVDirector::CreateShotFromEvent( CGameEvent *event )
+#include "hltvdirector.h"
+
+void CCSHLTVDirector::CreateShotFromEvent( CHLTVGameEvent *event )
 {
 	// show event at least for 2 more seconds after it occured
 	const char *name = event->m_Event->GetName();
