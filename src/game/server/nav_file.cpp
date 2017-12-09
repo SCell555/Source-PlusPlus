@@ -23,7 +23,7 @@
 #ifdef CSTRIKE_DLL
 #include "cs_shareddefs.h"
 #include "nav_pathfind.h"
-#include "cs_nav_area.h"
+//#include "cs_nav_area.h"
 #endif
 
 // NOTE: This has to be the last file included!
@@ -792,55 +792,6 @@ NavErrorType CNavArea::PostLoad( void )
 	return error;
 }
 
-
-//--------------------------------------------------------------------------------------------------------------
-/**
- * Compute travel distance along shortest path from startPos to goalPos. 
- * Return -1 if can't reach endPos from goalPos.
- */
-template< typename CostFunctor >
-float NavAreaTravelDistance( const Vector &startPos, const Vector &goalPos, CostFunctor &costFunc )
-{
-	CNavArea *startArea = TheNavMesh->GetNearestNavArea( startPos );
-	if (startArea == NULL)
-	{
-		return -1.0f;
-	}
-
-	// compute path between areas using given cost heuristic
-	CNavArea *goalArea = NULL;
-	if (NavAreaBuildPath( startArea, NULL, &goalPos, costFunc, &goalArea ) == false)
-	{
-		return -1.0f;
-	}
-
-	// compute distance along path
-	if (goalArea->GetParent() == NULL)
-	{
-		// both points are in the same area - return euclidean distance
-		return (goalPos - startPos).Length();
-	}
-	else
-	{
-		CNavArea *area;
-		float distance;
-
-		// goalPos is assumed to be inside goalArea (or very close to it) - skip to next area
-		area = goalArea->GetParent();
-		distance = (goalPos - area->GetCenter()).Length();
-
-		for( ; area->GetParent(); area = area->GetParent() )
-		{
-			distance += (area->GetCenter() - area->GetParent()->GetCenter()).Length();
-		}
-
-		// add in distance to startPos
-		distance += (startPos - area->GetCenter()).Length();
-
-		return distance;
-	}
-}
-
 //--------------------------------------------------------------------------------------------------------------
 /**
  * Determine the earliest time this hiding spot can be reached by either team
@@ -1034,7 +985,7 @@ static void WarnIfMeshNeedsAnalysis( int version )
 			return;
 		}
 	}
-#ifdef CSTRIKE_DLL
+/*#ifdef CSTRIKE_DLL
 	else
 	{
 		bool hasApproachAreas = false;
@@ -1062,7 +1013,7 @@ static void WarnIfMeshNeedsAnalysis( int version )
 			Warning( "The nav mesh needs a full nav_analyze\n" );
 		}
 	}
-#endif
+#endif*/
 }
 
 /**

@@ -21,7 +21,7 @@
 #endif
 
 #ifdef CSTRIKE_DLL
-#include "cstrike/cs_nav_mesh.h"
+//#include "cstrike/cs_nav_mesh.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -38,7 +38,7 @@ CNavMesh *NavMeshFactory( void )
 #endif
 
 #ifdef CSTRIKE_DLL
-	return new CSNavMesh;
+//	return new CSNavMesh;
 #endif
 
 	return new CNavMesh;
