@@ -1016,9 +1016,9 @@ void CCSBot::DebugDisplay( void ) const
 			const SpotOrder *order;
 			Vector along;
 
-			FOR_EACH_LL( m_spotEncounter->spotList, it )
+			FOR_EACH_VEC( m_spotEncounter->spots, it )
 			{
-				order = &m_spotEncounter->spotList[ it ];
+				order = &m_spotEncounter->spots[ it ];
 
 				// ignore spots the enemy could not have possibly reached yet
 				if (order->spot->GetArea())

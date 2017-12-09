@@ -114,10 +114,11 @@ bool CCSBot::ComputePathPositions( void )
 		else if (to->how == GO_LADDER_UP)		// to get to next area, must go up a ladder
 		{
 			// find our ladder
-			const NavLadderConnectList *list = from->area->GetLadderList( CNavLadder::LADDER_UP );
-			int it;
-			for( it = list->Head(); it != list->InvalidIndex(); it = list->Next(it))
+			auto* list = from->area->GetLadders( CNavLadder::LADDER_UP );
+			int it2 = 0;
+			FOR_EACH_VEC((*list), it)
 			{
+				it2 = it;
 				CNavLadder *ladder = (*list)[ it ].ladder;
 
 				// can't use "behind" area when ascending...
@@ -131,7 +132,7 @@ bool CCSBot::ComputePathPositions( void )
 				}
 			}
 
-			if (it == list->InvalidIndex())
+			if (it2 == list->InvalidIndex())
 			{
 				PrintIfWatched( "ERROR: Can't find ladder in path\n" );
 				return false;
@@ -140,10 +141,11 @@ bool CCSBot::ComputePathPositions( void )
 		else if (to->how == GO_LADDER_DOWN)		// to get to next area, must go down a ladder
 		{
 			// find our ladder
-			const NavLadderConnectList *list = from->area->GetLadderList( CNavLadder::LADDER_DOWN );
-			int it;
-			for( it = list->Head(); it != list->InvalidIndex(); it = list->Next(it))
+			auto* list = from->area->GetLadders( CNavLadder::LADDER_DOWN );
+			int it2  = 0;
+			FOR_EACH_VEC((*list), it)
 			{
+				it2 = it;
 				CNavLadder *ladder = (*list)[ it ].ladder;
 
 				if (ladder->m_bottomArea == to->area)
@@ -155,7 +157,7 @@ bool CCSBot::ComputePathPositions( void )
 				}
 			}
 
-			if (it == list->InvalidIndex())
+			if (it2 == list->InvalidIndex())
 			{
 				PrintIfWatched( "ERROR: Can't find ladder in path\n" );
 				return false;
@@ -1810,10 +1812,10 @@ CCSBot::PathResult CCSBot::UpdatePathMovement( bool allowSpeedChange )
 		{
 			if (m_lastNavArea)
 			{
-				m_lastNavArea->DecrementPlayerCount( GetTeamNumber() );
+				m_lastNavArea->DecrementPlayerCount( GetTeamNumber(), entindex() );
 			}
 
-			area->IncrementPlayerCount( GetTeamNumber() );
+			area->IncrementPlayerCount( GetTeamNumber(), entindex() );
 
 			m_lastNavArea = area;
 			if ( area->GetPlace() != UNDEFINED_PLACE )

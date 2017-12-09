@@ -735,14 +735,14 @@ void CCSGameMovement::DecayPunchAngle( void )
 
 void CCSGameMovement::HandleDuckingSpeedCrop()
 {
-	if ( !m_bSpeedCropped )
+	if ( !m_iSpeedCropped )
 	{
 		if ( ( mv->m_nButtons & IN_DUCK ) || ( player->m_Local.m_bDucking ) || ( player->GetFlags() & FL_DUCKING ) )
 		{
 			mv->m_flForwardMove	*= DuckSpeedMultiplier;
 			mv->m_flSideMove	*= DuckSpeedMultiplier;
 			mv->m_flUpMove		*= DuckSpeedMultiplier;
-			m_bSpeedCropped		= true;
+			m_iSpeedCropped		= SPEED_CROPPED_DUCK;
 		}
 	}
 }

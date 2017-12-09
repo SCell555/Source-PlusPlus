@@ -71,9 +71,9 @@ public:
 			return true;
 
 		// collect all the hiding spots in this area
-		const HidingSpotList *list = area->GetHidingSpotList();
+		auto *list = area->GetHidingSpots();
 		
-		FOR_EACH_LL( (*list), it )
+		FOR_EACH_VEC( (*list), it )
 		{
 			const HidingSpot *spot = (*list)[ it ];
 
@@ -382,9 +382,9 @@ public:
 	bool operator() ( CNavArea *area )
 	{
 		// collect all the hiding spots in this area
-		const HidingSpotList *list = area->GetHidingSpotList();
+		auto *list = area->GetHidingSpots();
 		
-		FOR_EACH_LL( (*list), it )
+		FOR_EACH_VEC( (*list), it )
 		{
 			const HidingSpot *spot = (*list)[ it ];
 

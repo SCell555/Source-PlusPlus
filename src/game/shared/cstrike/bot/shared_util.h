@@ -53,12 +53,12 @@ inline char *CloneString( const char *str )
  * Simple utility function to allocate memory and duplicate a wide string
  */
 #ifdef _WIN32
-inline wchar_t *CloneWString( const wchar_t *str )
+/*inline wchar_t *CloneWString( const wchar_t *str )
 {
 	wchar_t *cloneStr = new wchar_t [ wcslen(str)+1 ];
 	wcscpy( cloneStr, str );
 	return cloneStr;
-}
+}*/
 #endif
 
 //--------------------------------------------------------------------------------------------------------------

@@ -195,6 +195,8 @@ CNavArea::CNavArea( void )
 	m_costSoFar = 0.0f;
 	m_pathLengthSoFar = 0.0f;
 
+	m_approachCount = 0;
+
 	ResetNodes();
 
 	int i;
@@ -1841,6 +1843,7 @@ void CleanupApproachAreaAnalysisPrep( void )
  */
 void CNavArea::Strip( void )
 {
+	m_approachCount = 0;
 	m_spotEncounters.PurgeAndDeleteElements(); // this calls delete on each element
 }
 

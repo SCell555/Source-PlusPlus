@@ -1300,7 +1300,8 @@ public:
 
 	bool operator() ( CNavArea *area )
 	{
-		const Extent &areaExtent = area->GetExtent();
+		Extent areaExtent;
+		area->GetExtent(&areaExtent);
 
 		if (areaExtent.hi.x >= m_zone->m_extent.lo.x && areaExtent.lo.x <= m_zone->m_extent.hi.x &&
 			areaExtent.hi.y >= m_zone->m_extent.lo.y && areaExtent.lo.y <= m_zone->m_extent.hi.y &&
@@ -1539,7 +1540,8 @@ const Vector *CCSBotManager::GetRandomPositionInZone( const Zone *zone ) const
 	}
 	else
 	{
-		const Extent &areaExtent = area->GetExtent();
+		Extent areaExtent;
+		area->GetExtent(&areaExtent);
 		Extent overlap;
 		overlap.lo.x = max( areaExtent.lo.x, zone->m_extent.lo.x );
 		overlap.lo.y = max( areaExtent.lo.y, zone->m_extent.lo.y );
@@ -1913,7 +1915,8 @@ public:
 
 	bool operator() ( CNavArea *area )
 	{
-		const Extent &areaExtent = area->GetExtent();
+		Extent areaExtent;
+		area->GetExtent(&areaExtent);
 
 		if (areaExtent.hi.x >= m_breakableExtent.lo.x && areaExtent.lo.x <= m_breakableExtent.hi.x &&
 			areaExtent.hi.y >= m_breakableExtent.lo.y && areaExtent.lo.y <= m_breakableExtent.hi.y &&
@@ -2250,9 +2253,9 @@ void CCSBotManager::ResetRadioMessageTimestamps( void )
  */
 void DrawOccupyTime( void )
 {
-	FOR_EACH_LL( TheNavAreaList, it )
+	FOR_EACH_VEC( TheNavAreas, it )
 	{
-		CNavArea *area = TheNavAreaList[ it ];
+		CNavArea *area = TheNavAreas[ it ];
 
 		int r, g, b;
 		
@@ -2298,9 +2301,9 @@ void DrawBattlefront( void )
 	const float epsilon = 1.0f;
 	int r = 255, g = 50, b = 0;
 	
-	FOR_EACH_LL( TheNavAreaList, it )
+	FOR_EACH_VEC( TheNavAreas, it )
 	{
-		CNavArea *area = TheNavAreaList[ it ];
+		CNavArea *area = TheNavAreas[ it ];
 
 		if ( fabs(area->GetEarliestOccupyTime( TEAM_TERRORIST ) - area->GetEarliestOccupyTime( TEAM_CT )) > epsilon )
 		{
@@ -2370,9 +2373,9 @@ CON_COMMAND_F( nav_check_connectivity, "Checks to be sure every (or just the mar
 	{
 		// Otherwise, loop through every area, and make sure they can all get to the goal.
 		float start = engine->Time();
-		FOR_EACH_LL( TheNavAreaList, nit )
+		FOR_EACH_VEC( TheNavAreas, nit )
 		{
-			CheckAreaAgainstAllZoneAreas(TheNavAreaList[ nit ]);
+			CheckAreaAgainstAllZoneAreas(TheNavAreas[ nit ]);
 		}
 
 		float end = engine->Time();

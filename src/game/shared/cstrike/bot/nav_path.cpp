@@ -100,10 +100,11 @@ bool CNavPath::ComputePathPositions( void )
 		else if (to->how == GO_LADDER_UP)		// to get to next area, must go up a ladder
 		{
 			// find our ladder
-			const NavLadderConnectList *list = from->area->GetLadderList( CNavLadder::LADDER_UP );
-			int it;
-			for( it = list->Head(); it != list->InvalidIndex(); it = list->Next(it))
+			auto *list = from->area->GetLadders( CNavLadder::LADDER_UP );
+			int it2 = 0;
+			FOR_EACH_VEC(*list, it)
 			{
+				it2 = it;
 				CNavLadder *ladder = (*list)[ it ].ladder;
 
 				// can't use "behind" area when ascending...
@@ -117,7 +118,7 @@ bool CNavPath::ComputePathPositions( void )
 				}
 			}
 
-			if (it == list->InvalidIndex())
+			if (it2 == list->InvalidIndex())
 			{
 				//PrintIfWatched( "ERROR: Can't find ladder in path\n" );
 				return false;
@@ -126,10 +127,11 @@ bool CNavPath::ComputePathPositions( void )
 		else if (to->how == GO_LADDER_DOWN)		// to get to next area, must go down a ladder
 		{
 			// find our ladder
-			const NavLadderConnectList *list = from->area->GetLadderList( CNavLadder::LADDER_DOWN );
-			int it;
-			for( it = list->Head(); it != list->InvalidIndex(); it = list->Next(it))
+			auto *list = from->area->GetLadders( CNavLadder::LADDER_DOWN );
+			int it2 = 0;
+			FOR_EACH_VEC(*list, it)
 			{
+				it2 = it;
 				CNavLadder *ladder = (*list)[ it ].ladder;
 
 				if (ladder->m_bottomArea == to->area)
@@ -141,7 +143,7 @@ bool CNavPath::ComputePathPositions( void )
 				}
 			}
 
-			if (it == list->InvalidIndex())
+			if (it2 == list->InvalidIndex())
 			{
 				//PrintIfWatched( "ERROR: Can't find ladder in path\n" );
 				return false;

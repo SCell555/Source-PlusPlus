@@ -4022,7 +4022,9 @@ bool CCSGameRules::ShouldCollide( int collisionGroup0, int collisionGroup1 )
 	if ( collisionGroup0 > collisionGroup1 )
 	{
 		// swap so that lowest is always first
-		swap(collisionGroup0,collisionGroup1);
+		int temp = collisionGroup0;
+		collisionGroup0 = collisionGroup1;
+		collisionGroup1 = temp;
 	}
 	
 	//Don't stand on COLLISION_GROUP_WEAPONs

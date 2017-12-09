@@ -181,14 +181,15 @@ void HuntState::OnUpdate( CCSBot *me )
 			int areaCount = 0;
 			const float minSize = 150.0f;
 
-			FOR_EACH_LL( TheNavAreaList, it )
+			FOR_EACH_VEC( TheNavAreas, it )
 			{
-				CNavArea *area = TheNavAreaList[ it ];
+				CNavArea *area = TheNavAreas[ it ];
 
 				++areaCount;
 
 				// skip the small areas
-				const Extent &extent = area->GetExtent();
+				Extent extent;
+				area->GetExtent(&extent);
 				if (extent.hi.x - extent.lo.x < minSize || extent.hi.y - extent.lo.y < minSize)
 					continue;
 
@@ -205,9 +206,9 @@ void HuntState::OnUpdate( CCSBot *me )
 			int which = RandomInt( 0, areaCount-1 );
 
 			areaCount = 0;
-			FOR_EACH_LL( TheNavAreaList, hit )
+			FOR_EACH_VEC( TheNavAreas, hit )
 			{
-				m_huntArea = TheNavAreaList[ hit ];
+				m_huntArea = TheNavAreas[ hit ];
 
 				if (which == areaCount)
 					break;

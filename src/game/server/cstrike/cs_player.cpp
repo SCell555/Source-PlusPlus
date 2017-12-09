@@ -620,10 +620,10 @@ void CCSPlayer::InitialSpawn( void )
 		m_iAccount = CSGameRules()->GetStartMoney();
 	}
 
-	if ( !engine->IsDedicatedServer() && !TheNavMesh->IsFromCurrentMap() && this == UTIL_GetListenServerHost() )
+	/*if ( !engine->IsDedicatedServer() && !TheNavMesh->IsFromCurrentMap() && this == UTIL_GetListenServerHost() )
 	{
 		ClientPrint( this, HUD_PRINTCENTER, "The Navigation Mesh was built using a different version of this map." );
-	}
+	}*/
 
 	State_Enter( STATE_WELCOME );
 }
@@ -708,10 +708,10 @@ void CCSPlayer::Spawn()
 
 	m_iNumSpawns++;
 
-	if ( !engine->IsDedicatedServer() && CSGameRules()->m_iTotalRoundsPlayed < 2 && !TheNavMesh->IsFromCurrentMap() && this == UTIL_GetListenServerHost() )
-	{
-		ClientPrint( this, HUD_PRINTCENTER, "The Navigation Mesh was built using a different version of this map." );
-	}
+	//if ( !engine->IsDedicatedServer() && CSGameRules()->m_iTotalRoundsPlayed < 2 && !TheNavMesh->IsFromCurrentMap() && this == UTIL_GetListenServerHost() )
+	//{
+	//	ClientPrint( this, HUD_PRINTCENTER, "The Navigation Mesh was built using a different version of this map." );
+	//}
 
 	m_bTeamChanged	= false;
 	m_iOldTeam = TEAM_UNASSIGNED;

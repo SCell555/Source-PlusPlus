@@ -21,7 +21,7 @@
 #ifdef CSTRIKE_DLL
 
 #include "cs_gamestats.h"
-#include "cs_achievement_constants.h"
+//#include "cs_achievement_constants.h"
 
 #endif
 //=============================================================================
@@ -377,7 +377,7 @@ bool CMoveHelperServer::PlayerFallingDamage( void )
 
         if ( pPlayer )
         {
-            CCS_GameStats.IncrementStat( pPlayer, CSSTAT_FALL_DAMAGE, (int)flFallDamage );
+            //CCS_GameStats.IncrementStat( pPlayer, CSSTAT_FALL_DAMAGE, (int)flFallDamage );
         }
 
 #endif

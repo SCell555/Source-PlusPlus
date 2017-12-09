@@ -1853,7 +1853,7 @@ public:
 		m_route = route;
 	}
 
-	float operator() ( CNavArea *area, CNavArea *fromArea, const CNavLadder *ladder )
+	float operator() ( CNavArea *area, CNavArea *fromArea, const CNavLadder *ladder, const CFuncElevator *elevator, float length )
 	{
 		float baseDangerFactor = 100.0f;	// 100
 
@@ -1908,7 +1908,7 @@ public:
 			if (!area->IsUnderwater() && area->IsConnected( fromArea, NUM_DIRECTIONS ) == false)
 			{
 				// this is a "jump down" (one way drop) transition - estimate damage we will take to traverse it
-				float fallDistance = -fromArea->ComputeHeightChange( area );
+				float fallDistance = -fromArea->ComputeGroundHeightChange( area );
 
 				// if it's a drop-down ladder, estimate height from the bottom of the ladder to the lower area
 				if ( ladder && ladder->m_bottom.z < fromArea->GetCenter().z && ladder->m_bottom.z > area->GetCenter().z )

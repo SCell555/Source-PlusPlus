@@ -417,6 +417,26 @@ public:
 	void ComputeNormal( Vector *normal, bool alternate = false ) const;	// Computes the area's normal based on m_nwCorner.  If 'alternate' is specified, m_seCorner is used instead.
 	void RemoveOrthogonalConnections( NavDirType dir );
 
+	//- approach areas ----------------------------------------------------------------------------------
+	struct ApproachInfo
+	{
+		NavConnect here;										///< the approach area
+		NavConnect prev;										///< the area just before the approach area on the path
+		NavTraverseType prevToHereHow;
+		NavConnect next;										///< the area just after the approach area on the path
+		NavTraverseType hereToNextHow;
+	};
+	const ApproachInfo *GetApproachInfo(int i) const { return &m_approach[i]; }
+	int GetApproachInfoCount(void) const { return m_approachCount; }
+	void ComputeApproachAreas(void);							///< determine the set of "approach areas" - for map learning
+
+	private:
+	//- approach areas ----------------------------------------------------------------------------------
+	enum { MAX_APPROACH_AREAS = 16 };
+	ApproachInfo m_approach[MAX_APPROACH_AREAS];
+	unsigned char m_approachCount;
+	public:
+
 	//- occupy time ------------------------------------------------------------------------------------
 	float GetEarliestOccupyTime( int teamID ) const;			// returns the minimum time for someone of the given team to reach this spot from their spawn
 	bool IsBattlefront( void ) const	{ return m_isBattlefront; }	// true if this area is a "battlefront" - where rushing teams initially meet

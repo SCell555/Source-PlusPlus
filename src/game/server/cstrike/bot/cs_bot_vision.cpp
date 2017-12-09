@@ -647,9 +647,9 @@ void CCSBot::UpdatePeripheralVision()
 		const SpotOrder *spotOrder;
 		Vector pos;
 
-		FOR_EACH_LL( m_spotEncounter->spotList, it )
+		FOR_EACH_VEC( m_spotEncounter->spots, it )
 		{
-			spotOrder = &m_spotEncounter->spotList[ it ];
+			spotOrder = &m_spotEncounter->spots[ it ];
 
 			const Vector &spotPos = spotOrder->spot->GetPosition();
 
@@ -864,9 +864,9 @@ void CCSBot::UpdateLookAround( bool updateNow )
 
 			const float checkTime = 10.0f;
 			const SpotOrder *spotOrder;
-			FOR_EACH_LL( m_spotEncounter->spotList, it )
+			FOR_EACH_VEC( m_spotEncounter->spots, it )
 			{
-				spotOrder = &(m_spotEncounter->spotList[ it ]);
+				spotOrder = &(m_spotEncounter->spots[ it ]);
 
 				// if we have seen this spot recently, we don't need to look at it
 				if (gpGlobals->curtime - GetHidingSpotCheckTimestamp( spotOrder->spot ) <= checkTime)

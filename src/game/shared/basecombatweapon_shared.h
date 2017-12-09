@@ -625,6 +625,10 @@ public:
 	float					m_flUnlockTime;
 	EHANDLE					m_hLocker;				// Who locked this weapon.
 
+#if defined(CSTRIKE_DLL) && defined(CLIENT_DLL)
+	bool					m_bInReloadAnimation;
+#endif
+
 	CNetworkVar( bool, m_bFlipViewModel );
 
 	IPhysicsConstraint		*GetConstraint() { return m_pConstraint; }
