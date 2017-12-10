@@ -8,9 +8,10 @@
 
 static bool SameSign(float a, float b)
 {
-	int32 aa=*((int *) &a);
-	int32 bb=*((int *) &b);
-	return ((aa^bb)&0x80000000)==0;
+	union { float af; int32 ai; } au, bu;
+	au.af = a;
+	bu.af = b;
+	return ((au.ai^bu.ai)&0x80000000)==0;
 }
 
 int FourRays::CalculateDirectionSignMask(void) const
@@ -114,7 +115,7 @@ void RayTracingEnvironment::AddQuad(
 }
 
 
-void RayTracingEnvironment::AddAxisAlignedRectangularSolid(int id,Vector minc, Vector maxc,
+void RayTracingEnvironment::AddAxisAlignedRectangularSolid(int id, const Vector& minc, const Vector& maxc,
 														   const Vector &color)
 {
 
@@ -232,8 +233,6 @@ void CacheOptimizedTriangle::ChangeIntoIntersectionFormat(void)
 
 
 }
-
-int n_intersection_calculations=0;
 
 int CacheOptimizedTriangle::ClassifyAgainstAxisSplit(int split_plane, float split_value)
 {
@@ -476,7 +475,6 @@ void RayTracingEnvironment::Trace4Rays(const FourRays &rays, fltx4 TMin, fltx4 T
 				TriIntersectData_t const *tri = &( OptimizedTriangleList[tnum].m_Data.m_IntersectData );
 				if ( ( mailboxids[mbox_slot] != tnum ) && ( tri->m_nTriangleID != skip_id ) )
 				{
-					n_intersection_calculations++;
 					mailboxids[mbox_slot] = tnum;
 					// compute plane intersection
 
@@ -653,7 +651,7 @@ void RayTracingEnvironment::CalculateTriangleListBounds(int32 const *tris,int nt
 
 float RayTracingEnvironment::CalculateCostsOfSplit(
 	int split_plane,int32 const *tri_list,int ntris,
-	Vector MinBound,Vector MaxBound, float &split_value,
+	const Vector& MinBound, const Vector& MaxBound, float &split_value,
 	int &nleft, int &nright, int &nboth)
 {
 	// determine the costs of splitting on a given axis, and label triangles with respect to
@@ -663,9 +661,6 @@ float RayTracingEnvironment::CalculateCostsOfSplit(
 	
 	// now, label each triangle. Since we have not converted the triangles into
 	// intersection fromat yet, we can use the CoordSelect0 field of each as a temp.
-	nleft=0;
-	nright=0;
-	nboth=0;
 	float min_coord=1.0e23,max_coord=-1.0e23;
 
 	for(int t=0;t<ntris;t++)
@@ -719,8 +714,8 @@ float RayTracingEnvironment::CalculateCostsOfSplit(
 
 #define NEVER_SPLIT 0
 
-void RayTracingEnvironment::RefineNode(int node_number,int32 const *tri_list,int ntris,
-									   Vector MinBound,Vector MaxBound, int depth)
+void RayTracingEnvironment::RefineNode( int node_number,int32 const *tri_list,int ntris,
+										const Vector& MinBound, const Vector& MaxBound, int depth)
 {
 	if (ntris<3)											// never split empty lists
 	{
@@ -891,11 +886,9 @@ void RayTracingEnvironment::SetupAccelerationStructure(void)
 
 
 
-void RayTracingEnvironment::AddInfinitePointLight(Vector position, Vector intensity)
+void RayTracingEnvironment::AddInfinitePointLight( const Vector& position, const Vector& intensity)
 {
-	LightDesc_t mylight(position,intensity);
-	LightList.AddToTail(mylight);
-	
+	LightList.AddToTail( LightDesc_t( position, intensity ) );
 }
 
 

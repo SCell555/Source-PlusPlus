@@ -411,7 +411,7 @@ void CmdLib_Cleanup()
 
 void CmdLib_Exit( int exitCode )
 {
-	TerminateProcess( GetCurrentProcess(), 1 );
+	TerminateProcess( GetCurrentProcess(), exitCode );
 }	
 
 
@@ -556,6 +556,10 @@ char *copystring(const char *s)
 
 void GetHourMinuteSeconds( int nInputSeconds, int &nHours, int &nMinutes, int &nSeconds )
 {
+	nMinutes = nInputSeconds / 60;
+	nSeconds = nInputSeconds - nMinutes * 60;
+	nHours = nMinutes / 60;
+	nMinutes -= nHours * 60;
 }
 
 
@@ -590,8 +594,11 @@ void Q_mkdir (char *path)
 	Error ("mkdir failed %s\n", path );
 }
 
+extern void InitTaskBar();
+
 void CmdLib_InitFileSystem( const char *pFilename, int maxMemoryUsage )
 {
+	InitTaskBar();
 	FileSystem_Init( pFilename, maxMemoryUsage );
 	if ( !g_pFileSystem )
 		Error( "CmdLib_InitFileSystem failed." );

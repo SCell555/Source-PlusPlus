@@ -19,7 +19,7 @@
 #include "threads.h"
 #include "pacifier.h"
 
-#define	MAX_THREADS	16
+#define	MAX_THREADS	MAX_TOOL_THREADS
 
 
 class CRunThreadsData
@@ -130,14 +130,11 @@ void SetLowPriority()
 
 void ThreadSetDefault (void)
 {
-	SYSTEM_INFO info;
-
 	if (numthreads == -1)	// not set manually
 	{
+		SYSTEM_INFO info;
 		GetSystemInfo (&info);
-		numthreads = info.dwNumberOfProcessors;
-		if (numthreads < 1 || numthreads > 32)
-			numthreads = 1;
+		numthreads = clamp( int( info.dwNumberOfProcessors ), 1, MAX_THREADS );
 	}
 
 	Msg ("%i threads\n", numthreads);

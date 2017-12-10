@@ -117,7 +117,10 @@ bool		g_bNoDetailLighting = false;
 double		g_flStartTime;
 bool		g_bStaticPropLighting = false;
 bool        g_bStaticPropPolys = false;
+bool		g_bAllowDX90VTX = false;
+bool		g_bIgnoreModelVersions = false;
 bool        g_bTextureShadows = false;
+bool		g_bAllowDynamicPropsAsStatic = false;
 bool        g_bDisablePropSelfShadowing = false;
 
 
@@ -287,7 +290,7 @@ void ReadLightFile (char *filename)
 			num_texlights = max( num_texlights, j + 1 );
 		}
 	}
-	qprintf ( "[%i texlights parsed from '%s']\n\n", file_texlights, filename);
+	Msg( "[%i texlights parsed from '%s']\n\n", file_texlights, filename);
 	g_pFileSystem->Close( f );
 }
 
@@ -299,8 +302,6 @@ LightForTexture
 */
 void LightForTexture( const char *name, Vector& result )
 {
-	int		i;
-
 	result[ 0 ] = result[ 1 ] = result[ 2 ] = 0;
 
 	char baseFilename[ MAX_PATH ];
@@ -340,7 +341,7 @@ void LightForTexture( const char *name, Vector& result )
 		}
 	}
 
-	for (i=0 ; i<num_texlights ; i++)
+	for (int i=0 ; i<num_texlights ; i++)
 	{
 		if (!Q_strcasecmp (name, texlights[i].name))
 		{
@@ -504,7 +505,6 @@ void MakePatchForFace (int fn, winding_t *w)
 	dface_t     *f = g_pFaces + fn;
 	float	    area;
 	CPatch		*patch;
-	Vector		centroid(0,0,0);
 	int			i, j;
 	texinfo_t	*tx;
 
@@ -698,7 +698,7 @@ void MakePatches (void)
 	entity_t	*ent;
 
 	ParseEntities ();
-	qprintf ("%i faces\n", numfaces);
+	Msg("%i faces\n", numfaces);
 
 	for (i=0 ; i<nummodels ; i++)
 	{
@@ -726,10 +726,10 @@ void MakePatches (void)
 
 	if (num_degenerate_faces > 0)
 	{
-		qprintf("%d degenerate faces\n", num_degenerate_faces );
+		Msg("%d degenerate faces\n", num_degenerate_faces );
 	}
 
-	qprintf ("%i square feet [%.2f square inches]\n", (int)(totalarea/144), totalarea );
+	Msg( "%.2f square feet [%.2f square inches]\n", totalarea / 144, totalarea );
 
 	// make the displacement surface patches
 	StaticDispMgr()->MakePatches();
@@ -931,7 +931,7 @@ void SubdividePatches (void)
 		return;
 
 	unsigned int uiPatchCount = g_Patches.Size();
-	qprintf ("%i patches before subdivision\n", uiPatchCount);
+	Msg( "%i patches before subdivision\n", uiPatchCount );
 
 	for (i = 0; i < uiPatchCount; i++)
 	{
@@ -1041,7 +1041,7 @@ void SubdividePatches (void)
 #endif
 	}
 
-	qprintf ("%i patches after subdivision\n", uiPatchCount);
+	Msg( "%i patches after subdivision\n", uiPatchCount );
 }
 
 
@@ -1112,9 +1112,7 @@ float FormFactorDiffToDiff ( CPatch *pDiff1, CPatch* pDiff2 )
 
 
 void MakeTransfer( int ndxPatch1, int ndxPatch2, transfer_t *all_transfers )
-//void MakeTransfer (CPatch *patch, CPatch *patch2, transfer_t *all_transfers )
 {
-	Vector	delta;
 	vec_t	scale;
 	float	trans;
 	transfer_t *transfer;
@@ -1177,23 +1175,6 @@ void MakeTransfer( int ndxPatch1, int ndxPatch2, transfer_t *all_transfers )
 
 	// FIXME: why is this not trans?
 	transfer->transfer = trans;
-
-#if 0
-	// DEBUG! Dump patches and transfer connection for displacements.  This creates a lot of data, so only
-	// use it when you really want it - that is why it is #if-ed out.
-	if ( g_bDumpPatches )
-	{
-		if ( !pFpTrans )
-		{
-			pFpTrans = g_pFileSystem->Open( "trans.txt", "w" );
-		}
-		Vector light = pPatch1->totallight.light[0] + pPatch1->directlight;
-		WriteWinding( pFpTrans, pPatch1->winding, light );
-		light = pPatch2->totallight.light[0] + pPatch2->directlight;
-		WriteWinding( pFpTrans, pPatch2->winding, light );
-		WriteLine( pFpTrans, pPatch1->origin, pPatch2->origin, Vector( 255, 0, 255 ) );
-	}
-#endif
 
 	pPatch1->numtransfers++;
 }
@@ -1306,7 +1287,7 @@ void WriteWorld (char *name, int iBump)
 	g_pFileSystem->Close( out );
 }
 
-void WriteRTEnv (char *name)
+void WriteRTEnv (const char *name)
 {
 	FileHandle_t out;
 
@@ -1442,19 +1423,11 @@ void CollectLight( Vector& total )
 		{
 			// This is an interior node.
 			// Pull received light from children.
-			float s1, s2;
-			CPatch *child1;
-			CPatch *child2;
+			CPatch *child1 = &g_Patches[patch->child1];
+			CPatch *child2 = &g_Patches[patch->child2];
 
-			child1 = &g_Patches[patch->child1];
-			child2 = &g_Patches[patch->child2];
-
-			// BUG: This doesn't do anything?
-			if ((int)patch->area != (int)(child1->area + child2->area))
-				s1 = 0;
-
-			s1 = child1->area / (child1->area + child2->area);
-			s2 = child2->area / (child1->area + child2->area);
+			float s1 = child1->area / (child1->area + child2->area);
+			float s2 = child2->area / (child1->area + child2->area);
 
 			// patch->totallight = s1 * child1->totallight + s2 * child2->totallight
 			for ( j = 0; j < normalCount; j++ )
@@ -1652,13 +1625,12 @@ BounceLight
 */
 void BounceLight (void)
 {
-	unsigned i;
 	Vector	added;
 	char		name[64];
 	qboolean	bouncing = numbounce > 0;
 
-	unsigned int uiPatchCount = g_Patches.Size();
-	for (i=0 ; i<uiPatchCount; i++)
+	int uiPatchCount = g_Patches.Size();
+	for (int i=0 ; i<uiPatchCount; i++)
 	{
 		// totallight has a copy of the direct lighting.  Move it to the emitted light and zero it out (to integrate bounces only)
 		VectorCopy( g_Patches[i].totallight.light[0], emitlight[i] );
@@ -1667,52 +1639,18 @@ void BounceLight (void)
 		VectorFill( g_Patches[i].totallight.light[0], 0 );
 	}
 
-#if 0
-	FileHandle_t dFp = g_pFileSystem->Open( "lightemit.txt", "w" );
-
-	unsigned int uiPatchCount = g_Patches.Size();
-	for (i=0 ; i<uiPatchCount; i++)
-	{
-		CmdLib_FPrintf( dFp, "Emit %d: %f %f %f\n", i, emitlight[i].x, emitlight[i].y, emitlight[i].z );
-	}
-
-	g_pFileSystem->Close( dFp );
-
-	for (i=0; i<num_patches ; i++)
-	{
-		Vector total;
-
-		VectorSubtract (g_Patches[i].maxs, g_Patches[i].mins, total);
-		Msg("%4d %4d %4d %4d (%d) %.0f", i, g_Patches[i].parent, g_Patches[i].child1, g_Patches[i].child2, g_Patches[i].samples, g_Patches[i].area );
-		Msg(" [%.0f %.0f %.0f]", total[0], total[1], total[2] );
-		if (g_Patches[i].child1 != g_Patches.InvalidIndex() )
-		{
-			Vector tmp;
-			VectorScale( g_Patches[i].totallight.light[0], g_Patches[i].area, tmp );
-
-			VectorMA( tmp, -g_Patches[g_Patches[i].child1].area, g_Patches[g_Patches[i].child1].totallight.light[0], tmp );
-			VectorMA( tmp, -g_Patches[g_Patches[i].child2].area, g_Patches[g_Patches[i].child2].totallight.light[0], tmp );
-			// Msg("%.0f ", VectorLength( tmp ) );
-			// Msg("%d ", g_Patches[i].samples - g_Patches[g_Patches[i].child1].samples - g_Patches[g_Patches[i].child2].samples );
-			// Msg("%d ", g_Patches[i].samples );
-		}
-		Msg("\n");
-	}
-#endif
-
-	i = 0;
+	unsigned i = 0U;
 	while ( bouncing )
 	{
 		// transfer light from to the leaf patches from other patches via transfers
 		// this moves shooter->emitlight to receiver->addlight
-		unsigned int uiPatchCount = g_Patches.Size();
 		RunThreadsOn (uiPatchCount, true, GatherLight);
 		// move newly received light (addlight) to light to be sent out (emitlight)
 		// start at children and pull light up to parents
 		// light is always received to leaf patches
 		CollectLight( added );
 
-		qprintf ("\tBounce #%i added RGB(%.0f, %.0f, %.0f)\n", i+1, added[0], added[1], added[2] );
+		Msg("\tBounce #%i added RGB(%.0f, %.0f, %.0f)\n", i+1, added[0], added[1], added[2] );
 
 		if ( i+1 == numbounce || (added[0] < 1.0 && added[1] < 1.0 && added[2] < 1.0) )
 			bouncing = false;
@@ -1753,25 +1691,10 @@ RadWorld
 */
 void RadWorld_Start()
 {
-	unsigned	i;
-
 	if (luxeldensity < 1.0)
 	{
-		// Remember the old lightmap vectors.
-		float oldLightmapVecs[MAX_MAP_TEXINFO][2][4];
-		for (i = 0; i < texinfo.Count(); i++)
-		{
-			for( int j=0; j < 2; j++ )
-			{
-				for( int k=0; k < 3; k++ )
-				{
-					oldLightmapVecs[i][j][k] = texinfo[i].lightmapVecsLuxelsPerWorldUnits[j][k];
-				}
-			}
-		}
-
 		// rescale luxels to be no denser than "luxeldensity"
-		for (i = 0; i < texinfo.Count(); i++)
+		for (int i = 0; i < texinfo.Count(); i++)
 		{
 			texinfo_t	*tx = &texinfo[i];
 
@@ -1932,7 +1855,7 @@ void MakeAllScales (void)
 
 	Msg("transfers %d, max %d\n", total_transfer, max_transfer );
 
-	qprintf ("transfer lists: %5.1f megs\n"
+	Msg("transfer lists: %5.1f megs\n"
 		, (float)total_transfer * sizeof(transfer_t) / (1024*1024));
 }
 
@@ -2269,11 +2192,11 @@ void VRAD_LoadBSP( char const *pFilename )
 		WriteRTEnv("trace.txt");
 
 	// Build acceleration structure
-	printf ( "Setting up ray-trace acceleration structure... ");
+	Msg( "Setting up ray-trace acceleration structure... " );
 	float start = Plat_FloatTime();
 	g_RtEnv.SetupAccelerationStructure();
 	float end = Plat_FloatTime();
-	printf ( "Done (%.2f seconds)\n", end-start );
+	Msg( "Done (%.2f seconds)\n", end - start );
 
 #if 0  // To test only k-d build
 	exit(0);
@@ -2287,7 +2210,6 @@ void VRAD_LoadBSP( char const *pFilename )
 		if( !g_pIncremental->Init( source, incrementfile ) )
 		{
 			Error( "Unable to load incremental lighting file in %s.\n", incrementfile );
-			return;
 		}
 	}
 }
@@ -2388,6 +2310,18 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			g_bStaticPropPolys = true;
 		}
+		else if ( !Q_stricmp( argv[i], "-AllowDX90VTX" ) )
+		{
+			g_bAllowDX90VTX = true;
+		}
+		else if ( !Q_stricmp( argv[i], "-IgnoreModelVersions" ) )
+		{
+			g_bIgnoreModelVersions = true;
+		}
+		else if ( !Q_stricmp( argv[i], "-AllowDynamicPropsAsStatic" ) )
+		{
+			g_bAllowDynamicPropsAsStatic = true;
+		}
 		else if ( !Q_stricmp( argv[i], "-nossprops" ) )
 		{
 			g_bDisablePropSelfShadowing = true;
@@ -2428,7 +2362,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				int bounceParam = atoi (argv[i]);
+				int bounceParam = Q_atoi( argv[i] );
 				if ( bounceParam < 0 )
 				{
 					Warning("Error: expected non-negative value after '-bounce'\n" );
@@ -2450,7 +2384,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				numthreads = atoi (argv[i]);
+				numthreads = Q_atoi( argv[i] );
 				if ( numthreads <= 0 )
 				{
 					Warning("Error: expected positive value after '-threads'\n" );
@@ -2467,7 +2401,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc && *argv[i] )
 			{
-				strcpy( designer_lights, argv[i] );
+				Q_strcpy( designer_lights, argv[i] );
 			}
 			else
 			{
@@ -2503,7 +2437,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc && *argv[i] )
 			{
-				g_flSkySampleScale = atof( argv[i] );
+				g_flSkySampleScale = Q_atof( argv[i] );
 			}
 			else
 			{
@@ -2519,7 +2453,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				smoothing_threshold = (float)cos(atof(argv[i])*(M_PI/180.0));
+				smoothing_threshold = ( float )cos( Q_atof( argv[i] )*( M_PI / 180.0 ) );
 			}
 			else
 			{
@@ -2535,7 +2469,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				luxeldensity = (float)atof (argv[i]);
+				luxeldensity = Q_atof( argv[i] );
 				if (luxeldensity > 1.0)
 					luxeldensity = 1.0 / luxeldensity;
 			}
@@ -2561,9 +2495,9 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				g_SunAngularExtent=atof(argv[i]);
-				g_SunAngularExtent=sin((M_PI/180.0)*g_SunAngularExtent);
-				printf("sun extent=%f\n",g_SunAngularExtent);
+				g_SunAngularExtent = Q_atof( argv[i] );
+				g_SunAngularExtent = sin( ( M_PI / 180.0 )*g_SunAngularExtent );
+				Msg( "sun extent=%f\n", g_SunAngularExtent );
 			}
 			else
 			{
@@ -2575,7 +2509,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				g_flMaxDispSampleSize = ( float )atof( argv[i] );
+				g_flMaxDispSampleSize = Q_atof( argv[i] );
 			}
 			else
 			{
@@ -2617,7 +2551,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				maxchop = (float)atof (argv[i]);
+				maxchop = Q_atof( argv[i] );
 				if ( maxchop < 1 )
 				{
 					Warning("Error: expected positive value after '-maxchop'\n" );
@@ -2634,7 +2568,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				minchop = (float)atof (argv[i]);
+				minchop = Q_atof( argv[i] );
 				if ( minchop < 1 )
 				{
 					Warning("Error: expected positive value after '-chop'\n" );
@@ -2652,7 +2586,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				dispchop = ( float )atof( argv[i] );
+				dispchop = Q_atof( argv[i] );
 				if ( dispchop < 1.0f )
 				{
 					Warning( "Error: expected positive value after '-dipschop'\n" );
@@ -2669,7 +2603,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				g_MaxDispPatchRadius = ( float )atof( argv[i] );
+				g_MaxDispPatchRadius = Q_atof( argv[i] );
 				if ( g_MaxDispPatchRadius < 10.0f )
 				{
 					Warning( "Error: g_MaxDispPatchRadius < 10.0\n" );
@@ -2688,7 +2622,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				lightscale = (float)atof (argv[i]);
+				lightscale = Q_atof(argv[i]);
 			}
 			else
 			{
@@ -2700,9 +2634,9 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( i+3 < argc )
 			{
- 				ambient[0] = (float)atof (argv[++i]) * 128;
- 				ambient[1] = (float)atof (argv[++i]) * 128;
- 				ambient[2] = (float)atof (argv[++i]) * 128;
+				ambient[0] = Q_atof( argv[++i] ) * 128;
+				ambient[1] = Q_atof( argv[++i] ) * 128;
+				ambient[2] = Q_atof( argv[++i] ) * 128;
 			}
 			else
 			{
@@ -2714,7 +2648,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				dlight_threshold = (float)atof (argv[i]);
+				dlight_threshold = Q_atof( argv[i] );
 			}
 			else
 			{
@@ -2726,7 +2660,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				indirect_sun = (float)atof (argv[i]);
+				indirect_sun = Q_atof( argv[i] );
 			}
 			else
 			{
@@ -2742,7 +2676,7 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			if ( ++i < argc )
 			{
-				coring = (float)atof( argv[i] );
+				coring = Q_atof( argv[i] );
 			}
 			else
 			{
@@ -2806,7 +2740,7 @@ void PrintUsage( int argc, char **argv )
 		"  -extrasky n     : trace N times as many rays for indirect light and sky ambient.\n"
 		"  -low            : Run as an idle-priority process.\n"
 		"  -mpi            : Use VMPI to distribute computations.\n"
-		"  -rederror       : Show errors in red.\n"
+		"  -rederrors      : Show errors in red.\n"
 		"\n"
 		"  -vproject <directory> : Override the VPROJECT environment variable.\n"
 		"  -game <directory>     : Same as -vproject.\n"
@@ -2832,8 +2766,8 @@ void PrintUsage( int argc, char **argv )
 		"  -nodetaillight  : Don't light detail props.\n"
 		"  -centersamples  : Move sample centers.\n"
 		"  -luxeldensity # : Rescale all luxels by the specified amount (default: 1.0).\n"
-		"                    The number specified must be less than 1.0 or it will be\n"
-		"                    ignored.\n"
+		"                    The number specified should be less than 1.0 or it will be\n"
+		"                    inverted.\n"
 		"  -loghash        : Log the sample hash table to samplehash.txt.\n"
 		"  -onlydetail     : Only light detail props and per-leaf lighting.\n"
 		"  -maxdispsamplesize #: Set max displacement sample size (default: 512).\n"
@@ -2849,13 +2783,18 @@ void PrintUsage( int argc, char **argv )
 		"                          light across a wider area.\n"
         "  -StaticPropLighting   : generate backed static prop vertex lighting\n"
         "  -StaticPropPolys   : Perform shadow tests of static props at polygon precision\n"
+		"  -AllowDX90VTX	  : Allow usage of .dx90.vtx files\n"
+		"  -IgnoreModelVersions  : Ignore .MDL and .VTX versions when loading models\n"
+		"  -AllowDynamicPropsAsStatic  : Allow all models with the 'static' flag in the\n"
+		"							    model viewer to be used on prop_static, even when\n"
+		"							    their propdata doesn't contain 'allowstatic'.\n"
         "  -OnlyStaticProps   : Only perform direct static prop lighting (vrad debug option)\n"
 		"  -StaticPropNormals : when lighting static props, just show their normal vector\n"
 		"  -textureshadows : Allows texture alpha channels to block light - rays intersecting alpha surfaces will sample the texture\n"
 		"  -noskyboxrecurse : Turn off recursion into 3d skybox (skybox shadows on world)\n"
 		"  -nossprops      : Globally disable self-shadowing on static props\n"
 		"\n"
-#if 1 // Disabled for the initial SDK release with VMPI so we can get feedback from selected users.
+#if 0 // Disabled for the initial SDK release with VMPI so we can get feedback from selected users.
 		);
 #else
 		"  -mpi_ListParams : Show a list of VMPI parameters.\n"
@@ -2869,14 +2808,14 @@ void PrintUsage( int argc, char **argv )
 		{
 			Warning( "VMPI-specific options:\n\n" );
 
-			bool bIsSDKMode = VMPI_IsSDKMode();
-			for ( int i=k_eVMPICmdLineParam_FirstParam+1; i < k_eVMPICmdLineParam_LastParam; i++ )
+			//bool bIsSDKMode = VMPI_IsSDKMode();
+			for ( int j=k_eVMPICmdLineParam_FirstParam+1; j < k_eVMPICmdLineParam_LastParam; j++ )
 			{
-				if ( (VMPI_GetParamFlags( (EVMPICmdLineParam)i ) & VMPI_PARAM_SDK_HIDDEN) && bIsSDKMode )
-					continue;
+				//if ( (VMPI_GetParamFlags( (EVMPICmdLineParam)i ) & VMPI_PARAM_SDK_HIDDEN) && bIsSDKMode )
+				//	continue;
 					
-				Warning( "[%s]\n", VMPI_GetParamString( (EVMPICmdLineParam)i ) );
-				Warning( VMPI_GetParamHelpString( (EVMPICmdLineParam)i ) );
+				Warning( "[%s]\n", VMPI_GetParamString( (EVMPICmdLineParam)j ) );
+				Warning( VMPI_GetParamHelpString( (EVMPICmdLineParam)j ) );
 				Warning( "\n\n" );
 			}
 			break;
@@ -2947,14 +2886,9 @@ int VRAD_Main(int argc, char **argv)
 	else
 #endif
 	{
-		LoadCmdLineFromFile( argc, argv, source, "vrad" ); // Don't do this if we're a VMPI worker..
+		//LoadCmdLineFromFile( argc, argv, source, "vrad" ); // Don't do this if we're a VMPI worker..
 		SetupDefaultToolsMinidumpHandler();
 	}
 	
 	return RunVRAD( argc, argv );
 }
-
-
-
-
-

@@ -3369,7 +3369,7 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 #ifndef PLATFORM_WINDOWS_PC64
 		// These are not yet available.
 		// Select the SSE specific routines if available
-		pfVectorNormalize = _VectorNormalize;
+		pfVectorNormalize = _SSE_VectorNormalize;
 		pfVectorNormalizeFast = _SSE_VectorNormalizeFast;
 		pfInvRSquared = _SSE_InvRSquared;
 		pfSqrt = _SSE_Sqrt;

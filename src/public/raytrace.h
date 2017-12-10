@@ -179,12 +179,16 @@ struct CacheOptimizedKDNode
 	inline int NumberOfTrianglesInLeaf(void) const
 	{
 		assert(NodeType()==KDNODE_STATE_LEAF);
-		return *((int32 *) &SplittingPlaneValue);
+		union { int32 i; float f; } u;
+		u.f=SplittingPlaneValue;
+		return u.i;
 	}
 
 	inline void SetNumberOfTrianglesInLeafNode(int n)
 	{
-		*((int32 *) &SplittingPlaneValue)=n;
+		union { int32 i; float f; } u;
+		u.i=n;
+		SplittingPlaneValue=u.f;
 	}
 
 protected:
@@ -290,7 +294,7 @@ public:
 				 const Vector &color);
 
 	// for ease of testing. 
-	void AddAxisAlignedRectangularSolid(int id,Vector mincoord, Vector Maxcoord, 
+	void AddAxisAlignedRectangularSolid(int id, const Vector& mincoord, const Vector& Maxcoord, 
 										const Vector &color);
 
 
@@ -347,17 +351,17 @@ public:
 
 	float CalculateCostsOfSplit(
 		int split_plane,int32 const *tri_list,int ntris,
-		Vector MinBound,Vector MaxBound, float &split_value,
+		const Vector& MinBound, const Vector& MaxBound, float &split_value,
 		int &nleft, int &nright, int &nboth);
 		
-	void RefineNode(int node_number,int32 const *tri_list,int ntris,
-						 Vector MinBound,Vector MaxBound, int depth);
+	void RefineNode( int node_number,int32 const *tri_list,int ntris,
+					 const Vector& MinBound, const Vector& MaxBound, int depth );
 	
 	void CalculateTriangleListBounds(int32 const *tris,int ntris,
 									 Vector &minout, Vector &maxout);
 
-	void AddInfinitePointLight(Vector position,				// light center
-							   Vector intensity);			// rgb amount
+	void AddInfinitePointLight( const Vector& position,				// light center
+								const Vector& intensity);			// rgb amount
 
 	// use the global variables set by LoadBSPFile to populated the RayTracingEnvironment with
 	// faces.
@@ -374,11 +378,11 @@ public:
 		return OptimizedTriangleList[triID];
 	}
 
-	int32 GetTriangleMaterial( int32 triID )
+	int32 GetTriangleMaterial( int32 triID ) const
 	{
 		return TriangleMaterials[triID];
 	}
-	const Vector &GetTriangleColor( int triID )
+	const Vector &GetTriangleColor( int triID ) const
 	{
 		return TriangleColors[triID];
 	}

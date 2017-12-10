@@ -63,7 +63,7 @@ Callback stuff
 
 void DefaultScriptLoadedCallback( char const *pFilenameLoaded, char const *pIncludedFromFileName, int nIncludeLineNumber )
 {
-	NULL;
+	
 }
 
 SCRIPT_LOADED_CALLBACK g_pfnCallback = DefaultScriptLoadedCallback;
@@ -1215,8 +1215,8 @@ int CScriptLib::GetFileList( const char* pDirPath, const char* pPattern, CUtlVec
 #elif defined(POSIX)
 	FIND_DATA findData;
 	Q_FixSlashes( fullPath );
-	void *h = FindFirstFile( fullPath, &findData );
-	if ( (int)h == -1 )
+	int h = FindFirstFile( fullPath, &findData );
+	if ( h == -1 )
 	{
 		return 0;
 	}
