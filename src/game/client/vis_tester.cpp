@@ -1,7 +1,9 @@
 #include "cbase.h"
+
 #include "filesystem.h"
 #include "lumpfiles.h"
 #include "tier1/memstack.h"
+#include "lzmaDecoder.h"
 
 #include "tier0/memdbgon.h"
 
@@ -153,6 +155,12 @@ class CMapLoadHelper
 public:
 	CMapLoadHelper( int lumpToLoad )
 	{
+		if ( s_MapFileHandle == FILESYSTEM_INVALID_HANDLE )
+		{
+			Warning( "Can't load map from invalid handle!!!" );
+			return;
+		}
+		
 		if ( lumpToLoad < 0 || lumpToLoad >= HEADER_LUMPS )
 		{
 			Warning( "Can't load lump %i, range is 0 to %i!!!", lumpToLoad, HEADER_LUMPS - 1 );
@@ -164,27 +172,20 @@ public:
 	
 		// Load raw lump from disk
 		lump_t *lump = &s_MapHeader.lumps[ lumpToLoad ];
-		Assert( lump );
 
 		m_nLumpSize = lump->filelen;
+		m_nLumpUncompressedSize = lump->uncompressedSize;
 		m_nLumpOffset = lump->fileofs;
 		m_nLumpVersion = lump->version;	
 
-		FileHandle_t fileToUse = s_MapFileHandle;
-		
 		if ( !m_nLumpSize )
 		{
 			// this lump has no data
 			return;
 		}
 
-		if ( s_MapFileHandle == FILESYSTEM_INVALID_HANDLE )
-		{
-			Warning( "Can't load map from invalid handle!!!" );
-		}
-
 		unsigned nOffsetAlign, nSizeAlign, nBufferAlign;
-		filesystem->GetOptimalIOConstraints( fileToUse, &nOffsetAlign, &nSizeAlign, &nBufferAlign );
+		filesystem->GetOptimalIOConstraints( s_MapFileHandle, &nOffsetAlign, &nSizeAlign, &nBufferAlign );
 
 		bool bTryOptimal = ( m_nLumpOffset % 4 == 0 ); // Don't return badly aligned data
 		unsigned int alignedOffset = m_nLumpOffset;
@@ -196,22 +197,44 @@ public:
 			alignedBytesToRead = AlignValue( ( m_nLumpOffset - alignedOffset ) + alignedBytesToRead, nSizeAlign );
 		}
 
-		m_pRawData = static_cast<byte *>( filesystem->AllocOptimalReadBuffer( fileToUse, alignedBytesToRead, alignedOffset ) );
-		if ( !m_pRawData && m_nLumpSize )
+		m_pRawData = static_cast<byte *>( filesystem->AllocOptimalReadBuffer( s_MapFileHandle, alignedBytesToRead, alignedOffset ) );
+		if ( !m_pRawData )
 		{
 			Warning( "Can't load lump %i, allocation of %i bytes failed!!!", lumpToLoad, m_nLumpSize + 1 );
 		}
 
-		if ( m_nLumpSize )
+		filesystem->Seek( s_MapFileHandle, alignedOffset, FILESYSTEM_SEEK_HEAD );
+		filesystem->ReadEx( m_pRawData, alignedBytesToRead, alignedBytesToRead, s_MapFileHandle );
+
+		if ( m_nLumpUncompressedSize )
 		{
-			filesystem->Seek( fileToUse, alignedOffset, FILESYSTEM_SEEK_HEAD );
-			filesystem->ReadEx( m_pRawData, alignedBytesToRead, alignedBytesToRead, fileToUse );
+			if ( CLZMA::IsCompressed( m_pRawData ) && m_nLumpUncompressedSize == (int)CLZMA::GetActualSize( m_pRawData ) )
+			{
+				m_pData = static_cast<byte*>( MemAlloc_AllocAligned( m_nLumpUncompressedSize, 4 ) );
+				const int outSize = CLZMA::Uncompress( m_pRawData, m_pData );
+				if ( outSize != m_nLumpUncompressedSize )
+				{
+					Warning( "Decompressed size differs from header, BSP may be corrupt\n" );
+				}
+			}
+			else
+			{
+				Assert( 0 );
+				Warning( "Unsupported BSP: Unrecognized compressed lump\n" );
+			}
+		}
+		else
+		{
 			m_pData = m_pRawData + ( m_nLumpOffset - alignedOffset );
 		}
 	}
 	
 	~CMapLoadHelper()
 	{
+		if ( m_nLumpUncompressedSize )
+		{
+			MemAlloc_FreeAligned( m_pData );
+		}
 		if ( m_pRawData )
 		{
 			filesystem->FreeOptimalReadBuffer( m_pRawData );
@@ -225,7 +248,7 @@ public:
 	
 	int	LumpSize() const
 	{
-		return m_nLumpSize;
+		return m_nLumpUncompressedSize ? m_nLumpUncompressedSize : m_nLumpSize;
 	}
 	
 	int	LumpOffset() const
@@ -291,64 +314,10 @@ public:
 		s_szLoadName[ 0 ] = 0;
 		V_memset( &s_MapHeader, 0, sizeof( s_MapHeader ) );
 	}
-	
-	// Returns the size of a particular lump without loading it
-	static int LumpSize( int lumpId )
-	{
-		lump_t *pLump = &s_MapHeader.lumps[ lumpId ];
-		Assert( pLump );
-
-		return pLump->filelen;
-	}
-	
-	static int LumpOffset( int lumpId )
-	{
-		lump_t *pLump = &s_MapHeader.lumps[ lumpId ];
-		Assert( pLump );
-
-		return pLump->fileofs;
-	}
-
-	// Loads one element in a lump.
-	void LoadLumpElement( int nElemIndex, int nElemSize, void *pData ) const
-	{
-		if ( !nElemSize || !m_nLumpSize )
-		{
-			return;
-		}
-
-		// supply from memory
-		if ( nElemIndex * nElemSize + nElemSize <= m_nLumpSize )
-		{
-			V_memcpy( pData, m_pData + nElemIndex * nElemSize, nElemSize );
-		}
-		else
-		{
-			// out of range
-			Assert( 0 );
-		}
-	}
-
-	void LoadLumpData( int offset, int size, void *pData ) const
-	{
-		if ( !size || !m_nLumpSize )
-		{
-			return;
-		}
-
-		if ( offset + size <= m_nLumpSize )
-		{
-			V_memcpy( pData, m_pData + offset, size );
-		}
-		else
-		{
-			// out of range
-			Assert( 0 );
-		}
-	}
 
 private:
 	int					m_nLumpSize;
+	int					m_nLumpUncompressedSize;
 	int					m_nLumpOffset;
 	int					m_nLumpVersion;
 	byte				*m_pRawData;
