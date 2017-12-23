@@ -11,14 +11,14 @@
 static CMemoryStack g_MemStack;
 template <typename T> static T* Hunk_Alloc( size_t s, bool clear = true )
 {
-	return static_cast<T*>( g_MemStack.Alloc( s, clear ) );
+	return static_cast< T* >( g_MemStack.Alloc( s, clear ) );
 }
 
 static void CM_LoadMap( const char *name );
 static void CM_FreeMap();
 static class TEST : public CAutoGameSystem
 {
-public:														  
+public:
 	TEST() : CAutoGameSystem( "visMemoryManager" ) {}
 
 	bool Init() OVERRIDE
@@ -32,7 +32,7 @@ public:
 
 	void Shutdown() OVERRIDE
 	{
-		g_MemStack.FreeAll();
+		g_MemStack.Term();
 	}
 
 	void LevelInitPostEntity() OVERRIDE
@@ -43,6 +43,7 @@ public:
 	void LevelShutdownPreEntity() OVERRIDE
 	{
 		CM_FreeMap();
+		g_MemStack.FreeAll( false );
 	}
 
 } memManager;
@@ -102,7 +103,7 @@ public:
 	}
 
 private:
-	T *m_pArray;
+	T * m_pArray;
 
 #ifdef _DEBUG
 	int m_nCount;
@@ -141,7 +142,7 @@ public:
 	int									numleafs;				// allow leaf funcs to be called without a map
 	CRangeValidatedArray<cleaf_t>		map_leafs;
 	int									emptyleaf, solidleaf;
-	
+
 	// this points to the whole block of memory for vis data, but it is used to
 	// reference the header at the top of the block.
 	int									numvisibility;
@@ -160,23 +161,22 @@ public:
 			Warning( "Can't load map from invalid handle!!!" );
 			return;
 		}
-		
+
 		if ( lumpToLoad < 0 || lumpToLoad >= HEADER_LUMPS )
 		{
 			Warning( "Can't load lump %i, range is 0 to %i!!!", lumpToLoad, HEADER_LUMPS - 1 );
 		}
-	
-		m_nLumpID = lumpToLoad;
+
 		m_pData = NULL;
 		m_pRawData = NULL;
-	
+
 		// Load raw lump from disk
-		lump_t *lump = &s_MapHeader.lumps[ lumpToLoad ];
+		lump_t *lump = &s_MapHeader.lumps[lumpToLoad];
 
 		m_nLumpSize = lump->filelen;
 		m_nLumpUncompressedSize = lump->uncompressedSize;
 		m_nLumpOffset = lump->fileofs;
-		m_nLumpVersion = lump->version;	
+		m_nLumpVersion = lump->version;
 
 		if ( !m_nLumpSize )
 		{
@@ -197,7 +197,7 @@ public:
 			alignedBytesToRead = AlignValue( ( m_nLumpOffset - alignedOffset ) + alignedBytesToRead, nSizeAlign );
 		}
 
-		m_pRawData = static_cast<byte *>( filesystem->AllocOptimalReadBuffer( s_MapFileHandle, alignedBytesToRead, alignedOffset ) );
+		m_pRawData = static_cast< byte * >( filesystem->AllocOptimalReadBuffer( s_MapFileHandle, alignedBytesToRead, alignedOffset ) );
 		if ( !m_pRawData )
 		{
 			Warning( "Can't load lump %i, allocation of %i bytes failed!!!", lumpToLoad, m_nLumpSize + 1 );
@@ -208,9 +208,9 @@ public:
 
 		if ( m_nLumpUncompressedSize )
 		{
-			if ( CLZMA::IsCompressed( m_pRawData ) && m_nLumpUncompressedSize == (int)CLZMA::GetActualSize( m_pRawData ) )
+			if ( CLZMA::IsCompressed( m_pRawData ) && m_nLumpUncompressedSize == ( int )CLZMA::GetActualSize( m_pRawData ) )
 			{
-				m_pData = static_cast<byte*>( MemAlloc_AllocAligned( m_nLumpUncompressedSize, 4 ) );
+				m_pData = static_cast< byte* >( MemAlloc_AllocAligned( m_nLumpUncompressedSize, 4 ) );
 				const int outSize = CLZMA::Uncompress( m_pRawData, m_pData );
 				if ( outSize != m_nLumpUncompressedSize )
 				{
@@ -228,7 +228,7 @@ public:
 			m_pData = m_pRawData + ( m_nLumpOffset - alignedOffset );
 		}
 	}
-	
+
 	~CMapLoadHelper()
 	{
 		if ( m_nLumpUncompressedSize )
@@ -240,22 +240,22 @@ public:
 			filesystem->FreeOptimalReadBuffer( m_pRawData );
 		}
 	}
-	
+
 	byte *LumpBase() const
 	{
 		return m_pData;
 	}
-	
+
 	int	LumpSize() const
 	{
 		return m_nLumpUncompressedSize ? m_nLumpUncompressedSize : m_nLumpSize;
 	}
-	
+
 	int	LumpOffset() const
 	{
 		return m_nLumpOffset;
 	}
-	
+
 	int	LumpVersion() const
 	{
 		return m_nLumpVersion;
@@ -294,7 +294,7 @@ public:
 			filesystem->Close( s_MapFileHandle );
 			s_MapFileHandle = FILESYSTEM_INVALID_HANDLE;
 			Warning( "CMapLoadHelper::Init, map %s has wrong version (%i when expecting %i)\n", loadname,
-				s_MapHeader.version, BSPVERSION );
+					 s_MapHeader.version, BSPVERSION );
 		}
 	}
 
@@ -311,7 +311,7 @@ public:
 			s_MapFileHandle = FILESYSTEM_INVALID_HANDLE;
 		}
 
-		s_szLoadName[ 0 ] = 0;
+		s_szLoadName[0] = 0;
 		V_memset( &s_MapHeader, 0, sizeof( s_MapHeader ) );
 	}
 
@@ -323,9 +323,6 @@ private:
 	byte				*m_pRawData;
 	byte				*m_pData;
 
-	// Handling for lump files
-	int					m_nLumpID;
-	
 	static dheader_t		s_MapHeader;
 	static FileHandle_t		s_MapFileHandle;
 	static char				s_szLoadName[64];
@@ -340,7 +337,7 @@ static void CollisionBSPData_LoadLeafs( CCollisionBSPData* );
 static void CollisionBSPData_LoadVisibility( CCollisionBSPData* );
 static void CollisionBSPData_LoadNodes( CCollisionBSPData* );
 static void CollisionBSPData_LoadPlanes( CCollisionBSPData* );
-static bool CollisionBSPData_Load( CCollisionBSPData *pBSPData )
+static void CollisionBSPData_Load( CCollisionBSPData *pBSPData )
 {
 	COM_TimestampedLog( "  CollisionBSPData_LoadPlanes" );
 	CollisionBSPData_LoadPlanes( pBSPData );
@@ -353,35 +350,33 @@ static bool CollisionBSPData_Load( CCollisionBSPData *pBSPData )
 
 	COM_TimestampedLog( "  CollisionBSPData_LoadVisibility" );
 	CollisionBSPData_LoadVisibility( pBSPData );
-
-	return true;
 }
 
 static void CollisionBSPData_LoadLeafs_Version_0( CCollisionBSPData *pBSPData, CMapLoadHelper &lh )
 {
-	dleaf_version_0_t *in = reinterpret_cast<dleaf_version_0_t *>( lh.LumpBase() );
+	dleaf_version_0_t *in = reinterpret_cast< dleaf_version_0_t * >( lh.LumpBase() );
 	if ( lh.LumpSize() % sizeof( dleaf_version_0_t ) )
-		Warning( "CollisionBSPData_LoadLeafs: funny lump size");
+		Warning( "CollisionBSPData_LoadLeafs: funny lump size" );
 
 	int count = lh.LumpSize() / sizeof( dleaf_version_0_t );
 
-	if (count < 1)
-		Warning( "Map with no leafs");
+	if ( count < 1 )
+		Warning( "Map with no leafs" );
 
 	// need to save space for box planes
-	if (count > MAX_MAP_PLANES)
-		Warning( "Map has too many planes");
+	if ( count > MAX_MAP_PLANES )
+		Warning( "Map has too many planes" );
 
 	// Need an extra one for the emptyleaf below
-	int nSize = (count + 1) * sizeof(cleaf_t);
+	int nSize = ( count + 1 ) * sizeof( cleaf_t );
 	pBSPData->map_leafs.Attach( count + 1, Hunk_Alloc<cleaf_t>( nSize ) );
 
 	pBSPData->numleafs = count;
 	pBSPData->numclusters = 0;
 
-	for ( int i = 0 ; i<count ; i++, in++ )
+	for ( int i = 0; i < count; i++, in++ )
 	{
-		cleaf_t	*out = &pBSPData->map_leafs[i];	
+		cleaf_t	*out = &pBSPData->map_leafs[i];
 		out->contents = in->contents;
 		out->cluster = in->cluster;
 		out->area = in->area;
@@ -391,46 +386,46 @@ static void CollisionBSPData_LoadLeafs_Version_0( CCollisionBSPData *pBSPData, C
 
 		out->dispCount = 0;
 
-		if (out->cluster >= pBSPData->numclusters)
+		if ( out->cluster >= pBSPData->numclusters )
 		{
 			pBSPData->numclusters = out->cluster + 1;
 		}
 	}
 
-	if (pBSPData->map_leafs[0].contents != CONTENTS_SOLID)
-		Warning( "Map leaf 0 is not CONTENTS_SOLID");
+	if ( pBSPData->map_leafs[0].contents != CONTENTS_SOLID )
+		Warning( "Map leaf 0 is not CONTENTS_SOLID" );
 
 	pBSPData->solidleaf = 0;
 	pBSPData->emptyleaf = pBSPData->numleafs;
-	V_memset( &pBSPData->map_leafs[pBSPData->emptyleaf], 0, sizeof(pBSPData->map_leafs[pBSPData->emptyleaf]) );
+	V_memset( &pBSPData->map_leafs[pBSPData->emptyleaf], 0, sizeof( pBSPData->map_leafs[pBSPData->emptyleaf] ) );
 	pBSPData->numleafs++;
 }
 
 static void CollisionBSPData_LoadLeafs_Version_1( CCollisionBSPData *pBSPData, CMapLoadHelper &lh )
 {
-	dleaf_t *in = reinterpret_cast<dleaf_t *>( lh.LumpBase() );
+	dleaf_t *in = reinterpret_cast< dleaf_t * >( lh.LumpBase() );
 	if ( lh.LumpSize() % sizeof( dleaf_t ) )
-		Warning( "CollisionBSPData_LoadLeafs: funny lump size");
+		Warning( "CollisionBSPData_LoadLeafs: funny lump size" );
 
 	int count = lh.LumpSize() / sizeof( dleaf_t );
 
-	if (count < 1)
-		Warning( "Map with no leafs");
+	if ( count < 1 )
+		Warning( "Map with no leafs" );
 
 	// need to save space for box planes
-	if (count > MAX_MAP_PLANES)
-		Warning( "Map has too many planes");
+	if ( count > MAX_MAP_PLANES )
+		Warning( "Map has too many planes" );
 
 	// Need an extra one for the emptyleaf below
-	int nSize = (count + 1) * sizeof(cleaf_t);
+	int nSize = ( count + 1 ) * sizeof( cleaf_t );
 	pBSPData->map_leafs.Attach( count + 1, Hunk_Alloc<cleaf_t>( nSize ) );
 
 	pBSPData->numleafs = count;
 	pBSPData->numclusters = 0;
 
-	for ( int i = 0 ; i<count ; i++, in++ )
+	for ( int i = 0; i < count; i++, in++ )
 	{
-		cleaf_t	*out = &pBSPData->map_leafs[i];	
+		cleaf_t	*out = &pBSPData->map_leafs[i];
 		out->contents = in->contents;
 		out->cluster = in->cluster;
 		out->area = in->area;
@@ -440,25 +435,25 @@ static void CollisionBSPData_LoadLeafs_Version_1( CCollisionBSPData *pBSPData, C
 
 		out->dispCount = 0;
 
-		if (out->cluster >= pBSPData->numclusters)
+		if ( out->cluster >= pBSPData->numclusters )
 		{
 			pBSPData->numclusters = out->cluster + 1;
 		}
 	}
 
-	if (pBSPData->map_leafs[0].contents != CONTENTS_SOLID)
-		Warning( "Map leaf 0 is not CONTENTS_SOLID");
+	if ( pBSPData->map_leafs[0].contents != CONTENTS_SOLID )
+		Warning( "Map leaf 0 is not CONTENTS_SOLID" );
 
 	pBSPData->solidleaf = 0;
 	pBSPData->emptyleaf = pBSPData->numleafs;
-	V_memset( &pBSPData->map_leafs[pBSPData->emptyleaf], 0, sizeof(pBSPData->map_leafs[pBSPData->emptyleaf]) );
+	V_memset( &pBSPData->map_leafs[pBSPData->emptyleaf], 0, sizeof( pBSPData->map_leafs[pBSPData->emptyleaf] ) );
 	pBSPData->numleafs++;
 }
 
 static void CollisionBSPData_LoadLeafs( CCollisionBSPData *pBSPData )
 {
 	CMapLoadHelper lh( LUMP_LEAFS );
-	switch( lh.LumpVersion() )
+	switch ( lh.LumpVersion() )
 	{
 	case 0:
 		CollisionBSPData_LoadLeafs_Version_0( pBSPData, lh );
@@ -497,7 +492,7 @@ static void CollisionBSPData_LoadNodes( CCollisionBSPData *pBSPData )
 {
 	CMapLoadHelper lh( LUMP_NODES );
 
-	dnode_t *in = reinterpret_cast<dnode_t *>( lh.LumpBase() );
+	dnode_t *in = reinterpret_cast< dnode_t * >( lh.LumpBase() );
 	if ( lh.LumpSize() % sizeof( dnode_t ) )
 		Warning( "CollisionBSPData_LoadNodes: funny lump size" );
 	int count = lh.LumpSize() / sizeof( dnode_t );
@@ -515,11 +510,11 @@ static void CollisionBSPData_LoadNodes( CCollisionBSPData *pBSPData )
 	pBSPData->numnodes = count;
 	pBSPData->map_rootnode = pBSPData->map_nodes.Base();
 
-	for ( int i = 0; i<count; i++, in++ )
+	for ( int i = 0; i < count; i++, in++ )
 	{
 		cnode_t	*out = &pBSPData->map_nodes[i];
 		out->plane = &pBSPData->map_planes[in->planenum];
-		for ( int j = 0; j<2; j++ )
+		for ( int j = 0; j < 2; j++ )
 		{
 			out->children[j] = in->children[j];
 		}
@@ -530,7 +525,7 @@ static void CollisionBSPData_LoadPlanes( CCollisionBSPData *pBSPData )
 {
 	CMapLoadHelper lh( LUMP_PLANES );
 
-	dplane_t *in = reinterpret_cast<dplane_t *>( lh.LumpBase() );
+	dplane_t *in = reinterpret_cast< dplane_t * >( lh.LumpBase() );
 	if ( lh.LumpSize() % sizeof( dplane_t ) )
 		Warning( "CollisionBSPData_LoadPlanes: funny lump size" );
 
@@ -547,11 +542,11 @@ static void CollisionBSPData_LoadPlanes( CCollisionBSPData *pBSPData )
 	pBSPData->map_planes.Attach( count, Hunk_Alloc<cplane_t>( nSize ) );
 	pBSPData->numplanes = count;
 
-	for ( int i = 0; i<count; i++, in++ )
+	for ( int i = 0; i < count; i++, in++ )
 	{
 		cplane_t *out = &pBSPData->map_planes[i];
 		int bits = 0;
-		for ( int j = 0; j<3; j++ )
+		for ( int j = 0; j < 3; j++ )
 		{
 			out->normal[j] = in->normal[j];
 			if ( out->normal[j] < 0 )
@@ -578,7 +573,7 @@ static bool CollisionBSPData_Init( CCollisionBSPData *pBSPData )
 static void CollisionBSPData_PreLoad( CCollisionBSPData *pBSPData )
 {
 	// initialize the collision bsp data
-	CollisionBSPData_Init( pBSPData ); 
+	CollisionBSPData_Init( pBSPData );
 }
 
 static CCollisionBSPData* GetCollisionBSPData()
@@ -638,7 +633,7 @@ static void CM_LoadMap( const char *name )
 	// read in the collision model data
 	CMapLoadHelper::Init( name );
 	CollisionBSPData_Load( pBSPData );
-	CMapLoadHelper::Shutdown( );
+	CMapLoadHelper::Shutdown();
 }
 
 static int	CM_NumClusters()
@@ -648,10 +643,10 @@ static int	CM_NumClusters()
 
 static void CM_NullVis( CCollisionBSPData *pBSPData, byte *out )
 {
-	int numClusterBytes = (pBSPData->numclusters+7)>>3;	
+	int numClusterBytes = ( pBSPData->numclusters + 7 ) >> 3;
 	byte *out_p = out;
 
-	while (numClusterBytes)
+	while ( numClusterBytes )
 	{
 		*out_p++ = 0xff;
 		numClusterBytes--;
@@ -674,25 +669,25 @@ static void CM_DecompressVis( CCollisionBSPData *pBSPData, int cluster, int visT
 
 	// no vis info, so make all visible
 	if ( !pBSPData->numvisibility || !pBSPData->map_vis )
-	{	
+	{
 		CM_NullVis( pBSPData, out );
-		return;		
+		return;
 	}
 
-	byte *in = reinterpret_cast<byte *>( pBSPData->map_vis ) + pBSPData->map_vis->bitofs[cluster][visType];
-	int numClusterBytes = (pBSPData->numclusters+7)>>3;	
+	byte *in = reinterpret_cast< byte * >( pBSPData->map_vis ) + pBSPData->map_vis->bitofs[cluster][visType];
+	int numClusterBytes = ( pBSPData->numclusters + 7 ) >> 3;
 	byte *out_p = out;
 
 	// no vis info, so make all visible
 	if ( !in )
-	{	
+	{
 		CM_NullVis( pBSPData, out );
-		return;		
+		return;
 	}
 
 	do
 	{
-		if (*in)
+		if ( *in )
 		{
 			*out_p++ = *in++;
 			continue;
@@ -700,17 +695,17 @@ static void CM_DecompressVis( CCollisionBSPData *pBSPData, int cluster, int visT
 
 		int c = in[1];
 		in += 2;
-		if ((out_p - out) + c > numClusterBytes)
+		if ( ( out_p - out ) + c > numClusterBytes )
 		{
-			c = numClusterBytes - (out_p - out);
+			c = numClusterBytes - ( out_p - out );
 			DevWarning( "Vis decompression overrun\n" );
 		}
-		while (c)
+		while ( c )
 		{
 			*out_p++ = 0;
 			c--;
 		}
-	} while (out_p - out < numClusterBytes);
+	} while ( out_p - out < numClusterBytes );
 }
 
 static void CM_Vis( byte *dest, int destlen, int cluster, int visType )
@@ -720,19 +715,19 @@ static void CM_Vis( byte *dest, int destlen, int cluster, int visType )
 
 	if ( !dest || visType > 2 || visType < 0 )
 	{
-		Warning( "CM_Vis: error");
+		Warning( "CM_Vis: error" );
 		return;
 	}
 
 	if ( cluster == -1 )
 	{
-		int len = (pBSPData->numclusters+7)>>3;
+		int len = ( pBSPData->numclusters + 7 ) >> 3;
 		if ( len > destlen )
 		{
 			Warning( "CM_Vis:  buffer not big enough (%i but need %i)\n",
-				destlen, len );
+					 destlen, len );
 		}
-		V_memset( dest, 0, (pBSPData->numclusters+7)>>3 );
+		V_memset( dest, 0, ( pBSPData->numclusters + 7 ) >> 3 );
 	}
 	else
 	{
@@ -750,19 +745,19 @@ static int	CM_LeafCluster( int leafnum )
 	return pBSPData->map_leafs[leafnum].cluster;
 }
 
-static int CM_PointLeafnum_r( CCollisionBSPData *pBSPData, const Vector& p, int num)
+static int CM_PointLeafnum_r( CCollisionBSPData *pBSPData, const Vector& p, int num )
 {
 	float d;
-	while (num >= 0)
+	while ( num >= 0 )
 	{
 		cnode_t *node = pBSPData->map_rootnode + num;
 		cplane_t *plane = node->plane;
-		
-		if (plane->type < 3)
+
+		if ( plane->type < 3 )
 			d = p[plane->type] - plane->dist;
 		else
-			d = DotProduct (plane->normal, p) - plane->dist;
-		if (d < 0)
+			d = DotProduct( plane->normal, p ) - plane->dist;
+		if ( d < 0 )
 			num = node->children[1];
 		else
 			num = node->children[0];
@@ -771,7 +766,7 @@ static int CM_PointLeafnum_r( CCollisionBSPData *pBSPData, const Vector& p, int 
 	return -1 - num;
 }
 
-static int CM_PointLeafnum (const Vector& p)
+static int CM_PointLeafnum( const Vector& p )
 {
 	// get the current collision bsp -- there is only one!
 	CCollisionBSPData *pBSPData = GetCollisionBSPData();
@@ -779,7 +774,7 @@ static int CM_PointLeafnum (const Vector& p)
 	if ( !pBSPData->numnodes )
 		return 0;
 
-	return CM_PointLeafnum_r(pBSPData, p, 0);
+	return CM_PointLeafnum_r( pBSPData, p, 0 );
 }
 #pragma endregion
 
@@ -788,9 +783,9 @@ int GetClusterForOrigin( const Vector& org )
 	return CM_LeafCluster( CM_PointLeafnum( org ) );
 }
 
-int GetPVSForCluster( int clusterIndex, int outputpvslength, unsigned char *outputpvs )
+int GetPVSForCluster( int clusterIndex, int outputpvslength, byte *outputpvs )
 {
-	int length = (CM_NumClusters()+7)>>3;
+	int length = ( CM_NumClusters() + 7 ) >> 3;
 
 	if ( outputpvs )
 	{
@@ -799,32 +794,27 @@ int GetPVSForCluster( int clusterIndex, int outputpvslength, unsigned char *outp
 			Warning( "GetPVSForOrigin called with inusfficient sized pvs array, need %i bytes!", length );
 			return length;
 		}
-		
+
 		CM_Vis( outputpvs, outputpvslength, clusterIndex, DVIS_PVS );
 	}
 
 	return length;
 }
 
-bool CheckOriginInPVS( const Vector& org, const unsigned char *checkpvs, int checkpvssize )
+bool CheckOriginInPVS( const Vector& org, const byte* checkpvs, int checkpvssize )
 {
-	int clusterIndex = GetClusterForOrigin( org );
-	
+	const int clusterIndex = GetClusterForOrigin( org );
+
 	if ( clusterIndex < 0 )
 		return false;
-		
-	int offset = clusterIndex>>3;
+
+	const int offset = clusterIndex >> 3;
 	if ( offset > checkpvssize )
 	{
 		Warning( "CheckOriginInPVS:  cluster would read past end of pvs data (%i:%i)\n",
-			offset, checkpvssize );
+				 offset, checkpvssize );
 		return false;
 	}
-		
-	if ( !(checkpvs[offset] & (1<<(clusterIndex&7)) ) )
-	{
-		return false;
-	}
-		
-	return true;
+
+	return ( checkpvs[offset] & ( 1 << ( clusterIndex & 7 ) ) ) != 0;
 }
