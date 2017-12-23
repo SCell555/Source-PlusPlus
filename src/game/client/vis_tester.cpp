@@ -16,14 +16,14 @@ template <typename T> static T* Hunk_Alloc( size_t s, bool clear = true )
 
 static void CM_LoadMap( const char* name );
 static void CM_FreeMap();
-static class TEST : public CAutoGameSystem
+static class CVisMemoryManager : public CAutoGameSystem
 {
 public:
-	TEST() : CAutoGameSystem( "visMemoryManager" ) {}
+	CVisMemoryManager() : CAutoGameSystem( "visMemoryManager" ) {}
 
 	bool Init() OVERRIDE
 	{
-		const int nMaxBytes = 48*  1024*  1024;
+		const int nMaxBytes = 48 * 1024 * 1024;
 		const int nMinCommitBytes = 0x8000;
 		const int nInitialCommit = 0x280000;
 		g_MemStack.Init( nMaxBytes, nMinCommitBytes, nInitialCommit );
@@ -35,7 +35,7 @@ public:
 		g_MemStack.Term();
 	}
 
-	void LevelInitPostEntity() OVERRIDE
+	void LevelInitPreEntity() OVERRIDE
 	{
 		CM_LoadMap( VarArgs( "maps/%s.bsp", MapName() ) );
 	}
@@ -126,12 +126,12 @@ public:
 	CRangeValidatedArray<cnode_t>		map_nodes;
 	int									numleafs;				// allow leaf funcs to be called without a map
 	CRangeValidatedArray<cleaf_t>		map_leafs;
-	int									emptyleaf, solidleaf;
+	int									emptyleaf;
 
 	// this points to the whole block of memory for vis data, but it is used to
 	// reference the header at the top of the block.
 	int									numvisibility;
-	dvis_t								*map_vis;
+	dvis_t*								map_vis;
 
 	int									numclusters;
 };
@@ -377,7 +377,6 @@ static void CollisionBSPData_LoadLeafs_Version_0( CCollisionBSPData* pBSPData, C
 	if ( pBSPData->map_leafs[0].contents != CONTENTS_SOLID )
 		Warning( "Map leaf 0 is not CONTENTS_SOLID" );
 
-	pBSPData->solidleaf = 0;
 	pBSPData->emptyleaf = pBSPData->numleafs;
 	V_memset( &pBSPData->map_leafs[pBSPData->emptyleaf], 0, sizeof( pBSPData->map_leafs[pBSPData->emptyleaf] ) );
 	pBSPData->numleafs++;
@@ -426,7 +425,6 @@ static void CollisionBSPData_LoadLeafs_Version_1( CCollisionBSPData* pBSPData, C
 	if ( pBSPData->map_leafs[0].contents != CONTENTS_SOLID )
 		Warning( "Map leaf 0 is not CONTENTS_SOLID" );
 
-	pBSPData->solidleaf = 0;
 	pBSPData->emptyleaf = pBSPData->numleafs;
 	V_memset( &pBSPData->map_leafs[pBSPData->emptyleaf], 0, sizeof( pBSPData->map_leafs[pBSPData->emptyleaf] ) );
 	pBSPData->numleafs++;
@@ -583,7 +581,6 @@ static void CM_FreeMap()
 
 	pBSPData->numplanes = 0;
 	pBSPData->emptyleaf = 0;
-	pBSPData->solidleaf = 0;
 	pBSPData->numnodes = 0;
 	pBSPData->numleafs = 0;
 	pBSPData->numclusters = 0;

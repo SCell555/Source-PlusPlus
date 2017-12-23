@@ -114,11 +114,8 @@ void CWorldLights::Clear()
 //-----------------------------------------------------------------------------
 void CWorldLights::LevelInitPreEntity()
 {
-	// Get the map path
-	const char *pszMapName = modelinfo->GetModelName( modelinfo->GetModel( 1 ) );
-
 	// Open map
-	FileHandle_t hFile = g_pFullFileSystem->Open( pszMapName, "rb" );
+	FileHandle_t hFile = g_pFullFileSystem->Open( VarArgs( "maps/%s.bsp", MapName() ), "rb" );
 	if ( !hFile )
 	{
 		Warning( "CWorldLights: unable to open map\n" );
