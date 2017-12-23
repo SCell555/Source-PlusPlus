@@ -6,6 +6,8 @@
 // Author: Saul Rennison
 //
 //===========================================================================//
+#ifndef WORLDLIGHT_H
+#define WORLDLIGHT_H
 
 #pragma once
 
@@ -31,10 +33,7 @@ public:
 	// CAutoGameSystem overrides
 public:
 	virtual void LevelInitPreEntity();
-	virtual void LevelInitPostEntity();
 	virtual void LevelShutdownPostEntity() { Clear(); }
-
-	virtual void PreRender();
 
 private:
 	void Clear();
@@ -47,3 +46,5 @@ private:
 // Singleton exposure
 //-----------------------------------------------------------------------------
 extern CWorldLights *g_pWorldLights;
+
+#endif // WORLDLIGHT_H
