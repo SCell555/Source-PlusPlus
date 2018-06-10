@@ -236,6 +236,7 @@ $Project
 		$File	"c_baseviewmodel.cpp"
 		$File	"c_breakableprop.cpp"
 		$File	"c_colorcorrection.cpp"
+		$File	"c_colorcorrection.h"
 		$File	"c_colorcorrectionvolume.cpp"
 		$File	"c_dynamiclight.cpp"
 		$File	"c_entitydissolve.cpp"
@@ -1256,6 +1257,7 @@ $Project
 		$Lib		mathlib
 		$Lib		matsys_controls
 		$Lib		particles
+		$Lib		raytrace
 		$Lib		tier1
 		$Lib		tier2
 		$Lib		tier3
