@@ -139,7 +139,7 @@ void CHUDQuickInfo::VidInit( void )
 
 void CHUDQuickInfo::DrawWarning( int x, int y, CHudTexture *icon, float &time )
 {
-	float scale	= (int)( fabs(sin(gpGlobals->curtime*8.0f)) * 128.0);
+	float scale	= (int)( fabsf(sin(gpGlobals->curtime*8.0f)) * 128.0);
 
 	// Only fade out at the low point of our blink
 	if ( time <= (gpGlobals->frametime * 200.0f) )

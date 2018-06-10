@@ -49,7 +49,7 @@ public:
 		pParticle->m_flRollDelta += pParticle->m_flRollDelta * ( timeDelta * -2.0f );
 
 		//Cap the minimum roll
-		if ( fabs( pParticle->m_flRollDelta ) < 0.5f )
+		if ( fabsf( pParticle->m_flRollDelta ) < 0.5f )
 		{
 			pParticle->m_flRollDelta = ( pParticle->m_flRollDelta > 0.0f ) ? 0.5f : -0.5f;
 		}

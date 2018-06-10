@@ -292,7 +292,7 @@ void CAI_Spotlight::UpdateSpotlightDirection( void )
 	float flAngle = AngleNormalize( RAD2DEG( acos( flDot ) ) );
 	float flClampedAngle = clamp( flAngle, 0.0f, 45.0f );
 	float flBeamTurnRate = SimpleSplineRemapVal( flClampedAngle, 0.0f, 45.0f, 10.0f, 45.0f );
-	if ( fabs(flAngle) > flBeamTurnRate * gpGlobals->frametime )
+	if ( fabsf(flAngle) > flBeamTurnRate * gpGlobals->frametime )
 	{
 		flAngle = flBeamTurnRate * gpGlobals->frametime;
 	}
@@ -377,7 +377,7 @@ void CAI_Spotlight::UpdateSpotlightEndpoint( void )
 	// Adjust end width to keep beam width constant
 	float flNewWidth = SPOTLIGHT_WIDTH * ( flBeamLength / m_flSpotlightMaxLength );
 	
-	flNewWidth = MIN( 100, flNewWidth );
+	flNewWidth = MIN( 100.f, flNewWidth );
 
 	m_hSpotlight->SetWidth(flNewWidth);
 	m_hSpotlight->SetEndWidth(flNewWidth);

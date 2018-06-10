@@ -106,52 +106,6 @@ const char *MDkeyvalue::Value(void) const
 typedef CUtlVector<MDkeyvalue> KeyValueArray;
 
 
-// Used in cases where there can be duplicate key names.
-class WCKVBase_Vector
-{
-public:
-	
-	// Iteration helpers.
-	inline int GetCount() const			{ return m_KeyValues.Count(); }
-	inline int GetFirst() const			{ return m_KeyValues.Count() - 1; }
-	inline int GetNext( int i ) const	{ return i - 1; }
-	static inline int GetInvalidIndex()	{ return -1; }
-
-	void RemoveKeyAt(int nIndex);
-	int FindByKeyName( const char *pKeyName ) const; // Returns the same value as GetInvalidIndex if not found.
-
-	// Special function used for non-unique keyvalue lists.
-	void AddKeyValue(const char *pszKey, const char *pszValue);
-
-protected:
-
-	void InsertKeyValue( const MDkeyvalue &kv );
-
-protected:
-	CUtlVector<MDkeyvalue> m_KeyValues;
-};
-
-// Used for most key/value sets because it's fast. Does not allow duplicate key names.
-class WCKVBase_Dict
-{
-public:
-
-	// Iteration helpers. Note that there is no GetCount() because you can't iterate
-	// these by incrementing a counter.
-	inline int GetFirst() const			{ return m_KeyValues.First(); }
-	inline int GetNext( int i ) const	{ return m_KeyValues.Next( i ); }
-	static inline int GetInvalidIndex()	{ return CUtlDict<MDkeyvalue,unsigned short>::InvalidIndex(); }
-
-	int FindByKeyName( const char *pKeyName ) const; // Returns the same value as GetInvalidIndex if not found.
-	void RemoveKeyAt(int nIndex);
-
-protected:
-	void InsertKeyValue( const MDkeyvalue &kv );
-
-protected:
-	CUtlDict<MDkeyvalue,unsigned short> m_KeyValues;
-};
-
 
 // See below for typedefs of this class you can use.
 template<class Base>
@@ -175,6 +129,55 @@ public:
 	const char *GetValue(const char *pszKey, int *piIndex = NULL) const;
 };
 
+// Used in cases where there can be duplicate key names.
+class WCKVBase_Vector
+{
+public:
+	
+	// Iteration helpers.
+	inline int GetCount() const			{ return m_KeyValues.Count(); }
+	inline int GetFirst() const			{ return m_KeyValues.Count() - 1; }
+	inline int GetNext( int i ) const	{ return i - 1; }
+	static inline int GetInvalidIndex()	{ return -1; }
+
+	void RemoveKeyAt( int nIndex );
+	int FindByKeyName( const char *pKeyName ) const; // Returns the same value as GetInvalidIndex if not found.
+
+	// Special function used for non-unique keyvalue lists.
+	void AddKeyValue( const char *pszKey, const char *pszValue );
+
+protected:
+
+	void InsertKeyValue( const MDkeyvalue &kv );
+
+protected:
+	CUtlVector<MDkeyvalue> m_KeyValues;
+
+	friend class WCKeyValuesT<WCKVBase_Vector>;
+};
+
+// Used for most key/value sets because it's fast. Does not allow duplicate key names.
+class WCKVBase_Dict
+{
+public:
+
+	// Iteration helpers. Note that there is no GetCount() because you can't iterate
+	// these by incrementing a counter.
+	inline int GetFirst() const			{ return m_KeyValues.First(); }
+	inline int GetNext( int i ) const	{ return m_KeyValues.Next( i ); }
+	static inline int GetInvalidIndex() { return CUtlDict<MDkeyvalue, unsigned short>::InvalidIndex(); }
+
+	int FindByKeyName( const char *pKeyName ) const; // Returns the same value as GetInvalidIndex if not found.
+	void RemoveKeyAt( int nIndex );
+
+protected:
+	void InsertKeyValue( const MDkeyvalue &kv );
+
+protected:
+	CUtlDict<MDkeyvalue, unsigned short> m_KeyValues;
+
+	friend class WCKeyValuesT<WCKVBase_Dict>;
+};
 
 // These have explicit template instantiations so you can use them.
 typedef WCKeyValuesT<WCKVBase_Dict> WCKeyValues;
@@ -188,7 +191,7 @@ typedef WCKeyValuesT<WCKVBase_Vector> WCKeyValuesVector;
 template<class Base>
 inline const char *WCKeyValuesT<Base>::GetKey(int nIndex) const
 {
-	return(m_KeyValues.Element(nIndex).szKey);
+	return(((Base*) this)->m_KeyValues.Element(nIndex).szKey);
 }
 
 
@@ -200,7 +203,7 @@ inline const char *WCKeyValuesT<Base>::GetKey(int nIndex) const
 template<class Base>
 inline MDkeyvalue &WCKeyValuesT<Base>::GetKeyValue(int nIndex)
 {
-	return(m_KeyValues.Element(nIndex));
+	return(((Base*) this)->m_KeyValues.Element(nIndex));
 }
 
 
@@ -212,7 +215,7 @@ inline MDkeyvalue &WCKeyValuesT<Base>::GetKeyValue(int nIndex)
 template<class Base>
 inline const MDkeyvalue& WCKeyValuesT<Base>::GetKeyValue(int nIndex) const
 {
-	return(m_KeyValues.Element(nIndex));
+	return(((Base*) this)->m_KeyValues.Element(nIndex));
 }
 
 
@@ -223,7 +226,7 @@ inline const MDkeyvalue& WCKeyValuesT<Base>::GetKeyValue(int nIndex) const
 template<class Base>
 inline const char *WCKeyValuesT<Base>::GetValue(int nIndex) const
 {
-	return(m_KeyValues.Element(nIndex).szValue);
+	return(((Base*) this)->m_KeyValues.Element(nIndex).szValue);
 }
 
 

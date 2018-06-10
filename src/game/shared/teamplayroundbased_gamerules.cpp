@@ -3399,7 +3399,7 @@ float CTeamplayRoundBasedRules::GetRespawnWaveMaxLength( int iTeam, bool bScaleW
 	// For long respawn times, scale the time as the number of players drops
 	if ( bScaleWithNumPlayers && flTime > 5 )
 	{
-		flTime = MAX( 5, flTime * GetRespawnTimeScalar(iTeam) );
+		flTime = MAX( 5.f, flTime * GetRespawnTimeScalar(iTeam) );
 	}
 
 	return flTime;

@@ -748,7 +748,7 @@ void CNPC_BaseScanner::AttackDivebombCollide(float flInterval)
 			if (vBounceVel.z < 0)
 			{
 				float floorZ = GetFloorZ(GetAbsOrigin());
-				if (fabsf(GetAbsOrigin().z - floorZ) < 36.0f)
+				if (fabsf(GetAbsOrigin().z - floorZ) < 36)
 				{
 					vBounceVel.z = 0;
 				}
@@ -813,7 +813,7 @@ void CNPC_BaseScanner::PlayFlySound(void)
 
 	float	speed	 = GetCurrentVelocity().Length();
 	float	flVolume = 0.25f + (0.75f*(speed/GetMaxSpeed()));
-	int		iPitch	 = MIN( 255, 80 + (20*(speed/GetMaxSpeed())) );
+	int		iPitch	 = MIN( 255.f, 80 + (20*(speed/GetMaxSpeed())) );
 
 	//Update our pitch and volume based on our speed
 	controller.SoundChangePitch( m_pEngineSound, iPitch, 0.1f );

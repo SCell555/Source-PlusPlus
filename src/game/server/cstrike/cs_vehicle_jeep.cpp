@@ -489,7 +489,7 @@ void CPropJeep::AimGunAt( Vector *endPos, float flInterval )
 	float newTargetPitch = clamp( targetPitch, -CANNON_MAX_DOWN_PITCH, CANNON_MAX_UP_PITCH );
 
 	// If the angles have been clamped, we're looking outside of our valid range
-	if ( fabs(newTargetYaw-targetYaw) > 1e-4 || fabs(newTargetPitch-targetPitch) > 1e-4 )
+	if ( fabsf(newTargetYaw-targetYaw) > 1e-4 || fabsf(newTargetPitch-targetPitch) > 1e-4 )
 	{
 		m_bUnableToFire = true;
 	}
@@ -1398,7 +1398,7 @@ void CPropJeep::CreateDangerSounds( void )
 	const float soundDuration = 0.25;
 	float speed = m_VehiclePhysics.GetHLSpeed();
 	// Make danger sounds ahead of the jeep
-	if ( fabs(speed) > 120 )
+	if ( fabsf(speed) > 120 )
 	{
 		Vector	vecSpot;
 

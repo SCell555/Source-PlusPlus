@@ -890,7 +890,6 @@ void CNPC_Manhack::OnStateChange( NPC_STATE OldState, NPC_STATE NewState )
 //-----------------------------------------------------------------------------
 void CNPC_Manhack::HandleAnimEvent( animevent_t *pEvent )
 {
-	Vector vecNewVelocity;
 	switch( pEvent->event )
 	{
 	case MANHACK_AE_START_ENGINE:
@@ -1096,7 +1095,7 @@ void CNPC_Manhack::MaintainGroundHeight( void )
 
 	if ( tr.fraction != 1.0f )
 	{
-		float speedAdj = MAX( 16, (-zSpeed*0.5f) );
+		float speedAdj = MAX( 16.f, (-zSpeed*0.5f) );
 
 		m_vForceVelocity += Vector(0,0,1) * ( speedAdj * ( 1.0f - tr.fraction ) );
 	}
@@ -1253,7 +1252,7 @@ void CNPC_Manhack::MoveToTarget(float flInterval, const Vector &vMoveTarget)
 		if ( GetEnemy() != NULL )
 		{
 			Vector steerDir = ( GetEnemy()->EyePosition() - GetAbsOrigin() );
-			zDist = fabs( steerDir.z );
+			zDist = fabsf( steerDir.z );
 			VectorNormalize( steerDir );
 
 			float useTime = flInterval;
@@ -1285,7 +1284,7 @@ void CNPC_Manhack::MoveToTarget(float flInterval, const Vector &vMoveTarget)
 #else
 		myAccel	 = 400;
 #endif // _XBOX
-		myZAccel = MIN( 500, zDist / flInterval );
+		myZAccel = MIN( 500.f, zDist / flInterval );
 	}
 	else
 	{
@@ -1590,7 +1589,7 @@ void CNPC_Manhack::Bump( CBaseEntity *pHitEntity, float flInterval, trace_t &tr 
 		if (moveVec.z < 0)
 		{
 			float floorZ = GetFloorZ(GetAbsOrigin());
-			if (fabsf(GetAbsOrigin().z - floorZ) < 36.0f)
+			if (fabsf(GetAbsOrigin().z - floorZ) < 36)
 			{
 				moveVec.z = 0;
 			}
@@ -1600,7 +1599,7 @@ void CNPC_Manhack::Bump( CBaseEntity *pHitEntity, float flInterval, trace_t &tr 
 		VPhysicsGetObject()->LocalToWorldVector( &myUp, Vector( 0.0, 0.0, 1.0 ) );
 
 		// plane must be something that could hit the blades
-		if (fabs( DotProduct( myUp, tr.plane.normal ) ) < 0.25 )
+		if (fabsf( DotProduct( myUp, tr.plane.normal ) ) < 0.25 )
 		{
 			CEffectData data;
 			Vector velocity = GetCurrentVelocity();
@@ -1623,7 +1622,7 @@ void CNPC_Manhack::Bump( CBaseEntity *pHitEntity, float flInterval, trace_t &tr 
 			AngularImpulse vecAngVelocity;
 			VPhysicsGetObject()->GetVelocity( &vecVelocity, &vecAngVelocity );
 			float flDot = DotProduct( myUp, vecAngVelocity );
-			if ( fabs(flDot) < 100 )
+			if ( fabsf(flDot) < 100 )
 			{
 				//AngularImpulse torque = myUp * (1000 - flDot * 10);
 				AngularImpulse torque = myUp * (1000 - flDot * 2);
@@ -1811,11 +1810,11 @@ void CNPC_Manhack::PlayFlySound(void)
 			int iPitch1, iPitch2;
 			float flDistFactor;
 
-			flDistFactor = MIN( 1.0, 1 - flEnemyDist / MANHACK_PITCH_DIST1 ); 
+			flDistFactor = MIN( 1.f, 1 - flEnemyDist / MANHACK_PITCH_DIST1 );
 			iPitch1 = MANHACK_MIN_PITCH1 + ( ( MANHACK_MAX_PITCH1 - MANHACK_MIN_PITCH1 ) * flDistFactor); 
 
 			// NOTE: MANHACK_PITCH_DIST2 must be < MANHACK_PITCH_DIST1
-			flDistFactor = MIN( 1.0, 1 - flEnemyDist / MANHACK_PITCH_DIST2 ); 
+			flDistFactor = MIN( 1.f, 1 - flEnemyDist / MANHACK_PITCH_DIST2 );
 			iPitch2 = MANHACK_MIN_PITCH2 + ( ( MANHACK_MAX_PITCH2 - MANHACK_MIN_PITCH2 ) * flDistFactor); 
 
 			m_nEnginePitch1 = iPitch1;
@@ -1953,7 +1952,7 @@ void CNPC_Manhack::MoveExecute_Alive(float flInterval)
 	else if( GetWaterLevel() > 0 )
 	{
 		// Allow the manhack to lift off, but not to go deeper.
-		m_vCurrentVelocity.z = MAX( m_vCurrentVelocity.z, 0 );
+		m_vCurrentVelocity.z = MAX( m_vCurrentVelocity.z, 0.f );
 	}
 
 	CheckCollisions(flInterval);
@@ -2223,7 +2222,7 @@ void CNPC_Manhack::GatherEnemyConditions( CBaseEntity *pEnemy )
 	else
 	{
 		float targetZ	= pEnemy->EyePosition().z;
-		if (fabs(GetAbsOrigin().z - targetZ) < flZDist)
+		if (fabsf(GetAbsOrigin().z - targetZ) < flZDist)
 		{
 			SetCondition(COND_MANHACK_START_ATTACK);
 		}

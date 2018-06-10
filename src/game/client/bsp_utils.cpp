@@ -110,11 +110,7 @@ void BSP_BackgroundRepack( const char *pszInputMapFile,
 			}
 		}
 
-		#ifdef CLIENT_DLL
-		virtual void Update( float frametime ) OVERRIDE { CheckFinished(); }
-        #else // GAME DLL
-		virtual void FrameUpdatePostEntityThink() OVERRIDE { CheckFinished(); }
-		#endif
+		void SafeRemoveIfDesired() OVERRIDE { CheckFinished(); }
 	private:
 		CUtlString                m_strInput;
 		CUtlString                m_strOutput;

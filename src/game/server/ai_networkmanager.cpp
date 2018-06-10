@@ -2494,7 +2494,7 @@ void CAI_NetworkBuilder::InitClimbNodePosition(CAI_Network *pNetwork, CAI_Node *
 				{
 					for (int hull = 0; hull < NUM_HULLS; hull++)
 					{
-						if (fabs(pNode->m_flVOffset[hull] - new_node->m_flVOffset[hull]) > 1)
+						if (fabsf(pNode->m_flVOffset[hull] - new_node->m_flVOffset[hull]) > 1)
 						{
 							DevMsg(2, "Warning: Climb Node %i has different exit heights for hull %s\n", pNode->m_iID, NAI_Hull::Name(hull));
 						}
@@ -2945,11 +2945,11 @@ static bool IsInLineForClimb( const Vector &srcPos, const Vector &srcFacing, con
 
 	VectorNormalize( vecDelta );
 
-	float fabsCos = fabs( srcFacing.Dot( vecDelta ) );
+	float fabsCos = fabsf( srcFacing.Dot( vecDelta ) );
 
 	const float CosAngLadderStairs = 0.4472; // rise 2 & run 1
 
-	if ( fabsCos > 0.05 && fabs( fabsCos - CosAngLadderStairs ) > 0.05 )
+	if ( fabsCos > 0.05 && fabsf( fabsCos - CosAngLadderStairs ) > 0.05 )
 		return false;
 
 	// *************************** --------------------------------

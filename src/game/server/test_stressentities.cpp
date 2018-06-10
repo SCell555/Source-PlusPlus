@@ -6,6 +6,9 @@
 //=============================================================================//
 
 #include "cbase.h"
+
+#if 0
+
 #include "test_stressentities.h"
 #include "vstdlib/random.h"
 #include "world.h"
@@ -150,3 +153,4 @@ ConCommand cc_Test_SpawnRandomEntities( "Test_SpawnRandomEntities", Test_SpawnRa
 ConCommand cc_Test_RandomizeInPVS( "Test_RandomizeInPVS", Test_RandomizeInPVS, 0, FCVAR_CHEAT );
 ConCommand cc_Test_RemoveAllRandomEntities( "Test_RemoveAllRandomEntities", Test_RemoveAllRandomEntities, 0, FCVAR_CHEAT );
 
+#endif

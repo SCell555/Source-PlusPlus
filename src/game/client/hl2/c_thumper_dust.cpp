@@ -52,7 +52,7 @@ public:
 		pParticle->m_flRollDelta += pParticle->m_flRollDelta * ( timeDelta * -4.0f );
 
 		//Cap the minimum roll
-		if ( fabs( pParticle->m_flRollDelta ) < 0.25f )
+		if ( fabsf( pParticle->m_flRollDelta ) < 0.25f )
 		{
 			pParticle->m_flRollDelta = ( pParticle->m_flRollDelta > 0.0f ) ? 0.25f : -0.25f;
 		}
@@ -113,7 +113,7 @@ void FX_ThumperDust( const CEffectData &data )
 	Vector vecColor;
 	int i = 0;
 
-	float flScale = MIN( data.m_flScale, 255 );
+	float flScale = MIN( data.m_flScale, 255.f );
 
 	// Setup the color for these particles
 	engine->ComputeLighting( data.m_vOrigin, NULL, true, vecColor );

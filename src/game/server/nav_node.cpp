@@ -44,7 +44,7 @@ public:
 
 	unsigned int operator()( const CNavNode *pItem ) const
 	{
-		return Hash8( &pItem->GetPosition()->AsVector2D() );	
+		return PearsonHash::Hash8( &pItem->GetPosition()->AsVector2D() );
 	}
 };
 
@@ -422,7 +422,7 @@ CNavNode *CNavNode::GetNode( const Vector &pos )
 		{
 			for( pNode = g_pNavNodeHash->Element( hNode ); pNode; pNode = pNode->m_nextAtXY )
 			{
-				float dz = fabs( pNode->m_pos.z - pos.z );
+				float dz = fabsf( pNode->m_pos.z - pos.z );
 
 				if (dz < tolerance)
 				{
@@ -436,9 +436,9 @@ CNavNode *CNavNode::GetNode( const Vector &pos )
 	CNavNode *pTestNode = NULL;
 	for( CNavNode *node = m_list; node; node = node->m_next )
 	{
-		float dx = fabs( node->m_pos.x - pos.x );
-		float dy = fabs( node->m_pos.y - pos.y );
-		float dz = fabs( node->m_pos.z - pos.z );
+		float dx = fabsf( node->m_pos.x - pos.x );
+		float dy = fabsf( node->m_pos.y - pos.y );
+		float dz = fabsf( node->m_pos.z - pos.z );
 
 		if (dx < tolerance && dy < tolerance && dz < tolerance)
 		{

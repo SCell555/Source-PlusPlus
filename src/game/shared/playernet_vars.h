@@ -17,6 +17,11 @@
 
 // These structs are contained in each player's local data and shared by the client & server
 
+#ifdef POSIX
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsequence-point"
+#endif
+
 struct fogparams_t
 {
 	DECLARE_CLASS_NOBASE( fogparams_t );
@@ -40,10 +45,13 @@ struct fogparams_t
 
 	CNetworkVar( float, startLerpTo );
 	CNetworkVar( float, endLerpTo );
+	CNetworkVar( float, maxdensityLerpTo );
 	CNetworkVar( float, lerptime );
 	CNetworkVar( float, duration );
 	CNetworkVar( bool, enable );
 	CNetworkVar( bool, blend );
+	
+	CNetworkVar( float, HDRColorScale );
 };
 
 // Crappy. Needs to be here because it wants to use 
@@ -68,21 +76,33 @@ struct fogplayerparams_t
 	color32					m_OldColor;
 	float					m_flOldStart;
 	float					m_flOldEnd;
+	float					m_flOldMaxDensity;
+	float					m_flOldHDRColorScale;
+	float					m_flOldFarZ;
 
 	color32					m_NewColor;
 	float					m_flNewStart;
 	float					m_flNewEnd;
+	float					m_flNewMaxDensity;
+	float					m_flNewHDRColorScale;
+	float					m_flNewFarZ;
 
 	fogplayerparams_t()
 	{
 		m_hCtrl.Set( NULL );
 		m_flTransitionTime = -1.0f;
-		m_OldColor.r = m_OldColor.g = m_OldColor.b = m_OldColor.a = 0;
+		m_OldColor.r = m_OldColor.g = m_OldColor.b = m_OldColor.a = 0.0f;
 		m_flOldStart = 0.0f;
 		m_flOldEnd = 0.0f;
-		m_NewColor.r = m_NewColor.g = m_NewColor.b = m_NewColor.a = 0;
+		m_flOldMaxDensity = 1.0f;
+		m_flOldHDRColorScale = 1.0f;
+		m_flOldFarZ = 0;
+		m_NewColor.r = m_NewColor.g = m_NewColor.b = m_NewColor.a = 0.0f;
 		m_flNewStart = 0.0f;
 		m_flNewEnd = 0.0f;
+		m_flNewMaxDensity = 1.0f;
+		m_flNewHDRColorScale = 1.0f;
+		m_flNewFarZ = 0;
 	}
 };
 
@@ -119,5 +139,54 @@ struct audioparams_t
 	CNetworkHandle( CBaseEntity, ent );		// the entity setting the soundscape
 };
 
+//Tony; new tonemap information.
+// In single player the values are coped directly from the single env_tonemap_controller entity.
+// This will allow the controller to work as it always did.
+// That way nothing in ep2 will break. With these new params, the controller can properly be used in mp.
+//
+//
+// Map specific objectives, such as blowing out a wall ( and bringing in more light )
+// can still change values on a particular controller as necessary via inputs, but the
+// effects will not directly affect any players who are referencing this controller
+// unless the option to update on inputs is set. ( otherwise the values are simply cached
+// and changes only take effect when the players controller target is changed )
+//
+struct tonemap_params_t
+{
+	DECLARE_CLASS_NOBASE( tonemap_params_t );
+	DECLARE_EMBEDDED_NETWORKVAR();
+
+#ifndef CLIENT_DLL
+	DECLARE_SIMPLE_DATADESC();
+#endif
+	tonemap_params_t()
+	{
+		m_flAutoExposureMin = -1.0f;
+		m_flAutoExposureMax = -1.0f;
+		m_flTonemapScale = -1.0f;
+		m_flBloomScale = -1.0f;
+		m_flTonemapRate = -1.0f;
+	}
+	//Tony; all of these are initialized to -1!
+	CNetworkVar( float, m_flTonemapScale );
+	CNetworkVar( float, m_flTonemapRate );
+	CNetworkVar( float, m_flBloomScale );
+
+	CNetworkVar( float, m_flAutoExposureMin );
+	CNetworkVar( float, m_flAutoExposureMax );
+
+	// BLEND TODO
+	//
+	//	//Tony; Time it takes for a blend to finish, default to 0; this is for the the effect of InputBlendTonemapScale.
+	//	//When
+	//	CNetworkVar( float, m_flBlendTime );
+
+	//Tony; these next 4 variables do not have to be networked; but I want to update them on the client whenever m_flBlendTime changes.
+	//TODO
+};
+
+#ifdef POSIX
+#pragma GCC diagnostic pop
+#endif
 
 #endif // PLAYERNET_VARS_H

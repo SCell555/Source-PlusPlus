@@ -534,6 +534,7 @@ const char *KeyValues::GetName( void ) const
 //-----------------------------------------------------------------------------
 // Purpose: Read a single token from buffer (0 terminated)
 //-----------------------------------------------------------------------------
+#pragma warning (push)
 #pragma warning (disable:4706)
 const char *KeyValues::ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasConditional )
 {
@@ -618,7 +619,7 @@ const char *KeyValues::ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasCon
 	s_pTokenBuf[ nCount ] = 0;
 	return s_pTokenBuf;
 }
-#pragma warning (default:4706)
+#pragma warning (pop)
 
 	
 
@@ -1568,6 +1569,41 @@ Color KeyValues::GetColor( const char *keyName )
 			color[1] = (unsigned char)b;
 			color[2] = (unsigned char)c;
 			color[3] = (unsigned char)d;
+		}
+	}
+	return color;
+}
+
+Color KeyValues::GetColor( const char *keyName, const Color& defaultColor )
+{
+	Color color = defaultColor;
+	KeyValues *dat = FindKey( keyName, false );
+	if ( dat )
+	{
+		if ( dat->m_iDataType == TYPE_COLOR )
+		{
+			color[0] = dat->m_Color[0];
+			color[1] = dat->m_Color[1];
+			color[2] = dat->m_Color[2];
+			color[3] = dat->m_Color[3];
+		}
+		else if ( dat->m_iDataType == TYPE_FLOAT )
+		{
+			color[0] = dat->m_flValue;
+		}
+		else if ( dat->m_iDataType == TYPE_INT )
+		{
+			color[0] = dat->m_iValue;
+		}
+		else if ( dat->m_iDataType == TYPE_STRING )
+		{
+			// parse the colors out of the string
+			float a = 0.0f, b = 0.0f, c = 0.0f, d = 0.0f;
+			sscanf( dat->m_sValue, "%f %f %f %f", &a, &b, &c, &d );
+			color[0] = ( unsigned char )a;
+			color[1] = ( unsigned char )b;
+			color[2] = ( unsigned char )c;
+			color[3] = ( unsigned char )d;
 		}
 	}
 	return color;
@@ -2633,7 +2669,7 @@ bool KeyValues::WriteAsBinary( CUtlBuffer &buffer )
 
 		case TYPE_UINT64:
 			{
-				buffer.PutDouble( *((double *)dat->m_sValue) );
+				buffer.PutInt64( *((int64 *)dat->m_sValue) );
 				break;
 			}
 

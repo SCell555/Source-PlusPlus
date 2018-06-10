@@ -60,8 +60,8 @@ private:
 	
 	void ResetPosition()
 	{
-		m_vecPos.x = ScreenWidth() / 2;
-		m_vecPos.y = ScreenHeight() / 2;
+		m_vecPos.x = ScreenWidth() / 2.f;
+		m_vecPos.y = ScreenHeight() / 2.f;
 		m_vecPos.z = 0;
 	}
 
@@ -227,7 +227,7 @@ void CHUDAutoAim::OnThink()
 					float flSpeed = VectorNormalize( vecMove );
 					float flDot = DotProduct( vecLook, vecMove );
 
-					if( flSpeed >= 100 && fabs(flDot) <= 0.707f )
+					if( flSpeed >= 100 && fabsf(flDot) <= 0.707f )
 					{
 						QAngle viewangles;
 						QAngle targetangles;

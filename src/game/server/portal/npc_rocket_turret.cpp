@@ -553,14 +553,14 @@ void CNPC_RocketTurret::SearchThink()
 			float flOffsetX = RandomFloat( -5.0f, 5.0f );
 			float flOffsetY = RandomFloat( -5.0f, 5.0f );
 
-			if ( fabs(m_flTotalDivergenceX) <= MAX_DIVERGENCE_X || 
+			if ( fabsf(m_flTotalDivergenceX) <= MAX_DIVERGENCE_X || 
 				 SignDiffers( m_flTotalDivergenceX, flOffsetX ) )
 			{
 				m_flTotalDivergenceX += flOffsetX;
 				m_vecGoalAngles.x += flOffsetX;
 			}
 
-			if ( fabs(m_flTotalDivergenceY) <= MAX_DIVERGENCE_Y ||
+			if ( fabsf(m_flTotalDivergenceY) <= MAX_DIVERGENCE_Y ||
 				 SignDiffers( m_flTotalDivergenceY, flOffsetY ) )
 			{
 				m_flTotalDivergenceY += flOffsetY;

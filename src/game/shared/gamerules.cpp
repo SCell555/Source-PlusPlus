@@ -545,7 +545,7 @@ void CGameRules::RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc
 				bIsPrimary = false;
 			}
 
-			gamestats->Event_WeaponHit( player, bIsPrimary, (pWeapon != NULL) ? player->GetActiveWeapon()->GetClassname() : "NULL", info );
+			gamestats->Event_WeaponHit( player, bIsPrimary, (pWeapon != NULL) ? pWeapon->GetClassname() : "NULL", info );
 		}
 #endif
 	}

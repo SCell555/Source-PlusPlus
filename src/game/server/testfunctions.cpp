@@ -6,6 +6,9 @@
 //=============================================================================//
 
 #include "cbase.h"
+
+#if 0
+
 #include "convar.h"
 #include "tier0/dbg.h"
 #include "player.h"
@@ -86,3 +89,4 @@ ConCommand cc_Test_CreateEntity( "Test_CreateEntity", Test_CreateEntity, 0, FCVA
 ConCommand cc_Test_RandomPlayerPosition( "Test_RandomPlayerPosition", Test_RandomPlayerPosition, 0, FCVAR_CHEAT );
 
 
+#endif

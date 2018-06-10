@@ -166,6 +166,7 @@ void CCommentaryModelViewer::OnThink( void )
 //-----------------------------------------------------------------------------
 void CCommentaryModelViewer::HandleMovementInput( void )
 {
+	using namespace vgui;
 	bool bLeftDown = input()->IsKeyDown(KEY_LEFT);
 	bool bRightDown = input()->IsKeyDown(KEY_RIGHT);
 	bool bForwardDown = input()->IsKeyDown(KEY_UP);
@@ -180,7 +181,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 		{
 			m_flYawSpeed = 0;
 		}
-		m_flYawSpeed = MAX(m_flYawSpeed-flAccel, -3.0);
+		m_flYawSpeed = MAX(m_flYawSpeed-flAccel, -3.f);
 	}
 	else if ( bRightDown )
 	{
@@ -188,7 +189,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 		{
 			m_flYawSpeed = 0;
 		}
-		m_flYawSpeed = MIN(m_flYawSpeed+flAccel, 3.0);
+		m_flYawSpeed = MIN(m_flYawSpeed+flAccel, 3.f);
 	}
 	if ( m_flYawSpeed != 0 )
 	{
@@ -203,7 +204,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 
 		if ( !bLeftDown && !bRightDown )
 		{
-			m_flYawSpeed = ( m_flYawSpeed > 0 ) ? MAX(0,m_flYawSpeed-0.1) : MIN(0,m_flYawSpeed+0.1);
+			m_flYawSpeed = ( m_flYawSpeed > 0 ) ? MAX(0.f,m_flYawSpeed-0.1f) : MIN(0.f,m_flYawSpeed+0.1f);
 		}
 	}
 
@@ -214,7 +215,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 		{
 			m_flZoomSpeed = 0;
 		}
-		m_flZoomSpeed = MAX(m_flZoomSpeed-flAccel, -3.0);
+		m_flZoomSpeed = MAX(m_flZoomSpeed-flAccel, -3.f);
 	}
 	else if ( bBackDown )
 	{
@@ -222,7 +223,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 		{
 			m_flZoomSpeed = 0;
 		}
-		m_flZoomSpeed = MIN(m_flZoomSpeed+flAccel, 3.0);
+		m_flZoomSpeed = MIN(m_flZoomSpeed+flAccel, 3.f);
 	}
 	if ( m_flZoomSpeed != 0 )
 	{
@@ -239,7 +240,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 
 		if ( !bForwardDown && !bBackDown )
 		{
-			m_flZoomSpeed = ( m_flZoomSpeed > 0 ) ? MAX(0,m_flZoomSpeed-0.1) : MIN(0,m_flZoomSpeed+0.1);
+			m_flZoomSpeed = ( m_flZoomSpeed > 0 ) ? MAX(0.f,m_flZoomSpeed-0.1f) : MIN(0.f,m_flZoomSpeed+0.1f);
 		}
 	}
 }

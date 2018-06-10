@@ -109,6 +109,6 @@ void CVGUIMarquee::OnThink()
 
 	m_flCurOffset += m_flMoveDir * gpGlobals->frametime;
 
-	while ( abs( m_flCurOffset ) > strWidth )
+	while ( fabsf( m_flCurOffset ) > strWidth )
 		m_flCurOffset -= strWidth * Sign( m_flCurOffset );
 }

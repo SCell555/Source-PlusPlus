@@ -876,14 +876,14 @@ int C_PropAirboat::DrawWake( void )
 		curSeg.m_vColor.x = curSeg.m_vColor.y = curSeg.m_vColor.z = 1.0f;
 
 		float flAlphaFade = flLifePerc;
-		float alpha = RemapValClamped( fabs( m_vecPhysVelocity.y ), 128, 600, 0.0f, 1.0f );
+		float alpha = RemapValClamped( fabsf( m_vecPhysVelocity.y ), 128, 600, 0.0f, 1.0f );
 
 		curSeg.m_flAlpha = 0.25f;
 		curSeg.m_flAlpha *= flAlphaFade * alpha;
 
 		curSeg.m_vPos = pPoint->m_vecScreenPos;
 		
-		float widthBase = SimpleSplineRemapVal( fabs( m_vecPhysVelocity.y ), 128, 600, 32, 48 );
+		float widthBase = SimpleSplineRemapVal( fabsf( m_vecPhysVelocity.y ), 128, 600, 32, 48 );
 
 		curSeg.m_flWidth = Lerp( flLifePerc, widthBase*6, widthBase );
 		curSeg.m_flWidth += pPoint->m_flWidthVariance;

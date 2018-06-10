@@ -198,6 +198,8 @@ private:
 
 	float				m_flServerFramerate;
 	float				m_flServerFramerateStdDeviation;
+public:
+	bool				m_bShouldDraw;
 };
 
 CNetGraphPanel *g_pNetGraphPanel = NULL;
@@ -279,6 +281,8 @@ CNetGraphPanel::CNetGraphPanel( VPANEL parent )
 	netcolors[COLOR_NORMAL].alpha = 232;
 
 	ivgui()->AddTickSignal( GetVPanel(), 500 );
+
+	m_bShouldDraw = engine->IsInGame();
 
 	m_WhiteMaterial.Init( "vgui/white", TEXTURE_GROUP_OTHER );
 	g_pNetGraphPanel = this;
@@ -491,7 +495,7 @@ void CNetGraphPanel::DrawTimes( vrect_t vrect, cmdinfo_t *cmdinfo, int x, int w,
 	for (a=0 ; a<w ; a++)
 	{
 		i = ( m_OutgoingSequence - a ) & ( TIMINGS - 1 );
-		h = MIN( ( cmdinfo[i].cmd_lerp / 3.0 ) * LERP_HEIGHT, LERP_HEIGHT );
+		h = MIN( ( cmdinfo[i].cmd_lerp / 3.f ) * LERP_HEIGHT, (float)LERP_HEIGHT );
 		if ( h < 0 )
 		{
 			h = LERP_HEIGHT;
@@ -609,7 +613,7 @@ void CNetGraphPanel::GetFrameData( 	INetChannelInfo *netchannel, int *biggest_me
 	}
 
 	// Can't be below zero
-	m_AvgLatency = MAX( 0.0, m_AvgLatency );
+	m_AvgLatency = MAX( 0.f, m_AvgLatency );
 
 	flAdjust *= 1000.0f;
 
@@ -1129,10 +1133,10 @@ void CNetGraphPanel::OnTick( void )
 
 bool CNetGraphPanel::ShouldDraw( void )
 {
-	if ( GraphValue() != 0 )
-		return true;
+	if ( !m_bShouldDraw )
+		return false;
 
-	return false;
+	return GraphValue() != 0;
 }
 
 void CNetGraphPanel::DrawLargePacketSizes( int x, int w, int graphtype, float warning_threshold )
@@ -1152,7 +1156,7 @@ void CNetGraphPanel::DrawLargePacketSizes( int x, int w, int graphtype, float wa
 		int nTotalBytes = m_Graph[ i ].msgbytes[ INetChannelInfo::TOTAL ];
 
 		if ( warning_threshold != 0.0f &&
-			nTotalBytes > MAX( 300, warning_threshold ) )
+			nTotalBytes > MAX( 300.f, warning_threshold ) )
 		{
 			char sz[ 32 ];
 			Q_snprintf( sz, sizeof( sz ), "%i", nTotalBytes );
@@ -1523,7 +1527,7 @@ void CNetGraphPanel::UpdateEstimatedServerFramerate( INetChannelInfo *netchannel
 	}
 }
 
-class CNetGraphPanelInterface : public INetGraphPanel
+class CNetGraphPanelInterface : public INetGraphPanel, public CAutoGameSystem
 {
 private:
 	CNetGraphPanel *netGraphPanel;
@@ -1532,11 +1536,11 @@ public:
 	{
 		netGraphPanel = NULL;
 	}
-	void Create( VPANEL parent )
+	void Create( VPANEL parent ) override
 	{
 		netGraphPanel = new CNetGraphPanel( parent );
 	}
-	void Destroy( void )
+	void Destroy( void ) override
 	{
 		if ( netGraphPanel )
 		{
@@ -1544,6 +1548,14 @@ public:
 			netGraphPanel->MarkForDeletion();
 			netGraphPanel = NULL;
 		}
+	}
+	void LevelInitPostEntity() override
+	{
+		netGraphPanel->m_bShouldDraw = true;
+	}
+	void LevelShutdownPreEntity() override
+	{
+		netGraphPanel->m_bShouldDraw = false;
 	}
 };
 

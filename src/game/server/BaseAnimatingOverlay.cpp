@@ -254,6 +254,21 @@ void CBaseAnimatingOverlay::VerifyOrder( void )
 }
 
 
+//-----------------------------------------------------------------------------
+// Purpose: Sets the entity's model, clearing animation data
+// Input  : *szModelName - 
+//-----------------------------------------------------------------------------
+void CBaseAnimatingOverlay::SetModel( const char *szModelName )
+{
+	for ( int j=0; j<m_AnimOverlay.Count(); ++j )
+	{
+		m_AnimOverlay[j].Init( this );
+	}
+
+	BaseClass::SetModel( szModelName );
+}
+
+
 //------------------------------------------------------------------------------
 // Purpose : advance the animation frame up to the current time
 //			 if an flInterval is passed in, only advance animation that number of seconds
@@ -354,7 +369,7 @@ void CBaseAnimatingOverlay::DispatchAnimEvents ( CBaseAnimating *eventHandler )
 
 	for ( int i = 0; i < m_AnimOverlay.Count(); i++ )
 	{
-		if (m_AnimOverlay[ i ].IsActive())
+		if (m_AnimOverlay[ i ].IsActive() && !m_AnimOverlay[ i ].NoEvents() )
 		{
 			m_AnimOverlay[ i ].DispatchAnimEvents( eventHandler, this );
 		}
@@ -570,6 +585,7 @@ int CBaseAnimatingOverlay::AddGesture( Activity activity, bool autokill /*= true
 		return FindGestureLayer( activity );
 	}
 
+	MDLCACHE_CRITICAL_SECTION();
 	int seq = SelectWeightedSequence( activity );
 	if ( seq <= 0 )
 	{
@@ -717,6 +733,7 @@ int CBaseAnimatingOverlay::AllocateLayer( int iPriority )
 
 		iOpenLayer = m_AnimOverlay.AddToTail();
 		m_AnimOverlay[iOpenLayer].Init( this );
+		m_AnimOverlay[iOpenLayer].NetworkStateChanged();
 	}
 
 	// make sure there's always an empty unused layer so that history slots will be available on the client when it is used
@@ -726,6 +743,7 @@ int CBaseAnimatingOverlay::AllocateLayer( int iPriority )
 		{
 			i = m_AnimOverlay.AddToTail();
 			m_AnimOverlay[i].Init( this );
+			m_AnimOverlay[i].NetworkStateChanged();
 		}
 	}
 
@@ -1065,6 +1083,23 @@ void CBaseAnimatingOverlay::SetLayerNoRestore( int iLayer, bool bNoRestore )
 	}
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CBaseAnimatingOverlay::SetLayerNoEvents( int iLayer, bool bNoEvents )
+{
+	if (!IsValidLayer( iLayer ))
+		return;
+
+	if (bNoEvents)
+	{
+		m_AnimOverlay[iLayer].m_fFlags |= ANIM_LAYER_NOEVENTS;
+	}
+	else
+	{
+		m_AnimOverlay[iLayer].m_fFlags &= ~ANIM_LAYER_NOEVENTS;
+	}
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -1145,10 +1180,12 @@ void CBaseAnimatingOverlay::SetNumAnimOverlays( int num )
 	if ( m_AnimOverlay.Count() < num )
 	{
 		m_AnimOverlay.AddMultipleToTail( num - m_AnimOverlay.Count() );
+		NetworkStateChanged();
 	}
 	else if ( m_AnimOverlay.Count() > num )
 	{
 		m_AnimOverlay.RemoveMultiple( num, m_AnimOverlay.Count() - num );
+		NetworkStateChanged();
 	}
 }
 

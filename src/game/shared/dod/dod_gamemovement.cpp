@@ -561,7 +561,7 @@ bool CDODGameMovement::ResolveStanding( void )
 	TracePlayerBBoxWithStep( mv->GetAbsOrigin(), vecStandPos, MASK_PLAYERSOLID, COLLISION_GROUP_PLAYER_MOVEMENT, trace );
 
 	// Anything between 0.5 and 1.0 is a valid stand value
-	if ( fabs( trace.fraction - 0.5 ) < 0.0004f )
+	if ( fabsf( trace.fraction - 0.5 ) < 0.0004f )
 	{
 		return true;
 	}

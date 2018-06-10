@@ -1350,7 +1350,7 @@ inline void CInterpolatedVarArrayBase<Type, IS_ARRAY>::_Extrapolate(
 	float flMaxExtrapolationAmount
 	)
 {
-	if ( fabs( pOld->changetime - pNew->changetime ) < 0.001f || flDestinationTime <= pNew->changetime )
+	if ( fabsf( pOld->changetime - pNew->changetime ) < 0.001f || flDestinationTime <= pNew->changetime )
 	{
 		for ( int i=0; i < m_nMaxCount; i++ )
 			pOut[i] = pNew->GetValue()[i];
@@ -1379,7 +1379,7 @@ inline void CInterpolatedVarArrayBase<Type, IS_ARRAY>::TimeFixup2_Hermite(
 	float dt2 = start->changetime - prev->changetime;
 
 	// If times are not of the same interval renormalize the earlier sample to allow for uniform hermite spline interpolation
-	if ( fabs( dt1 - dt2 ) > 0.0001f &&
+	if ( fabsf( dt1 - dt2 ) > 0.0001f &&
 		dt2 > 0.0001f )
 	{
 		// Renormalize
@@ -1513,7 +1513,7 @@ inline void CInterpolatedVarArrayBase<Type, IS_ARRAY>::_Derivative_Linear(
 	CInterpolatedVarEntry *start, 
 	CInterpolatedVarEntry *end )
 {
-	if ( start == end || fabs( start->changetime - end->changetime ) < 0.0001f )
+	if ( start == end || fabsf( start->changetime - end->changetime ) < 0.0001f )
 	{
 		for( int i = 0; i < m_nMaxCount; i++ )
 		{

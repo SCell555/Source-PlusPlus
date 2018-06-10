@@ -154,7 +154,7 @@ static float ResponseCurve( int curve, float x, int axis, float sensitivity )
 		{
 		// quadratic extreme
 		float extreme = 1.0f;
-		if ( fabs( x ) >= 0.95f )
+		if ( fabsf( x ) >= 0.95f )
 		{
 			extreme = 1.5f;
 		}
@@ -166,7 +166,7 @@ static float ResponseCurve( int curve, float x, int axis, float sensitivity )
 		{
 			float flScale = sensitivity < 0.0f ? -1.0f : 1.0f;
 
-			sensitivity = clamp( fabs( sensitivity ), 1.0e-8f, 1000.0f );
+			sensitivity = clamp( fabsf( sensitivity ), 1.0e-8f, 1000.0f );
 
 			float oneOverSens = 1.0f / sensitivity;
 		
@@ -175,7 +175,7 @@ static float ResponseCurve( int curve, float x, int axis, float sensitivity )
 				flScale = -flScale;
 			}
 
-			float retval = clamp( powf( fabs( x ), oneOverSens ), 0.0f, 1.0f );
+			float retval = clamp( powf( fabsf( x ), oneOverSens ), 0.0f, 1.0f );
 			return retval * flScale;
 		}
 		break;
@@ -183,7 +183,7 @@ static float ResponseCurve( int curve, float x, int axis, float sensitivity )
 		{
 			float out = x;
 
-			if( fabs(out) <= 0.6f )
+			if( fabsf(out) <= 0.6f )
 			{
 				out *= 0.5f;
 			}
@@ -206,7 +206,7 @@ static float ResponseCurve( int curve, float x, int axis, float sensitivity )
 				if( x  < 0.0 )
 					sign = -1;
 
-				x = fabs(x);
+				x = fabsf(x);
 
 				if( x <= joy_vehicle_turn_lowend.GetFloat() )
 					x = RemapVal( x, 0.0f, joy_vehicle_turn_lowend.GetFloat(), 0.0f, joy_vehicle_turn_lowmap.GetFloat() );
@@ -238,7 +238,7 @@ float AutoAimDampening( float x, int axis, float dist )
 #ifdef HL2_CLIENT_DLL
 	// Help the user stay on target if the feature is enabled and the user
 	// is not making a gross stick movement.
-	if( joy_autoaimdampen.GetFloat() > 0.0f && fabs(x) < joy_autoaimdampenrange.GetFloat() )
+	if( joy_autoaimdampen.GetFloat() > 0.0f && fabsf(x) < joy_autoaimdampenrange.GetFloat() )
 	{
 		// Get the HL2 player
 		C_BaseHLPlayer *pLocalPlayer = (C_BaseHLPlayer *)C_BasePlayer::GetLocalPlayer();

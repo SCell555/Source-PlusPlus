@@ -474,9 +474,9 @@ typedef char *  va_list;
 int V_vsnprintf( OUT_Z_CAP(maxLenInCharacters) char *pDest, int maxLenInCharacters, PRINTF_FORMAT_STRING const char *pFormat, va_list params );
 template <size_t maxLenInCharacters> int V_vsprintf_safe( OUT_Z_ARRAY char (&pDest)[maxLenInCharacters], PRINTF_FORMAT_STRING const char *pFormat, va_list params ) { return V_vsnprintf( pDest, maxLenInCharacters, pFormat, params ); }
 
-int V_snprintf( OUT_Z_CAP(maxLenInChars) char *pDest, int maxLenInChars, PRINTF_FORMAT_STRING const char *pFormat, ... ) FMTFUNCTION( 3, 4 );
+FMTFUNCTION_WIN( 3, 4 ) int V_snprintf( OUT_Z_CAP(maxLenInChars) char *pDest, int maxLenInChars, PRINTF_FORMAT_STRING const char *pFormat, ... ) FMTFUNCTION( 3, 4 );
 // gcc insists on only having format annotations on declarations, not definitions, which is why I have both.
-template <size_t maxLenInChars> int V_sprintf_safe( OUT_Z_ARRAY char (&pDest)[maxLenInChars], PRINTF_FORMAT_STRING const char *pFormat, ... ) FMTFUNCTION( 2, 3 );
+template <size_t maxLenInChars> FMTFUNCTION_WIN( 2, 3 ) int V_sprintf_safe( OUT_Z_ARRAY char (&pDest)[maxLenInChars], PRINTF_FORMAT_STRING const char *pFormat, ... ) FMTFUNCTION( 2, 3 );
 template <size_t maxLenInChars> int V_sprintf_safe( OUT_Z_ARRAY char (&pDest)[maxLenInChars], PRINTF_FORMAT_STRING const char *pFormat, ... )
 {
 	va_list params;
@@ -606,6 +606,9 @@ bool V_MakeRelativePath( const char *pFullPath, const char *pDirectory, char *pR
 
 // Fixes up a file name, removing dot slashes, fixing slashes, converting to lowercase, etc.
 void V_FixupPathName( OUT_Z_CAP(nOutLen) char *pOut, size_t nOutLen, const char *pPath );
+
+// trim whitespace from both ends of the string
+int V_StrTrim( char *pStr );
 
 // Adds a path separator to the end of the string if there isn't one already. Returns false if it would run out of space.
 void V_AppendSlash( INOUT_Z_CAP(strSize) char *pStr, int strSize );

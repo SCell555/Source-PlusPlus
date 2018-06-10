@@ -99,7 +99,6 @@ char* ConvertCRtoNL( char *str );
 wchar_t* ConvertCRtoNL( wchar_t *str );
 wchar_t* ReadLocalizedString( bf_read &msg, OUT_Z_BYTECAP(outSizeInBytes) wchar_t *pOut, int outSizeInBytes, bool bStripNewline, OUT_Z_CAP(originalSize) char *originalString = NULL, int originalSize = 0 );
 wchar_t* ReadChatTextString( bf_read &msg, OUT_Z_BYTECAP(outSizeInBytes) wchar_t *pOut, int outSizeInBytes );
-char* RemoveColorMarkup( char *str );
 
 //--------------------------------------------------------------------------------------------------------
 /**
@@ -240,8 +239,8 @@ public:
 
 	void			MsgFunc_TextMsg(const char *pszName, int iSize, void *pbuf);
 	
-	virtual void	Printf( int iFilter, PRINTF_FORMAT_STRING const char *fmt, ... );
-	virtual void	ChatPrintf( int iPlayerIndex, int iFilter, PRINTF_FORMAT_STRING const char *fmt, ... ) FMTFUNCTION( 4, 5 );
+	FMTFUNCTION_WIN( 2, 3 ) virtual void	Printf( int iFilter, PRINTF_FORMAT_STRING const char *fmt, ... ) FMTFUNCTION( 3, 4 );
+	FMTFUNCTION_WIN( 3, 4 ) virtual void	ChatPrintf( int iPlayerIndex, int iFilter, PRINTF_FORMAT_STRING const char *fmt, ... ) FMTFUNCTION( 4, 5 );
 	
 	virtual void	StartMessageMode( int iMessageModeType );
 	virtual void	StopMessageMode( void );
@@ -297,7 +296,7 @@ public:
 	void			SetVoiceSubtitleState( bool bState ) { m_bEnteringVoice = bState; }
 	int				GetMessageMode( void ) { return m_nMessageMode; }
 
-	void			SetCustomColor( Color colNew ) { m_ColorCustom = colNew; }
+	void			SetCustomColor( const Color& colNew ) { m_ColorCustom = colNew; }
 	void			SetCustomColor( const char *pszColorName );
 
 protected:

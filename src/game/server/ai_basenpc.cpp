@@ -2661,7 +2661,7 @@ void CAI_BaseNPC::SetAim( const Vector &aimDir )
 	// Calculate our interaction yaw.
 	// If we've got a small adjustment off our abs yaw, use that. 
 	// Otherwise, use our abs yaw.
-	if ( fabs(newYaw) < 20 )
+	if ( fabsf(newYaw) < 20 )
 	{
 		m_flInteractionYaw = angDir.y;
 	}
@@ -6637,7 +6637,7 @@ void CAI_BaseNPC::CheckPhysicsContacts()
 					// Either set ignore, or disable collisions entirely
 					if ( vel.LengthSqr() < 5.0f*5.0f )
 					{
-						float topdist = fabs(point.z-heightCheck);
+						float topdist = fabsf(point.z-heightCheck);
 						// 4 seconds to ignore this for nav
 						solverTime = 4.0f;
 						if ( topdist < 2.0f )
@@ -9837,7 +9837,7 @@ bool CAI_BaseNPC::ShouldMoveAndShoot()
 //=========================================================
 bool CAI_BaseNPC::FacingIdeal( void )
 {
-	if ( fabs( GetMotor()->DeltaIdealYaw() ) <= 0.006 )//!!!BUGBUG - no magic numbers!!!
+	if ( fabsf( GetMotor()->DeltaIdealYaw() ) <= 0.006 )//!!!BUGBUG - no magic numbers!!!
 	{
 		return true;
 	}
@@ -11558,7 +11558,7 @@ void CAI_BaseNPC::InputSetEnemyFilter( inputdata_t &inputdata )
 void CAI_BaseNPC::InputSetHealth( inputdata_t &inputdata )
 {
 	int iNewHealth = inputdata.value.Int();
-	int iDelta = abs(GetHealth() - iNewHealth);
+	int iDelta = fabsf(GetHealth() - iNewHealth);
 	if ( iNewHealth > GetHealth() )
 	{
 		TakeHealth( iDelta, DMG_GENERIC );
@@ -13723,7 +13723,7 @@ bool CAI_BaseNPC::InteractionCouldStart( CAI_BaseNPC *pOtherNPC, ScriptedNPCInte
 		for ( int ang = 0; ang < 3; ang++ )
 		{
 			float flAngDiff = AngleDiff( angEnemyAngles[ang], angAngles[ang] );
-			if ( fabs(flAngDiff) > DSS_MAX_ANGLE_DIFF )
+			if ( fabsf(flAngDiff) > DSS_MAX_ANGLE_DIFF )
 			{
 				bMatches = false;
 				break;

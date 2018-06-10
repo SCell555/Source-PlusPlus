@@ -11,6 +11,7 @@
 #pragma once
 #endif
 
+#if 0
 
 class CBaseEntity;
 
@@ -52,5 +53,6 @@ private:
 CBaseEntity*	MoveToRandomSpot( CBaseEntity *pEnt );
 Vector			GetRandomSpot();
 
+#endif
 
 #endif // TEST_STRESSENTITIES_H

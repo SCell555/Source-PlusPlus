@@ -1176,7 +1176,7 @@ void CNPC_Strider::GatherHeightConditions( const Vector &vTestPos, CBaseEntity *
 		if ( m_LowZCorrectionTimer.Expired() )
 		{
 			// Hack to handle discrepency between ideal gun pos and actual pos due to strider head tilt in crouch pos
-			if ( pEntity && fabs( newHeight - GetHeight() ) < 12 && newHeight < GetMinHeight() + GetHeightRange() * .33 )
+			if ( pEntity && fabsf( newHeight - GetHeight() ) < 12 && newHeight < GetMinHeight() + GetHeightRange() * .33 )
 			{
 				Vector muzzlePos;
 				Vector targetPos = pEntity->BodyTarget( GetAdjustedOrigin() );
@@ -1204,7 +1204,7 @@ void CNPC_Strider::GatherHeightConditions( const Vector &vTestPos, CBaseEntity *
 		if ( !strider_always_use_procedural_height.GetBool() )
 		{
 			// If going from max to min, or min to max, use animations 60% of the time
-			if ( fabsf(GetMaxHeight() - GetHeight()) < 0.1 && fabsf(GetMinHeight() - newHeight) < 0.1 )
+			if ( fabsf(GetMaxHeight() - GetHeight()) < 0.1f && fabsf(GetMinHeight() - newHeight) < 0.1f )
 			{
 				if ( random->RandomInt(1, 10 ) <= 6 )
 				{
@@ -1212,7 +1212,7 @@ void CNPC_Strider::GatherHeightConditions( const Vector &vTestPos, CBaseEntity *
 					bDoProceduralHeightChange = false;
 				}
 			}
-			else if ( fabsf(GetMinHeight() - GetHeight()) < 0.1 && fabsf(GetMaxHeight() - newHeight) < 0.1 )
+			else if ( fabsf(GetMinHeight() - GetHeight()) < 0.1f && fabsf(GetMaxHeight() - newHeight) < 0.1f )
 			{
 				if ( random->RandomInt(1, 10 ) <= 6 )
 				{
@@ -2582,7 +2582,7 @@ int CNPC_Strider::MeleeAttack1Conditions( float flDot, float flDist )
 	// Don't skewer if target is too high above or below ground.
 	Vector vecGround = GetAbsOrigin();
 	MoveToGround( &vecGround, this, Vector( -16, -16, -16 ), Vector( 16, 16, 16 ) );
-	if( fabs( vecGround.z - GetEnemy()->GetAbsOrigin().z ) > 64.0f )
+	if( fabsf( vecGround.z - GetEnemy()->GetAbsOrigin().z ) > 64.0f )
 	{
 		return COND_NONE;
 	}
@@ -2739,7 +2739,6 @@ void CNPC_Strider::MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, in
 {
 	float flTracerDist;
 	Vector vecDir;
-	Vector vecEndPos;
 
 	vecDir = tr.endpos - vecTracerSrc;
 
@@ -4015,8 +4014,8 @@ bool CNPC_Strider::AimCannonAt( CBaseEntity *pEntity, float flInterval )
 	float yawSpeed = fabsf(aimSpeed*flInterval*localEnemyAngles.y);
 	float pitchSpeed = fabsf(aimSpeed*flInterval*localEnemyAngles.x);
 
-	yawSpeed = MAX(yawSpeed,5);
-	pitchSpeed = MAX(pitchSpeed,5);
+	yawSpeed = MAX(yawSpeed,5.f);
+	pitchSpeed = MAX(pitchSpeed,5.f);
 
 	m_aimYaw = UTIL_Approach( targetYaw, m_aimYaw, yawSpeed );
 	m_aimPitch = UTIL_Approach( targetPitch, m_aimPitch, pitchSpeed );
@@ -4878,7 +4877,7 @@ bool CStriderMinigun::ShouldFindTarget( IMinigunHost *pHost )
 //---------------------------------------------------------
 float CStriderMinigun::GetAimError()
 {
-	return fabs(m_yaw.target-m_yaw.current) + fabs(m_pitch.target-m_pitch.current);
+	return fabsf(m_yaw.target-m_yaw.current) + fabsf(m_pitch.target-m_pitch.current);
 }
 
 //---------------------------------------------------------
@@ -5349,7 +5348,7 @@ void CStriderMinigun::Think( IStriderMinigunHost *pHost, float dt )
 				{
 					m_bWarnedAI = true;
 
-					CSoundEnt::InsertSound( SOUND_DANGER | SOUND_CONTEXT_REACT_TO_SOURCE, pTargetEnt->EarPosition() + Vector( 0, 0, 1 ), 120, MAX( 1.0, flRemainingShootTime ), pHost->GetEntity() );
+					CSoundEnt::InsertSound( SOUND_DANGER | SOUND_CONTEXT_REACT_TO_SOURCE, pTargetEnt->EarPosition() + Vector( 0, 0, 1 ), 120, MAX( 1.f, flRemainingShootTime ), pHost->GetEntity() );
 				}
 			}
 		}

@@ -227,7 +227,7 @@ void AvoidPushawayProps( CBaseCombatCharacter *pPlayer, CUserCmd *pCmd )
 		}
 		mass = clamp( mass, minMass, maxMass );
 		
-		mass = MAX( mass, 0 );
+		mass = MAX( mass, 0.f );
 		mass /= maxMass; // bring into a 0..1 range
 
 		// Push away from the collision point. The closer our center is to the collision point,
@@ -257,7 +257,7 @@ void AvoidPushawayProps( CBaseCombatCharacter *pPlayer, CUserCmd *pCmd )
 			flDist = VectorNormalize( vPushAway );
 		}
 
-		flDist = MAX( flDist, 1 );
+		flDist = MAX( flDist, 1.f );
 
 		float flForce = sv_pushaway_player_force.GetFloat() / flDist * mass;
 		flForce = MIN( flForce, sv_pushaway_max_player_force.GetFloat() );
@@ -316,17 +316,27 @@ void PerformObstaclePushaway( CBaseCombatCharacter *pPushingEntity )
 				continue;
 		}
 
+		if ( props[i]->GetCollisionGroup() != COLLISION_GROUP_PUSHAWAY )
+		{
+			continue;
+		}
+
 		IPhysicsObject *pObj = props[i]->VPhysicsGetObject();
 
 		if ( pObj )
 		{		
-			Vector vPushAway = (props[i]->WorldSpaceCenter() - pPushingEntity->WorldSpaceCenter());
+			Vector vPushAway = (props[i]->WorldSpaceCenter() - pPushingEntity->GetAbsOrigin());
 			vPushAway.z = 0;
 			
 			float flDist = VectorNormalize( vPushAway );
-			flDist = MAX( flDist, 1 );
+			if ( flDist < 0.1f )
+			{
+				continue;
+			}
+
+			flDist = MAX( flDist, 1.f );
 			
-			float flForce = sv_pushaway_force.GetFloat() / flDist;
+			float flForce = sv_pushaway_force.GetFloat() / flDist * pObj->GetMass();
 			flForce = MIN( flForce, sv_pushaway_max_force.GetFloat() );
 
 			pObj->ApplyForceOffset( vPushAway * flForce, pPushingEntity->WorldSpaceCenter() );

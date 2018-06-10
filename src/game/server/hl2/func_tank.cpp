@@ -1631,7 +1631,7 @@ void CFuncTank::Think( void )
 	SetLocalAngularVelocity( vec3_angle );
 	TrackTarget();
 
-	if ( fabs(GetLocalAngularVelocity().x) > 1 || fabs(GetLocalAngularVelocity().y) > 1 )
+	if ( fabsf(GetLocalAngularVelocity().x) > 1 || fabsf(GetLocalAngularVelocity().y) > 1 )
 	{
 		StartRotSound();
 	}
@@ -1728,7 +1728,6 @@ void CFuncTank::AimBarrelAtPlayerCrosshair( QAngle *pAngles )
 //-----------------------------------------------------------------------------
 void CFuncTank::CalcNPCEnemyTarget( Vector *pVecTarget )
 {
-	Vector vecTarget;
 	CAI_BaseNPC *pNPC = m_hController->MyNPCPointer();
 
 	// Aim the barrel at the npc's enemy, or where the npc is looking.
@@ -1783,8 +1782,8 @@ bool CFuncTank::RotateTankToAngles( const QAngle &angles, float *pDistX, float *
 	float flActualYaw = m_yawCenter + offsetY;
 	float flActualPitch = m_pitchCenter + offsetX;
 
-	if ( ( fabs( offsetY ) > m_yawRange + m_yawTolerance ) ||
-		 ( fabs( offsetX ) > m_pitchRange + m_pitchTolerance ) )
+	if ( ( fabsf( offsetY ) > m_yawRange + m_yawTolerance ) ||
+		 ( fabsf( offsetX ) > m_pitchRange + m_pitchTolerance ) )
 	{
 		// Limit against range in x
 		flActualYaw = clamp( flActualYaw, m_yawCenter - m_yawRange, m_yawCenter + m_yawRange );
@@ -2028,7 +2027,7 @@ void CFuncTank::AimFuncTankAtTarget( void )
 
 	SetMoveDoneTime( 0.1 );
 
-	if ( CanFire() && ( ( (fabs(distX) <= m_pitchTolerance) && (fabs(distY) <= m_yawTolerance) ) || (m_spawnflags & SF_TANK_LINEOFSIGHT) ) )
+	if ( CanFire() && ( ( (fabsf(distX) <= m_pitchTolerance) && (fabsf(distY) <= m_yawTolerance) ) || (m_spawnflags & SF_TANK_LINEOFSIGHT) ) )
 	{
 		bool fire = false;
 		Vector forward;
@@ -2372,7 +2371,7 @@ bool CFuncTank::IsEntityInViewCone( CBaseEntity *pEntity )
 	angGun.y = m_yawCenter + flOffsetY;
 	angGun.x = m_pitchCenter + flOffsetX;
 
-	if ( ( fabs( flOffsetY ) > m_yawRange + m_yawTolerance ) || ( fabs( flOffsetX ) > m_pitchRange + m_pitchTolerance ) )
+	if ( ( fabsf( flOffsetY ) > m_yawRange + m_yawTolerance ) || ( fabsf( flOffsetX ) > m_pitchRange + m_pitchTolerance ) )
 		return false;
 
 	// Remember the last time we saw a non-player
@@ -3616,9 +3615,6 @@ void CMortarShell::Warn( void )
 //---------------------------------------------------------
 void CMortarShell::Impact( void )
 {
-	// Fire the bullets
-	Vector vecSrc, vecShootDir;
-
 	float flRadius = MORTAR_BLAST_RADIUS;
 
 	trace_t	tr;
@@ -3920,9 +3916,6 @@ void CFuncTankMortar::Fire( int bulletCount, const Vector &barrelEnd, const Vect
 		return;
 
 	#define TARGET_SEARCH_DEPTH 100
-
-	// find something interesting to shoot at near the projected position. 
-	Vector delta;
 
 	// Make a really rough approximation of the last half of the mortar trajectory and trace it. 
 	// Do this so that mortars fired into windows land on rooftops, and that targets projected 

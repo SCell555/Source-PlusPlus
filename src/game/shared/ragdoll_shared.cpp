@@ -312,6 +312,51 @@ static void RagdollCreateObjects( IPhysicsEnvironment *pPhysEnv, ragdoll_t &ragd
 	physcollision->VPhysicsKeyParserDestroy( pParse );
 }
 
+static void RagdollCreateDestrObjects( IPhysicsEnvironment *pPhysEnv, ragdoll_t &ragdoll, const ragdollparams_t &params )
+{
+	ragdoll.listCount = 0;
+	ragdoll.pGroup = NULL;
+	ragdoll.allowStretch = params.allowStretch;
+	memset( ragdoll.list, 0, sizeof( ragdoll.list ) );
+	memset( &ragdoll.animfriction, 0, sizeof( ragdoll.animfriction ) );
+
+	if ( !params.pCollide || params.pCollide->solidCount > RAGDOLL_MAX_ELEMENTS )
+		return;
+
+	constraint_groupparams_t group;
+	group.Defaults();
+	ragdoll.pGroup = pPhysEnv->CreateConstraintGroup( group );
+
+	IVPhysicsKeyParser *pParse = physcollision->VPhysicsKeyParserCreate( params.pCollide->pKeyValues );
+	while ( !pParse->Finished() )
+	{
+		const char *pBlock = pParse->GetCurrentBlockName();
+		if ( !strcmpi( pBlock, "solid" ) )
+		{
+			solid_t solid;
+
+			pParse->ParseSolid( &solid, &g_SolidSetup );
+			RagdollAddSolid( pPhysEnv, ragdoll, params, solid );
+		}
+		else if ( !strcmpi( pBlock, "collisionrules" ) )
+		{
+			IPhysicsCollisionSet *pSet = physics->FindOrCreateCollisionSet( params.modelIndex, ragdoll.listCount );
+			CRagdollCollisionRules rules( pSet );
+			pParse->ParseCustom( ( void * )&rules, &rules );
+		}
+		else if ( !strcmpi( pBlock, "animatedfriction" ) )
+		{
+			CRagdollAnimatedFriction friction( &ragdoll );
+			pParse->ParseCustom( ( void* )&friction, &friction );
+		}
+		else
+		{
+			pParse->SkipBlock();
+		}
+	}
+	physcollision->VPhysicsKeyParserDestroy( pParse );
+}
+
 void RagdollSetupCollisions( ragdoll_t &ragdoll, vcollide_t *pCollide, int modelIndex )
 {
 	Assert(pCollide);
@@ -402,6 +447,36 @@ void RagdollActivate( ragdoll_t &ragdoll, vcollide_t *pCollide, int modelIndex, 
 	}
 }
 
+void RagdollActivateDestr( ragdoll_t &ragdoll, vcollide_t *pCollide, int modelIndex, bool bForceWake )
+{
+	RagdollSetupCollisions( ragdoll, pCollide, modelIndex );
+
+	for ( int i = 0; i < ragdoll.listCount; i++ )
+	{
+		//SAVE THE FPS!!!
+		PhysSetGameFlags( ragdoll.list[i].pObject, FVPHYSICS_NO_SELF_COLLISIONS );
+		// now that the relationships are set, activate the collision system
+		ragdoll.list[i].pObject->EnableCollisions( true );
+
+		if ( bForceWake == true )
+		{
+			ragdoll.list[i].pObject->Wake();
+		}
+	}
+	if ( ragdoll.pGroup )
+	{
+		// NOTE: This also wakes the objects
+		ragdoll.pGroup->Activate();
+		// so if we didn't want that, we'll need to put them back to sleep here
+		if ( !bForceWake )
+		{
+			for ( int i = 0; i < ragdoll.listCount; i++ )
+			{
+				ragdoll.list[i].pObject->Sleep();
+			}
+		}
+	}
+}
 
 bool RagdollCreate( ragdoll_t &ragdoll, const ragdollparams_t &params, IPhysicsEnvironment *pPhysEnv )
 {
@@ -418,7 +493,7 @@ bool RagdollCreate( ragdoll_t &ragdoll, const ragdollparams_t &params, IPhysicsE
 	{
 		totalMass += ragdoll.list[i].pObject->GetMass();
 	}
-	totalMass = MAX(totalMass,1);
+	totalMass = MAX(totalMass, 1.f);
 
 	// apply force to the model
 	Vector nudgeForce = params.forceVector;
@@ -454,6 +529,12 @@ bool RagdollCreate( ragdoll_t &ragdoll, const ragdollparams_t &params, IPhysicsE
 	return true;
 }
 
+bool RagdollCreateDestr( ragdoll_t &ragdoll, const ragdollparams_t &params, IPhysicsEnvironment *pPhysEnv )
+{
+	RagdollCreateDestrObjects( pPhysEnv, ragdoll, params );
+
+	return true;
+}
 
 void RagdollApplyAnimationAsVelocity( ragdoll_t &ragdoll, const matrix3x4_t *pPrevBones, const matrix3x4_t *pCurrentBones, float dt )
 {
@@ -483,7 +564,6 @@ void RagdollApplyAnimationAsVelocity( ragdoll_t &ragdoll, const matrix3x4_t *pBo
 		MatrixAngles( inverse, q, pos );
 
 		Vector velocity;
-		AngularImpulse angVel;
 		float flSpin;
 
 		Vector localVelocity;

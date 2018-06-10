@@ -68,8 +68,6 @@ void CEnvSoundscapeProxy::Activate()
 
 LINK_ENTITY_TO_CLASS( env_soundscape, CEnvSoundscape );
 
-#pragma warning( push )
-#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CEnvSoundscape )
 
 	DEFINE_KEYFIELD( m_flRadius, FIELD_FLOAT, "radius" ),
@@ -100,7 +98,6 @@ BEGIN_DATADESC( CEnvSoundscape )
 
 
 END_DATADESC()
-#pragma warning( pop )
 
 CEnvSoundscape::CEnvSoundscape()
 {

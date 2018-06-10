@@ -1385,7 +1385,7 @@ Vector C_Portal_Player::EyeFootPosition( const QAngle &qEyeAngles )
 #endif
 
 	//interpolate between feet and normal eye position based on view roll (gets us wall/ceiling & ceiling/ceiling teleportations without an eye position pop)
-	float fFootInterp = fabs(qEyeAngles[ROLL]) * ((1.0f/180.0f) * 0.75f); //0 when facing straight up, 0.75 when facing straight down
+	float fFootInterp = fabsf(qEyeAngles[ROLL]) * ((1.0f/180.0f) * 0.75f); //0 when facing straight up, 0.75 when facing straight down
 	return (BaseClass::EyePosition() - (fFootInterp * m_vecViewOffset)); //TODO: Find a good Up vector for this rolled player and interpolate along actual eye/foot axis
 }
 
@@ -1543,7 +1543,7 @@ void C_Portal_Player::CalcPortalView( Vector &eyeOrigin, QAngle &eyeAngles )
 			{
 				float fInvTotalDist = 1.0f / (fOriginDist - fEyeDist); //fEyeDist is negative
 				Vector ptPlaneIntersection = (eyeOrigin * fOriginDist * fInvTotalDist) - (ptPlayerOrigin * fEyeDist * fInvTotalDist);
-				Assert( fabs( vPortalForward.Dot( ptPlaneIntersection ) - fPortalPlaneDist ) < 0.01f );
+				Assert( fabsf( vPortalForward.Dot( ptPlaneIntersection ) - fPortalPlaneDist ) < 0.01f );
 
 				Vector vIntersectionTest = ptPlaneIntersection - ptPortalCenter;
 

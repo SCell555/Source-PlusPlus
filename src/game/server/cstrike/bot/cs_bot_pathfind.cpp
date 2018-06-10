@@ -347,7 +347,7 @@ bool CCSBot::UpdateLadderMovement( void )
 			{
 				Vector2D perp( -m_pathLadder->GetNormal().y, m_pathLadder->GetNormal().x );
 
-				if (fabs(d.x * perp.x + d.y * perp.y) < tolerance && d.Length() < closeToGoal)
+				if (fabsf(d.x * perp.x + d.y * perp.y) < tolerance && d.Length() < closeToGoal)
 					approached = true;
 			}
 
@@ -420,7 +420,7 @@ bool CCSBot::UpdateLadderMovement( void )
 				{
 					Vector2D perp( -m_pathLadder->GetNormal().y, m_pathLadder->GetNormal().x );
 
-					if (fabs(d.x * perp.x + d.y * perp.y) < tolerance && d.Length() < closeToGoal)
+					if (fabsf(d.x * perp.x + d.y * perp.y) < tolerance && d.Length() < closeToGoal)
 						approached = true;
 				}
 

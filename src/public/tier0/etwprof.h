@@ -37,7 +37,7 @@
 PLATFORM_INTERFACE int64 ETWMark( const char *pMessage );
 // Optionally do full printf formatting of the mark string. This will be more expensive,
 // but only when tracing is enabled.
-PLATFORM_INTERFACE void ETWMarkPrintf( PRINTF_FORMAT_STRING const char *pMessage, ... ) FMTFUNCTION( 1, 2 );
+FMTFUNCTION_WIN( 1, 2 ) PLATFORM_INTERFACE void ETWMarkPrintf( PRINTF_FORMAT_STRING const char *pMessage, ... ) FMTFUNCTION( 1, 2 );
 // Optionally specify one to four floats. They will show up in separate columns in
 // summary tables to allow sorting and easier transfer to spreadsheets.
 PLATFORM_INTERFACE void ETWMark1F( const char *pMessage, float data1 );

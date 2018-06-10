@@ -54,12 +54,12 @@ bool EffectOccluded( const Vector &pos, pixelvis_handle_t *queryHandle )
 		trace_t	tr;
 		UTIL_TraceLine( pos, MainViewOrigin(), MASK_OPAQUE, NULL, COLLISION_GROUP_NONE, &tr );
 		
-		return ( tr.fraction < 1.0f ) ? true : false;
+		return tr.fraction < 1.0f;
 	}
 	pixelvis_queryparams_t params;
 	params.Init(pos);
 	
-	return PixelVisibility_FractionVisible( params, queryHandle ) > 0.0f ? false : true;
+	return PixelVisibility_FractionVisible( params, queryHandle ) <= 0.0f;
 }
 
 
@@ -94,14 +94,14 @@ void CSimpleGlowEmitter::SimulateParticles( CParticleSimulateIterator *pIterator
 	BaseClass::SimulateParticles( pIterator );
 }
 
-bool CSimpleGlowEmitter::WasTestedInView( unsigned char viewMask )
+bool CSimpleGlowEmitter::WasTestedInView( unsigned char viewMask ) const
 {
-	return (m_wasTested & viewMask) ? true : false;
+	return ( m_wasTested & viewMask ) != 0;
 }
 
-bool CSimpleGlowEmitter::IsVisibleInView( unsigned char viewMask )
+bool CSimpleGlowEmitter::IsVisibleInView( unsigned char viewMask ) const
 {
-	return (m_isVisible & viewMask) ? true : false;
+	return ( m_isVisible & viewMask ) != 0;
 }
 
 void CSimpleGlowEmitter::SetTestedInView( unsigned char viewMask, bool bTested )
@@ -131,7 +131,7 @@ unsigned char CSimpleGlowEmitter::CurrentViewMask() const
 
 void CSimpleGlowEmitter::RenderParticles( CParticleRenderIterator *pIterator )
 {
-	unsigned char viewMask = CurrentViewMask();
+	const unsigned char viewMask = CurrentViewMask();
 	if ( !WasTestedInView(CurrentViewMask()) )
 	{
 		pixelvis_queryparams_t params;
@@ -201,7 +201,7 @@ void CTrailParticles::RenderParticles( CParticleRenderIterator *pIterator )
 	while ( pParticle )
 	{
 		//Get our remaining time
-		float lifePerc = 1.0f - ( pParticle->m_flLifetime / pParticle->m_flDieTime  );
+		const float lifePerc = 1.0f - ( pParticle->m_flLifetime / pParticle->m_flDieTime  );
 		float scale = (pParticle->m_flLength*lifePerc);
 
 		if ( scale < 0.01f )
@@ -211,7 +211,7 @@ void CTrailParticles::RenderParticles( CParticleRenderIterator *pIterator )
 
 		//NOTE: We need to do everything in screen space
 		TransformParticle( ParticleMgr()->GetModelView(), pParticle->m_Pos, start );
-		float sortKey = start.z;
+		const float sortKey = start.z;
 
 		Vector3DMultiply( ParticleMgr()->GetModelView(), pParticle->m_vecVelocity, delta );
 		
@@ -233,11 +233,11 @@ void CTrailParticles::RenderParticles( CParticleRenderIterator *pIterator )
 		color[2] = pParticle->m_color.b * ramp * (1.0f / 255.0f);
 		color[3] = pParticle->m_color.a * ramp * (1.0f / 255.0f);
 
-		float	flLength = (pParticle->m_vecVelocity * scale).Length();//( delta - pos ).Length();
-		float	flWidth	 = ( flLength < pParticle->m_flWidth ) ? flLength : pParticle->m_flWidth;
+		const float	flLength = (pParticle->m_vecVelocity * scale).Length();//( delta - pos ).Length();
+		const float	flWidth	 = ( flLength < pParticle->m_flWidth ) ? flLength : pParticle->m_flWidth;
 
 		//See if we should fade
-		Vector vecScaledDelta = (delta*scale);
+		const Vector& vecScaledDelta = (delta*scale);
 		Tracer_Draw( pIterator->GetParticleDraw(), start, vecScaledDelta, flWidth, color );
 		
 		pParticle = (const TrailParticle*)pIterator->GetNext( sortKey );
@@ -248,7 +248,7 @@ void CTrailParticles::RenderParticles( CParticleRenderIterator *pIterator )
 void CTrailParticles::SimulateParticles( CParticleSimulateIterator *pIterator )
 {
 	//Turn off collision if we're not told to do it
-	if (( m_fFlags & bitsPARTICLE_TRAIL_COLLIDE )==false)
+	if ( ( m_fFlags & bitsPARTICLE_TRAIL_COLLIDE ) == 0 )
 	{
 		m_ParticleCollision.ClearActivePlanes();
 	}
@@ -314,7 +314,7 @@ void FX_ElectricSpark( const Vector &pos, int nMagnitude, int nTrailLength, cons
 	}
 
 	//Setup our collision information
-	pSparkEmitter->Setup( (Vector &) pos, 
+	pSparkEmitter->Setup( pos,
 							NULL, 
 							SPARK_ELECTRIC_SPREAD, 
 							SPARK_ELECTRIC_MINSPEED, 
@@ -442,9 +442,7 @@ void FX_ElectricSpark( const Vector &pos, int nMagnitude, int nTrailLength, cons
 	//
 	// Inner glow
 	//
-	SimpleParticle *sParticle;
-
-	sParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "effects/yellowflare_noz" ), pos );
+	SimpleParticle* sParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), pSimple->GetPMaterial( "effects/yellowflare_noz" ), pos );
 		
 	if ( sParticle == NULL )
 		return;
@@ -474,7 +472,7 @@ void FX_ElectricSpark( const Vector &pos, int nMagnitude, int nTrailLength, cons
 	
 	sParticle->m_vecVelocity.Init();
 
-	float	fColor = random->RandomInt( 32, 64 );
+	const float	fColor = random->RandomInt( 32, 64 );
 	sParticle->m_uchColor[0]	= fColor;
 	sParticle->m_uchColor[1]	= fColor;
 	sParticle->m_uchColor[2]	= fColor;
@@ -550,7 +548,7 @@ void FX_ElectricSpark( const Vector &pos, int nMagnitude, int nTrailLength, cons
 void FX_MetalScrape( Vector &position, Vector &normal )
 {
 	VPROF_BUDGET( "FX_MetalScrape", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
-	Vector	offset = position + ( normal * 1.0f );
+	const Vector& offset = position + ( normal * 1.0f );
 
 	CSmartPtr<CTrailParticles> sparkEmitter = CTrailParticles::Create( "FX_MetalScrape 1" );
 
@@ -569,7 +567,7 @@ void FX_MetalScrape( Vector &position, Vector &normal )
 						METAL_SCRAPE_DAMPEN, 
 						bitsPARTICLE_TRAIL_VELOCITY_DAMPEN );
 
-	int	numSparks = random->RandomInt( 4, 8 );
+	const int	numSparks = random->RandomInt( 4, 8 );
 	
 	if ( g_Material_Spark == NULL )
 	{
@@ -577,20 +575,19 @@ void FX_MetalScrape( Vector &position, Vector &normal )
 	}
 
 	Vector	dir;
-	TrailParticle *pParticle;
-	float	length	= 0.06f;
+	const float	length	= 0.06f;
 
 	//Dump out sparks
 	for ( int i = 0; i < numSparks; i++ )
 	{
-		pParticle = (TrailParticle *) sparkEmitter->AddParticle( sizeof(TrailParticle), g_Material_Spark, offset );
+		TrailParticle* pParticle = (TrailParticle *) sparkEmitter->AddParticle( sizeof(TrailParticle), g_Material_Spark, offset );
 
 		if ( pParticle == NULL )
 			return;
 
 		pParticle->m_flLifetime	= 0.0f;
 
-		float	spreadOfs = random->RandomFloat( 0.0f, 2.0f );
+		const float	spreadOfs = random->RandomFloat( 0.0f, 2.0f );
 
 		dir[0] = normal[0] + random->RandomFloat( -(METAL_SCRAPE_SPREAD*spreadOfs), (METAL_SCRAPE_SPREAD*spreadOfs) );
 		dir[1] = normal[1] + random->RandomFloat( -(METAL_SCRAPE_SPREAD*spreadOfs), (METAL_SCRAPE_SPREAD*spreadOfs) );
@@ -628,7 +625,7 @@ void FX_MetalSpark( const Vector &position, const Vector &direction, const Vecto
 	// Emitted particles
 	//
 
-	Vector offset = position + ( surfaceNormal * 1.0f );
+	const Vector& offset = position + ( surfaceNormal * 1.0f );
 
 	CSmartPtr<CTrailParticles> sparkEmitter = CTrailParticles::Create( "FX_MetalSpark 1" );
 
@@ -651,14 +648,13 @@ void FX_MetalSpark( const Vector &position, const Vector &direction, const Vecto
 		g_Material_Spark = sparkEmitter->GetPMaterial( "effects/spark" );
 	}
 
-	TrailParticle	*pParticle;
 	Vector	dir;
-	float	length	= 0.1f;
+	const float	length	= 0.1f;
 
 	//Dump out sparks
 	for ( int i = 0; i < numSparks; i++ )
 	{
-		pParticle = (TrailParticle *) sparkEmitter->AddParticle( sizeof(TrailParticle), g_Material_Spark, offset );
+		TrailParticle * pParticle = (TrailParticle *) sparkEmitter->AddParticle( sizeof(TrailParticle), g_Material_Spark, offset );
 
 		if ( pParticle == NULL )
 			return;
@@ -675,7 +671,7 @@ void FX_MetalSpark( const Vector &position, const Vector &direction, const Vecto
 			pParticle->m_flDieTime	= random->RandomFloat( 0.05f, 0.1f );
 		}
 
-		float	spreadOfs = random->RandomFloat( 0.0f, 2.0f );
+		const float	spreadOfs = random->RandomFloat( 0.0f, 2.0f );
 
 		dir[0] = direction[0] + random->RandomFloat( -(METAL_SPARK_SPREAD*spreadOfs), (METAL_SPARK_SPREAD*spreadOfs) );
 		dir[1] = direction[1] + random->RandomFloat( -(METAL_SPARK_SPREAD*spreadOfs), (METAL_SPARK_SPREAD*spreadOfs) );
@@ -746,7 +742,7 @@ void FX_Sparks( const Vector &pos, int nMagnitude, int nTrailLength, const Vecto
 	}
 
 	//Setup our collision information
-	pSparkEmitter->Setup( (Vector &) pos, 
+	pSparkEmitter->Setup(	pos,
 							NULL, 
 							SPARK_SPREAD, 
 							flMinSpeed, 
@@ -775,7 +771,7 @@ void FX_Sparks( const Vector &pos, int nMagnitude, int nTrailLength, const Vecto
 		pParticle->m_flLifetime	= 0.0f;
 		pParticle->m_flDieTime	= nMagnitude * random->RandomFloat( 1.0f, 2.0f );
 
-		float	spreadOfs = random->RandomFloat( 0.0f, 2.0f );
+		const float spreadOfs = random->RandomFloat( 0.0f, 2.0f );
 		dir[0] = vecDir[0] + random->RandomFloat( -(SPARK_SPREAD*spreadOfs), (SPARK_SPREAD*spreadOfs) );
 		dir[1] = vecDir[1] + random->RandomFloat( -(SPARK_SPREAD*spreadOfs), (SPARK_SPREAD*spreadOfs) );
 		dir[2] = vecDir[2] + random->RandomFloat( -(SPARK_SPREAD*spreadOfs), (SPARK_SPREAD*spreadOfs) );
@@ -889,11 +885,7 @@ void FX_EnergySplash( const Vector &pos, const Vector &normal, int nFlags )
 				"effects/combinemuzzle2_nocull",
 				(FXQUAD_BIAS_SCALE|FXQUAD_BIAS_ALPHA) );
 
-	SimpleParticle *sParticle;
-
-	CSmartPtr<CSimpleEmitter> pEmitter;
-
-	pEmitter = CSimpleEmitter::Create( "C_EntityDissolve" );
+	CSmartPtr<CSimpleEmitter> pEmitter = CSimpleEmitter::Create( "C_EntityDissolve" );
 	pEmitter->SetSortOrigin( pos );
 
 	if ( g_Material_Spark == NULL )
@@ -910,7 +902,7 @@ void FX_EnergySplash( const Vector &pos, const Vector &normal, int nFlags )
 
 		offset += pos;
 
-		sParticle = (SimpleParticle *) pEmitter->AddParticle( sizeof(SimpleParticle), g_Material_Spark, offset );
+		SimpleParticle * sParticle = (SimpleParticle *) pEmitter->AddParticle( sizeof(SimpleParticle), g_Material_Spark, offset );
 		
 		if ( sParticle == NULL )
 			return;
@@ -925,7 +917,7 @@ void FX_EnergySplash( const Vector &pos, const Vector &normal, int nFlags )
 
 		sParticle->m_flRoll			= Helper_RandomInt( 0, 360 );
 
-		float alpha = 255;
+		const float alpha = 255;
 
 		sParticle->m_flRollDelta	= Helper_RandomFloat( -4.0f, 4.0f );
 		sParticle->m_uchColor[0]	= alpha;
@@ -972,27 +964,26 @@ void FX_MicroExplosion( Vector &position, Vector &normal )
 						MICRO_EXPLOSION_DAMPEN, 
 						bitsPARTICLE_TRAIL_VELOCITY_DAMPEN );
 
-	int	numSparks = random->RandomInt( 8, 16 );
+	const int numSparks = random->RandomInt( 8, 16 );
 	
 	if ( g_Material_Spark == NULL )
 	{
 		g_Material_Spark = sparkEmitter->GetPMaterial( "effects/spark" );
 	}
 
-	TrailParticle	*pParticle;
-	Vector	dir, vOfs;
+	Vector	dir;
 	float	length = 0.2f;
 
 	//Fast lines
 	for ( int i = 0; i < numSparks; i++ )
 	{
-		pParticle = (TrailParticle *) sparkEmitter->AddParticle( sizeof(TrailParticle), g_Material_Spark, offset );
+		TrailParticle * pParticle = (TrailParticle *) sparkEmitter->AddParticle( sizeof(TrailParticle), g_Material_Spark, offset );
 
 		if ( pParticle )
 		{
 			pParticle->m_flLifetime	= 0.0f;
 
-			float	ramp = ( (float) i / (float)numSparks );
+			const float	ramp = ( (float) i / (float)numSparks );
 
 			dir[0] = normal[0] + random->RandomFloat( -MICRO_EXPLOSION_SPREAD*ramp, MICRO_EXPLOSION_SPREAD*ramp );
 			dir[1] = normal[1] + random->RandomFloat( -MICRO_EXPLOSION_SPREAD*ramp, MICRO_EXPLOSION_SPREAD*ramp );
@@ -1059,14 +1050,12 @@ void FX_Explosion( Vector& origin, Vector& normal, char materialType )
 	if ( !pSparkEmitter )
 		return;
 
-	// Get color data from our hit point
-	IMaterial	*pTraceMaterial;
 	Vector		diffuseColor, baseColor;
-	pTraceMaterial = engine->TraceLineMaterialAndLighting( origin, normal * -16.0f, diffuseColor, baseColor );
+	engine->TraceLineMaterialAndLighting( origin, normal * -16.0f, diffuseColor, baseColor );
 	// Get final light value
-	float r = pow( diffuseColor[0], 1.0f/2.2f ) * baseColor[0];
-	float g = pow( diffuseColor[1], 1.0f/2.2f ) * baseColor[1];
-	float b = pow( diffuseColor[2], 1.0f/2.2f ) * baseColor[2];
+	const float r = pow( diffuseColor[0], 1.0f/2.2f ) * baseColor[0];
+	const float g = pow( diffuseColor[1], 1.0f/2.2f ) * baseColor[1];
+	const float b = pow( diffuseColor[2], 1.0f/2.2f ) * baseColor[2];
 
 	if ( g_Material_Spark == NULL )
 	{
@@ -1134,7 +1123,7 @@ void FX_Explosion( Vector& origin, Vector& normal, char materialType )
 			break;
 		}
 
-		int	numFlecks = random->RandomInt( 48, 64 );
+		const int	numFlecks = random->RandomInt( 48, 64 );
 		// Dump out flecks
 		for ( i = 0; i < numFlecks; i++ )
 		{
@@ -1162,8 +1151,8 @@ void FX_Explosion( Vector& origin, Vector& normal, char materialType )
 
 	// Large sphere bursts
 	CSmartPtr<CSimpleEmitter> pSimpleEmitter = CSimpleEmitter::Create( "FX_Explosion 1" );
-	PMaterialHandle	hSphereMaterial = g_Mat_DustPuff[1];
-	Vector vecBurstOrigin = offset + normal * 8.0;
+	const PMaterialHandle hSphereMaterial = g_Mat_DustPuff[1];
+	const Vector& vecBurstOrigin = offset + normal * 8.0;
 	pSimpleEmitter->SetSortOrigin( vecBurstOrigin );
 	SimpleParticle *pSphereParticle = (SimpleParticle *) pSimpleEmitter->AddParticle( sizeof(SimpleParticle), hSphereMaterial, vecBurstOrigin );
 	if ( pSphereParticle )
@@ -1174,17 +1163,17 @@ void FX_Explosion( Vector& origin, Vector& normal, char materialType )
 		pSphereParticle->m_uchEndAlpha		= 64.0;
 		pSphereParticle->m_uchStartSize		= 0.0;
 		pSphereParticle->m_uchEndSize		= 255.0;
-		pSphereParticle->m_vecVelocity		= Vector(0,0,0);
+		pSphereParticle->m_vecVelocity		= vec3_origin;
 
-		float colorRamp = random->RandomFloat( 0.75f, 1.5f );
+		const float colorRamp = random->RandomFloat( 0.75f, 1.5f );
 		pSphereParticle->m_uchColor[0] = MIN( 1.0f, r*colorRamp )*255.0f;
 		pSphereParticle->m_uchColor[1] = MIN( 1.0f, g*colorRamp )*255.0f;
 		pSphereParticle->m_uchColor[2] = MIN( 1.0f, b*colorRamp )*255.0f;
 	}
 
 	// Throw some smoke balls out around the normal
-	int numBalls = 12;
-	Vector vecRight, vecForward, vecUp;
+	const int numBalls = 12;
+	Vector vecRight, vecUp;
 	QAngle vecAngles;
 	VectorAngles( normal, vecAngles );
 	AngleVectors( vecAngles, NULL, &vecRight, &vecUp );
@@ -1200,12 +1189,12 @@ void FX_Explosion( Vector& origin, Vector& normal, char materialType )
 			pParticle->m_uchStartSize	= 16.0;
 			pParticle->m_uchEndSize		= 64.0;
 
-			float flAngle = ((float)i * M_PI * 2) / numBalls;
-			float x = cos( flAngle );
-			float y = sin( flAngle );
+			const float flAngle = ((float)i * M_PI * 2) / numBalls;
+			const float x = cos( flAngle );
+			const float y = sin( flAngle );
 			pParticle->m_vecVelocity = (vecRight*x + vecUp*y) * 1024.0;
 
-			float colorRamp = random->RandomFloat( 0.75f, 1.5f );
+			const float colorRamp = random->RandomFloat( 0.75f, 1.5f );
 			pParticle->m_uchColor[0] = MIN( 1.0f, r*colorRamp )*255.0f;
 			pParticle->m_uchColor[1] = MIN( 1.0f, g*colorRamp )*255.0f;
 			pParticle->m_uchColor[2] = MIN( 1.0f, b*colorRamp )*255.0f;
@@ -1234,7 +1223,7 @@ void FX_Explosion( Vector& origin, Vector& normal, char materialType )
 		pParticle->m_flRoll			= random->RandomFloat( 180, 360 );
 		pParticle->m_flRollDelta	= random->RandomFloat( -1, 1 );
 
-		float colorRamp = random->RandomFloat( 0.5f, 1.25f );
+		const float colorRamp = random->RandomFloat( 0.5f, 1.25f );
 		pParticle->m_uchColor[0] = MIN( 1.0f, r*colorRamp )*255.0f;
 		pParticle->m_uchColor[1] = MIN( 1.0f, g*colorRamp )*255.0f;
 		pParticle->m_uchColor[2] = MIN( 1.0f, b*colorRamp )*255.0f;
@@ -1246,7 +1235,7 @@ void FX_Explosion( Vector& origin, Vector& normal, char materialType )
 // Input  : origin - 
 //			normal - 
 //-----------------------------------------------------------------------------
-void FX_ConcussiveExplosion( Vector &origin, Vector &normal )
+void FX_ConcussiveExplosion( const Vector &origin, const Vector &normal )
 {
 	VPROF_BUDGET( "FX_ConcussiveExplosion", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	Vector	offset = origin + ( normal * 2.0f );
@@ -1283,7 +1272,7 @@ void FX_ConcussiveExplosion( Vector &origin, Vector &normal )
 		pParticle->m_flRoll			= random->RandomFloat( 180, 360 );
 		pParticle->m_flRollDelta	= random->RandomFloat( -4, 4 );
 
-		int colorRamp = random->RandomFloat( 235, 255 );
+		const int colorRamp = random->RandomFloat( 235, 255 );
 		pParticle->m_uchColor[0] = colorRamp;
 		pParticle->m_uchColor[1] = colorRamp;
 		pParticle->m_uchColor[2] = colorRamp;
@@ -1312,7 +1301,7 @@ void FX_ConcussiveExplosion( Vector &origin, Vector &normal )
 		pParticle->m_flRoll			= random->RandomFloat( 180, 360 );
 		pParticle->m_flRollDelta	= random->RandomFloat( -1, 1 );
 
-		int colorRamp = random->RandomFloat( 235, 255 );
+		const int colorRamp = random->RandomFloat( 235, 255 );
 		pParticle->m_uchColor[0] = colorRamp;
 		pParticle->m_uchColor[1] = colorRamp;
 		pParticle->m_uchColor[2] = colorRamp;
@@ -1413,7 +1402,7 @@ void FX_ConcussiveExplosion( Vector &origin, Vector &normal )
 			
 			pTrailParticle->m_vecVelocity	= dir * random->RandomFloat( 800, 1000 );
 
-			float colorRamp = random->RandomFloat( 0.75f, 1.0f );
+			const float colorRamp = random->RandomFloat( 0.75f, 1.0f );
 			FloatToColor32( pTrailParticle->m_color, colorRamp, colorRamp, 1.0f, 1.0f );
 		}
 	}
@@ -1457,16 +1446,16 @@ void FX_ConcussiveExplosion( Vector &origin, Vector &normal )
 			
 			pTrailParticle->m_vecVelocity	= dir * random->RandomFloat( 128, 512 );
 
-			float colorRamp = random->RandomFloat( 0.75f, 1.0f );
+			const float colorRamp = random->RandomFloat( 0.75f, 1.0f );
 			FloatToColor32( pTrailParticle->m_color, colorRamp, colorRamp, 1.0f, 1.0f );
 		}
 	}
 }
 
 
-void FX_SparkFan( Vector &position, Vector &normal )
+void FX_SparkFan( const Vector &position, const Vector &normal )
 {
-	Vector	offset = position + ( normal * 1.0f );
+	const Vector& offset = position + ( normal * 1.0f );
 
 	CSmartPtr<CTrailParticles> sparkEmitter = CTrailParticles::Create( "FX_MetalScrape 1" );
 
@@ -1490,21 +1479,20 @@ void FX_SparkFan( Vector &position, Vector &normal )
 		g_Material_Spark = sparkEmitter->GetPMaterial( "effects/spark" );
 	}
 
-	TrailParticle	*pParticle;
 	Vector			dir;
 
-	float	length	= 0.06f;
+	const float	length	= 0.06f;
 
 	//Dump out sparks
 	for ( int i = 0; i < 35; i++ )
 	{
-		pParticle = (TrailParticle *) sparkEmitter->AddParticle( sizeof(TrailParticle), g_Material_Spark, offset );
+		TrailParticle * pParticle = (TrailParticle *) sparkEmitter->AddParticle( sizeof(TrailParticle), g_Material_Spark, offset );
 		if ( pParticle == NULL )
 			return;
 
 		pParticle->m_flLifetime	= 0.0f;
 
-		float	spreadOfs = random->RandomFloat( 0.0f, 2.0f );
+		const float spreadOfs = random->RandomFloat( 0.0f, 2.0f );
 
 		dir[0] = normal[0] + random->RandomFloat( -(METAL_SCRAPE_SPREAD*spreadOfs), (METAL_SCRAPE_SPREAD*spreadOfs) );
 		dir[1] = normal[1] + random->RandomFloat( -(METAL_SCRAPE_SPREAD*spreadOfs), (METAL_SCRAPE_SPREAD*spreadOfs) );
@@ -1523,15 +1511,7 @@ void FX_SparkFan( Vector &position, Vector &normal )
 
 void ManhackSparkCallback( const CEffectData & data )
 {
-	Vector vecNormal;
-	Vector vecPosition;
-	QAngle angles;
-
-	vecPosition = data.m_vOrigin;
-	vecNormal = data.m_vNormal;
-	angles = data.m_vAngles;
-
-	FX_SparkFan( vecPosition, vecNormal );
+	FX_SparkFan( data.m_vOrigin, data.m_vNormal );
 }
 
 DECLARE_CLIENT_EFFECT( "ManhackSparks", ManhackSparkCallback );

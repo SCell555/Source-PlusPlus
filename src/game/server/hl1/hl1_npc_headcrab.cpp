@@ -177,7 +177,7 @@ int CNPC_Headcrab::SelectSchedule( void )
 		{
 			if (HasCondition( COND_LIGHT_DAMAGE ) || HasCondition( COND_HEAVY_DAMAGE ))
 			{
-				if ( fabs( GetMotor()->DeltaIdealYaw() ) < ( 1.0 - m_flFieldOfView) * 60 ) // roughly in the correct direction
+				if ( fabsf( GetMotor()->DeltaIdealYaw() ) < ( 1.0 - m_flFieldOfView) * 60 ) // roughly in the correct direction
 				{
 					return SCHED_TAKE_COVER_FROM_ORIGIN;
 				}

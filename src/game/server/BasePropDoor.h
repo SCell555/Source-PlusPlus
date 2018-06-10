@@ -46,6 +46,8 @@ public:
 	void Activate();
 	int	ObjectCaps();
 
+	virtual bool IsAbleToCloseAreaPortals( void ) const;
+
 	void HandleAnimEvent( animevent_t *pEvent );
 
 	// Base class services.
@@ -56,11 +58,12 @@ public:
 	inline bool IsDoorOpening();
 	inline bool IsDoorClosed();
 	inline bool IsDoorClosing();
-	inline bool IsDoorLocked();
 	inline bool IsDoorBlocked() const;
 	inline bool IsNPCOpening(CAI_BaseNPC *pNPC);
 	inline bool IsPlayerOpening();
 	inline bool IsOpener(CBaseEntity *pEnt);
+
+	virtual bool IsDoorLocked() { return m_bLocked; }
 
 	bool NPCOpenDoor(CAI_BaseNPC *pNPC);
 	bool TestCollision( const Ray_t &ray, unsigned int mask, trace_t& trace );
@@ -74,6 +77,14 @@ public:
 	virtual void GetNPCOpenData(CAI_BaseNPC *pNPC, opendata_t &opendata) = 0;
 	virtual float GetOpenInterval(void) = 0;
 	// }
+	enum DoorExtent_t
+	{
+		DOOR_EXTENT_OPEN = 1,
+		DOOR_EXTENT_CLOSED = 2,
+	};
+	virtual void ComputeDoorExtent( Extent *extent, unsigned int extentType ) = 0;	// extent contains the volume encompassing by the door in the specified states
+
+
 
 protected:
 
@@ -87,18 +98,24 @@ protected:
 	};
 
 	// dvs: FIXME: make these private
-	void DoorClose();
+	virtual void DoorClose();
 
 	CBasePropDoor *GetMaster( void ) { return m_hMaster; }
 	bool HasSlaves( void ) { return ( m_hDoorList.Count() > 0 ); }
 
 	inline void SetDoorState( DoorState_t eDoorState );
 
+	virtual void CalcDoorSounds();
+
 	float m_flAutoReturnDelay;	// How many seconds to wait before automatically closing, -1 never closes automatically.
 	CUtlVector< CHandle< CBasePropDoor > >	m_hDoorList;	// List of doors linked to us
 
 	inline CBaseEntity *GetActivator();
 
+	int		m_nHardwareType;
+
+	// Called when the door becomes fully closed.
+	virtual void OnDoorClosed() {}
 private:
 
 	// Implement these in your leaf class.
@@ -107,9 +124,6 @@ private:
 	virtual void OnDoorOpened() {}
 
 	// Called when the door becomes fully closed.
-	virtual void OnDoorClosed() {}
-
-	// Called to tell the door to start opening.
 	virtual void BeginOpening(CBaseEntity *pOpenAwayFrom) = 0;
 
 	// Called to tell the door to start closing.
@@ -124,6 +138,10 @@ private:
 	// Called to send the door instantly to its spawn positions.
 	virtual void DoorTeleportToSpawnPosition() = 0;
 	// }
+
+protected:
+	void UpdateAreaPortals( bool bOpen );
+	void DisableAreaPortalThink( void );
 
 private:
 
@@ -154,8 +172,6 @@ private:
 	void EndBlocked(void);
 	void OnEndBlocked( void );
 
-	void UpdateAreaPortals(bool bOpen);
-
 	// Input handlers
 	void InputClose(inputdata_t &inputdata);
 	void InputLock(inputdata_t &inputdata);
@@ -168,11 +184,6 @@ private:
 
 	void SetMaster( CBasePropDoor *pMaster ) { m_hMaster = pMaster; }
 
-	void CalcDoorSounds();
-	// }
-
-	int		m_nHardwareType;
-	
 	DoorState_t m_eDoorState;	// Holds whether the door is open, closed, opening, or closing.
 
 	locksound_t m_ls;			// The sounds the door plays when being locked, unlocked, etc.
@@ -182,11 +193,14 @@ private:
 	EHANDLE	m_hBlocker;				// Entity blocking the door currently
 	bool	m_bFirstBlocked;		// Marker for being the first door (in a group) to be blocked (needed for motion control)
 
+protected:
 	bool m_bForceClosed;			// True if this door must close no matter what.
 
 	string_t m_SoundMoving;
 	string_t m_SoundOpen;
 	string_t m_SoundClose;
+
+	int m_nPhysicsMaterial;
 
 	// dvs: FIXME: can we remove m_flSpeed from CBaseEntity?
 	//float m_flSpeed;			// Rotation speed when opening or closing in degrees per second.
@@ -240,11 +254,6 @@ bool CBasePropDoor::IsDoorClosed()
 bool CBasePropDoor::IsDoorClosing()
 {
 	return m_eDoorState == DOOR_STATE_CLOSING;
-}
-
-bool CBasePropDoor::IsDoorLocked()
-{
-	return m_bLocked;
 }
 
 CBaseEntity *CBasePropDoor::GetActivator()

@@ -274,7 +274,7 @@ void CScratchPad3D::SetMapping(
 	
 	Vector vDivisor(1,1,1);
 	for( int i=0; i < 3; i++ )
-		vDivisor[i] = fabs(vInputMax[i] - vInputMin[i]) < 0.0001f ? 0.001f : (vInputMax[i] - vInputMin[i]);
+		vDivisor[i] = fabsf(vInputMax[i] - vInputMin[i]) < 0.0001f ? 0.001f : (vInputMax[i] - vInputMin[i]);
 
 	Vector vScale = (vOutputMax - vOutputMin) / vDivisor; 
 	Vector vShift = -vInputMin * vScale + vOutputMin;

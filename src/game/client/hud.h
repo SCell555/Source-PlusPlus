@@ -16,6 +16,7 @@
 #include <vgui/VGUI.h>
 #include <Color.h>
 #include <bitbuf.h>
+#include "vgui/ISurface.h"
 
 namespace vgui
 {
@@ -59,7 +60,7 @@ public:
 	int EffectiveHeight( float flScale ) const;
 
 	void DrawSelf( int x, int y, const Color& clr ) const;
-	void DrawSelf( int x, int y, int w, int h, const Color& clr ) const;
+	void DrawSelf( int x, int y, int w, int h, const Color& clr, vgui::FontDrawType_t = vgui::FONT_DRAW_DEFAULT ) const;
 	void DrawSelfCropped( int x, int y, int cropx, int cropy, int cropw, int croph, Color clr ) const;
 	// new version to scale the texture over a finalWidth and finalHeight passed in
 	void DrawSelfCropped( int x, int y, int cropx, int cropy, int cropw, int croph, int finalWidth, int finalHeight, Color clr ) const;

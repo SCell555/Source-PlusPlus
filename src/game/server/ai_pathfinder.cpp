@@ -1907,7 +1907,7 @@ bool CAI_Pathfinder::Triangulate( Navigation_t navType, const Vector &vecStart, 
 		vecEnd = vecEndIn;
 
 	// Compute a direction vector perpendicular to the desired motion direction
-	if ( 1.0f - fabs(vecForward.z) > 1e-3 )
+	if ( 1.0f - fabsf(vecForward.z) > 1e-3 )
 	{
 		vecUp.Init( 0, 0, 1 );
 		CrossProduct( vecForward, vecUp, vecPerpendicular );	// Orthogonal to facing

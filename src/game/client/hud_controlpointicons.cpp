@@ -18,6 +18,54 @@
 #include "tf_hud_freezepanel.h"
 #include "tf_hud_objectivestatus.h"
 
+#include "vgui/IVGui.h"
+#include "vgui/ISurface.h"
+
+#include "tier0/memdbgon.h"
+
+using namespace vgui;
+
+void CControlPointIconCapturePulse::PaintBackground()
+{
+	if ( m_flFinishCapAnimStart && gpGlobals->curtime > m_flFinishCapAnimStart )
+	{
+		float flElapsedTime = MAX( 0.f, ( gpGlobals->curtime - m_flFinishCapAnimStart ) );
+		if ( GetImage() )
+		{
+			surface()->DrawSetColor( 255, 255, 255, 255 );
+			int iSize = RemapValClamped( flElapsedTime, 0, FINISHCAPANIM_SWOOP_LENGTH, GetWide(), m_iShrinkSize );
+			GetImage()->SetPos( ( GetWide() - iSize )*0.5, ( GetTall() - iSize )*0.5 );
+			GetImage()->SetSize( iSize, iSize );
+			GetImage()->Paint();
+		}
+
+		// Once we've finished the swoop, go away
+		if ( flElapsedTime >= FINISHCAPANIM_SWOOP_LENGTH )
+		{
+			SetVisible( false );
+		}
+	}
+}
+
+void CControlPointIconSwoop::PaintBackground()
+{
+	float flElapsedTime = ( gpGlobals->curtime - m_flStartCapAnimStart );
+
+	if ( GetImage() )
+	{
+		surface()->DrawSetColor( 255, 255, 255, 255 );
+		int iYPos = RemapValClamped( flElapsedTime, 0, STARTCAPANIM_SWOOP_LENGTH, 0, GetTall() );
+		GetImage()->SetPos( 0, iYPos );
+		GetImage()->Paint();
+	}
+
+	// Once we've finished the swoop, go away
+	if ( flElapsedTime >= STARTCAPANIM_SWOOP_LENGTH )
+	{
+		SetVisible( false );
+	}
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -70,7 +118,7 @@ void CControlPointIconPulseable::PaintBackground( void )
 			flPulseSpeed = RemapValClamped( flCapPercentage, 0, 1, 2, 5 );
 		}
 
-		float flPulseMod = fabs(sin( flElapsedTime * flPulseSpeed ));
+		float flPulseMod = fabsf(sin( flElapsedTime * flPulseSpeed ));
 		SetAlpha( 255 * flPulseMod );
 
 		int wide, tall;
@@ -682,13 +730,13 @@ CHudControlPointIcons::~CHudControlPointIcons( void )
 		{
 			if ( m_iCPTextures[i] != -1 )
 			{
-				vgui::surface()->DestroyTextureID( m_iCPTextures[i] );
+				vgui::surface()->DeleteTextureByID( m_iCPTextures[i] );
 				m_iCPTextures[i] = -1;
 			}
 
 			if ( m_iCPCappingTextures[i] != -1 )
 			{
-				vgui::surface()->DestroyTextureID( m_iCPCappingTextures[i] );
+				vgui::surface()->DeleteTextureByID( m_iCPCappingTextures[i] );
 				m_iCPCappingTextures[i] = -1;
 			}
 		}
@@ -697,7 +745,7 @@ CHudControlPointIcons::~CHudControlPointIcons( void )
 		{
 			if ( m_iTeamBaseTextures[i] != -1 )
 			{
-				vgui::surface()->DestroyTextureID( m_iTeamBaseTextures[i] );
+				vgui::surface()->DeleteTextureByID( m_iTeamBaseTextures[i] );
 				m_iTeamBaseTextures[i] = -1;
 			}
 		}

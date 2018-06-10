@@ -338,7 +338,7 @@ bool CDODBipodWeapon::CheckDeployEnt( void )
 	}
 	
 	// 20 unit tolerance in height
-	if ( abs( m_flDeployedHeight - flDeployedHeight ) > 20 )
+	if ( fabsf( m_flDeployedHeight - flDeployedHeight ) > 20 )
 		return false;
 
 	return true;
@@ -394,7 +394,7 @@ bool CDODBipodWeapon::TestDeploy( float *flDeployedHeight, CBaseEntity **pDeploy
 					*flDeployedHeight = flTestDeployHeight;
 					*pDeployedOn = pTestDeployedOn;
 				}
-				else if ( abs( *flDeployedHeight - flTestDeployHeight ) > 20 )
+				else if ( fabsf( *flDeployedHeight - flTestDeployHeight ) > 20 )
 				{
 					// don't allow yaw to a position that is too different in height
 					break;
@@ -423,7 +423,7 @@ bool CDODBipodWeapon::TestDeploy( float *flDeployedHeight, CBaseEntity **pDeploy
 
 			if ( TestDeployAngle( pPlayer, &flTestDeployHeight, &pTestDeployedOn, angles ) == true )
 			{
-				if ( abs( *flDeployedHeight - flTestDeployHeight ) > 20 )
+				if ( fabsf( *flDeployedHeight - flTestDeployHeight ) > 20 )
 				{
 					// don't allow yaw to a position that is too different in height
 					break;

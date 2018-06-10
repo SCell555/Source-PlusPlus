@@ -13,14 +13,13 @@
 
 #include <vgui_controls/Panel.h>
 
-using namespace vgui;
-
 class CIconPanel : public vgui::Panel
 {
 	DECLARE_CLASS_SIMPLE( CIconPanel, vgui::Panel );
 
 public:
 	CIconPanel( vgui::Panel *parent, const char *name );
+	~CIconPanel() {}
 
 	void Init( void );
 	virtual void Paint();

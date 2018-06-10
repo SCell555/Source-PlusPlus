@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -28,7 +28,7 @@ ConVar r_pixelvisibility_spew( "r_pixelvisibility_spew", "0" );
 #ifdef OSX
 	// GLMgr will set this one to "1" if it senses the new post-10.6.4 driver (m_hasPerfPackage1)
 	ConVar gl_can_query_fast( "gl_can_query_fast", "0" );
-	
+
 	static bool	HasFastQueries( void )
 	{
 		return gl_can_query_fast.GetBool();
@@ -51,8 +51,6 @@ const float MIN_PROXY_PIXELS = 25.0f;
 
 float PixelVisibility_DrawProxy( IMatRenderContext *pRenderContext, OcclusionQueryObjectHandle_t queryHandle, Vector origin, float scale, float proxyAspect, IMaterial *pMaterial, bool screenspace )
 {
-	Vector point;
-
 	// don't expand this with distance to fit pixels or the sprite will poke through
 	// only expand the parts perpendicular to the view
 	float forwardScale = scale;
@@ -69,7 +67,7 @@ float PixelVisibility_DrawProxy( IMatRenderContext *pRenderContext, OcclusionQue
 	else
 	{
 		float pixels = scale * pixelsPerUnit;
-		
+
 		// make the radius larger to ensure a minimum screen space size of the proxy geometry
 		if ( pixels < MIN_PROXY_PIXELS )
 		{
@@ -82,7 +80,7 @@ float PixelVisibility_DrawProxy( IMatRenderContext *pRenderContext, OcclusionQue
 	VectorNormalize(dir);
 	origin -= dir * forwardScale;
 	forwardScale = 0.0f;
-	// 
+	//
 
 	Vector verts[5];
 	const float sqrt2 = 0.707106781f; // sqrt(2) - keeps all vectors the same length from origin
@@ -92,7 +90,7 @@ float PixelVisibility_DrawProxy( IMatRenderContext *pRenderContext, OcclusionQue
 	verts[0] = origin - CurrentViewForward() * forwardScale;					  // the apex of the pyramid
 	verts[1] = origin + CurrentViewUp() * scale45y - CurrentViewRight() * scale45x; // these four form the base
 	verts[2] = origin + CurrentViewUp() * scale45y + CurrentViewRight() * scale45x; // the pyramid is a sprite with a point that
-	verts[3] = origin - CurrentViewUp() * scale45y + CurrentViewRight() * scale45x; // pokes back toward the camera through any nearby 
+	verts[3] = origin - CurrentViewUp() * scale45y + CurrentViewRight() * scale45x; // pokes back toward the camera through any nearby
 	verts[4] = origin - CurrentViewUp() * scale45y - CurrentViewRight() * scale45x; // geometry
 
 	// get screen coords of edges
@@ -161,7 +159,7 @@ float PixelVisibility_DrawProxy( IMatRenderContext *pRenderContext, OcclusionQue
 	VectorMA (point, scale, CurrentViewRight(), point);
 	meshBuilder.Position3fv (point.Base());
 	meshBuilder.AdvanceVertex();
-	
+
 	meshBuilder.End();
 	pMesh->Draw();
 #endif
@@ -237,9 +235,9 @@ public:
 	void IssueQuery( IMatRenderContext *pRenderContext, float proxySize, float proxyAspect, IMaterial *pMaterial, bool sizeIsScreenSpace );
 	void IssueCountingQuery( IMatRenderContext *pRenderContext, float proxySize, float proxyAspect, IMaterial *pMaterial, bool sizeIsScreenSpace );
 	void ResetOcclusionQueries();
-	void SetView( int viewID ) 
-	{ 
-		m_viewID = viewID;	
+	void SetView( int viewID )
+	{
+		m_viewID = viewID;
 		m_brightnessTarget = 0.0f;
 		m_clipFraction = 1.0f;
 		m_frameIssued = -1;
@@ -290,7 +288,7 @@ void CPixelVisibilityQuery::ResetOcclusionQueries()
 {
 	// NOTE: Since we're keeping the CPixelVisibilityQuery objects around in a pool
 	// and not actually deleting them, this means that our material system occlusion queries are
-	// not being deleted either. Which means that if a CPixelVisibilityQuery is 
+	// not being deleted either. Which means that if a CPixelVisibilityQuery is
 	// put into the free list and then immediately re-used, then we have an opportunity for
 	// a bug: What can happen on the first frame of the material system query
 	// is that if the query isn't done yet, it will use the last queried value
@@ -314,9 +312,9 @@ bool CPixelVisibilityQuery::IsValid()
 {
 	return (m_queryHandle != INVALID_OCCLUSION_QUERY_OBJECT_HANDLE) ? true : false;
 }
-bool CPixelVisibilityQuery::IsForView( int viewID ) 
-{ 
-	return m_viewID == viewID ? true : false; 
+bool CPixelVisibilityQuery::IsForView( int viewID )
+{
+	return m_viewID == viewID ? true : false;
 }
 
 bool CPixelVisibilityQuery::IsActive()
@@ -343,7 +341,7 @@ float CPixelVisibilityQuery::GetFractionVisible( float fadeTimeInv )
 				pixels = pRenderContext->OcclusionQuery_GetNumPixelsRendered( m_queryHandle );
 			}
 
-			if ( r_pixelvisibility_spew.GetBool() && CurrentViewID() == 0 ) 
+			if ( r_pixelvisibility_spew.GetBool() && CurrentViewID() == 0 )
 			{
 				DevMsg( 1, "Pixels visible: %d (qh:%d) Pixels possible: %d (qh:%d) (frame:%d)\n", pixels, (int)m_queryHandle, pixelsPossible, (int)m_queryHandleCount, gpGlobals->framecount );
 			}
@@ -374,7 +372,7 @@ float CPixelVisibilityQuery::GetFractionVisible( float fadeTimeInv )
 				pixels = pRenderContext->OcclusionQuery_GetNumPixelsRendered( m_queryHandle );
 			}
 
-			if ( r_pixelvisibility_spew.GetBool() && CurrentViewID() == 0 ) 
+			if ( r_pixelvisibility_spew.GetBool() && CurrentViewID() == 0 )
 			{
 				DevMsg( 1, "Pixels visible: %d (qh:%d) (frame:%d)\n", pixels, (int)m_queryHandle, gpGlobals->framecount );
 			}
@@ -413,7 +411,7 @@ void CPixelVisibilityQuery::IssueQuery( IMatRenderContext *pRenderContext, float
 	{
 		Assert( IsValid() );
 
-		if ( r_pixelvisibility_spew.GetBool() && CurrentViewID() == 0 ) 
+		if ( r_pixelvisibility_spew.GetBool() && CurrentViewID() == 0 )
 		{
 			DevMsg( 1, "Draw Proxy: qh:%d org:<%d,%d,%d> (frame:%d)\n", (int)m_queryHandle, (int)m_origin[0], (int)m_origin[1], (int)m_origin[2], gpGlobals->framecount );
 		}
@@ -466,7 +464,7 @@ CLIENTEFFECT_REGISTER_END()
 class CPixelVisibilitySystem : public CAutoGameSystem
 {
 public:
-	
+
 	// GameSystem: Level init, shutdown
 	virtual void LevelInitPreEntity();
 	virtual void LevelShutdownPostEntity();
@@ -489,7 +487,7 @@ public:
 	bool SupportsOcclusion() { return m_hwCanTestGlows; }
 	void DebugInfo()
 	{
-		Msg("Pixel vis system using %d sets total (%d in free list), %d queries total (%d in free list)\n", 
+		Msg("Pixel vis system using %d sets total (%d in free list), %d queries total (%d in free list)\n",
 			m_setList.TotalCount(), m_setList.Count(m_freeSetsList), m_queryList.TotalCount(), m_queryList.Count( m_freeQueriesList ) );
 	}
 
@@ -522,7 +520,7 @@ void CPixelVisibilitySystem::LevelInitPreEntity()
 {
 	bool fastqueries = HasFastQueries();
 	// printf("\n ** fast queries: %s **", fastqueries?"true":"false" );
-	
+
 	m_hwCanTestGlows = r_dopixelvisibility.GetBool() && fastqueries && engine->GetDXSupportLevel() >= 80;
 	if ( m_hwCanTestGlows )
 	{
@@ -584,7 +582,7 @@ void CPixelVisibilitySystem::EndView()
 {
 	if ( !PixelVisibility_IsAvailable() && CurrentViewID() >= 0 )
 		return;
-	
+
 	if ( m_setList.Head( m_activeSetsList ) == m_setList.InvalidIndex() )
 		return;
 
@@ -769,7 +767,7 @@ class CTraceFilterGlow : public CTraceFilterSimple
 {
 public:
 	DECLARE_CLASS( CTraceFilterGlow, CTraceFilterSimple );
-	
+
 	CTraceFilterGlow( const IHandleEntity *passentity, int collisionGroup ) : CTraceFilterSimple(passentity, collisionGroup) {}
 	virtual bool ShouldHitEntity( IHandleEntity *pHandleEntity, int contentsMask )
 	{
@@ -799,7 +797,7 @@ float GlowSightDistance( const Vector &glowOrigin, bool bShouldTrace )
 			end -= CurrentViewForward()*4;
 		}
 		int traceFlags = MASK_OPAQUE|CONTENTS_MONSTER|CONTENTS_DEBRIS;
-		
+
 		CTraceFilterGlow filter(NULL, COLLISION_GROUP_NONE);
 		trace_t tr;
 		UTIL_TraceLine( CurrentViewOrigin(), end, traceFlags, &filter, &tr );
@@ -828,7 +826,7 @@ float PixelVisibility_FractionVisible( const pixelvis_queryparams_t &params, pix
 	{
 		return GlowSightDistance( params.position, true ) > 0.0f ? 1.0f : 0.0f;
 	}
-	else 
+	else
 	{
 		return g_PixelVisibilitySystem.GetFractionVisible( params, queryHandle );
 	}
@@ -840,7 +838,7 @@ bool PixelVisibility_IsAvailable()
 	return r_dopixelvisibility.GetBool() && fastqueries && g_PixelVisibilitySystem.SupportsOcclusion();
 }
 
-//this originally called a class function of CPixelVisibiltySystem to keep the work clean, but that function needed friend access to CPixelVisibilityQuery 
+//this originally called a class function of CPixelVisibiltySystem to keep the work clean, but that function needed friend access to CPixelVisibilityQuery
 //and I didn't want to make the whole class a friend or shift all the functions and class declarations around in this file
 void PixelVisibility_ShiftVisibilityViews( int iSourceViewID, int iDestViewID )
 {
@@ -869,7 +867,7 @@ void PixelVisibility_ShiftVisibilityViews( int iSourceViewID, int iDestViewID )
 		{
 			//make the source believe it's the destination
 			g_PixelVisibilitySystem.m_queryList[iSourceQueryNode].m_viewID = iDestViewID;
-		}		
+		}
 
 		node = next;
 	}

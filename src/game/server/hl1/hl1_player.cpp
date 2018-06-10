@@ -581,7 +581,7 @@ void CHL1_Player::CheckTimeBasedDamage( void )
 		return;
 
 	// only check for time based damage approx. every 2 seconds
-	if (abs(gpGlobals->curtime - m_tbdPrev) < 2.0)
+	if (fabsf(gpGlobals->curtime - m_tbdPrev) < 2.0)
 		return;
 	
 	m_tbdPrev = gpGlobals->curtime;
@@ -1272,7 +1272,7 @@ static QAngle AlignAngles( const QAngle &angles, float cosineAlignAngle )
 		MatrixGetColumn( alignMatrix, j, vec );
 		for ( int i = 0; i < 3; i++ )
 		{
-			if ( fabs(vec[i]) > cosineAlignAngle )
+			if ( fabsf(vec[i]) > cosineAlignAngle )
 			{
 				vec[i] = SIGN(vec[i]);
 				vec[(i+1)%3] = 0;
@@ -1837,7 +1837,7 @@ bool CGrabController::UpdateObject( CBasePlayer *pPlayer, float flError )
 	Vector radial = physcollision->CollideGetExtent( pPhys->GetCollide(), vec3_origin, pEntity->GetAbsAngles(), -forward );
 	Vector player2d = pPlayer->CollisionProp()->OBBMaxs();
 	float playerRadius = player2d.Length2D();
-	float radius = playerRadius + fabs(DotProduct( forward, radial ));
+	float radius = playerRadius + fabsf(DotProduct( forward, radial ));
 
 	float distance = 24 + ( radius * 2.0f );
 

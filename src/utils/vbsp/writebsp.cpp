@@ -1431,7 +1431,7 @@ static void AddNodeToBounds(int node, CUtlVector<int>& skipAreas, Vector& mins, 
 			for (int j = 0; j < dfaces[face].numedges; ++j)
 			{
 				Assert( firstedge+j < numsurfedges );
-				int edge = abs(dsurfedges[firstedge+j]); 
+				int edge = fabsf(dsurfedges[firstedge+j]); 
 				dedge_t* pEdge = &dedges[edge];
 				Assert( pEdge->v[0] >= 0 );
 				Assert( pEdge->v[1] >= 0 );

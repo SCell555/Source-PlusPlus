@@ -533,7 +533,7 @@ bool CCSPlayer::RunMimicCommand( CUserCmd& cmd )
 	if ( !IsBot() )
 		return false;
 
-	int iMimic = abs( bot_mimic.GetInt() );
+	int iMimic = fabsf( bot_mimic.GetInt() );
 	if ( iMimic > gpGlobals->maxClients )
 		return false;
 

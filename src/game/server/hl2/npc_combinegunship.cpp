@@ -887,7 +887,7 @@ bool CNPC_CombineGunship::CheckGroundAttack( void )
 		return false;
 
 	//FIXME: Check to make sure we're not firing too far above or below the target
-	if ( fabs( GetGroundAttackHitPosition().z - GetEnemy()->WorldSpaceCenter().z ) > MIN_GROUND_ATTACK_HEIGHT_DIFF )
+	if ( fabsf( GetGroundAttackHitPosition().z - GetEnemy()->WorldSpaceCenter().z ) > MIN_GROUND_ATTACK_HEIGHT_DIFF )
 		return false;
 
 	//FIXME: Check for ground movement capabilities?
@@ -943,7 +943,7 @@ void CNPC_CombineGunship::StartGroundAttack( void )
 //-----------------------------------------------------------------------------
 void CNPC_CombineGunship::ManageWarningBeam( void )
 {
-	Vector vecSrc, vecShootDir;
+	Vector vecSrc;
 	GetAttachment( "BellyGun", vecSrc, NULL, NULL, NULL );
 
 	trace_t	tr;
@@ -1409,7 +1409,6 @@ void CNPC_CombineGunship::MoveHead( void )
 			float	flDot;
 
 			Vector vTargetPos, vGunPosition;
-			Vector vecTargetOffset;
 			QAngle vGunAngles;
 
 			GetAttachment( "muzzle", vGunPosition, vGunAngles );
@@ -1630,9 +1629,6 @@ bool CNPC_CombineGunship::FireGun( void )
 //------------------------------------------------------------------------------
 void CNPC_CombineGunship::FireCannonRound( void )
 {
-	Vector vecPenetrate;
-	trace_t tr;
-
 	Vector vecToEnemy, vecEnemyTarget;
 	Vector vecMuzzle;
 	Vector vecAimDir;
@@ -2228,7 +2224,7 @@ void CNPC_CombineGunship::Flight( void )
 
 	SetLocalAngularVelocity( angVel );
 
-	m_flForce = m_flForce * 0.8 + (accel.z + fabs( accel.x ) * 0.1 + fabs( accel.y ) * 0.1) * 0.1 * 0.2;
+	m_flForce = m_flForce * 0.8 + (accel.z + fabsf( accel.x ) * 0.1 + fabsf( accel.y ) * 0.1) * 0.1 * 0.2;
 
 	Vector vecImpulse = m_flForce * up;
 	
@@ -2404,15 +2400,15 @@ void CNPC_CombineGunship::ApplySidewaysDrag( const Vector &vecRight )
 	Vector vecVelocity = GetAbsVelocity();
 	if( m_lifeState == LIFE_ALIVE )
 	{
-		vecVelocity.x *= (1.0 - fabs( vecRight.x ) * 0.04);
-		vecVelocity.y *= (1.0 - fabs( vecRight.y ) * 0.04);
-		vecVelocity.z *= (1.0 - fabs( vecRight.z ) * 0.04);
+		vecVelocity.x *= (1.0 - fabsf( vecRight.x ) * 0.04);
+		vecVelocity.y *= (1.0 - fabsf( vecRight.y ) * 0.04);
+		vecVelocity.z *= (1.0 - fabsf( vecRight.z ) * 0.04);
 	}
 	else
 	{
-		vecVelocity.x *= (1.0 - fabs( vecRight.x ) * 0.03);
-		vecVelocity.y *= (1.0 - fabs( vecRight.y ) * 0.03);
-		vecVelocity.z *= (1.0 - fabs( vecRight.z ) * 0.09);
+		vecVelocity.x *= (1.0 - fabsf( vecRight.x ) * 0.03);
+		vecVelocity.y *= (1.0 - fabsf( vecRight.y ) * 0.03);
+		vecVelocity.z *= (1.0 - fabsf( vecRight.z ) * 0.09);
 	}
 	SetAbsVelocity( vecVelocity );
 }
@@ -2803,14 +2799,6 @@ void CNPC_CombineGunship::MakeTracer( const Vector &vecTracerSrc, const trace_t 
 	{
 	case TRACER_LINE:
 		{
-			float flTracerDist;
-			Vector vecDir;
-			Vector vecEndPos;
-
-			vecDir = tr.endpos - vecTracerSrc;
-
-			flTracerDist = VectorNormalize( vecDir );
-
 			UTIL_Tracer( vecTracerSrc, tr.endpos, 0, TRACER_DONT_USE_ATTACHMENT, 8000, true, "GunshipTracer" );
 		}
 		break;

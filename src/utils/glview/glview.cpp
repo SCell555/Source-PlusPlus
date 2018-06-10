@@ -412,7 +412,7 @@ void ReadPolyFileType(const char *name, int nList, BOOL drawLines)
 				&v[2], &v[3], &v[4], &v[5]);
 
 			/*
-			if (!(fabs( v[0] ) < 32768.0&& fabs( v[1] ) < 32768.0 && fabs( v[2] ) < 32768.0 ) )
+			if (!(fabsf( v[0] ) < 32768.0&& fabsf( v[1] ) < 32768.0 && fabsf( v[2] ) < 32768.0 ) )
 				Error( "Out of range data\n");
 			*/
 
@@ -427,7 +427,7 @@ void ReadPolyFileType(const char *name, int nList, BOOL drawLines)
 			{
 				if (g_bReadPortals)  // Gray scale it, leave portals blue
 				{
-					if (fabs(fabs(v[5]) - 1.0f) < 0.01)   // Is this a detail brush (color 0,0,1 blue)
+					if (fabsf(fabsf(v[5]) - 1.0f) < 0.01)   // Is this a detail brush (color 0,0,1 blue)
 					{
 						glColor4f (v[3],v[4],v[5],0.5);   
 					}	
@@ -512,11 +512,11 @@ void Benchmark_PHY( const CPhysCollide *pCollide )
 		for ( int i = 0; i < NUM_COLLISION_TESTS; i++ )
 		{
 			radius += NUM_COLLISION_TESTS * 123.123f;
-			radius = fabs(fmod(radius, 128));
+			radius = fabsf(fmod(radius, 128));
 			theta += NUM_COLLISION_TESTS * 0.76f;
-			theta = fabs(fmod(theta, DEG2RAD(360)));
+			theta = fabsf(fmod(theta, DEG2RAD(360)));
 			phi += NUM_COLLISION_TESTS * 0.16666666f;
-			phi = fabs(fmod(phi, DEG2RAD(180)));
+			phi = fabsf(fmod(phi, DEG2RAD(180)));
 
 			float st, ct, sp, cp;
 			SinCos( theta, &st, &ct );

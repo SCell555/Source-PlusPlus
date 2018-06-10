@@ -139,7 +139,7 @@ bool CNPC_APCDriver::IsBeingCarried()
 	// Inert if we're carried...
 	Vector vecVelocity;
 	m_hAPC->GetVelocity( &vecVelocity, NULL );
-	return ( m_hAPC->GetMoveParent() != NULL ) || (fabs(vecVelocity.z) >= 15);
+	return ( m_hAPC->GetMoveParent() != NULL ) || (fabsf(vecVelocity.z) >= 15);
 }
 
 

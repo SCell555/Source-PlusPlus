@@ -577,7 +577,7 @@ void CHL2GameMovement::FullLadderMove()
 	if ( pressing_forward_or_side )
 	{
 		float fwdDot = m_vecForward.Dot( ladderVec );
-		if ( fabs( fwdDot ) > 0.9f )
+		if ( fabsf( fwdDot ) > 0.9f )
 		{
 			moving_along_ladder = true;
 		}
@@ -782,19 +782,19 @@ bool CHL2GameMovement::CheckLadderAutoMountCone( CFuncLadder *ladder, const Vect
 		bool reallyclosetoladder = ( dist != 0.0f && dist < 4.0f ) ? true : false;
 
 		bool facingladderaxis = ( angle < maxAngleDelta ) ? true : false;
-		bool facingalongaxis = ( (float)fabs( ladderAxis.Dot( m_vecForward ) ) > sv_ladderautomountdot.GetFloat() ) ? true : false;
+		bool facingalongaxis = ( (float)fabsf( ladderAxis.Dot( m_vecForward ) ) > sv_ladderautomountdot.GetFloat() ) ? true : false;
 #if 0
 		Msg( "close %i length %.3f maxdist %.3f facing %.3f dot %.3f ang %.3f\n",
 			closetoladder ? 1 : 0,
 			dist,
 			maxDistToLadder,
-			(float)fabs( ladderAxis.Dot( m_vecForward ) ),
+			(float)fabsf( ladderAxis.Dot( m_vecForward ) ),
 			facingDot, 
 			angle);
 #endif
 
 		// Tracker 21776:  Don't mount ladders this way if strafing
-		bool strafing = ( fabs( mv->m_flSideMove ) < 1.0f ) ? false : true;
+		bool strafing = ( fabsf( mv->m_flSideMove ) < 1.0f ) ? false : true;
 
 		if ( ( ( facingDot > 0.0f && !strafing ) || facingalongaxis  ) && 
 			( facingladderaxis || reallyclosetoladder ) && 
@@ -1067,7 +1067,7 @@ bool CHL2GameMovement::LadderMove( void )
 			return false;
 		}
 
-		bool ishorizontal = fabs( topPosition.z - bottomPosition.z ) < 64.0f ? true : false;
+		bool ishorizontal = fabsf( topPosition.z - bottomPosition.z ) < 64.0f ? true : false;
 
 		float changeover = ishorizontal ? 0.0f : 0.3f;
 

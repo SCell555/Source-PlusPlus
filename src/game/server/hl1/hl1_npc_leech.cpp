@@ -544,7 +544,7 @@ float CNPC_Leech::ObstacleDistance( CBaseEntity *pTarget )
 		}
 		else
 		{
-			if ( fabs( m_height - GetLocalOrigin().z ) > 10 )
+			if ( fabsf( m_height - GetLocalOrigin().z ) > 10 )
 				return tr.fraction;
 		}
 	}

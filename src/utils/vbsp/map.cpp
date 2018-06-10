@@ -150,9 +150,9 @@ int	PlaneTypeForNormal (Vector& normal)
 	if (normal[2] == 1.0 || normal[2] == -1.0)
 		return PLANE_Z;
 		
-	ax = fabs(normal[0]);
-	ay = fabs(normal[1]);
-	az = fabs(normal[2]);
+	ax = fabsf(normal[0]);
+	ay = fabsf(normal[1]);
+	az = fabsf(normal[2]);
 	
 	if (ax >= ay && ax >= az)
 		return PLANE_ANYX;
@@ -170,10 +170,10 @@ qboolean	PlaneEqual (plane_t *p, Vector& normal, vec_t dist, float normalEpsilon
 {
 #if 1
 	if (
-	   fabs(p->normal[0] - normal[0]) < normalEpsilon
-	&& fabs(p->normal[1] - normal[1]) < normalEpsilon
-	&& fabs(p->normal[2] - normal[2]) < normalEpsilon
-	&& fabs(p->dist - dist) < distEpsilon )
+	   fabsf(p->normal[0] - normal[0]) < normalEpsilon
+	&& fabsf(p->normal[1] - normal[1]) < normalEpsilon
+	&& fabsf(p->normal[2] - normal[2]) < normalEpsilon
+	&& fabsf(p->dist - dist) < distEpsilon )
 		return true;
 #else
 	if (p->normal[0] == normal[0]
@@ -194,7 +194,7 @@ void CMapFile::AddPlaneToHash (plane_t *p)
 {
 	int		hash;
 
-	hash = (int)fabs(p->dist) / 8;
+	hash = (int)fabsf(p->dist) / 8;
 	hash &= (PLANE_HASHES-1);
 
 	p->hash_chain = planehash[hash];
@@ -259,14 +259,14 @@ bool SnapVector (Vector& normal)
 
 	for (i=0 ; i<3 ; i++)
 	{
-		if ( fabs(normal[i] - 1) < RENDER_NORMAL_EPSILON )
+		if ( fabsf(normal[i] - 1) < RENDER_NORMAL_EPSILON )
 		{
 			VectorClear (normal);
 			normal[i] = 1;
 			return true;
 		}
 
-		if ( fabs(normal[i] - -1) < RENDER_NORMAL_EPSILON )
+		if ( fabsf(normal[i] - -1) < RENDER_NORMAL_EPSILON )
 		{
 			VectorClear (normal);
 			normal[i] = -1;
@@ -288,7 +288,7 @@ void SnapPlane(Vector &normal, vec_t &dist)
 {
 	SnapVector(normal);
 
-	if (fabs(dist - RoundInt(dist)) < RENDER_DIST_EPSILON)
+	if (fabsf(dist - RoundInt(dist)) < RENDER_DIST_EPSILON)
 	{
 		dist = RoundInt(dist);
 	}
@@ -320,7 +320,7 @@ void SnapPlane(Vector &normal, vec_t &dist, const Vector &p0, const Vector &p1, 
 		}
 	}
 
-	if (fabs(dist - RoundInt(dist)) < RENDER_DIST_EPSILON)
+	if (fabsf(dist - RoundInt(dist)) < RENDER_DIST_EPSILON)
 	{
 		dist = RoundInt(dist);
 	}
@@ -356,7 +356,7 @@ int	CMapFile::FindFloatPlane (Vector& normal, vec_t dist)
 	int		hash, h;
 
 	SnapPlane(normal, dist);
-	hash = (int)fabs(dist) / 8;
+	hash = (int)fabsf(dist) / 8;
 	hash &= (PLANE_HASHES-1);
 
 	// search the border bins as well
@@ -1696,7 +1696,7 @@ ChunkFileResult_t CMapFile::LoadEntityCallback(CChunkFile *pFile, int nParam)
 				// find length of x
 				// start with diagonal, then scale x by the projection of diag onto x
 				const Vector& diag = wind->p[0] - wind->p[2];
-				x *= abs( DotProduct( diag, x ) );
+				x *= fabsf( DotProduct( diag, x ) );
 
 				// build transformation matrix (what is needed to turn a [0,0,0] - [1,1,1] cube into this brush)
 				MatrixSetColumn( obbMatrix, 0, x );
@@ -3267,7 +3267,7 @@ void CMapFile::TestExpandBrushes (void)
 			s = brush->original_sides + i;
 			dist = mapplanes[s->planenum].dist;
 			for (j=0 ; j<3 ; j++)
-				dist += fabs( 16 * mapplanes[s->planenum].normal[j] );
+				dist += fabsf( 16 * mapplanes[s->planenum].normal[j] );
 
 			w = BaseWindingForPlane (mapplanes[s->planenum].normal, dist);
 

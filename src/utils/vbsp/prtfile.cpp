@@ -32,7 +32,7 @@ int g_SkyCluster = -1;
 
 void WriteFloat (FILE *f, vec_t v)
 {
-	if ( fabs(v - RoundInt(v)) < 0.001 )
+	if ( fabsf(v - RoundInt(v)) < 0.001 )
 		fprintf (f,"%i ",(int)RoundInt(v));
 	else
 		fprintf (f,"%f ",v);

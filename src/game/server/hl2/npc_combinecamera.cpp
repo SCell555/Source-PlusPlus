@@ -489,7 +489,7 @@ bool CNPC_CombineCamera::UpdateFacing()
 	int iPose = LookupPoseParameter(COMBINE_CAMERA_BC_PITCH);
 	SetPoseParameter(iPose, GetPoseParameter(iPose) + (flDiff / 1.5f));
 
-	if (fabs(flDiff) > 0.1f)
+	if (fabsf(flDiff) > 0.1f)
 	{
 		bMoved = true;
 	}
@@ -500,7 +500,7 @@ bool CNPC_CombineCamera::UpdateFacing()
 	iPose = LookupPoseParameter(COMBINE_CAMERA_BC_YAW);
 	SetPoseParameter(iPose, GetPoseParameter(iPose) + (flDiff / 1.5f));
 
-	if (fabs(flDiff) > 0.1f)
+	if (fabsf(flDiff) > 0.1f)
 	{
 		bMoved = true;
 	}
@@ -722,7 +722,6 @@ void CNPC_CombineCamera::TrackTarget( CBaseEntity *pTarget )
 	}
 
 	Vector vecMuzzle, vecMuzzleDir;
-	QAngle vecMuzzleAng;
 	
 	GetAttachment("eyes", vecMuzzle, &vecMuzzleDir);
 	

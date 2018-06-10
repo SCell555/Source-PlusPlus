@@ -986,12 +986,11 @@ bool FASTCALL IsBoxIntersectingRay( const fltx4 &inBoxMin, const fltx4 & inBoxMa
 bool FASTCALL IsBoxIntersectingRay( const fltx4& boxMin, const fltx4& boxMax, 
 								   const Ray_t& ray, float flTolerance )
 {
-	fltx4 vTolerance = ReplicateX4(flTolerance);
-	fltx4 rayStart = LoadAlignedSIMD(ray.m_Start);
-	fltx4 rayExtents = LoadAlignedSIMD(ray.m_Extents);
+	FLTX4 rayStart = LoadAlignedSIMD(ray.m_Start);
+	FLTX4 rayExtents = LoadAlignedSIMD(ray.m_Extents);
 	if ( !ray.m_IsSwept )
 	{
-
+		FLTX4 vTolerance = ReplicateX4(flTolerance);
 		fltx4 rayMins, rayMaxs;
 		rayMins = SubSIMD(rayStart, rayExtents);
 		rayMaxs = AddSIMD(rayStart, rayExtents);
@@ -3019,7 +3018,7 @@ bool OBBHasFullyContainedIntersectionWithQuad( const Vector &vOBBExtent1_Scaled,
 					float fTotalDist = fDists[iAxisCrossings[j]] - fDists[i]; //remember that fDists[i] is a negative value
 					ptPlaneIntersections[iPlaneIntersectionsCount] = (ptOBB[iAxisCrossings[j]] * (-fDists[i]/fTotalDist)) + (ptOBB[i] * (fDists[iAxisCrossings[j]]/fTotalDist));
 
-					Assert( fabs( ptPlaneIntersections[iPlaneIntersectionsCount].Dot( vQuadNormal ) - fQuadPlaneDist ) < 0.1f ); //intersection point is on plane
+					Assert( fabsf( ptPlaneIntersections[iPlaneIntersectionsCount].Dot( vQuadNormal ) - fQuadPlaneDist ) < 0.1f ); //intersection point is on plane
 
 					++iPlaneIntersectionsCount;
 				}
@@ -3035,13 +3034,13 @@ bool OBBHasFullyContainedIntersectionWithQuad( const Vector &vOBBExtent1_Scaled,
 		Vector vToPointFromQuadCenter = ptPlaneIntersections[i] - ptQuadCenter;
 
 		float fExt1Dist = vQuadExtent1_Normalized.Dot( vToPointFromQuadCenter );
-		if( fabs( fExt1Dist ) > fQuadExtent1Length )
+		if( fabsf( fExt1Dist ) > fQuadExtent1Length )
 			return false; //point is outside boundaries
 
 		//vToPointFromQuadCenter -= vQuadExtent1_Normalized * fExt1Dist; //to handle diamond shaped quads
 
 		float fExt2Dist = vQuadExtent2_Normalized.Dot( vToPointFromQuadCenter );
-		if( fabs( fExt2Dist ) > fQuadExtent2Length )
+		if( fabsf( fExt2Dist ) > fQuadExtent2Length )
 			return false; //point is outside boundaries
 	}
 
@@ -3088,7 +3087,7 @@ bool RayHasFullyContainedIntersectionWithQuad( const Ray_t &ray,
 					{
 						float fInvTotalDist = 1.0f / (fDists[j] - fDists[i]); //fDists[i] <= 0, ray is swept so no chance that the denom was 0
 						ptPlaneIntersections[0] = (ptEndPoints[i] * (fDists[j] * fInvTotalDist)) - (ptEndPoints[j] * (fDists[i] * fInvTotalDist)); //fDists[i] <= 0 
-						Assert( fabs( ptPlaneIntersections[iPlaneIntersectionsCount].Dot( vQuadNormal ) - fQuadPlaneDist ) < 0.1f ); //intersection point is on plane
+						Assert( fabsf( ptPlaneIntersections[iPlaneIntersectionsCount].Dot( vQuadNormal ) - fQuadPlaneDist ) < 0.1f ); //intersection point is on plane
 						iPlaneIntersectionsCount = 1;
 					}
 					else 
@@ -3104,7 +3103,7 @@ bool RayHasFullyContainedIntersectionWithQuad( const Ray_t &ray,
 		}
 		else //not swept, so this is actually a point on quad question
 		{
-			if( fabs( vQuadNormal.Dot( ray.m_Start ) - fQuadPlaneDist ) < 1e-6 )
+			if( fabsf( vQuadNormal.Dot( ray.m_Start ) - fQuadPlaneDist ) < 1e-6f )
 			{
 				ptPlaneIntersections[0] = ray.m_Start;
 				iPlaneIntersectionsCount = 1;
@@ -3196,7 +3195,7 @@ bool RayHasFullyContainedIntersectionWithQuad( const Ray_t &ray,
 								float fInvTotalDist = 1.0f / (fDists[k][iAxisCrossings[j]] - fDists[k][i]); //remember that fDists[k][i] is a negative value
 								ptPlaneIntersections[iPlaneIntersectionsCount] = (ptEndPoints[k][iAxisCrossings[j]] * (-fDists[k][i] * fInvTotalDist)) + (ptEndPoints[k][i] * (fDists[k][iAxisCrossings[j]] * fInvTotalDist));
 
-								Assert( fabs( ptPlaneIntersections[iPlaneIntersectionsCount].Dot( vQuadNormal ) - fQuadPlaneDist ) < 0.1f ); //intersection point is on plane
+								Assert( fabsf( ptPlaneIntersections[iPlaneIntersectionsCount].Dot( vQuadNormal ) - fQuadPlaneDist ) < 0.1f ); //intersection point is on plane
 
 								++iPlaneIntersectionsCount;
 							}
@@ -3229,7 +3228,7 @@ bool RayHasFullyContainedIntersectionWithQuad( const Ray_t &ray,
 					float fInvTotalDist = 1.0f / (fDists[iPosSide][i] - fDists[iNegSide][i]); //remember that fDists[iNegSide][i] is a negative value
 					ptPlaneIntersections[iPlaneIntersectionsCount] = (ptEndPoints[iPosSide][i] * (-fDists[iNegSide][i] * fInvTotalDist)) + (ptEndPoints[iNegSide][i] * (fDists[iPosSide][i] * fInvTotalDist));
 
-					Assert( fabs( ptPlaneIntersections[iPlaneIntersectionsCount].Dot( vQuadNormal ) - fQuadPlaneDist ) < 0.1f ); //intersection point is on plane
+					Assert( fabsf( ptPlaneIntersections[iPlaneIntersectionsCount].Dot( vQuadNormal ) - fQuadPlaneDist ) < 0.1f ); //intersection point is on plane
 
 					++iPlaneIntersectionsCount;
 				}
@@ -3246,13 +3245,13 @@ bool RayHasFullyContainedIntersectionWithQuad( const Ray_t &ray,
 		Vector vToPointFromQuadCenter = ptPlaneIntersections[i] - ptQuadCenter;
 
 		float fExt1Dist = vQuadExtent1_Normalized.Dot( vToPointFromQuadCenter );
-		if( fabs( fExt1Dist ) > fQuadExtent1Length )
+		if( fabsf( fExt1Dist ) > fQuadExtent1Length )
 			return false; //point is outside boundaries
 
 		//vToPointFromQuadCenter -= vQuadExtent1_Normalized * fExt1Dist; //to handle diamond shaped quads
 
 		float fExt2Dist = vQuadExtent2_Normalized.Dot( vToPointFromQuadCenter );
-		if( fabs( fExt2Dist ) > fQuadExtent2Length )
+		if( fabsf( fExt2Dist ) > fQuadExtent2Length )
 			return false; //point is outside boundaries
 	}
 

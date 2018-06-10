@@ -57,7 +57,7 @@ static const char *g_FieldTypes[ FIELD_TYPECOUNT ] =
 	"FIELD_VMATRIX",			
 	"FIELD_VMATRIX_WORLDSPACE",
 	"FIELD_MATRIX3X4_WORLDSPACE",
-	"FIELD_INTERVAL"		// FIELD_INTERVAL
+	"FIELD_INTERVAL",		// FIELD_INTERVAL
 	"FIELD_MODELINDEX"		// FIELD_MODELINDEX
 };
 
@@ -729,7 +729,7 @@ CPredictionCopy::difftype_t CPredictionCopy::CompareFloat( float *outvalue, cons
 				continue;
 
 			if ( usetolerance &&
-				( fabs( outvalue[ i ] - invalue[ i ] ) <= tolerance ) )
+				( fabsf( outvalue[ i ] - invalue[ i ] ) <= tolerance ) )
 			{
 				retval = WITHINTOLERANCE;
 				continue;
@@ -793,9 +793,9 @@ CPredictionCopy::difftype_t CPredictionCopy::CompareVector( Vector& outValue, co
 		{
 			Vector delta = outValue - inValue;
 
-			if ( fabs( delta.x ) <= tolerance &&
-				 fabs( delta.y ) <= tolerance &&
-				 fabs( delta.z ) <= tolerance )
+			if ( fabsf( delta.x ) <= tolerance &&
+				 fabsf( delta.y ) <= tolerance &&
+				 fabsf( delta.z ) <= tolerance )
 			{
 				return WITHINTOLERANCE;
 			}
@@ -838,10 +838,10 @@ CPredictionCopy::difftype_t CPredictionCopy::CompareQuaternion( Quaternion& outV
 				delta[j] = outValue[j] - inValue[j];
 			}
 
-			if ( fabs( delta[0] ) <= tolerance &&
-				 fabs( delta[1] ) <= tolerance &&
-				 fabs( delta[2] ) <= tolerance &&
-				 fabs( delta[3] ) <= tolerance )
+			if ( fabsf( delta[0] ) <= tolerance &&
+				 fabsf( delta[1] ) <= tolerance &&
+				 fabsf( delta[2] ) <= tolerance &&
+				 fabsf( delta[3] ) <= tolerance )
 			{
 				return WITHINTOLERANCE;
 			}
@@ -897,9 +897,9 @@ CPredictionCopy::difftype_t CPredictionCopy::CompareVector( Vector* outValue, co
 
 			if ( tolerance > 0.0f )
 			{
-				if ( fabs( delta.x ) <= tolerance &&
-					 fabs( delta.y ) <= tolerance &&
-					 fabs( delta.z ) <= tolerance )
+				if ( fabsf( delta.x ) <= tolerance &&
+					 fabsf( delta.y ) <= tolerance &&
+					 fabsf( delta.z ) <= tolerance )
 				{
 					retval = WITHINTOLERANCE;
 					continue;
@@ -938,10 +938,10 @@ CPredictionCopy::difftype_t CPredictionCopy::CompareQuaternion( Quaternion* outV
 
 			if ( tolerance > 0.0f )
 			{
-				if ( fabs( delta[0] ) <= tolerance &&
-					 fabs( delta[1] ) <= tolerance &&
-					 fabs( delta[2] ) <= tolerance &&
-					 fabs( delta[3] ) <= tolerance )
+				if ( fabsf( delta[0] ) <= tolerance &&
+					 fabsf( delta[1] ) <= tolerance &&
+					 fabsf( delta[2] ) <= tolerance &&
+					 fabsf( delta[3] ) <= tolerance )
 				{
 					retval = WITHINTOLERANCE;
 					continue;

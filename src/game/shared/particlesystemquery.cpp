@@ -478,15 +478,11 @@ bool CParticleSystemQuery::IsPointInControllingObjectHitBox(
 		C_BaseAnimating *pAnimating = pMoveParent->GetBaseAnimating();
 
 		bool bInBBox = false;
-		Vector vecBBoxMin;
-		Vector vecBBoxMax;
-		Vector vecOrigin;
 
-		vecBBoxMin = pMoveParent->CollisionProp()->OBBMins();
-		vecBBoxMax = pMoveParent->CollisionProp()->OBBMaxs();
+		const Vector& vecBBoxMin = pMoveParent->CollisionProp()->OBBMins();
+		const Vector& vecBBoxMax = pMoveParent->CollisionProp()->OBBMaxs();
 
-		matrix3x4_t matOrientation;
-		matOrientation = pMoveParent->EntityToWorldTransform();
+		const matrix3x4_t& matOrientation = pMoveParent->EntityToWorldTransform();
 		Vector vecLocalPos;
 		VectorITransform( vecPos, matOrientation, vecLocalPos );
 		if ( IsPointInBox( vecLocalPos, vecBBoxMin, vecBBoxMax ) )

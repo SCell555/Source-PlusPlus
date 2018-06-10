@@ -1253,7 +1253,7 @@ int CTriggerLook::DrawDebugTextOverlays(void)
 		// Print Look time
 		// ----------------
 		char tempstr[255];
-		Q_snprintf(tempstr,sizeof(tempstr),"Time:   %3.2f",m_flLookTime - MAX(0,m_flLookTimeTotal));
+		Q_snprintf(tempstr,sizeof(tempstr),"Time:   %3.2f",m_flLookTime - MAX(0.f,m_flLookTimeTotal));
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 	}
@@ -1569,14 +1569,11 @@ void CChangeLevel::NotifyEntitiesOutOfTransition()
 //------------------------------------------------------------------------------
 void CChangeLevel::WarnAboutActiveLead( void )
 {
-	int					i;
-	CAI_BaseNPC *		ai;
-	CAI_BehaviorBase *	behavior;
-
-	for ( i = 0; i < g_AI_Manager.NumAIs(); i++ )
+	CAI_BaseNPC* const * const pAIs = g_AI_Manager.AccessAIs();
+	for ( int i = 0; i < g_AI_Manager.NumAIs(); i++ )
 	{
-		ai = g_AI_Manager.AccessAIs()[i];
-		behavior = ai->GetRunningBehavior();
+		CAI_BaseNPC* const ai = pAIs[i];
+		CAI_BehaviorBase *behavior = ai->GetRunningBehavior();
 		if ( behavior )
 		{
 			if ( dynamic_cast<CAI_LeadBehavior *>( behavior ) )
@@ -1589,9 +1586,6 @@ void CChangeLevel::WarnAboutActiveLead( void )
 
 void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 {
-	CBaseEntity	*pLandmark;
-	levellist_t	levels[16];
-
 	Assert(!FStrEq(m_szMapName, ""));
 
 	// Don't work in deathmatch
@@ -1614,7 +1608,7 @@ void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 	}
 
 	// look for a landmark entity		
-	pLandmark = FindLandmark( m_szLandmarkName );
+	CBaseEntity *pLandmark = FindLandmark( m_szLandmarkName );
 
 	if ( !pLandmark )
 		return;
@@ -4173,7 +4167,7 @@ void CTriggerImpact::StartTouch(CBaseEntity *pOther)
 	}
 
 	// If the player, so a view kick
-	if (pOther->IsPlayer() && fabs(m_flMagnitude)>0 )
+	if (pOther->IsPlayer() && fabsf(m_flMagnitude)>0 )
 	{
 		Vector vDir;
 		AngleVectors( GetLocalAngles(),&vDir );
@@ -4937,7 +4931,7 @@ void CTriggerApplyImpulse::Spawn()
 {
 	// Convert pushdir from angles to a vector
 	Vector vecAbsDir;
-	QAngle angPushDir = QAngle(m_vecImpulseDir.x, m_vecImpulseDir.y, m_vecImpulseDir.z);
+	QAngle angPushDir(m_vecImpulseDir.x, m_vecImpulseDir.y, m_vecImpulseDir.z);
 	AngleVectors(angPushDir, &vecAbsDir);
 
 	// Transform the vector into entity space

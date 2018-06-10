@@ -55,7 +55,14 @@ bool CBaseFilter::PassesDamageFilter(const CTakeDamageInfo &info)
 
 bool CBaseFilter::PassesDamageFilterImpl( const CTakeDamageInfo &info )
 {
-	return PassesFilterImpl( NULL, info.GetAttacker() );
+	//Tony; modified so it can check the inflictor or the attacker. We'll check the attacker first; which is normal if that fails, then check the inflictor.
+	bool bResult = false;
+	bResult = PassesFilterImpl( NULL, info.GetAttacker() );
+
+	if ( !bResult && info.GetInflictor() != NULL )
+		bResult = PassesFilterImpl( NULL, info.GetInflictor() );
+
+	return bResult;//PassesFilterImpl( NULL, info.GetAttacker() );
 }
 
 //-----------------------------------------------------------------------------
@@ -103,8 +110,6 @@ class CFilterMultiple : public CBaseFilter
 
 LINK_ENTITY_TO_CLASS(filter_multi, CFilterMultiple);
 
-#pragma warning( push )
-#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CFilterMultiple )
 
 
@@ -122,7 +127,8 @@ BEGIN_DATADESC( CFilterMultiple )
 	DEFINE_ARRAY( m_hFilter, FIELD_EHANDLE, MAX_FILTERS ),
 
 END_DATADESC()
-#pragma warning( pop )
+
+
 
 //------------------------------------------------------------------------------
 // Purpose : Called after all entities have been loaded
@@ -373,7 +379,8 @@ protected:
 
 	bool PassesDamageFilterImpl(const CTakeDamageInfo &info)
 	{
-	 	return info.GetDamageType() == m_iDamageType;
+		//Tony; these are bitflags. check them as so.
+		return ((info.GetDamageType() & m_iDamageType) == m_iDamageType);
 	}
 
 	int m_iDamageType;

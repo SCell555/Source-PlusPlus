@@ -98,7 +98,7 @@ DECLARE_CLIENT_EFFECT( "RagdollImpact", RagdollImpactCallback );
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool Impact( Vector &vecOrigin, Vector &vecStart, int iMaterial, int iDamageType, int iHitbox, C_BaseEntity *pEntity, trace_t &tr, int nFlags, int maxLODToDecal )
+bool Impact( const Vector &vecOrigin, const Vector &vecStart, int iMaterial, int iDamageType, int iHitbox, C_BaseEntity *pEntity, trace_t &tr, int nFlags, int maxLODToDecal )
 {
 	VPROF( "Impact" );
 
@@ -110,9 +110,8 @@ bool Impact( Vector &vecOrigin, Vector &vecStart, int iMaterial, int iDamageType
 
 	// Setup our shot information
 	Vector shotDir = vecOrigin - vecStart;
-	float flLength = VectorNormalize( shotDir );
 	Vector traceExt;
-	VectorMA( vecStart, flLength + 8.0f, shotDir, traceExt );
+	VectorMA( vecStart, VectorNormalize( shotDir ) + 8.0f, shotDir, traceExt );
 
 	// Attempt to hit ragdolls
 	
@@ -178,8 +177,7 @@ bool Impact( Vector &vecOrigin, Vector &vecStart, int iMaterial, int iDamageType
 	}
 
 	// If we found the surface, emit debris flecks
-	bool bReportRagdollImpacts = (nFlags & IMPACT_REPORT_RAGDOLL_IMPACTS) != 0;
-	if ( ( tr.fraction == 1.0f ) || ( bHitRagdoll && !bReportRagdollImpacts ) )
+	if ( tr.fraction == 1.0f || ( bHitRagdoll && (nFlags & IMPACT_REPORT_RAGDOLL_IMPACTS) == 0 ) )
 		return false;
 
 	return true;
@@ -256,7 +254,7 @@ static void SetImpactControlPoint( CNewParticleEffect *pEffect, int nPoint, cons
 	pEffect->SetControlPointEntity( nPoint, pEntity );
 }
 
-static void PerformNewCustomEffects( const Vector &vecOrigin, trace_t &tr, const Vector &shotDir, int iMaterial, int iScale, int nFlags )
+static bool PerformNewCustomEffects( const Vector &vecOrigin, trace_t &tr, const Vector &shotDir, int iMaterial, int iScale, int nFlags )
 {
 	bool bNoFlecks = !r_drawflecks.GetBool();
 	if ( !bNoFlecks )
@@ -272,21 +270,20 @@ static void PerformNewCustomEffects( const Vector &vecOrigin, trace_t &tr, const
 		pImpactName = effect.m_pNameNoFlecks;
 	}
 	if ( !pImpactName )
-		return;
+		return false;
 
 	CSmartPtr<CNewParticleEffect> pEffect = CNewParticleEffect::Create( NULL, pImpactName );
 	if ( !pEffect->IsValid() )
-		return;
+		return false;
 
 	Vector	vecReflect;
-	float	flDot = DotProduct( shotDir, tr.plane.normal );
-	VectorMA( shotDir, -2.0f * flDot, tr.plane.normal, vecReflect );
+	VectorMA( shotDir, -2.0f * DotProduct( shotDir, tr.plane.normal ), tr.plane.normal, vecReflect );
 
 	Vector vecShotBackward;
 	VectorMultiply( shotDir, -1.0f, vecShotBackward );
 
-	Vector vecImpactPoint = ( tr.fraction != 1.0f ) ? tr.endpos : vecOrigin;
-	Assert( VectorsAreEqual( vecOrigin, tr.endpos, 1e-1 ) );
+	const Vector& vecImpactPoint = ( tr.fraction != 1.0f ) ? tr.endpos : vecOrigin;
+	//Assert( VectorsAreEqual( vecOrigin, tr.endpos, 1e-1 ) );
 
 	SetImpactControlPoint( pEffect.GetObject(), 0, vecImpactPoint, tr.plane.normal, tr.m_pEnt ); 
 	SetImpactControlPoint( pEffect.GetObject(), 1, vecImpactPoint, vecReflect,		tr.m_pEnt ); 
@@ -298,6 +295,7 @@ static void PerformNewCustomEffects( const Vector &vecOrigin, trace_t &tr, const
 		GetColorForSurface( &tr, &vecColor );
 		pEffect->SetControlPoint( 4, vecColor );
 	}
+	return true;
 }
 
 void PerformCustomEffects( const Vector &vecOrigin, trace_t &tr, const Vector &shotDir, int iMaterial, int iScale, int nFlags )
@@ -306,11 +304,8 @@ void PerformCustomEffects( const Vector &vecOrigin, trace_t &tr, const Vector &s
 	if ( tr.surface.flags & (SURF_SKY|SURF_NODRAW|SURF_HINT|SURF_SKIP) )
 		return;
 
-	if ( cl_new_impact_effects.GetInt() )
-	{
-		PerformNewCustomEffects( vecOrigin, tr, shotDir, iMaterial, iScale, nFlags );
+	if ( cl_new_impact_effects.GetBool() && PerformNewCustomEffects( vecOrigin, tr, shotDir, iMaterial, iScale, nFlags ) )
 		return;
-	}
 
 	bool bNoFlecks = !r_drawflecks.GetBool();
 	if ( !bNoFlecks )
@@ -337,13 +332,7 @@ void PerformCustomEffects( const Vector &vecOrigin, trace_t &tr, const Vector &s
 	}
 	else if ( ( iMaterial == CHAR_TEX_METAL ) || ( iMaterial == CHAR_TEX_VENT ) )
 	{
-		Vector	reflect;
-		float	dot = shotDir.Dot( tr.plane.normal );
-		reflect = shotDir + ( tr.plane.normal * ( dot*-2.0f ) );
-
-		reflect[0] += random->RandomFloat( -0.2f, 0.2f );
-		reflect[1] += random->RandomFloat( -0.2f, 0.2f );
-		reflect[2] += random->RandomFloat( -0.2f, 0.2f );
+		const Vector reflect = shotDir + ( tr.plane.normal * ( shotDir.Dot( tr.plane.normal ) * -2.0f ) ) + RandomVector( -0.2f, 0.2f );
 
 		FX_MetalSpark( vecOrigin, reflect, tr.plane.normal, iScale );
 	}
@@ -365,10 +354,9 @@ void PerformCustomEffects( const Vector &vecOrigin, trace_t &tr, const Vector &s
 // Purpose: Play a sound for an impact. If tr contains a valid hit, use that. 
 //			If not, use the passed in origin & surface.
 //-----------------------------------------------------------------------------
-void PlayImpactSound( CBaseEntity *pEntity, trace_t &tr, Vector &vecServerOrigin, int nServerSurfaceProp )
+void PlayImpactSound( CBaseEntity *pEntity, trace_t &tr, const Vector &vecServerOrigin, int nServerSurfaceProp )
 {
 	VPROF( "PlayImpactSound" );
-	surfacedata_t *pdata;
 	Vector vecOrigin;
 
 	// If the client-side trace hit a different entity than the server, or
@@ -378,7 +366,7 @@ void PlayImpactSound( CBaseEntity *pEntity, trace_t &tr, Vector &vecServerOrigin
 	{
 		nServerSurfaceProp = tr.surface.surfaceProps;
 	}
-	pdata = physprops->GetSurfaceData( nServerSurfaceProp );
+	surfacedata_t* const pdata = physprops->GetSurfaceData( nServerSurfaceProp );
 	if ( tr.fraction < 1.0 )
 	{
 		vecOrigin = tr.endpos;

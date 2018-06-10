@@ -629,8 +629,8 @@ void C_CSPlayer::RecvProxy_CycleLatch( const CRecvProxyData *pData, void *pStruc
 
 	float incomingCycle = (float)(pData->m_Value.m_Int) / 16; // Came in as 4 bit fixed point
 	float currentCycle = pPlayer->GetCycle();
-	bool closeEnough = fabs(currentCycle - incomingCycle) < CycleLatchTolerance;
-	if( fabs(currentCycle - incomingCycle) > (1 - CycleLatchTolerance) )
+	bool closeEnough = fabsf(currentCycle - incomingCycle) < CycleLatchTolerance;
+	if( fabsf(currentCycle - incomingCycle) > (1 - CycleLatchTolerance) )
 	{
 		closeEnough = true;// Handle wrapping around 1->0
 	}

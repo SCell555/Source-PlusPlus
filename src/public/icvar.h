@@ -87,9 +87,9 @@ public:
 	// Install a console printer
 	virtual void			InstallConsoleDisplayFunc( IConsoleDisplayFunc* pDisplayFunc ) = 0;
 	virtual void			RemoveConsoleDisplayFunc( IConsoleDisplayFunc* pDisplayFunc ) = 0;
-	virtual void			ConsoleColorPrintf( const Color& clr, PRINTF_FORMAT_STRING const char *pFormat, ... ) const FMTFUNCTION( 3, 4 ) = 0;
-	virtual void			ConsolePrintf( PRINTF_FORMAT_STRING const char *pFormat, ... ) const FMTFUNCTION( 2, 3 ) = 0;
-	virtual void			ConsoleDPrintf( PRINTF_FORMAT_STRING const char *pFormat, ... ) const FMTFUNCTION( 2, 3 ) = 0;
+	FMTFUNCTION_WIN( 3, 4 ) virtual void			ConsoleColorPrintf( const Color& clr, PRINTF_FORMAT_STRING const char *pFormat, ... ) const FMTFUNCTION( 3, 4 ) = 0;
+	FMTFUNCTION_WIN( 2, 3 ) virtual void			ConsolePrintf( PRINTF_FORMAT_STRING const char *pFormat, ... ) const FMTFUNCTION( 2, 3 ) = 0;
+	FMTFUNCTION_WIN( 2, 3 ) virtual void			ConsoleDPrintf( PRINTF_FORMAT_STRING const char *pFormat, ... ) const FMTFUNCTION( 2, 3 ) = 0;
 
 	// Reverts cvars which contain a specific flag
 	virtual void			RevertFlaggedConVars( int nFlag ) = 0;
@@ -122,7 +122,7 @@ public:
 	/// }
 	/// The Iterator class actually wraps the internal factory methods
 	/// so you don't need to worry about new/delete -- scope takes care
-	//  of it.
+	///  of it.
 	/// We need an iterator like this because we can't simply return a 
 	/// pointer to the internal data type that contains the cvars -- 
 	/// it's a custom, protected class with unusual semantics and is

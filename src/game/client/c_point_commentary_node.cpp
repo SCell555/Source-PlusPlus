@@ -544,7 +544,7 @@ void CHudCommentary::StartCommentary( C_PointCommentaryNode *pNode, char *pszSpe
 	g_pVGuiLocalize->ConvertANSIToUnicode( sz, m_szCount, sizeof(m_szCount) );
 
 	// If the commentary just started, play the commentary fade in.
-	if ( fabs(flStartTime - gpGlobals->curtime) < 1.0 )
+	if ( fabsf(flStartTime - gpGlobals->curtime) < 1.0f )
 	{
 		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ShowCommentary" );
 	}

@@ -405,12 +405,12 @@ void FileWeaponInfo_t::Parse( KeyValues *pKeyValuesData, const char *szWeaponNam
 	}
 
 
-	bShowUsageHint = ( pKeyValuesData->GetInt( "showusagehint", 0 ) != 0 ) ? true : false;
-	bAutoSwitchTo = ( pKeyValuesData->GetInt( "autoswitchto", 1 ) != 0 ) ? true : false;
-	bAutoSwitchFrom = ( pKeyValuesData->GetInt( "autoswitchfrom", 1 ) != 0 ) ? true : false;
-	m_bBuiltRightHanded = ( pKeyValuesData->GetInt( "BuiltRightHanded", 1 ) != 0 ) ? true : false;
-	m_bAllowFlipping = ( pKeyValuesData->GetInt( "AllowFlipping", 1 ) != 0 ) ? true : false;
-	m_bMeleeWeapon = ( pKeyValuesData->GetInt( "MeleeWeapon", 0 ) != 0 ) ? true : false;
+	bShowUsageHint = pKeyValuesData->GetBool( "showusagehint", false );
+	bAutoSwitchTo = pKeyValuesData->GetBool( "autoswitchto", true );
+	bAutoSwitchFrom = pKeyValuesData->GetBool( "autoswitchfrom", true );
+	m_bBuiltRightHanded = pKeyValuesData->GetBool( "BuiltRightHanded", true );
+	m_bAllowFlipping = pKeyValuesData->GetBool( "AllowFlipping", true );
+	m_bMeleeWeapon = pKeyValuesData->GetBool( "MeleeWeapon", false );
 
 #if defined(_DEBUG) && defined(HL2_CLIENT_DLL)
 	// make sure two weapons aren't in the same slot & position

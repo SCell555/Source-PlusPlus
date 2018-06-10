@@ -425,22 +425,22 @@ void CNPC_Ichthyosaur::MoveExecute_Alive(float flInterval)
 	//
 	float turn = 360;
 
-	if (fabs(angSaveAngles.y - angAbsAngles.y) < fabs(turn))
+	if (fabsf(angSaveAngles.y - angAbsAngles.y) < fabsf(turn))
 	{
 		turn = angSaveAngles.y - angAbsAngles.y;
 	}
-	if (fabs(angSaveAngles.y - angAbsAngles.y + 360) < fabs(turn))
+	if (fabsf(angSaveAngles.y - angAbsAngles.y + 360) < fabsf(turn))
 	{
 		turn = angSaveAngles.y - angAbsAngles.y + 360;
 	}
-	if (fabs(angSaveAngles.y - angAbsAngles.y - 360) < fabs(turn))
+	if (fabsf(angSaveAngles.y - angAbsAngles.y - 360) < fabsf(turn))
 	{
 		turn = angSaveAngles.y - angAbsAngles.y - 360;
 	}	
 
 	float speed = m_flFlyingSpeed * 0.4;
 
-	if (fabs(turn) > speed)
+	if (fabsf(turn) > speed)
 	{
 		if (turn < 0.0)
 		{
@@ -466,20 +466,20 @@ void CNPC_Ichthyosaur::MoveExecute_Alive(float flInterval)
 	turn = 360;
 	float flTempRoll = angAbsAngles.z;
 
-	if (fabs(angSaveAngles.z - angAbsAngles.z) < fabs(turn))
+	if (fabsf(angSaveAngles.z - angAbsAngles.z) < fabsf(turn))
 	{
 		turn = angSaveAngles.z - angAbsAngles.z;
 	}
-	if (fabs(angSaveAngles.z - angAbsAngles.z + 360) < fabs(turn))
+	if (fabsf(angSaveAngles.z - angAbsAngles.z + 360) < fabsf(turn))
 	{
 		turn = angSaveAngles.z - angAbsAngles.z + 360;
 	}
-	if (fabs(angSaveAngles.z - angAbsAngles.z - 360) < fabs(turn))
+	if (fabsf(angSaveAngles.z - angAbsAngles.z - 360) < fabsf(turn))
 	{
 		turn = angSaveAngles.z - angAbsAngles.z - 360;
 	}
 	speed = m_flFlyingSpeed/2 * 0.1;
-	if (fabs(turn) < speed)
+	if (fabsf(turn) < speed)
 	{
 		flTempRoll += turn;
 	}

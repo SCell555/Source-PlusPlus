@@ -76,7 +76,7 @@ void GaussTracerCallback( const CEffectData &data )
 {
 	float flVelocity = data.m_flScale;
 	bool bWhiz = (data.m_fFlags & TRACER_FLAG_WHIZ);
-	FX_GaussTracer( (Vector&)data.m_vStart, (Vector&)data.m_vOrigin, flVelocity, bWhiz );
+	FX_GaussTracer( data.m_vStart, data.m_vOrigin, flVelocity, bWhiz );
 }
 
 DECLARE_CLIENT_EFFECT( "GaussTracer", GaussTracerCallback );
@@ -227,7 +227,7 @@ void FX_PlayerAR2Tracer( const Vector &start, const Vector &end )
 //			velocity - 
 //			makeWhiz - 
 //-----------------------------------------------------------------------------
-void FX_AR2Tracer( Vector& start, Vector& end, int velocity, bool makeWhiz )
+void FX_AR2Tracer( const Vector& start, const Vector& end, int velocity, bool makeWhiz )
 {
 	VPROF_BUDGET( "FX_AR2Tracer", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	
@@ -282,7 +282,7 @@ void AR2TracerCallback( const CEffectData &data )
 		VectorMA( data.m_vStart, 4, vright, foo );
 		foo[2] -= 0.5f;
 
-		FX_PlayerAR2Tracer( foo, (Vector&)data.m_vOrigin );
+		FX_PlayerAR2Tracer( foo, data.m_vOrigin );
 		return;
 	}
 	
@@ -293,7 +293,7 @@ void AR2TracerCallback( const CEffectData &data )
 	}
 
 	// Do tracer effect
-	FX_AR2Tracer( (Vector&)vecStart, (Vector&)data.m_vOrigin, flVelocity, bWhiz );
+	FX_AR2Tracer( vecStart, data.m_vOrigin, flVelocity, bWhiz );
 }
 
 DECLARE_CLIENT_EFFECT( "AR2Tracer", AR2TracerCallback );

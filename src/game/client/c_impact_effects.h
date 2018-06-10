@@ -36,12 +36,12 @@ public:
 
 #ifdef _XBOX
 		//Cap the minimum roll
-		if ( fabs( pParticle->m_flRollDelta ) < 0.1f )
+		if ( fabsf( pParticle->m_flRollDelta ) < 0.1f )
 		{
 			pParticle->m_flRollDelta = ( pParticle->m_flRollDelta > 0.0f ) ? 0.1f : -0.1f;
 		}
 #else
-		if ( fabs( pParticle->m_flRollDelta ) < 0.5f )
+		if ( fabsf( pParticle->m_flRollDelta ) < 0.5f )
 		{
 			pParticle->m_flRollDelta = ( pParticle->m_flRollDelta > 0.0f ) ? 0.5f : -0.5f;
 		}

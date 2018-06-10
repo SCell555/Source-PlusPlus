@@ -1674,7 +1674,7 @@ Vector CNPC_CScanner::SpotlightTargetPos(void)
 		const Vector &noiseMod = GetNoiseMod();
 		m_vSpotlightTargetPos.x += noiseScale*sin(noiseMod.x * gpGlobals->curtime + noiseMod.x);
 		m_vSpotlightTargetPos.y += noiseScale*cos(noiseMod.y* gpGlobals->curtime + noiseMod.y);
-		m_vSpotlightTargetPos.z -= fabs(noiseScale*cos(noiseMod.z* gpGlobals->curtime + noiseMod.z) );
+		m_vSpotlightTargetPos.z -= fabsf(noiseScale*cos(noiseMod.z* gpGlobals->curtime + noiseMod.z) );
 		m_vSpotlightTargetPos   = GetLocalOrigin()+m_vSpotlightTargetPos * 2024;
 	}
 

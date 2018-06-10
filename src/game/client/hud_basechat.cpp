@@ -48,42 +48,6 @@ Color g_ColorDarkGreen( 64, 255, 64, 255 );
 Color g_ColorYellow( 255, 178, 0, 255 );
 Color g_ColorGrey( 204, 204, 204, 255 );
 
-
-// removes all color markup characters, so Msg can deal with the string properly
-// returns a pointer to str
-char* RemoveColorMarkup( char *str )
-{
-	char *out = str;
-	for ( char *in = str; *in != 0; ++in )
-	{
-		if ( *in > 0 && *in < COLOR_MAX )
-		{
-			if ( *in == COLOR_HEXCODE || *in == COLOR_HEXCODE_ALPHA )
-			{
-				// skip the next six or eight characters
-				const int nSkip = ( *in == COLOR_HEXCODE ? 6 : 8 );
-				for ( int i = 0; i < nSkip && *in != 0; i++ )
-				{
-					++in;
-				}
-
-				// if we reached the end of the string first, then back up
-				if ( *in == 0 )
-				{
-					--in;
-				}
-			}
-
-			continue;
-		}
-		*out = *in;
-		++out;
-	}
-	*out = 0;
-
-	return str;
-}
-
 // converts all '\r' characters to '\n', so that the engine can deal with the properly
 // returns a pointer to str
 char* ConvertCRtoNL( char *str )
@@ -368,12 +332,6 @@ float CBaseHudChatLine::GetStartTime( void )
 void CBaseHudChatLine::Expire( void )
 {
 	SetVisible( false );
-
-	// Spit out label text now
-//	char text[ 256 ];
-//	GetText( text, 256 );
-
-//	Msg( "%s\n", text );
 }
 #endif // _XBOX
 
@@ -782,13 +740,11 @@ void CBaseHudChat::MsgFunc_SayText( bf_read &msg )
 
 	CLocalPlayerFilter filter;
 	C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "HudChat.Message" );
-
-	Msg( "%s", szString );
 }
 
 int CBaseHudChat::GetFilterForString( const char *pString )
 {
-	if ( !Q_stricmp( pString, "#HL_Name_Change" ) ) 
+	if ( !Q_stristr( pString, "_Name_Change" ) ) 
 	{
 		return CHAT_FILTER_NAMECHANGE;
 	}
@@ -835,8 +791,6 @@ void CBaseHudChat::MsgFunc_SayText2( bf_read &msg )
 
 		// print raw chat text
 		ChatPrintf( client, iFilter, "%s", ansiString );
-
-		Msg( "%s\n", RemoveColorMarkup(ansiString) );
 
 		CLocalPlayerFilter filter;
 		C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "HudChat.Message" );
@@ -1203,7 +1157,7 @@ void CBaseHudChat::StartMessageMode( int iMessageModeType )
 
 	//Place the mouse cursor near the text so people notice it.
 	int x, y, w, h;
-	GetChatHistory()->GetBounds( x, y, w, h );
+	GetBounds( x, y, w, h );
 	vgui::input()->SetCursorPos( x + ( w/2), y + (h/2) );
 
 	m_flHistoryFadeTime = gpGlobals->curtime + CHAT_HISTORY_FADE_TIME;
@@ -1343,7 +1297,9 @@ Color CBaseHudChat::GetTextColorForClient( TextColor colorNum, int clientIndex )
 		c = GetDefaultTextColor();
 	}
 
-	return Color( c[0], c[1], c[2], 255 );
+	c[3] = 255;
+
+	return c;
 }
 
 //-----------------------------------------------------------------------------
@@ -1395,8 +1351,7 @@ void CBaseHudChatLine::InsertAndColorizeText( wchar_t *buf, int clientIndex )
 
 	wchar_t *txt = m_text;
 	int lineLen = wcslen( m_text );
-	Color colCustom;
-	if ( m_text[0] == COLOR_PLAYERNAME || m_text[0] == COLOR_LOCATION || m_text[0] == COLOR_NORMAL || m_text[0] == COLOR_ACHIEVEMENT || m_text[0] == COLOR_CUSTOM || m_text[0] == COLOR_HEXCODE || m_text[0] == COLOR_HEXCODE_ALPHA )
+	if ( m_text[0] <= COLOR_MAX && m_text[0] != COLOR_USEOLDCOLORS )
 	{
 		while ( txt && *txt )
 		{
@@ -1552,6 +1507,8 @@ void CBaseHudChatLine::Colorize( int alpha )
 			InsertColorChange( color );
 			InsertString( wText );
 
+			ConColorMsg( color, "%ls", wText );
+
 			CBaseHudChat *pChat = dynamic_cast<CBaseHudChat*>(GetParent() );
 
 			if ( pChat && pChat->GetChatHistory() )
@@ -1568,6 +1525,8 @@ void CBaseHudChatLine::Colorize( int alpha )
 
 		}
 	}
+
+	Msg( "\n" );
 
 	InvalidateLayout( true );
 }
@@ -1709,10 +1668,11 @@ void CBaseHudChat::ChatPrintf( int iPlayerIndex, int iFilter, const char *fmt, .
 	Q_vsnprintf(msg, sizeof( msg), fmt, marker);
 	va_end(marker);
 
+	const size_t pMsgSize = V_strlen( msg );
 	// Strip any trailing '\n'
-	if ( strlen( msg ) > 0 && msg[ strlen( msg )-1 ] == '\n' )
+	if ( pMsgSize != 0 && msg[pMsgSize - 1] == '\n' )
 	{
-		msg[ strlen( msg ) - 1 ] = 0;
+		msg[pMsgSize - 1] = 0;
 	}
 
 	// Strip leading \n characters ( or notify/color signifiers ) for empty string check
@@ -1735,10 +1695,10 @@ void CBaseHudChat::ChatPrintf( int iPlayerIndex, int iFilter, const char *fmt, .
 	if ( !*pmsg )
 		return;
 
-	CBaseHudChatLine *line = (CBaseHudChatLine *)FindUnusedChatLine();
+	CBaseHudChatLine *line = FindUnusedChatLine();
 	if ( !line )
 	{
-		line = (CBaseHudChatLine *)FindUnusedChatLine();
+		line = FindUnusedChatLine();
 	}
 
 	if ( !line )
@@ -1788,8 +1748,6 @@ void CBaseHudChat::ChatPrintf( int iPlayerIndex, int iFilter, const char *fmt, .
 	wchar_t *wbuf = static_cast<wchar_t *>( _alloca( bufSize ) );
 	if ( wbuf )
 	{
-		Color clrNameColor = GetClientColor( iPlayerIndex );
-
 		line->SetExpireTime();
 
 		g_pVGuiLocalize->ConvertANSIToUnicode( pmsg, wbuf, bufSize);
@@ -1814,7 +1772,7 @@ void CBaseHudChat::ChatPrintf( int iPlayerIndex, int iFilter, const char *fmt, .
 		line->SetVisible( false );
 		line->SetNameStart( iNameStart );
 		line->SetNameLength( iNameLength );
-		line->SetNameColor( clrNameColor );
+		line->SetNameColor( GetClientColor( iPlayerIndex ) );
 
 		line->InsertAndColorizeText( wbuf, iPlayerIndex );
 	}

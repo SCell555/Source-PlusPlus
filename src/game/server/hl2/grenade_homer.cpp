@@ -330,7 +330,7 @@ void CGrenadeHomer::Launch( CBaseEntity*		pOwner,
 	{
 		// Figure out how long it'll take for me to reach the target.
 		float flDist = ( pTarget->WorldSpaceCenter() - WorldSpaceCenter() ).Length();
-		float flTime = MAX( 0.5, flDist / GetAbsVelocity().Length() );
+		float flTime = MAX( 0.5f, flDist / GetAbsVelocity().Length() );
 
 		CSoundEnt::InsertSound ( SOUND_DANGER, m_hTarget->GetAbsOrigin(), 300, flTime, pOwner );
 	}

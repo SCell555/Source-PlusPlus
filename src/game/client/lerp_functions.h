@@ -21,7 +21,7 @@ inline T LoopingLerp( float flPercent, T flFrom, T flTo )
 template <>
 inline float LoopingLerp( float flPercent, float flFrom, float flTo )
 {
-	if ( fabs( flTo - flFrom ) >= 0.5f )
+	if ( fabsf( flTo - flFrom ) >= 0.5f )
 	{
 		if (flFrom < flTo)
 			flFrom += 1.0f;
@@ -116,7 +116,7 @@ inline T LoopingLerp_Hermite( float t, T p0, T p1, T p2  )
 template <>
 inline float LoopingLerp_Hermite( float t, float p0, float p1, float p2 )
 {
-	if ( fabs( p1 - p0 ) > 0.5f )
+	if ( fabsf( p1 - p0 ) > 0.5f )
 	{
 		if ( p0 < p1 )
 			p0 += 1.0f;
@@ -124,7 +124,7 @@ inline float LoopingLerp_Hermite( float t, float p0, float p1, float p2 )
 			p1 += 1.0f;
 	}
 
-	if ( fabs( p2 - p1 ) > 0.5f )
+	if ( fabsf( p2 - p1 ) > 0.5f )
 	{
 		if ( p1 < p2 )
 		{

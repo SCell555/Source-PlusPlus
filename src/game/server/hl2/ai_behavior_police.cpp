@@ -180,7 +180,7 @@ void CAI_PolicingBehavior::GatherConditions( void )
 
 	float flDistSqr = ( m_hPoliceGoal->WorldSpaceCenter() - pTarget->WorldSpaceCenter() ).Length2DSqr();
 	float radius = ( m_hPoliceGoal->GetRadius() * PATROL_RADIUS_RATIO );
-	float zDiff = fabs( m_hPoliceGoal->WorldSpaceCenter().z - pTarget->WorldSpaceCenter().z );
+	float zDiff = fabsf( m_hPoliceGoal->WorldSpaceCenter().z - pTarget->WorldSpaceCenter().z );
 
 	// If we're too far away, don't bother
 	if ( flDistSqr < (radius*radius) && zDiff < 32.0f )
@@ -423,7 +423,7 @@ bool CAI_PolicingBehavior::MaintainGoalPosition( void )
 	Vector vecTarget = m_hPoliceGoal->GetAbsOrigin();
 
 	// Allow some slop on Z
-	if ( fabs(vecOrg.z - vecTarget.z) > 64 )
+	if ( fabsf(vecOrg.z - vecTarget.z) > 64 )
 		return true;
 
 	// Need to be very close on X/Y
@@ -664,7 +664,7 @@ int CAI_PolicingBehavior::SelectSchedule( void )
 		return SCHED_POLICE_TRACK_TARGET;
 
 	// Re-align myself to the goal angles if I've strayed
-	if ( fabs(UTIL_AngleDiff( GetAbsAngles().y, m_hPoliceGoal->GetAbsAngles().y )) > 15 )
+	if ( fabsf(UTIL_AngleDiff( GetAbsAngles().y, m_hPoliceGoal->GetAbsAngles().y )) > 15 )
 		return SCHED_POLICE_FACE_ALONG_GOAL;
 
 	return SCHED_IDLE_STAND;

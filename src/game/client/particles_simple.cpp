@@ -264,6 +264,7 @@ SimpleParticle*	CSimpleEmitter::AddSimpleParticle(
 		pRet->m_vecVelocity.Init();
 		pRet->m_flRoll = 0;
 		pRet->m_flRollDelta = 0;
+		pRet->m_flStartTime = 0;
 		pRet->m_flLifetime = 0;
 		pRet->m_flDieTime = flDieTime;
 		pRet->m_uchColor[0] = pRet->m_uchColor[1] = pRet->m_uchColor[2] = 0;

@@ -63,7 +63,7 @@ float RemapAngleRange( float startInterval, float endInterval, float value, Rema
 {
 	// Fixup the roll
 	value = AngleNormalize( value );
-	float absAngle = fabs(value);
+	float absAngle = fabsf(value);
 
 	// beneath cutoff?
 	if ( absAngle < startInterval )
@@ -189,9 +189,9 @@ void RemapViewAngles( ViewSmoothingData_t *pData, QAngle &vehicleEyeAngles )
 
 	// Blend out the roll dampening as our pitch approaches 90 degrees, to avoid gimbal lock problems.
 	float flBlendRoll = 1.0;
-	if ( fabs( vehicleEyeAngles.x ) > 60 )
+	if ( fabsf( vehicleEyeAngles.x ) > 60 )
 	{
-		flBlendRoll = RemapValClamped( fabs( vecEyeAnglesRemapped.x ), 60, 80, 1, 0);
+		flBlendRoll = RemapValClamped( fabsf( vecEyeAnglesRemapped.x ), 60, 80, 1, 0);
 	}
 
 	RemapAngleRange_CurvePart_t eRollCurvePart;
@@ -350,12 +350,12 @@ void SharedVehicleViewSmoothing(CBasePlayer *pPlayer,
 		// In either case, never increase the error, so track the minimum error and clamp to that.
 		for (int i = 0; i < 3; i++)
 		{
-			if ( fabs(vecAngleDiffCur[i] ) < fabs( pData->vecAngleDiffMin[i] ) )
+			if ( fabsf(vecAngleDiffCur[i] ) < fabsf( pData->vecAngleDiffMin[i] ) )
 			{
 				pData->vecAngleDiffMin[i] = vecAngleDiffCur[i];
 			}
 
-			if ( fabs(vecAngleDiffBlend[i] ) < fabs( pData->vecAngleDiffMin[i] ) )
+			if ( fabsf(vecAngleDiffBlend[i] ) < fabsf( pData->vecAngleDiffMin[i] ) )
 			{
 				pData->vecAngleDiffMin[i] = vecAngleDiffBlend[i];
 			}
@@ -381,7 +381,7 @@ void SharedVehicleViewSmoothing(CBasePlayer *pPlayer,
 			//debugoverlay->AddBoxOverlay( vecEyeExitEndpoint, -Vector(1,1,1), Vector(1,1,1), vec3_angle, 255,255,255, 64, 10 );
 
 			// Blend to the exit position
-			*pAbsOrigin = Lerp( flSplineFrac, vecAbsOrigin, vecEyeExitEndpoint );
+			*pAbsOrigin = VectorLerp( vecAbsOrigin, vecEyeExitEndpoint, flSplineFrac );
 			
 			if ( pFOV != NULL )
 			{
@@ -394,7 +394,7 @@ void SharedVehicleViewSmoothing(CBasePlayer *pPlayer,
 		else
 		{
 			// Blend from our starting position to the desired origin
-			*pAbsOrigin = Lerp( flSplineFrac, pData->vecOriginSaved, vecAbsOrigin );
+			*pAbsOrigin = VectorLerp( pData->vecOriginSaved, vecAbsOrigin, flSplineFrac );
 			
 			if ( pFOV != NULL )
 			{

@@ -630,7 +630,7 @@ void HTML::OnCursorMoved(int x,int y)
 		// if we've dragged far enough (in global coordinates), set to use the drag cursor
 		int gx, gy;
 		input()->GetCursorPos( gx, gy );
-		if ( abs(m_iDragStartX-gx) + abs(m_iDragStartY-gy) > 3 )
+		if ( fabsf(m_iDragStartX-gx) + fabsf(m_iDragStartY-gy) > 3 )
 		{
 //			input()->SetCursorOveride( dc_alias );
 		}
@@ -1233,7 +1233,7 @@ void HTML::BrowserNeedsPaint( HTML_NeedsPaint_t *pCallback )
 		tt = m_allocedTextureHeight;
 	}
 
-	if ( m_iHTMLTextureID != 0 && ( ( _vbar->IsVisible() && pCallback->unScrollY > 0 && abs( (int)pCallback->unScrollY - m_scrollVertical.m_nScroll) > 5 ) || ( _hbar->IsVisible() && pCallback->unScrollX > 0 && abs( (int)pCallback->unScrollX - m_scrollHorizontal.m_nScroll ) > 5 ) ) )
+	if ( m_iHTMLTextureID != 0 && ( ( _vbar->IsVisible() && pCallback->unScrollY > 0 && fabsf( (int)pCallback->unScrollY - m_scrollVertical.m_nScroll) > 5 ) || ( _hbar->IsVisible() && pCallback->unScrollX > 0 && fabsf( (int)pCallback->unScrollX - m_scrollHorizontal.m_nScroll ) > 5 ) ) )
 	{
 		m_bNeedsFullTextureUpload = true;
 		return;

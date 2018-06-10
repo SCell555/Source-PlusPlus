@@ -984,7 +984,7 @@ float CMultiPlayerAnimState::GetCurrentMaxGroundSpeed()
 	float prevX = GetBasePlayer()->GetPoseParameter( m_PoseParameterData.m_iMoveX );
 	float prevY = GetBasePlayer()->GetPoseParameter( m_PoseParameterData.m_iMoveY );
 
-	float d = MAX( fabs( prevX ), fabs( prevY ) );
+	float d = MAX( fabsf( prevX ), fabsf( prevY ) );
 	float newX, newY;
 	if ( d == 0.0 )
 	{ 
@@ -1546,7 +1546,7 @@ void CMultiPlayerAnimState::ComputePoseParam_MoveYaw( CStudioHdr *pStudioHdr )
 			vecCurrentMoveYaw.x = cos( DEG2RAD( flYaw ) );
 			vecCurrentMoveYaw.y = -sin( DEG2RAD( flYaw ) );
 			// push edges out to -1 to 1 box
-			float flInvScale = MAX( fabs( vecCurrentMoveYaw.x ), fabs( vecCurrentMoveYaw.y ) );
+			float flInvScale = MAX( fabsf( vecCurrentMoveYaw.x ), fabsf( vecCurrentMoveYaw.y ) );
 			if ( flInvScale != 0.0f )
 			{
 				vecCurrentMoveYaw.x /= flInvScale;
@@ -1684,7 +1684,7 @@ void CMultiPlayerAnimState::ComputePoseParam_AimYaw( CStudioHdr *pStudioHdr )
 		{
 			float flYawDelta = AngleNormalize(  m_flGoalFeetYaw - m_flEyeYaw );
 
-			if ( fabs( flYawDelta ) > 45.0f/*m_AnimConfig.m_flMaxBodyYawDegrees*/ )
+			if ( fabsf( flYawDelta ) > 45.0f/*m_AnimConfig.m_flMaxBodyYawDegrees*/ )
 			{
 				float flSide = ( flYawDelta > 0.0f ) ? -1.0f : 1.0f;
 				m_flGoalFeetYaw += ( 45.0f/*m_AnimConfig.m_flMaxBodyYawDegrees*/ * flSide );
@@ -1746,7 +1746,7 @@ void CMultiPlayerAnimState::ConvergeYawAngles( float flGoalYaw, float flYawRate,
 
 	// Find the yaw delta.
 	float flDeltaYaw = flGoalYaw - flCurrentYaw;
-	float flDeltaYawAbs = fabs( flDeltaYaw );
+	float flDeltaYawAbs = fabsf( flDeltaYaw );
 	flDeltaYaw = AngleNormalize( flDeltaYaw );
 
 	// Always do at least a bit of the turn (1%).

@@ -252,7 +252,7 @@ void C_BaseAnimatingOverlay::CheckForLayerChanges( CStudioHdr *hdr, float curren
 			if (pPrev2)
 			{
 				float num = 0;
-				if ( fabs( t0 - t1 ) > 0.001f )
+				if ( fabsf( t0 - t1 ) > 0.001f )
 					num = (t2 - t1) / (t0 - t1);
 
 				pPrev2->m_nSequence = pHead->m_nSequence;

@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -128,7 +128,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_TEPlayerDecal::C_TEPlayerDecal( void )
 {
@@ -138,26 +138,27 @@ C_TEPlayerDecal::C_TEPlayerDecal( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_TEPlayerDecal::~C_TEPlayerDecal( void )
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_TEPlayerDecal::Precache( void )
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-IMaterial *CreateTempMaterialForPlayerLogo( int iPlayerIndex, player_info_t *info, char *texname, int nchars )
+template <size_t N>
+IMaterial *CreateTempMaterialForPlayerLogo( int iPlayerIndex, player_info_t *info, char (&texname)[N] )
 {
 	// Doesn't have a logo?
-	if ( !info->customFiles[0] )	
+	if ( !info->customFiles[0] )
 		return NULL;
 
 	IMaterial *logo = materials->FindMaterial( VarArgs("decals/playerlogo%2.2d", iPlayerIndex), TEXTURE_GROUP_DECAL );
@@ -165,24 +166,40 @@ IMaterial *CreateTempMaterialForPlayerLogo( int iPlayerIndex, player_info_t *inf
 		return NULL;
 
 	char logohex[ 16 ];
-	Q_binarytohex( (byte *)&info->customFiles[0], sizeof( info->customFiles[0] ), logohex, sizeof( logohex ) );
+	V_binarytohex( reinterpret_cast<byte *>( &info->customFiles[0] ), sizeof( info->customFiles[0] ), logohex, sizeof( logohex ) );
 
 	// See if logo has been downloaded.
-	Q_snprintf( texname, nchars, "temp/%s", logohex );
+	V_sprintf_safe( texname, "temp/%s", logohex );
 	char fulltexname[ 512 ];
-	Q_snprintf( fulltexname, sizeof( fulltexname ), "materials/temp/%s.vtf", logohex );
+	V_sprintf_safe( fulltexname, "materials/temp/%s.vtf", logohex );
 
 	if ( !filesystem->FileExists( fulltexname ) )
 	{
-		char custname[ 512 ];
-		Q_snprintf( custname, sizeof( custname ), "download/user_custom/%c%c/%s.dat", logohex[0], logohex[1], logohex );
+		char custname[512];
+		char searchPaths[512];
+
+		//find the download path, using the first path found
+		filesystem->GetSearchPath( "DOWNLOAD", false, searchPaths, sizeof( searchPaths ) );
+		const char* downloadPath = strtok( searchPaths, ";" );
+
+		//get download folder relative to game folder, or empty it out (to use root) if no download path found; GAME_WRITE works too
+		if ( downloadPath == NULL || !filesystem->FullPathToRelativePathEx( downloadPath, "GAME", searchPaths, 512 ) )
+		{
+			V_strcpy_safe( searchPaths, "download/" );
+		}
+		else
+		{
+			//just in case
+			V_FixupPathName( searchPaths, 512, searchPaths );
+		}
+
+		V_sprintf_safe( custname, "%suser_custom/%c%c/%s.dat", searchPaths, logohex[0], logohex[1], logohex );
 		// it may have been downloaded but not copied under materials folder
 		if ( !filesystem->FileExists( custname ) )
 			return NULL; // not downloaded yet
 
 		// copy from download folder to materials/temp folder
 		// this is done since material system can access only materials/*.vtf files
-
 		if ( !engine->CopyLocalFile( custname, fulltexname) )
 			return NULL;
 	}
@@ -191,12 +208,12 @@ IMaterial *CreateTempMaterialForPlayerLogo( int iPlayerIndex, player_info_t *inf
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : filter - 
-//			delay - 
-//			pos - 
-//			player - 
-//			entity - 
+// Purpose:
+// Input  : filter -
+//			delay -
+//			pos -
+//			player -
+//			entity -
 //-----------------------------------------------------------------------------
 void TE_PlayerDecal( IRecipientFilter& filter, float delay,
 	const Vector* pos, int player, int entity  )
@@ -215,14 +232,14 @@ void TE_PlayerDecal( IRecipientFilter& filter, float delay,
 
 	// Make sure we've got the material for this player's logo
 	char texname[ 512 ];
-	IMaterial *logo = CreateTempMaterialForPlayerLogo( player, &info, texname, 512 );
+	IMaterial *logo = CreateTempMaterialForPlayerLogo( player, &info, texname );
 	if ( !logo )
 		return;
 
 	ITexture *texture = materials->FindTexture( texname, TEXTURE_GROUP_DECAL );
-	if ( IsErrorTexture( texture ) ) 
+	if ( IsErrorTexture( texture ) )
 	{
-		return; // not found 
+		return; // not found
 	}
 
 	// Update the texture used by the material if need be.
@@ -238,22 +255,22 @@ void TE_PlayerDecal( IRecipientFilter& filter, float delay,
 	}
 
 	color32 rgbaColor = { 255, 255, 255, 255 };
-	effects->PlayerDecalShoot( 
-		logo, 
+	effects->PlayerDecalShoot(
+		logo,
 		(void *)player,
-		entity, 
-		ent->GetModel(), 
-		ent->GetAbsOrigin(), 
-		ent->GetAbsAngles(), 
-		*pos, 
-		0, 
+		entity,
+		ent->GetModel(),
+		ent->GetAbsOrigin(),
+		ent->GetAbsAngles(),
+		*pos,
+		0,
 		0,
 		rgbaColor );
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : bool - 
+// Purpose:
+// Input  : bool -
 //-----------------------------------------------------------------------------
 void C_TEPlayerDecal::PostDataUpdate( DataUpdateType_t updateType )
 {

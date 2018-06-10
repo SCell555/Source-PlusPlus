@@ -13,10 +13,21 @@ CClientSteamContext  &ClientSteamContext()
 
 CSteamAPIContext *steamapicontext = &g_ClientSteamContext;
 
+
+DLL_EXPORT void S_CALLTYPE steamApiWarningMsg( int s, const char * msg )
+{
+	static const Color msgColor = COLOR_GREEN;
+	static const Color warnColor = COLOR_YELLOW;
+	if ( s == 0 )
+		ConColorMsg( msgColor, "%s\n", msg );
+	else
+		ConColorMsg( warnColor, "%s\n", msg );
+}
+
 //-----------------------------------------------------------------------------
 CClientSteamContext::CClientSteamContext() 
 #if !defined(NO_STEAM)
-:
+	:
 	m_CallbackSteamServersDisconnected( this, &CClientSteamContext::OnSteamServersDisconnected ),
 	m_CallbackSteamServerConnectFailure( this, &CClientSteamContext::OnSteamServerConnectFailure ),
 	m_CallbackSteamServersConnected( this, &CClientSteamContext::OnSteamServersConnected )
@@ -25,6 +36,7 @@ CClientSteamContext::CClientSteamContext()
 	m_bActive = false;
 	m_bLoggedOn = false;
 	m_nAppID = 0;
+	m_nUniverse = k_EUniverseInvalid;
 }
 
 
@@ -66,13 +78,14 @@ void CClientSteamContext::Activate()
 	
 	UpdateLoggedOnState();
 	Msg( "CClientSteamContext logged on = %d\n", m_bLoggedOn );
+	SteamUtils()->SetWarningMessageHook( steamApiWarningMsg );
 #endif
 }
 
 void CClientSteamContext::UpdateLoggedOnState()
 {
 	bool bPreviousLoggedOn = m_bLoggedOn;
-	m_bLoggedOn = ( SteamUser() && SteamUtils() && SteamUser()->BLoggedOn() );
+	m_bLoggedOn = SteamUser() && SteamUser()->BLoggedOn();
 
 	if ( !bPreviousLoggedOn && m_bLoggedOn )
 	{

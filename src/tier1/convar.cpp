@@ -16,6 +16,7 @@
 #include "tier1/utlbuffer.h"
 #include "tier1/tier1.h"
 #include "tier1/convar_serverbounded.h"
+#include "tier1/fmtstr.h"
 #include "icvar.h"
 #include "tier0/dbg.h"
 #include "Color.h"
@@ -29,7 +30,32 @@
 #define ALLOW_DEVELOPMENT_CVARS
 #endif
 
+void CONVAR_StringToColor( Color &color, const char *pString )
+{
+	char tempString[128];
+	int	j;
 
+	V_strcpy_safe( tempString, pString );
+	const char *pfront;
+	const char* pstr = pfront = tempString;
+
+	for ( j = 0; j < 4; j++ )			// lifted from pr_edict.c
+	{
+		color[j] = atoi( pfront );
+
+		while ( *pstr && *pstr != ' ' )
+			pstr++;
+		if ( !*pstr )
+			break;
+		pstr++;
+		pfront = pstr;
+	}
+
+	for ( j++; j < 4; j++ )
+	{
+		color[j] = 0;
+	}
+}
 
 //-----------------------------------------------------------------------------
 // Statically constructed list of ConCommandBases, 
@@ -1075,11 +1101,6 @@ public:
 
 static CEmptyConVar s_EmptyConVar;
 
-ConVarRef::ConVarRef( const char *pName )
-{
-	Init( pName, false );
-}
-
 ConVarRef::ConVarRef( const char *pName, bool bIgnoreMissing )
 {
 	Init( pName, bIgnoreMissing );
@@ -1124,70 +1145,126 @@ bool ConVarRef::IsValid() const
 //-----------------------------------------------------------------------------
 void ConVar_PrintFlags( const ConCommandBase *var )
 {
-	bool any = false;
+	CFmtStrN<270> flags;
 	if ( var->IsFlagSet( FCVAR_GAMEDLL ) )
 	{
-		ConMsg( " game" );
-		any = true;
+		flags.Append( " game" );
 	}
 
 	if ( var->IsFlagSet( FCVAR_CLIENTDLL ) )
 	{
-		ConMsg( " client" );
-		any = true;
+		flags.Append( " client" );
 	}
 
-	if ( var->IsFlagSet( FCVAR_ARCHIVE ) )
+	if ( var->IsFlagSet( FCVAR_HIDDEN ) )
 	{
-		ConMsg( " archive" );
-		any = true;
+		flags.Append( " hidden" );
 	}
 
-	if ( var->IsFlagSet( FCVAR_NOTIFY ) )
+	if ( var->IsFlagSet( FCVAR_PROTECTED ) )
 	{
-		ConMsg( " notify" );
-		any = true;
+		flags.Append( " protected" );
 	}
 
 	if ( var->IsFlagSet( FCVAR_SPONLY ) )
 	{
-		ConMsg( " singleplayer" );
-		any = true;
+		flags.Append( " singleplayer" );
 	}
 
-	if ( var->IsFlagSet( FCVAR_NOT_CONNECTED ) )
+	if ( var->IsFlagSet( FCVAR_ARCHIVE ) )
 	{
-		ConMsg( " notconnected" );
-		any = true;
+		flags.Append( " archive" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_NOTIFY ) )
+	{
+		flags.Append( " notify" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_USERINFO ) )
+	{
+		flags.Append( " userinfo" );
 	}
 
 	if ( var->IsFlagSet( FCVAR_CHEAT ) )
 	{
-		ConMsg( " cheat" );
-		any = true;
+		flags.Append( " cheat" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_PRINTABLEONLY ) )
+	{
+		flags.Append( " printableonly" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_UNLOGGED ) )
+	{
+		flags.Append( " notlogged" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_NEVER_AS_STRING ) )
+	{
+		flags.Append( " neverstring" );
 	}
 
 	if ( var->IsFlagSet( FCVAR_REPLICATED ) )
 	{
-		ConMsg( " replicated" );
-		any = true;
+		flags.Append( " replicated" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_DEMO ) )
+	{
+		flags.Append( " demo" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_DONTRECORD ) )
+	{
+		flags.Append( " notindemo" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_RELOAD_MATERIALS ) )
+	{
+		flags.Append( " reloadmaterials" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_RELOAD_TEXTURES ) )
+	{
+		flags.Append( " reloadtextures" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_NOT_CONNECTED ) )
+	{
+		flags.Append( " notconnected" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_MATERIAL_SYSTEM_THREAD ) )
+	{
+		flags.Append( " materialsystem" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_ACCESSIBLE_FROM_THREADS ) )
+	{
+		flags.Append( " threads" );
 	}
 
 	if ( var->IsFlagSet( FCVAR_SERVER_CAN_EXECUTE ) )
 	{
-		ConMsg( " server_can_execute" );
-		any = true;
+		flags.Append( " server_can_execute" );
+	}
+
+	if ( var->IsFlagSet( FCVAR_SERVER_CANNOT_QUERY ) )
+	{
+		flags.Append( " server_cannot_query" );
 	}
 
 	if ( var->IsFlagSet( FCVAR_CLIENTCMD_CAN_EXECUTE ) )
 	{
-		ConMsg( " clientcmd_can_execute" );
-		any = true;
+		flags.Append( " clientcmd_can_execute" );
 	}
 
-	if ( any )
+	if ( flags.Length() > 0 )
 	{
-		ConMsg( "\n" );
+		flags.Append( "\n" );
+		Msg( "%s", flags.Get() );
 	}
 }
 
@@ -1203,8 +1280,7 @@ void ConVar_PrintDescription( const ConCommandBase *pVar )
 
 	assert( pVar );
 
-	Color clr;
-	clr.SetColor( 255, 100, 100, 255 );
+	Color clr( 255, 100, 100, 255 );
 
 	if ( !pVar->IsCommand() )
 	{
@@ -1224,7 +1300,7 @@ void ConVar_PrintDescription( const ConCommandBase *pVar )
 			int intVal = pBounded ? pBounded->GetInt() : var->GetInt();
 			float floatVal = pBounded ? pBounded->GetFloat() : var->GetFloat();
 
-			if ( fabs( (float)intVal - floatVal ) < 0.000001 )
+			if ( fabsf( (float)intVal - floatVal ) < 0.000001 )
 			{
 				Q_snprintf( tempVal, sizeof( tempVal ), "%d", intVal );
 			}
@@ -1260,7 +1336,7 @@ void ConVar_PrintDescription( const ConCommandBase *pVar )
 		ConMsg( "\n" );
 
 		// Handled virtualized cvars.
-		if ( pBounded && fabs( pBounded->GetFloat() - var->GetFloat() ) > 0.0001f )
+		if ( pBounded && fabsf( pBounded->GetFloat() - var->GetFloat() ) > 0.0001f )
 		{
 			ConColorMsg( clr, "** NOTE: The real value is %.3f but the server has temporarily restricted it to %.3f **\n",
 				var->GetFloat(), pBounded->GetFloat() );

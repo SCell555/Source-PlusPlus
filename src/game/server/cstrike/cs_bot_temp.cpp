@@ -402,7 +402,7 @@ void Bot_Think( CCSPlayer *pBot )
 
 			for ( int i = 0 ; i < 2; i++ )
 			{
-				if ( fabs( botdata->lastAngles[ i ] - botdata->forwardAngle[ i ] ) > 15.0f )
+				if ( fabsf( botdata->lastAngles[ i ] - botdata->forwardAngle[ i ] ) > 15.0f )
 				{
 					if ( botdata->lastAngles[ i ] > botdata->forwardAngle[ i ] )
 					{

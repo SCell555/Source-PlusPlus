@@ -499,7 +499,7 @@ void CViewRenderBeams::InitBeams( void )
 	int p = CommandLine()->ParmValue("-particles", -1);
 	if ( p >= 0 )
 	{
-		m_nNumBeamTrails = MAX( p, MIN_PARTICLES );
+		m_nNumBeamTrails = MAX( p, static_cast<int>( MIN_PARTICLES ) );
 	}
 	else
 	{
@@ -1313,9 +1313,6 @@ void CViewRenderBeams::CreateBeamRingPoint( const Vector& center, float start_ra
 //-----------------------------------------------------------------------------
 Beam_t *CViewRenderBeams::CreateBeamRingPoint( BeamInfo_t &beamInfo )
 {
-	// ??
-	Vector endpos = beamInfo.m_vecCenter;
-
 	beamInfo.m_vecStart = beamInfo.m_vecCenter;
 	beamInfo.m_vecEnd = beamInfo.m_vecCenter;
 

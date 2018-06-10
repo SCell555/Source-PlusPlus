@@ -285,7 +285,7 @@ public:
 	void			PutDelimitedChar( CUtlCharConversion *pConv, char c );
 
 	// Just like printf, writes a terminating zero in binary mode
-	void			Printf( PRINTF_FORMAT_STRING const char* pFmt, ... ) FMTFUNCTION( 2, 3 );
+	FMTFUNCTION_WIN( 2, 3 ) void	Printf( PRINTF_FORMAT_STRING const char* pFmt, ... ) FMTFUNCTION( 2, 3 );
 	void			VaPrintf( const char* pFmt, va_list list );
 
 	// What am I writing (put)/reading (get)?
@@ -1078,7 +1078,7 @@ inline void CUtlBuffer::Purge()
 
 inline void CUtlBuffer::CopyBuffer( const CUtlBuffer &buffer )
 {
-	CopyBuffer( buffer.Base(), buffer.TellPut() );
+	CopyBuffer( buffer.Base(), buffer.IsReadOnly() ? buffer.TellMaxPut() : buffer.TellPut() );
 }
 
 inline void	CUtlBuffer::CopyBuffer( const void *pubData, int cubData )

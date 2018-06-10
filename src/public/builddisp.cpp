@@ -171,9 +171,11 @@ bool CalcBarycentricCooefs( Vector const &v0, Vector const &v1, Vector const &v2
 	return false;
 }
 
+#if defined( _MSC_VER )
 // For some reason, the global optimizer screws up the recursion here.  disable the global optimizations to fix this.
 // IN VC++ 6.0
 #pragma optimize( "g", off )
+#endif
 
 CCoreDispSurface::CCoreDispSurface()
 {
@@ -414,13 +416,13 @@ bool CCoreDispSurface::LongestInU( const Vector &vecU, const Vector &vecV )
 	float flVLength = 0.0f;
 	for ( int iPoint = 0; iPoint < 4; ++iPoint )
 	{
-		float flTestDist = fabs( flDistU[(iPoint+1)%4] - flDistU[iPoint] );
+		float flTestDist = fabsf( flDistU[(iPoint+1)%4] - flDistU[iPoint] );
 		if ( flTestDist > flULength )
 		{
 			flULength = flTestDist;
 		}
 
-		flTestDist = fabs( flDistV[(iPoint+1)%4] - flDistV[iPoint] );
+		flTestDist = fabsf( flDistV[(iPoint+1)%4] - flDistV[iPoint] );
 		if ( flTestDist > flVLength )
 		{
 			flVLength = flTestDist;
@@ -2210,9 +2212,10 @@ int GetNodeNeighborNodeFromNeighborSurf( int power, int index, int direction, in
 }
 
 
-
+#if defined( _MSC_VER )
 // Turn the optimizer back on
 #pragma optimize( "", on )
+#endif
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

@@ -1667,7 +1667,7 @@ void CClientLeafSystem::CollateRenderablesInLeaf( int leaf, int worldListLeafInd
 				Vector dims;
 				VectorSubtract( absMaxs, absMins, dims );
 
-				float const fDimension = MAX( MAX( fabs(dims.x), fabs(dims.y) ), fabs(dims.z) );
+				float const fDimension = MAX( MAX( fabsf(dims.x), fabsf(dims.y) ), fabsf(dims.z) );
 				group = DetectBucketedRenderGroup( group, fDimension );
 				
 				Assert( group >= RENDER_GROUP_OPAQUE_STATIC_HUGE && group <= RENDER_GROUP_OPAQUE_ENTITY );

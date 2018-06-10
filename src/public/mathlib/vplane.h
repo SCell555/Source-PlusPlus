@@ -31,6 +31,7 @@ class VPlane
 public:
 				VPlane();
 				VPlane(const Vector &vNormal, vec_t dist);
+				VPlane( const VPlane& other );
 
 	void		Init(const Vector &vNormal, vec_t dist);
 
@@ -85,6 +86,12 @@ inline VPlane::VPlane(const Vector &vNormal, vec_t dist)
 {
 	m_Normal = vNormal;
 	m_Dist = dist;
+}
+
+inline VPlane::VPlane( const VPlane& other )
+{
+	m_Normal = other.m_Normal;
+	m_Dist = other.m_Dist;
 }
 
 inline void	VPlane::Init(const Vector &vNormal, vec_t dist)

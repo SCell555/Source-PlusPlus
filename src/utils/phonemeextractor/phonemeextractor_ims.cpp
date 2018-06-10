@@ -669,7 +669,7 @@ bool FuzzyWordMatch( char const *w1, char const *w2 )
 	if ( !strnicmp( w1, w2, minlen ) )
 		return true;
 
-	int letterdiff = abs( len1 - len2 );
+	int letterdiff = fabsf( len1 - len2 );
 	// More than three letters different, don't bother
 	if ( letterdiff > 5 )
 		return false;

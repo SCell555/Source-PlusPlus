@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -57,7 +57,7 @@ void CRopeAnchor::Spawn()
 
 	if( GetOwnerEntity() )
 	{
-		flDist = fabs( GetOwnerEntity()->GetAbsOrigin().z - GetAbsOrigin().z );
+		flDist = fabsf( GetOwnerEntity()->GetAbsOrigin().z - GetAbsOrigin().z );
 	}
 
 	m_hRope = CRopeKeyframe::CreateWithSecondPointDetached( this, -1, flDist, RAPPEL_ROPE_WIDTH, "cable/cable.vmt", 5, true );
@@ -89,7 +89,7 @@ void CRopeAnchor::FallThink()
 //---------------------------------------------------------
 void CRopeAnchor::RemoveThink()
 {
-	UTIL_Remove( m_hRope );	
+	UTIL_Remove( m_hRope );
 	SetThink( &CRopeAnchor::SUB_Remove );
 	SetNextThink( gpGlobals->curtime );
 }
@@ -100,7 +100,7 @@ void CRopeAnchor::RemoveThink()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CAI_RappelBehavior::CAI_RappelBehavior()
 {
@@ -131,7 +131,7 @@ void CAI_RappelBehavior::Precache()
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 #define RAPPEL_MAX_SPEED	600	// Go this fast if you're really high.
-#define RAPPEL_MIN_SPEED	60 // Go no slower than this.
+#define RAPPEL_MIN_SPEED	60.f // Go no slower than this.
 #define RAPPEL_DECEL_DIST	(20.0f * 12.0f)	// Start slowing down when you're this close to the ground.
 void CAI_RappelBehavior::SetDescentSpeed()
 {
@@ -140,7 +140,7 @@ void CAI_RappelBehavior::SetDescentSpeed()
 	trace_t tr;
 	AI_TraceLine( GetOuter()->GetAbsOrigin(), GetOuter()->GetAbsOrigin() - Vector( 0, 0, 8192 ), MASK_SHOT, GetOuter(), COLLISION_GROUP_NONE, &tr );
 
-	float flDist = fabs( GetOuter()->GetAbsOrigin().z - tr.endpos.z );
+	float flDist = fabsf( GetOuter()->GetAbsOrigin().z - tr.endpos.z );
 
 	float speed = RAPPEL_MAX_SPEED;
 
@@ -174,8 +174,8 @@ void CAI_RappelBehavior::CleanupOnDeath( CBaseEntity *pCulprit, bool bFireDeathO
 	}
 }
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pTask - 
+// Purpose:
+// Input  : *pTask -
 //-----------------------------------------------------------------------------
 void CAI_RappelBehavior::StartTask( const Task_t *pTask )
 {
@@ -219,8 +219,8 @@ void CAI_RappelBehavior::StartTask( const Task_t *pTask )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pTask - 
+// Purpose:
+// Input  : *pTask -
 //-----------------------------------------------------------------------------
 void CAI_RappelBehavior::RunTask( const Task_t *pTask )
 {
@@ -258,7 +258,7 @@ void CAI_RappelBehavior::RunTask( const Task_t *pTask )
 
 				GetOuter()->m_OnRappelTouchdown.FireOutput( GetOuter(), GetOuter(), 0 );
 				GetOuter()->RemoveFlag( FL_FLY );
-				
+
 				CutZipline();
 
 				TaskComplete();
@@ -274,7 +274,7 @@ void CAI_RappelBehavior::RunTask( const Task_t *pTask )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CAI_RappelBehavior::CanSelectSchedule()
@@ -314,7 +314,7 @@ void CAI_RappelBehavior::GatherConditions()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : int
 //-----------------------------------------------------------------------------
 int CAI_RappelBehavior::SelectSchedule()
@@ -333,7 +333,7 @@ int CAI_RappelBehavior::SelectSchedule()
 	{
 		return SCHED_RAPPEL;
 	}
-	
+
 	return BaseClass::SelectSchedule();
 }
 

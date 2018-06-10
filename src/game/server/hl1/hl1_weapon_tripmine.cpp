@@ -508,7 +508,7 @@ void CTripmineGrenade::BeamBreakThink( void  )
 	CBaseEntity *pEntity = tr.m_pEnt;
 	CBaseCombatCharacter *pBCC  = ToBaseCombatCharacter( pEntity );
 
-	if ( pBCC || fabs( m_flBeamLength - tr.fraction ) > 0.001 )
+	if ( pBCC || fabsf( m_flBeamLength - tr.fraction ) > 0.001 )
 	{
 		bBlowup = true;
 	}

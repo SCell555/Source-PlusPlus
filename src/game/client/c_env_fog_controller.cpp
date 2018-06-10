@@ -31,8 +31,10 @@ BEGIN_NETWORK_TABLE_NOBASE( CFogController, DT_FogController )
 	RecvPropInt( RECVINFO( m_fog.colorSecondaryLerpTo ) ),
 	RecvPropFloat( RECVINFO( m_fog.startLerpTo ) ),
 	RecvPropFloat( RECVINFO( m_fog.endLerpTo ) ),
+	RecvPropFloat( RECVINFO( m_fog.maxdensityLerpTo ) ),
 	RecvPropFloat( RECVINFO( m_fog.lerptime ) ),
 	RecvPropFloat( RECVINFO( m_fog.duration ) ),
+	RecvPropFloat( RECVINFO( m_fog.HDRColorScale ) ),
 END_NETWORK_TABLE()
 
 //-----------------------------------------------------------------------------
@@ -43,4 +45,5 @@ C_FogController::C_FogController()
 	// Make sure that old maps without fog fields don't get wacked out fog values.
 	m_fog.enable = false;
 	m_fog.maxdensity = 1.0f;
+	m_fog.HDRColorScale = 1.f;
 }

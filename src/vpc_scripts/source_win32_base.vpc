@@ -14,8 +14,8 @@ $Configuration
 		//$PlatformToolset "v120_xp" [$VS2013 && !$ANALYZE] // VS 2013 targeting Windows XP - http://msdn.microsoft.com/en-us/library/vstudio/jj851139.aspx
 		//$PlatformToolset "v120" [$VS2013 && $ANALYZE] // VS 2013 for /analyze
 		
-		// Force VS 2015
-		$PlatformToolset "v140"
+		// Force VS 2017
+		$PlatformToolset "v141"
 	}
 
 	$General
@@ -39,7 +39,7 @@ $Configuration
 		// warning C4624: destructor was implicitly defined as deleted.
 		// warning C4577: some exception crap. We disable exceptions so this can bugger off.
 		// Force disable this warning...
-		$DisableSpecificWarnings	"$BASE;4316;4594;4457;4456;4458;4459;4624;4577" //[$VS2013]
+		$DisableSpecificWarnings	"$BASE;4316;4594;4457;4456;4458;4459;4624;4577;4838" //[$VS2013]
 
 		// Having lots of warnings makes it harder to notice new, and possibly
 		// important warnings, both on buildbot and in the output window. Lots

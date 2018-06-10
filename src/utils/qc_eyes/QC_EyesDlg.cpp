@@ -325,7 +325,7 @@ void CQC_EyesDlg::GenerateQCText()
 
 	AddText( "//head controllers\n" );
 	AddText( "$attachment \"eyes\" \"ValveBiped.Bip01_Head1\" %.2f %.2f %.2f absolute\n", 
-		p.m_flLeftEye[0] - ((fabs( p.m_flRightEye[0] ) + p.m_flLeftEye[0]) * 0.5), 
+		p.m_flLeftEye[0] - ((fabsf( p.m_flRightEye[0] ) + p.m_flLeftEye[0]) * 0.5), 
 		(p.m_flLeftEye[1] + p.m_flRightEye[1]) * 0.5, 
 		(p.m_flLeftEye[2] + p.m_flRightEye[2]) * 0.5 );
 	

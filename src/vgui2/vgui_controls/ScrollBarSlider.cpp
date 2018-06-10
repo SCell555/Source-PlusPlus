@@ -233,7 +233,7 @@ void ScrollBarSlider::RecomputeValueFromNobPos()
 	}
 
 	// check to see if we should just snap to the bottom
-	if (fabs(fvalue + _rangeWindow - _range[1]) < (0.01f * frange))
+	if (fabsf(fvalue + _rangeWindow - _range[1]) < (0.01f * frange))
 	{
 		// snap to the end
 		_value = _range[1] - _rangeWindow;

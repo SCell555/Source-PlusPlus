@@ -5,6 +5,9 @@
 // $NoKeywords: $
 //=============================================================================//
 #include "cbase.h"
+
+#if 0
+
 #include "c_baseentity.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -78,3 +81,4 @@ CON_COMMAND_F( Test_ProxyToggle_EnsureValue, "Test_ProxyToggle_EnsureValue", FCV
 
 
 
+#endif

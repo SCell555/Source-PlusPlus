@@ -295,6 +295,8 @@ void CParticleCollision::Setup( const Vector &origin, const Vector *dir, float a
 //-----------------------------------------------------------------------------
 bool CParticleCollision::MoveParticle( Vector &origin, Vector &velocity, float *rollDelta, float timeDelta, trace_t *pTrace )
 {	
+	pTrace->allsolid = false;
+
 	//Don't bother with non-moving particles
 	if ( velocity == vec3_origin )
 		return false;
@@ -323,7 +325,7 @@ bool CParticleCollision::MoveParticle( Vector &origin, Vector &velocity, float *
 			if ( pTrace->fraction != 1.0f )
 			{
 				//See if we've settled
-				if ( ( pTrace->plane.normal[2] >= 0.5f ) && ( fabs( velocity[2] ) <= 48.0f ) )
+				if ( ( pTrace->plane.normal[2] >= 0.5f ) && ( fabsf( velocity[2] ) <= 48.0f ) )
 				{		
 					//Leave the particle at the collision point
 					origin += velocity * ( (pTrace->fraction-COLLISION_EPSILON) * timeDelta );

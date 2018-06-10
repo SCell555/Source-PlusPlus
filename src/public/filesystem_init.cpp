@@ -576,7 +576,7 @@ FSReturnCode_t FileSystem_LoadSearchPaths( CFSSearchPathsInit &initInfo )
 
 		if ( Q_stristr( pLocation, GAMEINFOPATH_TOKEN ) == pLocation )
 		{
-			pLocation += strlen( GAMEINFOPATH_TOKEN );
+			pLocation += sizeof( GAMEINFOPATH_TOKEN ) - 1;
 			pszBaseDir = initInfo.m_pDirectoryName;
 		}
 		else if ( Q_stristr( pLocation, BASESOURCEPATHS_TOKEN ) == pLocation )
@@ -589,7 +589,7 @@ FSReturnCode_t FileSystem_LoadSearchPaths( CFSSearchPathsInit &initInfo )
 			// We need a special identifier in the gameinfo.txt here because the base hl2 folder exists in different places.
 			// In the case of a game or a Steam-launched dedicated server, all the necessary prior engine content is mapped in with the Steam depots,
 			// so we can just use the path as-is.
-			pLocation += strlen( BASESOURCEPATHS_TOKEN );
+			pLocation += sizeof( BASESOURCEPATHS_TOKEN ) - 1;
 		}
 
 		CUtlStringList vecFullLocationPaths;

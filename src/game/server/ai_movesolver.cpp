@@ -155,7 +155,7 @@ bool CAI_MoveSolver::Solve( const AI_MoveSuggestion_t *pSuggestions, int nSugges
 			if ( current.weight > 0)
 			{
 				int	iOffset = center - i;
-				float degrade = abs( iOffset ) * positiveDegrade;
+				float degrade = fabsf( iOffset ) * positiveDegrade;
 
 				if ( ( (current.flags & AIMS_FAVOR_LEFT ) && i > center ) || 
 					 ( (current.flags & AIMS_FAVOR_RIGHT) && i < center ) )

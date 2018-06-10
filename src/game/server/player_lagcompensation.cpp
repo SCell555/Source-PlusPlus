@@ -387,7 +387,7 @@ void CLagCompensationManager::StartLagCompensation( CBasePlayer *player, CUserCm
 	// calc difference between tick send by player and our latency based tick
 	float deltaTime =  correct - TICKS_TO_TIME(gpGlobals->tickcount - targettick);
 
-	if ( fabs( deltaTime ) > 0.2f )
+	if ( fabsf( deltaTime ) > 0.2f )
 	{
 		// difference between cmd time and latency is too big > 200ms, use time correction based on latency
 		// DevMsg("StartLagCompensation: delta too big (%.3f)\n", deltaTime );

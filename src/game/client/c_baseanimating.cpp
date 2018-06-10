@@ -540,7 +540,7 @@ void C_ClientRagdoll::FadeOut( void )
 	int iAlpha = GetRenderColor().a;
 	int iFadeSpeed = ( g_RagdollLVManager.IsLowViolence() ) ? g_ragdoll_lvfadespeed.GetInt() : g_ragdoll_fadespeed.GetInt();
 
-	iAlpha = MAX( iAlpha - ( iFadeSpeed * gpGlobals->frametime ), 0 );
+	iAlpha = MAX( iAlpha - ( iFadeSpeed * gpGlobals->frametime ), 0.f );
 
 	SetRenderMode( kRenderTransAlpha );
 	SetRenderColorA( iAlpha );
@@ -986,7 +986,7 @@ void C_BaseAnimating::UnlockStudioHdr()
 			// Immediate-mode rendering, can unlock immediately
 			if ( pStudioHdr->GetVirtualModel() )
 			{
-				MDLHandle_t hVirtualModel = (MDLHandle_t)(int)pStudioHdr->virtualModel&0xffff;
+				MDLHandle_t hVirtualModel = static_cast<MDLHandle_t>( reinterpret_cast<int>( pStudioHdr->virtualModel ) & 0xffff);
 				mdlcache->UnlockStudioHdr( hVirtualModel );
 			}
 			mdlcache->UnlockStudioHdr( m_hStudioHdr );
@@ -1134,7 +1134,8 @@ CStudioHdr *C_BaseAnimating::OnNewModel()
 		}
 	}
 
-	int boneControllerCount = MIN( hdr->numbonecontrollers(), ARRAYSIZE( m_flEncodedController ) );
+	int boneControllerCount = ARRAYSIZE( m_flEncodedController );
+	boneControllerCount = MIN( hdr->numbonecontrollers(), boneControllerCount );
 
 	m_iv_flEncodedController.SetMaxCount( boneControllerCount );
 
@@ -1524,9 +1525,9 @@ void C_BaseAnimating::BuildTransformations( CStudioHdr *hdr, Vector *pos, Quater
 		{
 			QuaternionMatrix( q[i], pos[i], bonematrix );
 
-			Assert( fabs( pos[i].x ) < 100000 );
-			Assert( fabs( pos[i].y ) < 100000 );
-			Assert( fabs( pos[i].z ) < 100000 );
+			Assert( fabsf( pos[i].x ) < 100000 );
+			Assert( fabsf( pos[i].y ) < 100000 );
+			Assert( fabsf( pos[i].z ) < 100000 );
 
 			if ( (hdr->boneFlags( i ) & BONE_ALWAYS_PROCEDURAL) && 
 				 (hdr->pBone( i )->proctype & STUDIO_PROC_JIGGLE) )
@@ -2112,7 +2113,7 @@ bool C_BaseAnimating::GetAttachment( int number, Vector &origin, QAngle &angles 
 	if ( !pData->m_bAnglesComputed )
 	{
 		MatrixAngles( pData->m_AttachmentToWorld, pData->m_angRotation );
-		pData->m_bAnglesComputed = 1;
+		pData->m_bAnglesComputed = true;
 	}
 	angles = pData->m_angRotation;
 	MatrixPosition( pData->m_AttachmentToWorld, origin );
@@ -2457,7 +2458,7 @@ void C_BaseAnimating::CalculateIKLocks( float currentTime )
 				VectorMA( estGround, pTarget->est.height, up, p1 );
 				VectorMA( estGround, -pTarget->est.height, up, p2 );
 
-				float r = MAX( pTarget->est.radius, 1);
+				float r = MAX( pTarget->est.radius, 1.f);
 
 				// don't IK to other characters
 				ray.Init( p1, p2, Vector(-r,-r,0), Vector(r,r,r*2) );
@@ -3258,7 +3259,7 @@ bool C_BaseAnimating::OnInternalDrawModel( ClientModelRenderInfo_t *pInfo )
 //-----------------------------------------------------------------------------
 void C_BaseAnimating::DoInternalDrawModel( ClientModelRenderInfo_t *pInfo, DrawModelState_t *pState, matrix3x4_t *pBoneToWorldArray )
 {
-	if ( pState)
+	if ( pState && pState->m_pRenderable && pState->m_pStudioHWData )
 	{
 		modelrender->DrawModelExecute( *pState, *pInfo, pBoneToWorldArray );
 	}
@@ -3385,20 +3386,25 @@ void C_BaseAnimating::ProcessMuzzleFlashEvent()
 		//FIXME: We should really use a named attachment for this
 		if ( m_Attachments.Count() > 0 )
 		{
-			Vector vAttachment;
-			QAngle dummyAngles;
-			GetAttachment( 1, vAttachment, dummyAngles );
+			Vector vAttachment, vAng;
+			QAngle angles;
+			GetAttachment( 1, vAttachment, angles );
 
-			// Make an elight
-			dlight_t *el = effects->CL_AllocElight( LIGHT_INDEX_MUZZLEFLASH + index );
-			el->origin = vAttachment;
-			el->radius = random->RandomInt( 32, 64 ); 
-			el->decay = el->radius / 0.05f;
-			el->die = gpGlobals->curtime + 0.05f;
-			el->color.r = 255;
-			el->color.g = 192;
-			el->color.b = 64;
-			el->color.exponent = 5;
+			AngleVectors( angles, &vAng );
+			vAttachment += vAng * 2;
+
+			// Create a "Dynamic" light that will illuminate the world
+			dlight_t *dl = effects->CL_AllocDlight( index );
+			if ( !dl )
+ 				return;
+
+			dl->origin = vAttachment;
+			dl->color.r = 252;
+			dl->color.g = 238;
+			dl->color.b = 128;
+			dl->die = gpGlobals->curtime + 0.05f;
+			dl->radius = random->RandomFloat( 245.0f, 256.0f );
+			dl->decay = 512.0f;
 		}
 	}
 }
@@ -4134,6 +4140,10 @@ void C_BaseAnimating::FireObsoleteEvent( const Vector& origin, const QAngle& ang
 	case CL_EVENT_NPC_MUZZLEFLASH2:
 	case CL_EVENT_NPC_MUZZLEFLASH3:
 		{
+			C_BasePlayer *follow = ToBasePlayer( GetFollowedEntity() );
+			if ( follow && follow->IsLocalPlayer() && ::input->CAM_IsThirdPerson() )
+				break;
+
 			int iAttachment = -1;
 			bool bFirstPerson = true;
 
@@ -5121,6 +5131,17 @@ void C_BaseAnimating::SetSequence( int nSequence )
 	}
 }
 
+
+//-----------------------------------------------------------------------------
+// Extracts the bounding box
+//-----------------------------------------------------------------------------
+void C_BaseAnimating::ExtractBbox( int nSequence, Vector &mins, Vector &maxs )
+{
+	CStudioHdr *pStudioHdr = GetModelPtr();
+	Assert( pStudioHdr );
+
+	::ExtractBbox( pStudioHdr, nSequence, mins, maxs );
+}
 
 //=========================================================
 // StudioFrameAdvance - advance the animation frame up some interval (default 0.1) into the future

@@ -76,17 +76,17 @@ void CLampHaloProxy::OnBind( C_BaseEntity *pEnt )
 	Vector vecLocal = pEnt->GetAbsOrigin() - CurrentViewOrigin();
 	VectorNormalize( vecLocal );
 
-	float fade = fabs( vecLocal.z );
+	float fade = fabsf( vecLocal.z );
 
 	// I hate these magic numbers here, will have to revise
 	// (sjb)
-	if( fade < 0.25 )
+	if( fade < 0.25f )
 	{
-		fade = 0.0;
+		fade = 0.f;
 	}
 	else
 	{
-		fade = MIN( (fade - 0.25) * 1.35, 1.0f );
+		fade = MIN( (fade - 0.25f) * 1.35f, 1.0f );
 	}
 
 	m_pFadeValue->SetFloatValue( fade );

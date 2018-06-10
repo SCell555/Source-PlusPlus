@@ -53,6 +53,8 @@ enum InvalidatePhysicsBits_t
 	ANGLES_CHANGED		= 0x2,
 	VELOCITY_CHANGED	= 0x4,
 	ANIMATION_CHANGED	= 0x8,
+	BOUNDS_CHANGED		= 0x10,		// Means render bounds have changed, so shadow decal projection is required, etc.
+	SEQUENCE_CHANGED	= 0x20,		// Means sequence has changed, only interesting when surrounding bounds depends on sequence
 };
 
 

@@ -210,7 +210,7 @@ public:
 		m_Plane[i].dist = dist;
 		m_Plane[i].type = nType;
 		m_Plane[i].signbits = SignbitsForPlane( &m_Plane[i] );
-		m_AbsNormal[i].Init( fabs(vecNormal.x), fabs(vecNormal.y), fabs(vecNormal.z) );
+		m_AbsNormal[i].Init( fabsf(vecNormal.x), fabsf(vecNormal.y), fabsf(vecNormal.z) );
 	}
 
 	inline const cplane_t *GetPlane( int i ) const { return &m_Plane[i]; }
@@ -1290,7 +1290,7 @@ FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
 
 FORCEINLINE bool IsIntegralValue( float flValue, float flTolerance = 0.001f )
 {
-	return fabs( RoundFloatToInt( flValue ) - flValue ) < flTolerance;
+	return fabsf( RoundFloatToInt( flValue ) - flValue ) < flTolerance;
 }
 
 // Fast, accurate ftol:
@@ -2159,14 +2159,14 @@ float FastPow10( float i );			// 10^i
 
 inline bool CloseEnough( float a, float b, float epsilon = EQUAL_EPSILON )
 {
-	return fabs( a - b ) <= epsilon;
+	return fabsf( a - b ) <= epsilon;
 }
 
 inline bool CloseEnough( const Vector &a, const Vector &b, float epsilon = EQUAL_EPSILON )
 {
-	return fabs( a.x - b.x ) <= epsilon &&
-		fabs( a.y - b.y ) <= epsilon &&
-		fabs( a.z - b.z ) <= epsilon;
+	return fabsf( a.x - b.x ) <= epsilon &&
+		fabsf( a.y - b.y ) <= epsilon &&
+		fabsf( a.z - b.z ) <= epsilon;
 }
 
 // Fast compare

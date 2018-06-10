@@ -690,7 +690,7 @@ void CNPC_Gargantua::RunTask( const Task_t *pTask )
 				if ( dir.Length() > 400 )
 					cancel = true;
 			}
-			if ( fabs(angles.y) > 60 )
+			if ( fabsf(angles.y) > 60 )
 				cancel = true;
 			
 			if ( cancel )

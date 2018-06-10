@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -24,7 +24,7 @@ BEGIN_SEND_TABLE_NOBASE( CPlayerLocalData, DT_Local )
 
 	SendPropArray3  (SENDINFO_ARRAY3(m_chAreaBits), SendPropInt(SENDINFO_ARRAY(m_chAreaBits), 8, SPROP_UNSIGNED)),
 	SendPropArray3  (SENDINFO_ARRAY3(m_chAreaPortalBits), SendPropInt(SENDINFO_ARRAY(m_chAreaPortalBits), 8, SPROP_UNSIGNED)),
-	
+
 	SendPropInt		(SENDINFO(m_iHideHUD), HIDEHUD_BITCOUNT, SPROP_UNSIGNED),
 	SendPropFloat	(SENDINFO(m_flFOVRate), 0, SPROP_NOSCALE ),
 	SendPropInt		(SENDINFO(m_bDucked),	1, SPROP_UNSIGNED ),
@@ -33,7 +33,7 @@ BEGIN_SEND_TABLE_NOBASE( CPlayerLocalData, DT_Local )
 	SendPropFloat	(SENDINFO(m_flDucktime), 12, SPROP_ROUNDDOWN|SPROP_CHANGES_OFTEN, 0.0f, 2048.0f ),
 	SendPropFloat	(SENDINFO(m_flDuckJumpTime), 12, SPROP_ROUNDDOWN, 0.0f, 2048.0f ),
 	SendPropFloat	(SENDINFO(m_flJumpTime), 12, SPROP_ROUNDDOWN, 0.0f, 2048.0f ),
-#if PREDICTION_ERROR_CHECK_LEVEL > 1 
+#if PREDICTION_ERROR_CHECK_LEVEL > 1
 	SendPropFloat	(SENDINFO(m_flFallVelocity), 32, SPROP_NOSCALE ),
 
 	SendPropFloat		( SENDINFO_VECTORELEM(m_vecPunchAngle, 0), 32, SPROP_NOSCALE|SPROP_CHANGES_OFTEN ),
@@ -68,6 +68,7 @@ BEGIN_SEND_TABLE_NOBASE( CPlayerLocalData, DT_Local )
 	SendPropFloat( SENDINFO_STRUCTELEM( m_skybox3d.fog.start ), 0, SPROP_NOSCALE ),
 	SendPropFloat( SENDINFO_STRUCTELEM( m_skybox3d.fog.end ), 0, SPROP_NOSCALE ),
 	SendPropFloat( SENDINFO_STRUCTELEM( m_skybox3d.fog.maxdensity ), 0, SPROP_NOSCALE ),
+	SendPropFloat( SENDINFO_STRUCTELEM( m_skybox3d.fog.HDRColorScale ), 0, SPROP_NOSCALE ),
 
 	SendPropEHandle( SENDINFO_STRUCTELEM( m_PlayerFog.m_hCtrl ) ),
 
@@ -83,6 +84,14 @@ BEGIN_SEND_TABLE_NOBASE( CPlayerLocalData, DT_Local )
 	SendPropInt( SENDINFO_STRUCTELEM( m_audio.soundscapeIndex ), 17, 0 ),
 	SendPropInt( SENDINFO_STRUCTELEM( m_audio.localBits ), NUM_AUDIO_LOCAL_SOUNDS, SPROP_UNSIGNED ),
 	SendPropEHandle( SENDINFO_STRUCTELEM( m_audio.ent ) ),
+
+	//Tony; tonemap stuff! -- TODO! Optimize this with bit sizes from env_tonemap_controller.
+	SendPropFloat( SENDINFO_STRUCTELEM( m_TonemapParams.m_flTonemapScale ), 0, SPROP_NOSCALE ),
+	SendPropFloat( SENDINFO_STRUCTELEM( m_TonemapParams.m_flTonemapRate ), 0, SPROP_NOSCALE ),
+	SendPropFloat( SENDINFO_STRUCTELEM( m_TonemapParams.m_flBloomScale ), 0, SPROP_NOSCALE ),
+
+	SendPropFloat( SENDINFO_STRUCTELEM( m_TonemapParams.m_flAutoExposureMin ), 0, SPROP_NOSCALE ),
+	SendPropFloat( SENDINFO_STRUCTELEM( m_TonemapParams.m_flAutoExposureMax ), 0, SPROP_NOSCALE ),
 END_SEND_TABLE()
 
 BEGIN_SIMPLE_DATADESC( fogplayerparams_t )
@@ -111,8 +120,10 @@ BEGIN_SIMPLE_DATADESC( fogparams_t )
 	DEFINE_FIELD( colorSecondaryLerpTo, FIELD_COLOR32 ),
 	DEFINE_FIELD( startLerpTo, FIELD_FLOAT ),
 	DEFINE_FIELD( endLerpTo, FIELD_FLOAT ),
+	DEFINE_FIELD( maxdensityLerpTo, FIELD_FLOAT ),
 	DEFINE_FIELD( lerptime, FIELD_TIME ),
 	DEFINE_FIELD( duration, FIELD_FLOAT ),
+	DEFINE_FIELD( HDRColorScale, FIELD_FLOAT ),
 END_DATADESC()
 
 BEGIN_SIMPLE_DATADESC( sky3dparams_t )
@@ -130,6 +141,17 @@ BEGIN_SIMPLE_DATADESC( audioparams_t )
 	DEFINE_FIELD( soundscapeIndex, FIELD_INTEGER ),
 	DEFINE_FIELD( localBits, FIELD_INTEGER ),
 	DEFINE_FIELD( ent, FIELD_EHANDLE ),
+
+END_DATADESC()
+
+//Tony; tonepam params!!
+BEGIN_SIMPLE_DATADESC( tonemap_params_t )
+
+	DEFINE_FIELD( m_flTonemapScale, FIELD_FLOAT ),
+	DEFINE_FIELD( m_flTonemapRate, FIELD_FLOAT ),
+	DEFINE_FIELD( m_flBloomScale, FIELD_FLOAT ),
+	DEFINE_FIELD( m_flAutoExposureMin, FIELD_FLOAT ),
+	DEFINE_FIELD( m_flAutoExposureMax, FIELD_FLOAT ),
 
 END_DATADESC()
 
@@ -159,7 +181,10 @@ BEGIN_SIMPLE_DATADESC( CPlayerLocalData )
 	DEFINE_EMBEDDED( m_PlayerFog ),
 	DEFINE_EMBEDDED( m_fog ),
 	DEFINE_EMBEDDED( m_audio ),
-	
+
+	//Tony; added
+	DEFINE_EMBEDDED( m_TonemapParams ),
+
 	// "Why don't we save this field, grandpa?"
 	//
 	// "You see Billy, trigger_vphysics_motion uses vPhysics to touch the player,
@@ -168,7 +193,7 @@ BEGIN_SIMPLE_DATADESC( CPlayerLocalData )
 	// aren't saved and restored, if the we save before EndTouch is called, it
 	// will never be called after we load."
 	//DEFINE_FIELD( m_bSlowMovement, FIELD_BOOLEAN ),
-	
+
 END_DATADESC()
 
 //-----------------------------------------------------------------------------
@@ -215,12 +240,12 @@ void CPlayerLocalData::UpdateAreaBits( CBasePlayer *pl, unsigned char chAreaPort
 
 //-----------------------------------------------------------------------------
 // Purpose: Fills in CClientData values for local player just before sending over wire
-// Input  : player - 
+// Input  : player -
 //-----------------------------------------------------------------------------
 
 void ClientData_Update( CBasePlayer *pl )
 {
-	// HACKHACK: for 3d skybox 
+	// HACKHACK: for 3d skybox
 	// UNDONE: Support multiple sky cameras?
 	CSkyCamera *pSkyCamera = GetCurrentSkyCamera();
 	if ( pSkyCamera != pl->m_Local.m_pOldSkyCamera )
@@ -236,7 +261,7 @@ void ClientData_Update( CBasePlayer *pl )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void UpdateAllClientData( void )
 {

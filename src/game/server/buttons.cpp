@@ -1167,7 +1167,7 @@ void CMomentaryRotButton::InputSetPosition( inputdata_t &inputdata )
 	// are told to change position in very small increments.
 	//
 	QAngle vecNewAngles = m_start + m_vecMoveAng * ( m_IdealYaw * m_flMoveDistance );
-	float flAngleDelta = fabs( AxisDelta( m_spawnflags, vecNewAngles, GetLocalAngles() ));
+	float flAngleDelta = fabsf( AxisDelta( m_spawnflags, vecNewAngles, GetLocalAngles() ));
 	float dt = flAngleDelta / m_flSpeed;
 	if ( dt < TICK_INTERVAL )
 	{
@@ -1286,7 +1286,7 @@ void CMomentaryRotButton::SetPositionMoveDone(void)
 
 	// TODO: change this to use a Think function like ReturnThink.
 	QAngle vecNewAngles = m_start + m_vecMoveAng * ( m_IdealYaw * m_flMoveDistance );
-	float flAngleDelta = fabs( AxisDelta( m_spawnflags, vecNewAngles, GetLocalAngles() ));
+	float flAngleDelta = fabsf( AxisDelta( m_spawnflags, vecNewAngles, GetLocalAngles() ));
 	float dt = flAngleDelta / m_flSpeed;
 	if ( dt < TICK_INTERVAL )
 	{

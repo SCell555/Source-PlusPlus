@@ -1017,15 +1017,15 @@ void CDODPlayerAnimState::ComputePoseParam_MoveYaw( CStudioHdr *pStudioHdr )
 
 		Vector2D vecCurrentMoveYaw( 0.0f, 0.0f );
 		// set the pose parameters to the correct direction, but not value
-		if ( vecEstVelocity.x != 0.0f && fabs( vecEstVelocity.x ) > fabs( vecEstVelocity.y ) )
+		if ( vecEstVelocity.x != 0.0f && fabsf( vecEstVelocity.x ) > fabsf( vecEstVelocity.y ) )
 		{
 			vecCurrentMoveYaw.x = (vecEstVelocity.x < 0.0) ? -1.0 : 1.0;
-			vecCurrentMoveYaw.y = vecEstVelocity.y / fabs( vecEstVelocity.x );
+			vecCurrentMoveYaw.y = vecEstVelocity.y / fabsf( vecEstVelocity.x );
 		}
 		else if (vecEstVelocity.y != 0.0f)
 		{
 			vecCurrentMoveYaw.y = (vecEstVelocity.y < 0.0) ? -1.0 : 1.0;
-			vecCurrentMoveYaw.x = vecEstVelocity.x / fabs( vecEstVelocity.y );
+			vecCurrentMoveYaw.x = vecEstVelocity.x / fabsf( vecEstVelocity.y );
 		}
 
 #ifndef CLIENT_DLL
@@ -1058,7 +1058,7 @@ void CDODPlayerAnimState::ComputePoseParam_MoveYaw( CStudioHdr *pStudioHdr )
 			GetOuterDOD()->GetBlendedLinearVelocity( &vecAnimVelocity );
 
 			// adjust X pose parameter based on movement error
-			if (fabs( vecAnimVelocity.x ) > 0.001)
+			if (fabsf( vecAnimVelocity.x ) > 0.001)
 			{
 				vecCurrentMoveYaw.x *= vecEstVelocity.x / vecAnimVelocity.x;
 			}
@@ -1068,7 +1068,7 @@ void CDODPlayerAnimState::ComputePoseParam_MoveYaw( CStudioHdr *pStudioHdr )
 				GetOuter()->SetPoseParameter( pStudioHdr, m_iMoveX, vecCurrentMoveYaw.x );
 			}
 			// adjust Y pose parameter based on movement error
-			if (fabs( vecAnimVelocity.y ) > 0.001)
+			if (fabsf( vecAnimVelocity.y ) > 0.001)
 			{
 				vecCurrentMoveYaw.y *= vecEstVelocity.y / vecAnimVelocity.y;
 			}
@@ -1212,7 +1212,7 @@ void CDODPlayerAnimState::ComputePoseParam_AimYaw( CStudioHdr *pStudioHdr )
 
 			if ( bDeployed )
 			{
-				if ( fabs( flYawDelta ) > 20.0f )
+				if ( fabsf( flYawDelta ) > 20.0f )
 				{
 					float flSide = ( flYawDelta > 0.0f ) ? -1.0f : 1.0f;
 					m_flGoalFeetYaw += ( 20.0f * flSide );
@@ -1220,7 +1220,7 @@ void CDODPlayerAnimState::ComputePoseParam_AimYaw( CStudioHdr *pStudioHdr )
 			}
 			else
 			{
-				if ( fabs( flYawDelta ) > m_AnimConfig.m_flMaxBodyYawDegrees )
+				if ( fabsf( flYawDelta ) > m_AnimConfig.m_flMaxBodyYawDegrees )
 				{
 					float flSide = ( flYawDelta > 0.0f ) ? -1.0f : 1.0f;
 					m_flGoalFeetYaw += ( m_AnimConfig.m_flMaxBodyYawDegrees * flSide );
@@ -1258,7 +1258,7 @@ void CDODPlayerAnimState::ConvergeYawAngles( float flGoalYaw, float flYawRate, f
 
 	// Find the yaw delta.
 	float flDeltaYaw = flGoalYaw - flCurrentYaw;
-	float flDeltaYawAbs = fabs( flDeltaYaw );
+	float flDeltaYawAbs = fabsf( flDeltaYaw );
 	flDeltaYaw = AngleNormalize( flDeltaYaw );
 
 	// Always do at least a bit of the turn (1%).

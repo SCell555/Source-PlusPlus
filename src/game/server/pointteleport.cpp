@@ -24,9 +24,17 @@ public:
 	void	Activate( void );
 
 	void InputTeleport( inputdata_t &inputdata );
+	void InputTeleportEntity( inputdata_t &inputdata );
+	void InputTeleportToCurrentPos( inputdata_t &inputdata );
+
+	int	ObjectCaps( void )
+	{ 
+		return (BaseClass::ObjectCaps() & ~FCAP_ACROSS_TRANSITION); 
+	}
 
 private:
 	
+	void	DoTeleport( inputdata_t &inputdata, const Vector &vecOrigin, const QAngle &angRotation, bool bOverrideTarget = false );
 	bool	EntityMayTeleport( CBaseEntity *pTarget );
 
 	Vector m_vSaveOrigin;
@@ -45,6 +53,8 @@ BEGIN_DATADESC( CPointTeleport )
 	DEFINE_FIELD( m_vSaveAngles, FIELD_VECTOR ),
 
 	DEFINE_INPUTFUNC( FIELD_VOID, "Teleport", InputTeleport ),
+	DEFINE_INPUTFUNC( FIELD_STRING, "TeleportEntity", InputTeleportEntity ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "TeleportToCurrentPos", InputTeleportToCurrentPos ),
 
 END_DATADESC()
 
@@ -112,8 +122,52 @@ void CPointTeleport::Activate( void )
 //------------------------------------------------------------------------------
 void CPointTeleport::InputTeleport( inputdata_t &inputdata )
 {
+	DoTeleport( inputdata, m_vSaveOrigin, m_vSaveAngles );
+}
 	// Attempt to find the entity in question
-	CBaseEntity *pTarget = gEntList.FindEntityByName( NULL, m_target, this, inputdata.pActivator, inputdata.pCaller );
+//------------------------------------------------------------------------------
+// Purpose: Teleport the specified entity instead of the Teleporter's pre
+//			determined entity.
+//------------------------------------------------------------------------------
+void CPointTeleport::InputTeleportEntity( inputdata_t &inputdata )
+{
+	DoTeleport( inputdata, m_vSaveOrigin, m_vSaveAngles, true );
+}
+
+//------------------------------------------------------------------------------
+// Teleport the target to wherever the point_teleport entity is currently. The Teleport
+// input teleports to the initial position of the point_teleport, so this input
+// was added to avoid breaking old content.
+//------------------------------------------------------------------------------
+void CPointTeleport::InputTeleportToCurrentPos( inputdata_t &inputdata )
+{
+	if ( m_spawnflags & SF_TELEPORT_TO_SPAWN_POS )
+	{
+		// This is a nonsensical spawnflag in combination with this input.
+		Warning( "%s: TeleportToCurrentPos input received; ignoring 'Teleport Home' spawnflag.\n", GetDebugName() );
+	}
+
+	DoTeleport( inputdata, GetAbsOrigin(), GetAbsAngles() );
+}
+
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+void CPointTeleport::DoTeleport( inputdata_t &inputdata, const Vector &vecOrigin, const QAngle &angRotation, bool bOverrideTarget )
+{
+	// Attempt to find the entity in question
+	CBaseEntity *pTarget;
+	if( bOverrideTarget )
+	{
+		// Use the inputdata to find the entity that the designer supplied in the parameter override 
+		pTarget = gEntList.FindEntityByName( NULL, inputdata.value.String(), this, inputdata.pActivator, inputdata.pCaller );
+	}
+	else
+	{
+		// Default behavior: Just find the entity that I am hardwired in Hammer to teleport.
+		pTarget = gEntList.FindEntityByName( NULL, m_target, this, inputdata.pActivator, inputdata.pCaller );
+	}
+
 	if ( pTarget == NULL )
 		return;
 

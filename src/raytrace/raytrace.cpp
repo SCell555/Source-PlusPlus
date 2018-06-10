@@ -164,8 +164,8 @@ static Vector GetEdgeEquation(Vector p1, Vector p2, int c1, int c2, Vector Insid
 	float nx=p1[c2]-p2[c2];
 	float ny=p2[c1]-p1[c1];
 	float d=-(nx*p1[c1]+ny*p1[c2]);
-// 	assert(fabs(nx*p1[c1]+ny*p1[c2]+d)<0.01);
-// 	assert(fabs(nx*p2[c1]+ny*p2[c2]+d)<0.01);
+// 	assert(fabsf(nx*p1[c1]+ny*p1[c2]+d)<0.01);
+// 	assert(fabsf(nx*p2[c1]+ny*p2[c2]+d)<0.01);
 
 	// use the convention that negative is "outside"
 	float trial_dist=InsidePoint[c1]*nx+InsidePoint[c2]*ny+d;
@@ -205,7 +205,7 @@ void CacheOptimizedTriangle::ChangeIntoIntersectionFormat(void)
 	// now, determine which axis to drop
 	int drop_axis = 0;
 	for(int c=1 ; c<3 ; c++)
-		if ( fabs(N[c]) > fabs( N[drop_axis] ) )
+		if ( fabsf(N[c]) > fabsf( N[drop_axis] ) )
 			drop_axis = c;
 
 	m_Data.m_IntersectData.m_flD = N.Dot( p1 );

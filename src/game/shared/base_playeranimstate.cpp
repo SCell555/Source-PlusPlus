@@ -752,7 +752,7 @@ int CBasePlayerAnimState::ConvergeAngles( float goal,float maxrate, float maxgap
 	float anglediff = goal - current;
 	anglediff = AngleNormalize( anglediff );
 	
-	float anglediffabs = fabs( anglediff );
+	float anglediffabs = fabsf( anglediff );
 
 	float scale = 1.0f;
 	if ( anglediffabs <= FADE_TURN_DEGREES )
@@ -845,7 +845,7 @@ void CBasePlayerAnimState::ComputePoseParam_BodyYaw()
 		// If he's rotated his view further than the model can turn, make him face forward.
 		float flDiff = AngleNormalize(  m_flGoalFeetYaw - m_flEyeYaw );
 
-		if ( fabs(flDiff) > m_AnimConfig.m_flMaxBodyYawDegrees )
+		if ( fabsf(flDiff) > m_AnimConfig.m_flMaxBodyYawDegrees )
 		{
 			if ( flDiff  > 0 )
 				m_flGoalFeetYaw -= m_AnimConfig.m_flMaxBodyYawDegrees;

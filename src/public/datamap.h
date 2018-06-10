@@ -362,7 +362,7 @@ struct datamap_t
 		\
 		if ( sizeof( dataDesc ) > sizeof( dataDesc[0] ) ) \
 		{ \
-			classNameTypedef::m_DataMap.dataNumFields = (int) (SIZE_OF_ARRAY( dataDesc ) - 1); \
+			classNameTypedef::m_DataMap.dataNumFields = SIZE_OF_ARRAY( dataDesc ) - 1; \
 			classNameTypedef::m_DataMap.dataDesc 	  = &dataDesc[1]; \
 		} \
 		else \

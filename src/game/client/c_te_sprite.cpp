@@ -123,7 +123,7 @@ void TE_Sprite( IRecipientFilter& filter, float delay,
 
 void TE_Sprite( IRecipientFilter& filter, float delay, KeyValues *pKeyValues )
 {
-	Vector vecOrigin, vecDirection;
+	Vector vecOrigin;
 	vecOrigin.x = pKeyValues->GetFloat( "originx" );
 	vecOrigin.y = pKeyValues->GetFloat( "originy" );
 	vecOrigin.z = pKeyValues->GetFloat( "originz" );

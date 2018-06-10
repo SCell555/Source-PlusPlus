@@ -1893,7 +1893,7 @@ bool CAI_Navigator::OnFailedSteer( AILocalMoveGoal_t *pMoveGoal, float distClear
 
 		if ( distClear > pMoveGoal->maxDist - GetPath()->GetGoalTolerance() )
 		{
-			Assert( CurWaypointIsGoal() && fabs(pMoveGoal->maxDist - GetPathDistToCurWaypoint()) < 0.01 );
+			Assert( CurWaypointIsGoal() && fabsf(pMoveGoal->maxDist - GetPathDistToCurWaypoint()) < 0.01 );
 
 			if ( pMoveGoal->maxDist > distClear )
 				pMoveGoal->maxDist = distClear;

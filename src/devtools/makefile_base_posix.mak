@@ -61,7 +61,7 @@ CFLAGS = $(BASE_CFLAGS) $(ENV_CFLAGS)
 ifeq ($(CLANG_BUILD),1)
 	CXXFLAGS = $(BASE_CFLAGS) -std=gnu++0x -Wno-c++11-narrowing -Wno-dangling-else $(ENV_CXXFLAGS)
 else
-	CXXFLAGS = $(BASE_CFLAGS) -std=gnu++0x -fpermissive $(ENV_CXXFLAGS)
+	CXXFLAGS = $(BASE_CFLAGS) -std=gnu++14 -fpermissive $(ENV_CXXFLAGS)
 endif
 DEFINES += -DVPROF_LEVEL=1 -DGNUC -DNO_HOOK_MALLOC -DNO_MALLOC_OVERRIDE
 
@@ -90,7 +90,7 @@ ifdef MAKE_CHROOT
         $(info '$(SCHROOT_CHROOT_NAME)' is not '$(CHROOT_NAME)')
         $(error This makefile should be run from within a chroot. 'schroot --chroot $(CHROOT_NAME) -- $(MAKE) $(MAKEFLAGS)')  
 	endif
-	GCC_VER = -4.8
+	GCC_VER = -5
 	P4BIN = $(SRCROOT)/devtools/bin/linux/p4
 	CRYPTOPPDIR=ubuntu12_32_gcc48
 else ifeq ($(USE_VALVE_BINDIR),1)
@@ -113,14 +113,14 @@ else
 	MARCH_TARGET = pentium4
 endif
 
-ifeq ($(USE_VALVE_BINDIR),1)
+#ifeq ($(USE_VALVE_BINDIR),1)
 	# On dedicated servers, some plugins depend on global variable symbols in addition to functions.
 	# So symbols like _Z16ClearMultiDamagev should show up when you do "nm server_srv.so" in TF2.
 	STRIP_FLAGS =
-else
+#else
 	# Linux desktop client (or client/dedicated server in chroot).
-	STRIP_FLAGS = -x
-endif
+	#STRIP_FLAGS = -x
+#endif
 
 ifeq ($(CLANG_BUILD),1)
 	# Clang does not support -mfpmath=sse because it uses whatever

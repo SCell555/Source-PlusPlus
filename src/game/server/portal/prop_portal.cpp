@@ -1005,17 +1005,17 @@ void CProp_Portal::TeleportTouchingEntity( CBaseEntity *pOther )
 		pOtherAsPlayer->m_bFixEyeAnglesFromPortalling = true;
 		pOtherAsPlayer->m_matLastPortalled = m_matrixThisToLinked;
 		bNonPhysical = true;
-		//if( (fabs( RemotePortalDataAccess.Placement.vForward.z ) + fabs( LocalPortalDataAccess.Placement.vForward.z )) > 0.7071f ) //some combination of floor/ceiling
-		if( fabs( LocalPortalDataAccess.Placement.vForward.z ) > 0.0f )
+		//if( (fabsf( RemotePortalDataAccess.Placement.vForward.z ) + fabsf( LocalPortalDataAccess.Placement.vForward.z )) > 0.7071f ) //some combination of floor/ceiling
+		if( fabsf( LocalPortalDataAccess.Placement.vForward.z ) > 0.0f )
 		{
 			//we may have to compensate for the fact that AABB's don't rotate ever
 			
-			float fAbsLocalZ = fabs( LocalPortalDataAccess.Placement.vForward.z );
-			float fAbsRemoteZ = fabs( RemotePortalDataAccess.Placement.vForward.z );
+			float fAbsLocalZ = fabsf( LocalPortalDataAccess.Placement.vForward.z );
+			float fAbsRemoteZ = fabsf( RemotePortalDataAccess.Placement.vForward.z );
 			
-			if( (fabs(fAbsLocalZ - 1.0f) < 0.01f) &&
-				(fabs(fAbsRemoteZ - 1.0f) < 0.01f) )
-				//(fabs( LocalPortalDataAccess.Placement.vForward.z + RemotePortalDataAccess.Placement.vForward.z ) < 0.01f) )
+			if( (fabsf(fAbsLocalZ - 1.0f) < 0.01f) &&
+				(fabsf(fAbsRemoteZ - 1.0f) < 0.01f) )
+				//(fabsf( LocalPortalDataAccess.Placement.vForward.z + RemotePortalDataAccess.Placement.vForward.z ) < 0.01f) )
 			{
 				//portals are both aligned on the z axis, no need to shrink the player
 				
@@ -1772,9 +1772,9 @@ void CProp_Portal::UpdatePortalTeleportMatrix( void )
 	m_plane_Origin.signbits = SignbitsForPlane( &m_plane_Origin );
 
 	Vector vAbsNormal;
-	vAbsNormal.x = fabs(m_plane_Origin.normal.x);
-	vAbsNormal.y = fabs(m_plane_Origin.normal.y);
-	vAbsNormal.z = fabs(m_plane_Origin.normal.z);
+	vAbsNormal.x = fabsf(m_plane_Origin.normal.x);
+	vAbsNormal.y = fabsf(m_plane_Origin.normal.y);
+	vAbsNormal.z = fabsf(m_plane_Origin.normal.z);
 
 	if( vAbsNormal.x > vAbsNormal.y )
 	{

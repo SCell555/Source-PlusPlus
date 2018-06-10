@@ -347,9 +347,9 @@ void CNPC_Apache::Flight( void )
 	SetLocalAngularVelocity( angVel );
 
 	// sideways drag
-	vecVel.x = vecVel.x * (1.0 - fabs( right.x ) * 0.05);
-    vecVel.y = vecVel.y * (1.0 - fabs( right.y ) * 0.05);
-	vecVel.z = vecVel.z * (1.0 - fabs( right.z ) * 0.05);
+	vecVel.x = vecVel.x * (1.0 - fabsf( right.x ) * 0.05);
+    vecVel.y = vecVel.y * (1.0 - fabsf( right.y ) * 0.05);
+	vecVel.z = vecVel.z * (1.0 - fabsf( right.z ) * 0.05);
 
 	// general drag
 	vecVel = vecVel * 0.995;

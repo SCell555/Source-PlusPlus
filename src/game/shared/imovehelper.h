@@ -67,7 +67,7 @@ public:
 	virtual void	ProcessImpacts( void ) = 0;
 	
 	// Numbered line printf
-	virtual void	Con_NPrintf( int idx, PRINTF_FORMAT_STRING char const* fmt, ... ) = 0;
+	FMTFUNCTION_WIN( 3, 4 ) virtual void	Con_NPrintf( int idx, PRINTF_FORMAT_STRING char const* fmt, ... ) = 0;
 
 	// These have separate server vs client impementations
 	virtual void	StartSound( const Vector& origin, int channel, char const* sample, float volume, soundlevel_t soundlevel, int fFlags, int pitch ) = 0;

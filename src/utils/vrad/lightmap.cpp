@@ -39,7 +39,7 @@ bool g_bNoAO = false;
 
 inline fltx4 AbsSIMD( const fltx4 & x )
 {
-	return fabs( x );
+	return fabsf( x );
 }
 
 inline FourVectors Mul( const FourVectors &a, const fltx4 &b )
@@ -563,7 +563,7 @@ void CalcFaceVectors(lightinfo_t *l)
 		tex->lightmapVecsLuxelsPerWorldUnits[1][1] * tex->lightmapVecsLuxelsPerWorldUnits[0][0];
 
 	float det = -DotProduct( l->facenormal, luxelSpaceCross );
-	if ( fabs( det ) < 1.0e-20 )
+	if ( fabsf( det ) < 1.0e-20 )
 	{
 		Warning(" warning - face vectors parallel to face normal. bad lighting will be produced\n" );
 		l->luxelOrigin = vec3_origin;
@@ -1331,7 +1331,7 @@ static void SetLightFalloffParams( entity_t * e, directlight_t * dl )
 			// prevent the light from going past there. If a user specifes an extreme falloff, the
 			// quadratic will start making the light brighter at some distance. We handle this by
 			// fading it from the minimum brightess point down to zero at 10x the minimum distance
-			if ( fabs( a ) > 0. )
+			if ( fabsf( a ) > 0. )
 			{
 				float flMax = b / ( - 2.0 * a );				// where f' = 0
 				if ( flMax > 0.0 )
@@ -2936,18 +2936,18 @@ static void ComputeLightmapGradients( SSE_SampleInfo_t& info, bool const* pHasPr
 
 			if (sample.t > 0)
 			{
-				if (sample.s > 0)   gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j-1-w] ) );
-				gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j-w] ) );
-				if (sample.s < w-1) gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j+1-w] ) );
+				if (sample.s > 0)   gradient[i] = max( gradient[i], fabsf( pIntensity[j] - pIntensity[j-1-w] ) );
+				gradient[i] = max( gradient[i], fabsf( pIntensity[j] - pIntensity[j-w] ) );
+				if (sample.s < w-1) gradient[i] = max( gradient[i], fabsf( pIntensity[j] - pIntensity[j+1-w] ) );
 			}
 			if (sample.t < h-1)
 			{
-				if (sample.s > 0)   gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j-1+w] ) );
-				gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j+w] ) );
-				if (sample.s < w-1) gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j+1+w] ) );
+				if (sample.s > 0)   gradient[i] = max( gradient[i], fabsf( pIntensity[j] - pIntensity[j-1+w] ) );
+				gradient[i] = max( gradient[i], fabsf( pIntensity[j] - pIntensity[j+w] ) );
+				if (sample.s < w-1) gradient[i] = max( gradient[i], fabsf( pIntensity[j] - pIntensity[j+1+w] ) );
 			}
-			if (sample.s > 0)   gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j-1] ) );
-			if (sample.s < w-1) gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j+1] ) );
+			if (sample.s > 0)   gradient[i] = max( gradient[i], fabsf( pIntensity[j] - pIntensity[j-1] ) );
+			if (sample.s < w-1) gradient[i] = max( gradient[i], fabsf( pIntensity[j] - pIntensity[j+1] ) );
 		}
 	}
 }

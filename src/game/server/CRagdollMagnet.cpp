@@ -202,10 +202,10 @@ float CRagdollMagnet::DistToPoint( const Vector &vecPoint )
 
 			// Set up the plane to measure horizontal dist.
 			axis.InitializePlane( vecRight, GetAbsOrigin() );
-			hDist = fabs( axis.PointDist( vecPoint ) );
+			hDist = fabsf( axis.PointDist( vecPoint ) );
 
 			axis.InitializePlane( vecUp, GetAbsOrigin() );
-			vDist = fabs( axis.PointDist( vecPoint ) );
+			vDist = fabsf( axis.PointDist( vecPoint ) );
 
 			return MAX( hDist, vDist );
 		}

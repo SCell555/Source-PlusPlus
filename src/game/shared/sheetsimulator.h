@@ -60,7 +60,7 @@ public:
 	void SetCollisionGroup( int group );
 
 	// Sets the bounding box used for collision vs world
-	void SetBoundingBox( Vector& mins, Vector& maxs );
+	void SetBoundingBox( const Vector& mins, const Vector& maxs );
 
 	// Computes the bounding box
 	void ComputeBounds( Vector& mins, Vector& maxs );

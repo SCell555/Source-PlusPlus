@@ -211,8 +211,8 @@ int	C_LocalTempEntity::DrawModel( int flags )
 		float flDot = DotProduct( m_vecNormal, vecDelta );
 		if ( flDot > 0 )
 		{
-			float flAlpha = RemapVal( MIN(flDot,0.3), 0, 0.3, 0, 1 );
-			flAlpha = MAX( 1.0, tempent_renderamt - (tempent_renderamt * flAlpha) );
+			float flAlpha = RemapVal( MIN(flDot,0.3f), 0, 0.3, 0, 1 );
+			flAlpha = MAX( 1.f, tempent_renderamt - (tempent_renderamt * flAlpha) );
 			SetRenderColorA( flAlpha );
 		}
 	}
@@ -3028,7 +3028,7 @@ void CTempEnts::MuzzleFlash_Shotgun_NPC( ClientEntityHandle_t hEntity, int attac
 
 		float dot = forward.Dot( pTrailParticle->m_vecVelocity );
 
-		dot = (1.0f-fabs(dot)) / spread;
+		dot = (1.0f-fabsf(dot)) / spread;
 		pTrailParticle->m_vecVelocity *= (random->RandomFloat( 256.0f, 1024.0f ) * (1.0f-dot));
 
 		Color32Init( pTrailParticle->m_color, 255, 242, 191, 255 );
@@ -3369,8 +3369,6 @@ void CTempEnts::CSEjectBrass( const Vector &vecPosition, const QAngle &angVeloci
 
 	Vector forward, right, up;
 	Vector velocity;
-	Vector origin;
-	QAngle angle;
 	
 	// Add some randomness to the velocity
 

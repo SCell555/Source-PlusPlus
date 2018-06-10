@@ -442,7 +442,7 @@ bool CNPC_GroundTurret::IsOpen()
 {
 	// The method is hacky but in the end, this does actually give
 	// us a pretty good idea if the turret is open or closed.
-	return( fabs(GetAbsOrigin().z - m_vecClosedPos.z ) > 1.0f );
+	return( fabsf(GetAbsOrigin().z - m_vecClosedPos.z ) > 1.0f );
 }
 
 //---------------------------------------------------------

@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -20,6 +20,7 @@
 #include "AI_Criteria.h"
 #include "ragdoll_shared.h"
 #include "hierarchy.h"
+#include "particle_parse.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -42,6 +43,14 @@ const float ATTACHED_DAMPING_SCALE = 50.0f;
 //-----------------------------------------------------------------------------
 // Spawnflags
 //-----------------------------------------------------------------------------
+
+#define SF_FULL_DESTROY						0x0001
+#define	SF_DONT_IGNITE						0x0002
+#define	SF_DESTROY_BY_PIECE					0x0008
+#define	SF_DISABLE_MOTION_IF_NOT_MOVING		0x0010
+#define	SF_ALLOW_BULLET_DAMAGE				0x0020
+#define SF_NO_SELF_COLLISION				0x0040
+
 #define	SF_RAGDOLLPROP_DEBRIS		0x0004
 #define SF_RAGDOLLPROP_USE_LRU_RETIREMENT	0x1000
 #define	SF_RAGDOLLPROP_ALLOW_DISSOLVE		0x2000	// Allow this prop to be dissolved
@@ -70,8 +79,6 @@ END_SEND_TABLE()
 	DEFINE_PHYSPTR( m_ragdoll.list[i].pConstraint ), \
 	DEFINE_FIELD( m_ragdoll.list[i].parentIndex, FIELD_INTEGER )
 
-#pragma warning( push )
-#pragma warning( disable : 4838 )
 BEGIN_DATADESC(CRagdollProp)
 //					m_ragdoll (custom handling)
 	DEFINE_AUTO_ARRAY	( m_ragdoll.boneIndex,	FIELD_INTEGER	),
@@ -142,9 +149,110 @@ BEGIN_DATADESC(CRagdollProp)
 	DEFINE_RAGDOLL_ELEMENT( 21 ),
 	DEFINE_RAGDOLL_ELEMENT( 22 ),
 	DEFINE_RAGDOLL_ELEMENT( 23 ),
-
+	DEFINE_RAGDOLL_ELEMENT( 24 ),
+	DEFINE_RAGDOLL_ELEMENT( 25 ),
+	DEFINE_RAGDOLL_ELEMENT( 26 ),
+	DEFINE_RAGDOLL_ELEMENT( 27 ),
+	DEFINE_RAGDOLL_ELEMENT( 28 ),
+	DEFINE_RAGDOLL_ELEMENT( 29 ),
+	DEFINE_RAGDOLL_ELEMENT( 30 ),
+	DEFINE_RAGDOLL_ELEMENT( 31 ),
+	DEFINE_RAGDOLL_ELEMENT( 32 ),
+	DEFINE_RAGDOLL_ELEMENT( 33 ),
+	DEFINE_RAGDOLL_ELEMENT( 34 ),
+	DEFINE_RAGDOLL_ELEMENT( 35 ),
+	DEFINE_RAGDOLL_ELEMENT( 36 ),
+	DEFINE_RAGDOLL_ELEMENT( 37 ),
+	DEFINE_RAGDOLL_ELEMENT( 38 ),
+	DEFINE_RAGDOLL_ELEMENT( 39 ),
+	DEFINE_RAGDOLL_ELEMENT( 41 ),
+	DEFINE_RAGDOLL_ELEMENT( 42 ),
+	DEFINE_RAGDOLL_ELEMENT( 43 ),
+	DEFINE_RAGDOLL_ELEMENT( 44 ),
+	DEFINE_RAGDOLL_ELEMENT( 45 ),
+	DEFINE_RAGDOLL_ELEMENT( 46 ),
+	DEFINE_RAGDOLL_ELEMENT( 47 ),
+	DEFINE_RAGDOLL_ELEMENT( 48 ),
+	DEFINE_RAGDOLL_ELEMENT( 49 ),
+	DEFINE_RAGDOLL_ELEMENT( 50 ),
+	DEFINE_RAGDOLL_ELEMENT( 51 ),
+	DEFINE_RAGDOLL_ELEMENT( 52 ),
+	DEFINE_RAGDOLL_ELEMENT( 53 ),
+	DEFINE_RAGDOLL_ELEMENT( 54 ),
+	DEFINE_RAGDOLL_ELEMENT( 55 ),
+	DEFINE_RAGDOLL_ELEMENT( 56 ),
+	DEFINE_RAGDOLL_ELEMENT( 57 ),
+	DEFINE_RAGDOLL_ELEMENT( 58 ),
+	DEFINE_RAGDOLL_ELEMENT( 59 ),
+	DEFINE_RAGDOLL_ELEMENT( 60 ),
+	DEFINE_RAGDOLL_ELEMENT( 61 ),
+	DEFINE_RAGDOLL_ELEMENT( 62 ),
+	DEFINE_RAGDOLL_ELEMENT( 63 ),
+	DEFINE_RAGDOLL_ELEMENT( 64 ),
+	DEFINE_RAGDOLL_ELEMENT( 65 ),
+	DEFINE_RAGDOLL_ELEMENT( 66 ),
+	DEFINE_RAGDOLL_ELEMENT( 67 ),
+	DEFINE_RAGDOLL_ELEMENT( 68 ),
+	DEFINE_RAGDOLL_ELEMENT( 69 ),
+	DEFINE_RAGDOLL_ELEMENT( 70 ),
+	DEFINE_RAGDOLL_ELEMENT( 71 ),
+	DEFINE_RAGDOLL_ELEMENT( 72 ),
+	DEFINE_RAGDOLL_ELEMENT( 73 ),
+	DEFINE_RAGDOLL_ELEMENT( 74 ),
+	DEFINE_RAGDOLL_ELEMENT( 75 ),
+	DEFINE_RAGDOLL_ELEMENT( 76 ),
+	DEFINE_RAGDOLL_ELEMENT( 77 ),
+	DEFINE_RAGDOLL_ELEMENT( 78 ),
+	DEFINE_RAGDOLL_ELEMENT( 79 ),
+	DEFINE_RAGDOLL_ELEMENT( 80 ),
+	DEFINE_RAGDOLL_ELEMENT( 81 ),
+	DEFINE_RAGDOLL_ELEMENT( 82 ),
+	DEFINE_RAGDOLL_ELEMENT( 83 ),
+	DEFINE_RAGDOLL_ELEMENT( 84 ),
+	DEFINE_RAGDOLL_ELEMENT( 85 ),
+	DEFINE_RAGDOLL_ELEMENT( 86 ),
+	DEFINE_RAGDOLL_ELEMENT( 87 ),
+	DEFINE_RAGDOLL_ELEMENT( 88 ),
+	DEFINE_RAGDOLL_ELEMENT( 89 ),
+	DEFINE_RAGDOLL_ELEMENT( 90 ),
+	DEFINE_RAGDOLL_ELEMENT( 91 ),
+	DEFINE_RAGDOLL_ELEMENT( 92 ),
+	DEFINE_RAGDOLL_ELEMENT( 93 ),
+	DEFINE_RAGDOLL_ELEMENT( 94 ),
+	DEFINE_RAGDOLL_ELEMENT( 95 ),
+	DEFINE_RAGDOLL_ELEMENT( 96 ),
+	DEFINE_RAGDOLL_ELEMENT( 97 ),
+	DEFINE_RAGDOLL_ELEMENT( 98 ),
+	DEFINE_RAGDOLL_ELEMENT( 99 ),
+	DEFINE_RAGDOLL_ELEMENT( 100 ),
+	DEFINE_RAGDOLL_ELEMENT( 101 ),
+	DEFINE_RAGDOLL_ELEMENT( 102 ),
+	DEFINE_RAGDOLL_ELEMENT( 103 ),
+	DEFINE_RAGDOLL_ELEMENT( 104 ),
+	DEFINE_RAGDOLL_ELEMENT( 105 ),
+	DEFINE_RAGDOLL_ELEMENT( 106 ),
+	DEFINE_RAGDOLL_ELEMENT( 107 ),
+	DEFINE_RAGDOLL_ELEMENT( 108 ),
+	DEFINE_RAGDOLL_ELEMENT( 109 ),
+	DEFINE_RAGDOLL_ELEMENT( 110 ),
+	DEFINE_RAGDOLL_ELEMENT( 111 ),
+	DEFINE_RAGDOLL_ELEMENT( 112 ),
+	DEFINE_RAGDOLL_ELEMENT( 113 ),
+	DEFINE_RAGDOLL_ELEMENT( 114 ),
+	DEFINE_RAGDOLL_ELEMENT( 115 ),
+	DEFINE_RAGDOLL_ELEMENT( 116 ),
+	DEFINE_RAGDOLL_ELEMENT( 117 ),
+	DEFINE_RAGDOLL_ELEMENT( 118 ),
+	DEFINE_RAGDOLL_ELEMENT( 119 ),
+	DEFINE_RAGDOLL_ELEMENT( 120 ),
+	DEFINE_RAGDOLL_ELEMENT( 121 ),
+	DEFINE_RAGDOLL_ELEMENT( 122 ),
+	DEFINE_RAGDOLL_ELEMENT( 123 ),
+	DEFINE_RAGDOLL_ELEMENT( 124 ),
+	DEFINE_RAGDOLL_ELEMENT( 125 ),
+	DEFINE_RAGDOLL_ELEMENT( 126 ),
+	DEFINE_RAGDOLL_ELEMENT( 127 ),
 END_DATADESC()
-#pragma warning( pop )
 
 //-----------------------------------------------------------------------------
 // Disable auto fading under dx7 or when level fades are specified
@@ -155,14 +263,14 @@ void CRagdollProp::DisableAutoFade()
 	m_flDefaultFadeScale = 0;
 }
 
-	
+
 void CRagdollProp::Spawn( void )
 {
 	// Starts out as the default fade scale value
 	m_flDefaultFadeScale = m_flFadeScale;
 
 	// NOTE: If this fires, then the assert or the datadesc is wrong!  (see DEFINE_RAGDOLL_ELEMENT above)
-	Assert( RAGDOLL_MAX_ELEMENTS == 24 );
+	Assert( RAGDOLL_MAX_ELEMENTS == 128 );
 	Precache();
 	SetModel( STRING( GetModelName() ) );
 
@@ -181,7 +289,18 @@ void CRagdollProp::Spawn( void )
 	// this is useless info after the initial conditions are set
 	SetAbsAngles( vec3_angle );
 	int collisionGroup = (m_spawnflags & SF_RAGDOLLPROP_DEBRIS) ? COLLISION_GROUP_DEBRIS : COLLISION_GROUP_NONE;
-	bool bWake = (m_spawnflags & SF_RAGDOLLPROP_STARTASLEEP) ? false : true;
+
+	bool bWake;
+
+	if( FClassnameIs(this, "prop_dynamically_destructible") )
+	{
+		bWake = false;
+	}
+	else
+	{
+		bWake = (m_spawnflags & SF_RAGDOLLPROP_STARTASLEEP) ? false : true;
+	}
+
 	InitRagdoll( vec3_origin, 0, vec3_origin, pBoneToWorld, pBoneToWorld, 0, collisionGroup, true, bWake );
 	m_lastUpdateTickCount = 0;
 	m_flBlendWeight = 0.0f;
@@ -193,7 +312,7 @@ void CRagdollProp::Spawn( void )
 		AddEFlags( EFL_NO_DISSOLVE );
 	}
 
-	if ( HasSpawnFlags(SF_RAGDOLLPROP_MOTIONDISABLED) )
+	if ( HasSpawnFlags(SF_RAGDOLLPROP_MOTIONDISABLED) || FClassnameIs( this, "prop_dynamically_destructible") )
 	{
 		DisableMotion();
 	}
@@ -201,6 +320,44 @@ void CRagdollProp::Spawn( void )
 	if( m_bStartDisabled )
 	{
 		AddEffects( EF_NODRAW );
+	}
+
+	if( FClassnameIs(this, "prop_dynamically_destructible") )	//I love you, Gabe, pls hire me :-*
+	{
+		Vector vecFullMins, vecFullMaxs;
+		vecFullMins = m_ragPos[0];
+		vecFullMaxs = m_ragPos[0];
+		for (int i = 0; i < m_ragdoll.listCount; i++ )
+		{
+			Vector mins, maxs;
+			matrix3x4_t update;
+			if ( !m_ragdoll.list[i].pObject )
+			{
+				m_ragdollMins[i].Init();
+				m_ragdollMaxs[i].Init();
+				continue;
+			}
+			m_ragdoll.list[i].pObject->GetPositionMatrix( &update );
+			TransformAABB( update, m_ragdollMins[i], m_ragdollMaxs[i], mins, maxs );
+			for ( int j = 0; j < 3; j++ )
+			{
+				if ( mins[j] < vecFullMins[j] )
+				{
+					vecFullMins[j] = mins[j];
+				}
+				if ( maxs[j] > vecFullMaxs[j] )
+				{
+					vecFullMaxs[j] = maxs[j];
+				}
+			}
+		}
+
+		SetAbsOrigin( m_ragPos[0] );
+		SetAbsAngles( vec3_angle );
+		const Vector &vecOrigin = CollisionProp()->GetCollisionOrigin();
+		CollisionProp()->AddSolidFlags( FSOLID_FORCE_WORLD_ALIGNED );
+		CollisionProp()->SetSurroundingBoundsType( USE_COLLISION_BOUNDS_NEVER_VPHYSICS );
+		SetCollisionBounds( vecFullMins - vecOrigin, vecFullMaxs - vecOrigin );
 	}
 }
 
@@ -215,7 +372,7 @@ void CRagdollProp::OnSave( IEntitySaveUtils *pUtils )
 	if ( !m_ragdoll.listCount )
 		return;
 
-	// Don't save ragdoll element 0, base class saves the pointer in 
+	// Don't save ragdoll element 0, base class saves the pointer in
 	// m_pPhysicsObject
 	Assert( m_ragdoll.list[0].parentIndex == -1 );
 	Assert( m_ragdoll.list[0].pConstraint == NULL );
@@ -296,14 +453,14 @@ int CRagdollProp::ObjectCaps()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::InitRagdollAnimation()
 {
 	m_flAnimTime = gpGlobals->curtime;
 	m_flPlaybackRate = 0.0;
 	SetCycle( 0 );
-	
+
 	// put into ACT_DIERAGDOLL if it exists, otherwise use sequence 0
 	int nSequence = SelectWeightedSequence( ACT_DIERAGDOLL );
 	if ( nSequence < 0 )
@@ -330,7 +487,7 @@ IResponseSystem *CRagdollProp::GetResponseSystem()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::ModifyOrAppendCriteria( AI_CriteriaSet& set )
 {
@@ -346,10 +503,12 @@ void CRagdollProp::ModifyOrAppendCriteria( AI_CriteriaSet& set )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t reason )
 {
+	CDefaultPlayerPickupVPhysics::OnPhysGunPickup(pPhysGunUser, reason);
+
 	m_hPhysicsAttacker = pPhysGunUser;
 	m_flLastPhysicsInfluenceTime = gpGlobals->curtime;
 
@@ -392,7 +551,7 @@ void CRagdollProp::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t r
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Reason )
 {
@@ -468,7 +627,7 @@ CBasePlayer *CRagdollProp::HasPhysicsAttacker( float dt )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 {
@@ -493,7 +652,7 @@ void CRagdollProp::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 	{
 		HandleFirstCollisionInteractions( index, pEvent );
 	}
-	
+
 	if ( m_takedamage != DAMAGE_NO )
 	{
 		int damageType = 0;
@@ -571,7 +730,7 @@ void CRagdollProp::HandleFirstCollisionInteractions( int index, gamevcollisionev
 
 	if( HasPhysgunInteraction( "onfirstimpact", "break" ) )
 	{
-		// Looks like it's best to break by having the object damage itself. 
+		// Looks like it's best to break by having the object damage itself.
 		CTakeDamageInfo info;
 
 		info.SetDamage( m_iHealth );
@@ -595,10 +754,10 @@ void CRagdollProp::HandleFirstCollisionInteractions( int index, gamevcollisionev
 	if( HasPhysgunInteraction( "onfirstimpact", "paintsplat" ) )
 	{
 		IPhysicsObject *pObj = VPhysicsGetObject();
- 
+
 		Vector vecPos;
 		pObj->GetPosition( &vecPos, NULL );
- 
+
 		trace_t tr;
 		UTIL_TraceLine( vecPos, vecPos + pEvent->preVelocity[0] * 1.5, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
@@ -622,10 +781,10 @@ void CRagdollProp::HandleFirstCollisionInteractions( int index, gamevcollisionev
 	if( bAlienBloodSplat || HasPhysgunInteraction( "onfirstimpact", "bloodsplat" ) )
 	{
 		IPhysicsObject *pObj = VPhysicsGetObject();
- 
+
 		Vector vecPos;
 		pObj->GetPosition( &vecPos, NULL );
- 
+
 		trace_t tr;
 		UTIL_TraceLine( vecPos, vecPos + pEvent->preVelocity[0] * 1.5, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
@@ -635,7 +794,7 @@ void CRagdollProp::HandleFirstCollisionInteractions( int index, gamevcollisionev
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::ClearFlagsThink( void )
 {
@@ -661,8 +820,8 @@ AngularImpulse CRagdollProp::PhysGunLaunchAngularImpulse()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : activity - 
+// Purpose:
+// Input  : activity -
 //-----------------------------------------------------------------------------
 void CRagdollProp::SetOverlaySequence( Activity activity )
 {
@@ -679,7 +838,14 @@ void CRagdollProp::SetOverlaySequence( Activity activity )
 
 void CRagdollProp::InitRagdoll( const Vector &forceVector, int forceBone, const Vector &forcePos, matrix3x4_t *pPrevBones, matrix3x4_t *pBoneToWorld, float dt, int collisionGroup, bool activateRagdoll, bool bWakeRagdoll )
 {
-	SetCollisionGroup( collisionGroup );
+	if( FClassnameIs( this, "prop_dynamically_destructible" ) && HasSpawnFlags( SF_NO_SELF_COLLISION ) )
+	{
+		SetCollisionGroup( COLLISION_GROUP_INTERACTIVE ); //SAVE THE FPS
+	}
+	else
+	{
+		SetCollisionGroup( collisionGroup );
+	}
 
 	// Make sure it's interactive debris for at most 5 seconds
 	if ( collisionGroup == COLLISION_GROUP_INTERACTIVE_DEBRIS )
@@ -704,7 +870,16 @@ void CRagdollProp::InitRagdoll( const Vector &forceVector, int forceBone, const 
 	params.jointFrictionScale = 1.0;
 	params.allowStretch = HasSpawnFlags(SF_RAGDOLLPROP_ALLOW_STRETCH);
 	params.fixedConstraints = false;
-	RagdollCreate( m_ragdoll, params, physenv );
+	//SNEAKY PEAKY LIKE!
+	if( !FClassnameIs( this, "prop_dynamically_destructible" ) )
+	{
+		RagdollCreate( m_ragdoll, params, physenv );
+	}
+	else
+	{
+		RagdollCreateDestr( m_ragdoll, params, physenv );
+	}
+
 	RagdollApplyAnimationAsVelocity( m_ragdoll, pPrevBones, pBoneToWorld, dt );
 	if ( m_anglesOverrideString != NULL_STRING && Q_strlen(m_anglesOverrideString.ToCStr()) > 0 )
 	{
@@ -750,7 +925,15 @@ void CRagdollProp::InitRagdoll( const Vector &forceVector, int forceBone, const 
 	if ( activateRagdoll )
 	{
 		MEM_ALLOC_CREDIT();
-		RagdollActivate( m_ragdoll, params.pCollide, GetModelIndex(), bWakeRagdoll );
+
+		if( !FClassnameIs( this, "prop_dynamically_destructible" ) )
+		{
+			RagdollActivate( m_ragdoll, params.pCollide, GetModelIndex(), bWakeRagdoll );
+		}
+		else
+		{
+			RagdollActivateDestr( m_ragdoll, params.pCollide, GetModelIndex(), bWakeRagdoll );
+		}
 	}
 
 	for ( int i = 0; i < m_ragdoll.listCount; i++ )
@@ -787,7 +970,7 @@ void CRagdollProp::SetDamageEntity( CBaseEntity *pEntity )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int	CRagdollProp::OnTakeDamage( const CTakeDamageInfo &info )
 {
@@ -827,7 +1010,7 @@ void CRagdollProp::TraceAttack( const CTakeDamageInfo &info, const Vector &dir, 
 
 void CRagdollProp::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 {
-	// no ragdoll, fall through to base class 
+	// no ragdoll, fall through to base class
 	if ( !m_ragdoll.listCount )
 	{
 		BaseClass::SetupBones( pBoneToWorld, boneMask );
@@ -862,7 +1045,7 @@ void CRagdollProp::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 	{
 		if ( sim[i] )
 			continue;
-		
+
 		if ( !(pStudioHdr->boneFlags(i) & boneMask) )
 			continue;
 
@@ -874,14 +1057,17 @@ void CRagdollProp::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 
 bool CRagdollProp::TestCollision( const Ray_t &ray, unsigned int mask, trace_t& trace )
 {
-#if 0
-	// PERFORMANCE: Use hitboxes for rays instead of vcollides if this is a performance problem
-	if ( ray.m_IsRay )
+	//Save the perfomance!
+	if( FClassnameIs(this, "prop_dynamically_destructible") )
 	{
-		return BaseClass::TestCollision( ray, mask, trace );
+		// PERFORMANCE: Use hitboxes for rays instead of vcollides if this is a performance problem
+		if ( ray.m_IsRay )
+		{
+			return BaseClass::TestCollision( ray, mask, trace );
+		}
 	}
-#endif
 
+	MDLCACHE_CRITICAL_SECTION();
 	CStudioHdr *pStudioHdr = GetModelPtr( );
 	if (!pStudioHdr)
 		return false;
@@ -943,7 +1129,7 @@ void CRagdollProp::Teleport( const Vector *newPosition, const QAngle *newAngles,
 	ConcatTransforms( endMatrix, startMatrixInv, xform );
 	// now xform is the relative transform the entity must undergo
 
-	// we need to call the base class and it will teleport our vphysics object, 
+	// we need to call the base class and it will teleport our vphysics object,
 	// so set object 0 up and compute the origin/angles for its new position (base implementation has side effects)
 	VPhysicsSwapObject( m_ragdoll.list[0].pObject );
 	matrix3x4_t obj0source, obj0Target;
@@ -953,7 +1139,7 @@ void CRagdollProp::Teleport( const Vector *newPosition, const QAngle *newAngles,
 	QAngle obj0Angles;
 	MatrixAngles( obj0Target, obj0Angles, obj0Pos );
 	BaseClass::Teleport( &obj0Pos, &obj0Angles, newVelocity );
-	
+
 	for ( int i = 1; i < m_ragdoll.listCount; i++ )
 	{
 		matrix3x4_t matrix, newMatrix;
@@ -976,7 +1162,6 @@ void CRagdollProp::VPhysicsUpdate( IPhysicsObject *pPhysics )
 
 	matrix3x4_t boneToWorld[MAXSTUDIOBONES];
 	QAngle angles;
-	Vector surroundingMins, surroundingMaxs;
 
 	int i;
 	for ( i = 0; i < m_ragdoll.listCount; i++ )
@@ -1011,7 +1196,7 @@ void CRagdollProp::VPhysicsUpdate( IPhysicsObject *pPhysics )
 			RagdollSolveSeparation( m_ragdoll, this );
 		}
 	}
-	
+
 	// Interactive debris converts back to debris when it comes to rest
 	if ( m_allAsleep && GetCollisionGroup() == COLLISION_GROUP_INTERACTIVE_DEBRIS )
 	{
@@ -1096,7 +1281,7 @@ void CRagdollProp::UpdateNetworkDataFromVPhysics( IPhysicsObject *pPhysics, int 
 //-----------------------------------------------------------------------------
 #define FADE_OUT_LENGTH 0.5f
 
-void CRagdollProp::FadeOut( float flDelay, float fadeTime ) 
+void CRagdollProp::FadeOut( float flDelay, float fadeTime )
 {
 	if ( IsFading() )
 		return;
@@ -1113,7 +1298,7 @@ bool CRagdollProp::IsFading()
 	return ( GetNextThink( s_pFadeOutContext ) >= gpGlobals->curtime );
 }
 
-void CRagdollProp::FadeOutThink(void) 
+void CRagdollProp::FadeOutThink(void)
 {
 	float dt = gpGlobals->curtime - m_flFadeOutStartTime;
 	if ( dt < 0 )
@@ -1146,11 +1331,11 @@ void CRagdollProp::FadeOutThink(void)
 // Purpose: Draw any debug text overlays
 // Output : Current text offset from the top
 //-----------------------------------------------------------------------------
-int CRagdollProp::DrawDebugTextOverlays(void) 
+int CRagdollProp::DrawDebugTextOverlays(void)
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		if (m_ragdoll.listCount)
 		{
@@ -1173,9 +1358,9 @@ int CRagdollProp::DrawDebugTextOverlays(void)
 	return text_offset;
 }
 
-void CRagdollProp::DrawDebugGeometryOverlays() 
+void CRagdollProp::DrawDebugGeometryOverlays()
 {
-	if (m_debugOverlays & OVERLAY_BBOX_BIT) 
+	if (m_debugOverlays & OVERLAY_BBOX_BIT)
 	{
 		DrawServerHitboxes();
 	}
@@ -1192,13 +1377,13 @@ void CRagdollProp::DrawDebugGeometryOverlays()
 				NDebugOverlay::EntityTextAtPosition( pos, 0, str.Access(), 0, 0, 255, 0, 255 );
 			}
 		}
-	} 
+	}
 	BaseClass::DrawDebugGeometryOverlays();
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pOther - 
+// Purpose:
+// Input  : *pOther -
 //-----------------------------------------------------------------------------
 void CRagdollProp::SetUnragdoll( CBaseAnimating *pOther )
 {
@@ -1272,7 +1457,7 @@ static void SyncAnimatingWithPhysics( CBaseAnimating *pAnimating )
 	}
 }
 
-	
+
 CBaseAnimating *CreateServerRagdollSubmodel( CBaseAnimating *pOwner, const char *pModelName, const Vector &position, const QAngle &angles, int collisionGroup )
 {
 	CRagdollProp *pRagdoll = (CRagdollProp *)CBaseEntity::CreateNoSpawn( "prop_ragdoll", position, angles, pOwner );
@@ -1307,7 +1492,7 @@ CBaseEntity *CreateServerRagdoll( CBaseAnimating *pAnimating, int forceBone, con
 
 	pRagdoll->InitRagdollAnimation();
 	matrix3x4_t pBoneToWorld[MAXSTUDIOBONES], pBoneToWorldNext[MAXSTUDIOBONES];
-	
+
 	float dt = 0.1f;
 
 	// Copy over dissolve state...
@@ -1330,7 +1515,7 @@ CBaseEntity *CreateServerRagdoll( CBaseAnimating *pAnimating, int forceBone, con
 	// Get Bones positions before
 	// Store current cycle
 	float fSequenceDuration = pAnimating->SequenceDuration( pAnimating->GetSequence() );
-	float fSequenceTime = pAnimating->GetCycle() * fSequenceDuration;		
+	float fSequenceTime = pAnimating->GetCycle() * fSequenceDuration;
 
 	if( fSequenceTime <= dt && fSequenceTime > 0.0f )
 	{
@@ -1344,7 +1529,7 @@ CBaseEntity *CreateServerRagdoll( CBaseAnimating *pAnimating, int forceBone, con
 	pAnimating->SetupBones( pBoneToWorldNext, BONE_USED_BY_ANYTHING );
 	// Get previous bones positions
 	pAnimating->SetCycle( fPreviousCycle );
-	pAnimating->SetupBones( pBoneToWorld, BONE_USED_BY_ANYTHING );		
+	pAnimating->SetupBones( pBoneToWorld, BONE_USED_BY_ANYTHING );
 	// Restore current cycle
 	pAnimating->SetCycle( fCurCycle );
 
@@ -1361,12 +1546,12 @@ CBaseEntity *CreateServerRagdoll( CBaseAnimating *pAnimating, int forceBone, con
 		{
 			Vector deltaPos;
 			QAngle deltaAngles;
-			if (Studio_SeqMovement( pstudiohdr, 
-				pAnimating->GetSequence(), 
-				fPreviousCycle, 
-				pAnimating->GetCycle(), 
-				pAnimating->GetPoseParameterArray(), 
-				deltaPos, 
+			if (Studio_SeqMovement( pstudiohdr,
+				pAnimating->GetSequence(),
+				fPreviousCycle,
+				pAnimating->GetCycle(),
+				pAnimating->GetPoseParameterArray(),
+				deltaPos,
 				deltaAngles ))
 			{
 				VectorRotate( deltaPos, pAnimating->EntityToWorldTransform(), vel );
@@ -1403,7 +1588,7 @@ CBaseEntity *CreateServerRagdoll( CBaseAnimating *pAnimating, int forceBone, con
 		int boxList[128];
 		Vector normal(0,0,-1);
 		int count = pAnimating->GetHitboxesFrontside( boxList, ARRAYSIZE(boxList), normal, DotProduct( normal, info.GetDamagePosition() ) );
-		
+
 		// distribute force over mass of entire character
 		float massScale = Studio_GetMass(pAnimating->GetModelPtr());
 		massScale = clamp( massScale, 1.f, 1.e4f );
@@ -1486,18 +1671,18 @@ void CRagdollPropAttached::Detach()
 	RecheckCollisionFilter();
 }
 
-void CRagdollPropAttached::InitRagdollAttached( 
-	IPhysicsObject *pAttached, 
-	const Vector &forceVector, 
-	int forceBone, 
-	matrix3x4_t *pPrevBones, 
-	matrix3x4_t *pBoneToWorld, 
-	float dt, 
-	int collisionGroup, 
-	CBaseAnimating *pFollow, 
-	int boneIndexRoot, 
-	const Vector &boneLocalOrigin, 
-	int parentBoneAttach, 
+void CRagdollPropAttached::InitRagdollAttached(
+	IPhysicsObject *pAttached,
+	const Vector &forceVector,
+	int forceBone,
+	matrix3x4_t *pPrevBones,
+	matrix3x4_t *pBoneToWorld,
+	float dt,
+	int collisionGroup,
+	CBaseAnimating *pFollow,
+	int boneIndexRoot,
+	const Vector &boneLocalOrigin,
+	int parentBoneAttach,
 	const Vector &worldAttachOrigin )
 {
 	int ragdollAttachedIndex = 0;
@@ -1509,7 +1694,7 @@ void CRagdollPropAttached::InitRagdollAttached(
 	}
 
 	InitRagdoll( forceVector, forceBone, vec3_origin, pPrevBones, pBoneToWorld, dt, collisionGroup, false );
-	
+
 	IPhysicsObject *pRefObject = m_ragdoll.list[ragdollAttachedIndex].pObject;
 
 	Vector attachmentPointRagdollSpace;
@@ -1565,7 +1750,7 @@ void CRagdollPropAttached::InitRagdollAttached(
 	m_boneIndexAttached = boneIndexRoot;
 	m_ragdollAttachedObjectIndex = ragdollAttachedIndex;
 	m_attachmentPointBoneSpace = boneLocalOrigin;
-	
+
 	Vector vTemp;
 	MatrixGetColumn( constraint.constraintToReference, 3, vTemp );
 	m_attachmentPointRagdollSpace = vTemp;
@@ -1584,7 +1769,7 @@ CRagdollProp *CreateServerRagdollAttached( CBaseAnimating *pAnimating, const Vec
 	matrix3x4_t pBoneToWorld[MAXSTUDIOBONES];
 	pAnimating->SetupBones( pBoneToWorld, BONE_USED_BY_ANYTHING );
 	pRagdoll->InitRagdollAttached( pAttached, vecForce, forceBone, pBoneToWorld, pBoneToWorld, 0.1, collisionGroup, pParentEntity, boneAttach, boneOrigin, parentBoneAttach, originAttached );
-	
+
 	return pRagdoll;
 }
 
@@ -1699,7 +1884,7 @@ void CRagdollProp::InputTurnOff( inputdata_t &inputdata )
 void CRagdollProp::InputFadeAndRemove( inputdata_t &inputdata )
 {
 	float flFadeDuration = inputdata.value.Float();
-	
+
 	if( flFadeDuration == 0.0f )
 		flFadeDuration = 1.0f;
 
@@ -1712,5 +1897,287 @@ void Ragdoll_GetAngleOverrideString( char *pOut, int size, CBaseEntity *pEntity 
 	if ( pRagdoll )
 	{
 		pRagdoll->GetAngleOverrideFromCurrentState( pOut, size );
+	}
+}
+
+
+class CDynamicDestrProp : public CRagdollProp
+{
+	DECLARE_CLASS( CDynamicDestrProp, CRagdollProp );
+public:
+	CDynamicDestrProp();
+
+	virtual int		OnTakeDamage( const CTakeDamageInfo &info );
+	virtual void	VPhysicsCollision( int index, gamevcollisionevent_t *pEvent );
+
+	void			InputStartDestruction( inputdata_t &inputdata );
+
+	DECLARE_DATADESC();
+private:
+	bool		bwehit;
+	bool		busefirstlimit;
+	bool		busesecondlimit;
+
+	float		Health;
+	float		PieceMass;
+
+	int			iNumBrokenPartsLimit;
+	int			iNumBrokenParts;
+	int			iNumHitLimit;
+	int			iNumHits;
+	char		particle_name[128];
+	float		flTimeToCollapse;
+	COutputEvent m_OnTakeDamage;
+	COutputEvent m_OnFullyDestroyed;
+};
+LINK_ENTITY_TO_CLASS( prop_dynamically_destructible, CDynamicDestrProp );
+
+BEGIN_DATADESC( CDynamicDestrProp )
+	DEFINE_KEYFIELD( Health, FIELD_FLOAT, "prophealth" ),
+	DEFINE_KEYFIELD( PieceMass, FIELD_FLOAT, "mass" ),
+	DEFINE_KEYFIELD( iNumHitLimit, FIELD_INTEGER, "numhits" ),
+	DEFINE_KEYFIELD( iNumBrokenPartsLimit, FIELD_INTEGER, "numpieces" ),
+
+	DEFINE_FIELD( iNumHits, FIELD_INTEGER ),
+	DEFINE_FIELD( iNumBrokenParts, FIELD_INTEGER ),
+
+	DEFINE_INPUTFUNC( FIELD_VOID, "StartDestruction", InputStartDestruction ),
+
+	DEFINE_OUTPUT(m_OnTakeDamage, "OnTakeDamage"),
+	DEFINE_OUTPUT(m_OnFullyDestroyed, "OnFullyDestroyed"),
+END_DATADESC()
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+CDynamicDestrProp::CDynamicDestrProp()
+{
+	Health = 0;
+	PieceMass = 0;
+	iNumHitLimit = 0;
+	iNumHits = 0;
+	iNumBrokenPartsLimit = 0;
+	iNumBrokenParts = 0;
+	particle_name[0] = '\0';
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CDynamicDestrProp::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
+{
+	char mat;
+	float velmodifier;
+
+	surfacedata_t *phit = physprops->GetSurfaceData( pEvent->surfaceProps[index] );
+	mat = phit->game.material;
+
+	//start burning if we are wood (btw I am defuse kit lololol, but if you are wood you should burn)
+	if ( !HasSpawnFlags( SF_DONT_IGNITE ) && bwehit == true )
+	{
+		if( mat == 'W')
+		{
+			flTimeToCollapse = gpGlobals->curtime + 60 + RandomFloat(0,5);
+			Ignite( 60, false, 256, true );
+		}
+	}
+
+	bwehit = false;
+
+	switch (mat)
+	{
+		case 'W':
+			velmodifier = 1;
+			V_strcpy_safe( particle_name, "dest_exp_wood_big" );
+			break;
+		case 'C':
+			velmodifier = 2;
+			V_strcpy_safe( particle_name, "dest_exp_concrete_big" );
+			break;
+		case 'M':
+			velmodifier = 1.5;
+			V_strcpy_safe( particle_name, "dest_exp_metal_big" );
+			break;
+		case 'Y':
+			velmodifier = 0.8;
+			break;
+		default:
+			velmodifier = 1.2;
+			break;
+	}
+
+	if( IsOnFire() && gpGlobals->curtime > flTimeToCollapse )
+	{
+		for ( int iRagdoll = 0; iRagdoll < m_ragdoll.listCount; ++iRagdoll )
+		{
+			IPhysicsObject *pPhysicsObject = m_ragdoll.list[ iRagdoll ].pObject;
+
+			if ( pPhysicsObject != NULL )
+			{
+				pPhysicsObject->EnableMotion(true);
+				pPhysicsObject->Wake();
+			}
+		}
+	}
+
+	if ( pEvent->preVelocity[!index].Length() > 1156 * velmodifier )
+	{
+		for ( int iRagdoll = 0; iRagdoll < m_ragdoll.listCount; ++iRagdoll )
+		{
+			IPhysicsObject *pPhysicsObject = m_ragdoll.list[ iRagdoll ].pObject;
+
+			if ( pPhysicsObject != NULL)
+				pPhysicsObject->EnableMotion(true);
+		}
+	}
+	if( HasSpawnFlags( SF_DISABLE_MOTION_IF_NOT_MOVING ) || HasSpawnFlags( SF_DESTROY_BY_PIECE ) )
+	{
+		Vector vel;
+		for ( int iRagdoll = 0; iRagdoll < m_ragdoll.listCount; ++iRagdoll )
+		{
+			IPhysicsObject *pPhysicsObject = m_ragdoll.list[ iRagdoll ].pObject;
+
+			if ( pPhysicsObject != NULL )
+			{
+				pPhysicsObject->GetVelocity(&vel, NULL);
+
+				if( vel.Length() < 1 )	//disable motion if we are not moving
+				{
+					pPhysicsObject->EnableMotion(false);
+				}
+			}
+		}
+	}
+	CBaseAnimating::VPhysicsCollision(index, pEvent);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+int	CDynamicDestrProp::OnTakeDamage( const CTakeDamageInfo &info )
+{
+	if ( !( info.GetDamageType() & (DMG_SONIC | DMG_BLAST ) ) && !HasSpawnFlags( SF_ALLOW_BULLET_DAMAGE ) )
+		return 0;
+
+	if( iNumHitLimit > 1 )
+	{
+		iNumHits += 1;
+	}
+
+	bwehit = ( info.GetDamageType() & ( DMG_BURN | DMG_SLOWBURN | DMG_BLAST ) ) != 0;
+
+	if( Health < 1 )
+	{
+		Health = 1;
+	}
+
+	m_OnTakeDamage.FireOutput(this, this);
+
+	Vector vpos;
+	QAngle vangles;
+
+	if( particle_name[0] != '\0' )	//why not?
+	{
+		DispatchParticleEffect( particle_name, info.GetDamagePosition(), vangles, this );
+	}
+	//numhits and pieces limits
+	if ( HasSpawnFlags( SF_FULL_DESTROY ) || ( iNumHitLimit > 1 && iNumHits >= iNumHitLimit )
+		|| ( iNumBrokenPartsLimit > 1 && iNumBrokenParts >= iNumBrokenPartsLimit ) )
+	{
+		for ( int iRagdoll = 0; iRagdoll < m_ragdoll.listCount; ++iRagdoll )
+		{
+			IPhysicsObject *pPhysicsObject = m_ragdoll.list[ iRagdoll ].pObject;
+
+			if ( pPhysicsObject != NULL )
+			{
+				pPhysicsObject->GetPosition( &vpos, &vangles );
+				pPhysicsObject->EnableMotion( true );
+
+				if( PieceMass >= 0 )
+				{
+					pPhysicsObject->SetMass( PieceMass );
+				}
+
+				pPhysicsObject->ApplyForceOffset( info.GetDamageForce()*(1/(vpos - info.GetDamagePosition()).Length()), info.GetDamagePosition() );
+			}
+		}
+
+		m_OnFullyDestroyed.FireOutput( this, this );
+	}
+
+	//if no limits set - use default destruction
+	if ( !HasSpawnFlags( SF_DESTROY_BY_PIECE ) )
+	{
+		for ( int iRagdoll = 0; iRagdoll < m_ragdoll.listCount; ++iRagdoll )
+		{
+			IPhysicsObject *pPhysicsObject = m_ragdoll.list[ iRagdoll ].pObject;
+
+			if ( pPhysicsObject != NULL )
+			{
+				pPhysicsObject->GetPosition(&vpos, &vangles);
+				//256 - MAXIMUM_EXPLODE_RADIUS or something like that
+				if( ( ( vpos - info.GetDamagePosition()).Length() < 256/Health ) )	//I am Source Engine God, Gabe, pls hire me. :) :) ;)
+				{
+					if( PieceMass >= 0 )
+					{
+						pPhysicsObject->SetMass( PieceMass );
+					}
+
+					pPhysicsObject->EnableMotion( true );
+					pPhysicsObject->ApplyForceOffset( info.GetDamageForce()*(1/(vpos - info.GetDamagePosition()).Length()), info.GetDamagePosition() );
+
+					if( iNumBrokenPartsLimit > 1 )
+					{
+						iNumBrokenParts += 1;
+					}
+
+				}
+			}
+		}
+	}
+	else if ( HasSpawnFlags(SF_DESTROY_BY_PIECE) )
+	{
+		for ( int iRagdoll = 0; iRagdoll < m_ragdoll.listCount; ++iRagdoll )
+		{
+			IPhysicsObject *pPhysicsObject = m_ragdoll.list[ iRagdoll ].pObject;
+
+			if ( pPhysicsObject != NULL )
+			{
+				pPhysicsObject->GetPosition(&vpos, &vangles);
+
+				if( ( ( vpos - info.GetDamagePosition()).Length() < 16 ) )
+				{
+					if( PieceMass >= 0 )
+					{
+						pPhysicsObject->SetMass( PieceMass );
+					}
+
+					pPhysicsObject->EnableMotion( true );
+					pPhysicsObject->ApplyForceOffset( info.GetDamageForce()*(1/(vpos - info.GetDamagePosition()).Length()), info.GetDamagePosition() );
+
+					if( iNumBrokenPartsLimit > 1 )
+					{
+						iNumBrokenParts += 1;
+					}
+
+					break;
+				}
+			}
+		}
+	}
+
+	return CBaseAnimating::OnTakeDamage( info );
+}
+
+void CDynamicDestrProp::InputStartDestruction( inputdata_t &inputdata )
+{
+	for ( int iRagdoll = 0; iRagdoll < m_ragdoll.listCount; ++iRagdoll )
+	{
+		IPhysicsObject *pPhysicsObject = m_ragdoll.list[ iRagdoll ].pObject;
+		if ( pPhysicsObject != NULL )
+		{
+			pPhysicsObject->EnableMotion( true );
+			pPhysicsObject->ApplyForceCenter(vec3_origin);
+		}
 	}
 }

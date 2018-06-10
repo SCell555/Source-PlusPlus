@@ -41,9 +41,9 @@ BEGIN_DATADESC( CAI_BaseActor )
 	DEFINE_FIELD( m_goalHeadCorrection, FIELD_VECTOR ),
 	DEFINE_FIELD( m_flBlinktime, FIELD_TIME ),
 	DEFINE_FIELD( m_hLookTarget, FIELD_EHANDLE ),
-	DEFINE_UTLVECTOR( m_lookQueue,	FIELD_EMBEDDED ), 
+	DEFINE_UTLVECTOR( m_lookQueue,	FIELD_EMBEDDED ),
 	DEFINE_UTLVECTOR( m_randomLookQueue, FIELD_EMBEDDED ),
-	DEFINE_UTLVECTOR( m_syntheticLookQueue,	FIELD_EMBEDDED ), 
+	DEFINE_UTLVECTOR( m_syntheticLookQueue,	FIELD_EMBEDDED ),
 	DEFINE_FIELD( m_flNextRandomLookTime, FIELD_TIME ),
 	DEFINE_FIELD( m_iszExpressionScene, FIELD_STRING ),
 	DEFINE_FIELD( m_hExpressionSceneEnt, FIELD_EHANDLE ),
@@ -154,7 +154,7 @@ void CAI_BaseActor::Precache()
 	}
 }
 
-static char const *g_ServerSideFlexControllers[] = 
+static char const *g_ServerSideFlexControllers[] =
 {
 	"body_rightleft",
 	//"body_updown",
@@ -172,8 +172,8 @@ static char const *g_ServerSideFlexControllers[] =
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: Static method 
-// Input  : *szName - 
+// Purpose: Static method
+// Input  : *szName -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CAI_BaseActor::IsServerSideFlexController( char const *szName )
@@ -227,7 +227,7 @@ void CAI_BaseActor::SetModel( const char *szModelName )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 
 bool CAI_BaseActor::StartSceneEvent( CSceneEventInfo *info, CChoreoScene *scene, CChoreoEvent *event, CChoreoActor *actor, CBaseEntity *pTarget )
@@ -239,7 +239,7 @@ bool CAI_BaseActor::StartSceneEvent( CSceneEventInfo *info, CChoreoScene *scene,
 	// FIXME: this code looks duplicated
 	switch ( info->m_pEvent->GetType() )
 	{
-	case CChoreoEvent::FACE: 
+	case CChoreoEvent::FACE:
 		{
 			return BaseClass::StartSceneEvent( info, scene, event, actor, pTarget );
 		}
@@ -254,7 +254,7 @@ bool CAI_BaseActor::StartSceneEvent( CSceneEventInfo *info, CChoreoScene *scene,
 				Blink();
 				// don't blink for duration, or next random blink time
 				float flDuration = (event->GetEndTime() - scene->GetTime());
-				m_flBlinktime = gpGlobals->curtime + MAX( flDuration, random->RandomFloat( 1.5, 4.5 ) ); 
+				m_flBlinktime = gpGlobals->curtime + MAX( flDuration, random->RandomFloat( 1.5, 4.5 ) );
 			}
 			else if (stricmp( event->GetParameters(), "AI_HOLSTER") == 0)
 			{
@@ -290,7 +290,7 @@ bool CAI_BaseActor::StartSceneEvent( CSceneEventInfo *info, CChoreoScene *scene,
 			{
 				info->m_nType = SCENE_AI_RANDOMHEADFLEX;
 				info->m_flNext = 0.0;
-			}	
+			}
 			else if (stricmp( event->GetParameters(), "AI_IGNORECOLLISION") == 0)
 			{
 				CBaseEntity *pTarget = FindNamedEntity( event->GetParameters2( ) );
@@ -337,19 +337,19 @@ bool CAI_BaseActor::ProcessSceneEvent( CSceneEventInfo *info, CChoreoScene *scen
 	// FIXME: this code looks duplicated
 	switch ( info->m_pEvent->GetType() )
 	{
-	case CChoreoEvent::FACE: 
+	case CChoreoEvent::FACE:
 		{
 			// make sure target exists
 			if (info->m_hTarget == NULL)
 				return false;
 
 			bool bInScene = false;
-			
+
 			// lockbodyfacing is designed to run on top of both normal AI and on top of
-			// scripted_sequences.  By allowing torso turns during post-idles, pre-idles, 
-			// act-busy's, scripted_sequences, normal AI movements, etc., it increases 
-			// the functionality of those AI features without breaking their assuptions 
-			// that the entity won't be made to "turn" by something outside of those 
+			// scripted_sequences.  By allowing torso turns during post-idles, pre-idles,
+			// act-busy's, scripted_sequences, normal AI movements, etc., it increases
+			// the functionality of those AI features without breaking their assuptions
+			// that the entity won't be made to "turn" by something outside of those
 			// AI's control.
 			// lockbody facing is also usefull when npcs are moving and you want them to turn
 			// towards something but still walk in the direction of travel.
@@ -410,7 +410,7 @@ bool CAI_BaseActor::ProcessSceneEvent( CSceneEventInfo *info, CChoreoScene *scen
 			float dir;
 			float flSpineYaw;
 			float flBodyYaw;
-			
+
 			// move upper body to account for missing body yaw
 			diff = UTIL_AngleDiff( info->m_flTargetYaw, GetLocalAngles().y );
 			if (diff < 0)
@@ -422,8 +422,8 @@ bool CAI_BaseActor::ProcessSceneEvent( CSceneEventInfo *info, CChoreoScene *scen
 			{
 				dir = 1;
 			}
-			flSpineYaw = MIN( diff, 30 );
-			flBodyYaw = MIN( diff - flSpineYaw, 30 );
+			flSpineYaw = MIN( diff, 30.f );
+			flBodyYaw = MIN( diff - flSpineYaw, 30.f );
 			m_goalSpineYaw = m_goalSpineYaw * (1.0 - intensity) + intensity * flSpineYaw * dir;
 			m_goalBodyYaw = m_goalBodyYaw * (1.0 - intensity) + intensity * flBodyYaw * dir;
 
@@ -437,7 +437,7 @@ bool CAI_BaseActor::ProcessSceneEvent( CSceneEventInfo *info, CChoreoScene *scen
 			CAI_BaseNPC *pGoalNpc = info->m_hTarget->MyNPCPointer();
 
 			float goalYaw = GetLocalAngles().y;
-			
+
 			if ( pGoalNpc )
 			{
 				goalYaw = CalcIdealYaw( pGoalNpc->FacingPosition() );
@@ -472,8 +472,8 @@ bool CAI_BaseActor::ProcessSceneEvent( CSceneEventInfo *info, CChoreoScene *scen
 				spineintensity = 1.0;
 			}
 
-			flSpineYaw = MIN( diff * spineintensity, 30 );
-			flBodyYaw = MIN( diff * spineintensity - flSpineYaw, 30 );
+			flSpineYaw = MIN( diff * spineintensity, 30.f );
+			flBodyYaw = MIN( diff * spineintensity - flSpineYaw, 30.f );
 			info->m_flFacingYaw = info->m_flInitialYaw + (diff - flBodyYaw - flSpineYaw) * dir;
 
 			if (!event->IsLockBodyFacing())
@@ -633,7 +633,7 @@ bool CAI_BaseActor::ClearSceneEvent( CSceneEventInfo *info, bool fastKill, bool 
 	// FIXME: this code looks duplicated
 	switch ( info->m_pEvent->GetType() )
 	{
-	case CChoreoEvent::FACE: 
+	case CChoreoEvent::FACE:
 		{
 			return BaseClass::ClearSceneEvent( info, fastKill, canceled );
 		}
@@ -697,8 +697,8 @@ void CAI_BaseActor::SetViewtarget( const Vector &viewtarget )
 //-----------------------------------------------------------------------------
 // Purpose: Returns true position of the eyeballs
 //-----------------------------------------------------------------------------
-void CAI_BaseActor::UpdateLatchedValues( ) 
-{ 
+void CAI_BaseActor::UpdateLatchedValues( )
+{
 	if (!(m_fLatchedPositions & HUMANOID_LATCHED_HEAD))
 	{
 		// set head latch
@@ -720,7 +720,7 @@ void CAI_BaseActor::UpdateLatchedValues( )
 
 		if ( CapabilitiesGet() & bits_CAP_ANIMATEDFACE )
 		{
-			m_latchedEyeDirection = GetViewtarget() - m_latchedEyeOrigin; 
+			m_latchedEyeDirection = GetViewtarget() - m_latchedEyeOrigin;
 			VectorNormalize( m_latchedEyeDirection );
 		}
 		else
@@ -735,7 +735,7 @@ void CAI_BaseActor::UpdateLatchedValues( )
 // Purpose: Returns true position of the eyeballs
 //-----------------------------------------------------------------------------
 Vector CAI_BaseActor::EyePosition( )
-{ 
+{
 	UpdateLatchedValues();
 
 	return m_latchedEyeOrigin;
@@ -788,7 +788,7 @@ bool CAI_BaseActor::ValidHeadTarget(const Vector &lookTargetPos)
 
 	// Only look if it doesn't crank my head too far
 	float dotPr = DotProduct(lookTargetDir, vFacing);
-	if (dotPr > 0 && fabs( lookTargetDir.z ) < 0.7) // +- 90 degrees side to side, +- 45 up/down
+	if (dotPr > 0 && fabsf( lookTargetDir.z ) < 0.7) // +- 90 degrees side to side, +- 45 up/down
 	{
 		return true;
 	}
@@ -826,7 +826,7 @@ float CAI_BaseActor::HeadTargetValidity(const Vector &lookTargetPos)
 	// 	X * b + b = 1 == 1 / (X + 1) = b, 3.4142
 	float flInterest = clamp( 3.4142f + 3.4142f * dotPr, 0.f, 1.f );
 
-	// stop looking when point too close 
+	// stop looking when point too close
 	if (flDist < MAX_FULL_LOOK_TARGET_DIST)
 	{
 		flInterest = flInterest * (flDist - MIN_LOOK_TARGET_DIST ) / (MAX_FULL_LOOK_TARGET_DIST - MIN_LOOK_TARGET_DIST);
@@ -965,7 +965,7 @@ void CAI_BaseActor::UpdateHeadControl( const Vector &vHeadTarget, float flHeadIn
 			// Msg("bias %f %f %f\n", angBias.x, angBias.y, angBias.z );
 
 			Vector tmp1, tmp2;
-			
+
 			VectorTransform( Vector( 0, 0, 0), chestToWorld, tmp1 );
 			VectorTransform( Vector( 100, 0, 0), chestToWorld, tmp2 );
 			NDebugOverlay::Line( tmp1, tmp2, 0,0,255, false, 0.12 );
@@ -1089,7 +1089,7 @@ Vector CAI_BaseActor::EyeDirection3D( void )
 // Output  :
 //------------------------------------------------------------------------------
 Vector CAI_BaseActor::HeadDirection2D( void )
-{	
+{
 	Vector vHeadDirection = HeadDirection3D();
 	vHeadDirection.z = 0;
 	vHeadDirection.AsVector2D().NormalizeInPlace();
@@ -1102,7 +1102,7 @@ Vector CAI_BaseActor::HeadDirection2D( void )
 // Output  :
 //------------------------------------------------------------------------------
 Vector CAI_BaseActor::HeadDirection3D( )
-{	
+{
 	UpdateLatchedValues( );
 
 	return m_latchedHeadDirection;
@@ -1156,16 +1156,16 @@ float CAI_BaseActor::PickLookTarget( bool bExcludePlayers, float minTime, float 
 float CAI_BaseActor::PickLookTarget( CAI_InterestTarget &queue, bool bExcludePlayers, float minTime, float maxTime )
 {
 	AILookTargetArgs_t args;
-	
+
 	args.vTarget			= vec3_invalid;
 	args.flDuration			= random->RandomFloat( minTime, maxTime );
 	args.flInfluence		= random->RandomFloat( 0.3, 0.5 );
 	args.flRamp				= random->RandomFloat( 0.2, 0.4 );
 	args.bExcludePlayers	= bExcludePlayers;
 	args.pQueue				= &queue;
-	
+
 	bool foundLookTarget = true;
-	
+
 	if ( !PickTacticalLookTarget( &args ) )
 	{
 		if ( !PickRandomLookTarget( &args ) )
@@ -1173,13 +1173,13 @@ float CAI_BaseActor::PickLookTarget( CAI_InterestTarget &queue, bool bExcludePla
 			foundLookTarget = false;
 		}
 	}
-	
+
 	if ( !foundLookTarget )
 	{
 		// DevMsg("nothing to see\n" );
 		MakeRandomLookTarget( &args, minTime, maxTime );
 	}
-	
+
 	// See if derived NPCs want to do anything with this look target before I use it
 	OnSelectedLookTarget( &args );
 
@@ -1195,7 +1195,7 @@ float CAI_BaseActor::PickLookTarget( CAI_InterestTarget &queue, bool bExcludePla
 	}
 
 	return args.flDuration;
-	
+
 }
 
 bool CAI_BaseActor::PickTacticalLookTarget( AILookTargetArgs_t *pArgs )
@@ -1226,7 +1226,7 @@ bool CAI_BaseActor::PickTacticalLookTarget( AILookTargetArgs_t *pArgs )
 bool CAI_BaseActor::PickRandomLookTarget( AILookTargetArgs_t *pArgs )
 {
 	bool bIsNavigating = ( GetNavigator()->IsGoalActive() && GetNavigator()->IsGoalSet() );
-	
+
 	if ( bIsNavigating && random->RandomInt(1, 10) <= 3 )
 	{
 		Vector navLookPoint;
@@ -1280,7 +1280,7 @@ bool CAI_BaseActor::PickRandomLookTarget( AILookTargetArgs_t *pArgs )
 
 		if ( pEntity->GetOwnerEntity() && !pEntity->GetOwnerEntity()->IsViewable() )
 		{
-			// Don't look at things that are associated with non-viewable owners. 
+			// Don't look at things that are associated with non-viewable owners.
 			// Specifically, this prevents NPC's looking at beams or sprites that
 			// are part of a viewmodel. (sjb)
 			continue;
@@ -1304,7 +1304,7 @@ bool CAI_BaseActor::PickRandomLookTarget( AILookTargetArgs_t *pArgs )
 
 		if( bObjectParentedToPlayer )
 			continue;
-		
+
 		// skip entities we're already looking at
 		if ( pArgs->pQueue->Find( pEntity ) != pArgs->pQueue->InvalidIndex() )
 			continue;
@@ -1321,7 +1321,7 @@ bool CAI_BaseActor::PickRandomLookTarget( AILookTargetArgs_t *pArgs )
 				break;
 			}
 		}
-	
+
 		Vector delta = (pEntity->EyePosition() - EyePosition());
 		VectorNormalize( delta );
 
@@ -1332,7 +1332,7 @@ bool CAI_BaseActor::PickRandomLookTarget( AILookTargetArgs_t *pArgs )
 #else
 		// No, for now, give all targets random priority (as long as they're in front)
 		iImportance = random->RandomInt( 1, 100 );
-		
+
 #endif
 		// make other npcs, and moving npc's far more important
 		if (pEntity->MyNPCPointer())
@@ -1349,7 +1349,7 @@ bool CAI_BaseActor::PickRandomLookTarget( AILookTargetArgs_t *pArgs )
 			if (FVisible( pEntity ) && ValidHeadTarget(pEntity->EyePosition()))
 			{
 				iHighestImportance = iImportance;
-				pBestEntity	= pEntity; 
+				pBestEntity	= pEntity;
 				// NDebugOverlay::Line( EyePosition(), pEntity->EyePosition(), 0,0,255, false, 0.5);
 			}
 		}
@@ -1368,7 +1368,7 @@ bool CAI_BaseActor::PickRandomLookTarget( AILookTargetArgs_t *pArgs )
 		pArgs->hTarget = pBestEntity;
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -1460,7 +1460,7 @@ void CAI_BaseActor::MaintainLookTargets( float flInterval )
 	Set( m_ParameterGestureHeight, Get( m_FlexweightGestureUpDown ) );
 	Set( m_ParameterGestureWidth, Get( m_FlexweightGestureRightLeft ) );
 
-	// initialize goal head direction to be current direction - this frames animation layering/pose parameters -  
+	// initialize goal head direction to be current direction - this frames animation layering/pose parameters -
 	// but with the head controlls removed.
 	Vector vHead = HeadDirection3D( );
 	float flHeadInfluence = 0.0;
@@ -1524,7 +1524,7 @@ void CAI_BaseActor::MaintainLookTargets( float flInterval )
 	{
 		active.AddToTail( &m_syntheticLookQueue[i] );
 	}
-		
+
 	// figure out ideal head yaw
 	bool bValidHeadTarget = false;
 	bool bExpectedHeadTarget = false;
@@ -1532,7 +1532,7 @@ void CAI_BaseActor::MaintainLookTargets( float flInterval )
 	{
 		Vector dir;
 		float flDist = 100.0f;
-		
+
 		bExpectedHeadTarget = true;
 		float flInterest = active[i]->Interest( );
 
@@ -1555,14 +1555,14 @@ void CAI_BaseActor::MaintainLookTargets( float flInterval )
 			flDist = VectorNormalize( dir );
 			flInterest = flInterest * HeadTargetValidity( active[i]->GetPosition() );
 		}
-		
+
 		/*
 		if ( (m_debugOverlays & OVERLAY_NPC_SELECTED_BIT) )
 		{
 			DevMsg( "head (%d) %.2f : %s : %.1f %.1f %.1f\n", i, flInterest, active[i]->m_hTarget->GetClassname(), active[i]->GetPosition().x, active[i]->GetPosition().y, active[i]->GetPosition().z );
 		}
 		*/
-		
+
 		if (flInterest > 0.0)
 		{
 			if (flHeadInfluence == 0.0)
@@ -1601,7 +1601,7 @@ void CAI_BaseActor::MaintainLookTargets( float flInterval )
 		// no target, decay all head control direction
 		m_goalHeadDirection = m_goalHeadDirection * 0.8 + vHead * 0.2;
 
-		m_goalHeadInfluence = MAX( m_goalHeadInfluence - 0.2, 0 );
+		m_goalHeadInfluence = MAX( m_goalHeadInfluence - 0.2f, 0.f );
 
 		VectorNormalize( m_goalHeadDirection );
 		UpdateHeadControl( vEyePosition + m_goalHeadDirection * 100, m_goalHeadInfluence );
@@ -1788,7 +1788,7 @@ void CAI_BaseActor::PlayExpressionForState( NPC_STATE state )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Return a random expression for the specified state to play over 
+// Purpose: Return a random expression for the specified state to play over
 //			the state's expression loop.
 //-----------------------------------------------------------------------------
 const char *CAI_BaseActor::SelectRandomExpressionForState( NPC_STATE state )
@@ -1908,11 +1908,11 @@ CAI_Expresser *CAI_BaseActor::CreateExpresser()
 
 //-----------------------------------------------------------------------------
 
-CAI_Expresser *CAI_BaseActor::GetExpresser() 
-{ 
-	return m_pExpresser; 
+CAI_Expresser *CAI_BaseActor::GetExpresser()
+{
+	return m_pExpresser;
 }
-	
+
 //-----------------------------------------------------------------------------
 
 bool CAI_BaseActor::CreateComponents()

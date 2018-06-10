@@ -497,7 +497,7 @@ bool CHudHintKeyDisplay::SetHintText( const char *text )
 		wchar_t *end = wcschr( ws, '%' );
 		if ( end )
 		{
-			wcsncpy( token, ws, MIN( end - ws, ARRAYSIZE(token)) );
+			wcsncpy( token, ws, MIN( static_cast<size_t>( end - ws ), ARRAYSIZE(token)) );
 			token[end - ws] = L'\0';	// force null termination
 		}
 		else

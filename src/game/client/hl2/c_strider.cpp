@@ -976,7 +976,7 @@ void StriderBlood( const Vector &origin, const Vector &normal, float scale )
 	tint = (tint * 0.25f)+(Vector(0.75f,0.75f,0.75f));
 
 	// Rescale to a character range
-	luminosity = MAX( 200, luminosity*255 );
+	luminosity = MAX( 200.f, luminosity*255 );
 
 	CSmartPtr<CSplashParticle> pSimple = CSplashParticle::Create( "splish" );
 	pSimple->SetSortOrigin( origin );
@@ -987,7 +987,6 @@ void StriderBlood( const Vector &origin, const Vector &normal, float scale )
 	PMaterialHandle	hMaterial = ParticleMgr()->GetPMaterial( "effects/slime1" );
 
 	float	length = 0.2f;
-	Vector	vForward, vRight, vUp;
 	Vector	offDir;
 
 	TrailParticle	*tParticle;

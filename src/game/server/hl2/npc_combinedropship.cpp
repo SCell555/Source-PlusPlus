@@ -36,7 +36,7 @@
 #include "tier0/memdbgon.h"
 
 // Spawnflags
-#define SF_DROPSHIP_WAIT_FOR_DROPOFF_INPUT		( 1 << 15 )	
+#define SF_DROPSHIP_WAIT_FOR_DROPOFF_INPUT		( 1 << 15 )
 
 #define DROPSHIP_ACCEL_RATE				300
 
@@ -76,13 +76,13 @@
 
 #define DROPSHIP_CRATE_ROCKET_HITS	4
 
-enum DROP_STATES 
+enum DROP_STATES
 {
 	DROP_IDLE = 0,
 	DROP_NEXT,
 };
 
-enum CRATE_TYPES 
+enum CRATE_TYPES
 {
 	CRATE_JEEP = -3,
 	CRATE_APC = -2,
@@ -105,10 +105,10 @@ ConVar	sk_npc_dmg_dropship( "sk_npc_dmg_dropship","5", FCVAR_NONE, "Dropship con
 // Custom activities
 //=====================================
 // Without Cargo
-Activity ACT_DROPSHIP_FLY_IDLE;			// Flying. Vertical aspect 
+Activity ACT_DROPSHIP_FLY_IDLE;			// Flying. Vertical aspect
 Activity ACT_DROPSHIP_FLY_IDLE_EXAGG;	// Exaggerated version of the flying idle
 // With Cargo
-Activity ACT_DROPSHIP_FLY_IDLE_CARGO;	// Flying. Vertical aspect 
+Activity ACT_DROPSHIP_FLY_IDLE_CARGO;	// Flying. Vertical aspect
 Activity ACT_DROPSHIP_DESCEND_IDLE;		// waiting to touchdown
 Activity ACT_DROPSHIP_DEPLOY_IDLE;		// idle on the ground with door open. Troops are leaving.
 Activity ACT_DROPSHIP_LIFTOFF;			// transition back to FLY IDLE
@@ -150,7 +150,7 @@ enum LandingState_t
 #define DROPSHIP_CONTAINER_MODEL "models/combine_dropship_container.mdl"
 
 #define DROPSHIP_CONTAINER_MAX_CHUNKS	3
-static const char *s_pChunkModelName[DROPSHIP_CONTAINER_MAX_CHUNKS] = 
+static const char *s_pChunkModelName[DROPSHIP_CONTAINER_MAX_CHUNKS] =
 {
 	"models/gibs/helicopter_brokenpiece_01.mdl",
 	"models/gibs/helicopter_brokenpiece_02.mdl",
@@ -158,7 +158,7 @@ static const char *s_pChunkModelName[DROPSHIP_CONTAINER_MAX_CHUNKS] =
 };
 
 #define DROPSHIP_CONTAINER_MAX_GIBS	1
-static const char *s_pGibModelName[DROPSHIP_CONTAINER_MAX_GIBS] = 
+static const char *s_pGibModelName[DROPSHIP_CONTAINER_MAX_GIBS] =
 {
 	"models/combine_dropship_container.mdl",
 };
@@ -290,13 +290,13 @@ private:
 	float	m_flDropDelay;			// delta between each mine
 	float	m_flTimeNextAttack;
 	float	m_flLastTime;
-	
+
 	// States and counters
 	int		m_iMineCount;		// index for current mine # being deployed
 	int		m_totalMinesToDrop;	// total # of mines to drop as a group (based upon triggered input)
 	int		m_soldiersToDrop;
 	int		m_iDropState;
-	int		m_iLandState; 
+	int		m_iLandState;
 	float	m_engineThrust;		// for tracking sound volume/pitch
 	float	m_existPitch;
 	float	m_existRoll;
@@ -311,7 +311,7 @@ private:
 	bool	m_bInvulnerable;
 
 	QAngle	m_vecAngAcceleration;
-	
+
 	// Misc Vars
 	CHandle<CBaseAnimating>	m_hContainer;
 	EHANDLE		m_hPickupTarget;
@@ -328,8 +328,8 @@ private:
 
 	// Templates for soldier's dropped off
 	string_t	m_sNPCTemplate[ DROPSHIP_MAX_SOLDIERS ];
-	string_t	m_sNPCTemplateData[ DROPSHIP_MAX_SOLDIERS ];	
-	string_t	m_sDustoffPoints[ DROPSHIP_MAX_SOLDIERS ];	
+	string_t	m_sNPCTemplateData[ DROPSHIP_MAX_SOLDIERS ];
+	string_t	m_sDustoffPoints[ DROPSHIP_MAX_SOLDIERS ];
 	int			m_iCurrentTroopExiting;
 	EHANDLE		m_hLastTroopToLeave;
 
@@ -363,7 +363,7 @@ protected:
 	// Should the dropship end up having inheritors, their activate may
 	// stomp these numbers, in which case you should make these ordinary members
 	// again.
-	static int m_poseBody_Accel, m_poseBody_Sway, m_poseCargo_Body_Accel, m_poseCargo_Body_Sway, 
+	static int m_poseBody_Accel, m_poseBody_Sway, m_poseCargo_Body_Accel, m_poseCargo_Body_Sway,
 		m_poseWeapon_Pitch, m_poseWeapon_Yaw;
 	static bool m_sbStaticPoseParamsLoaded;
 	virtual void	PopulatePoseParameters( void );
@@ -414,7 +414,7 @@ BEGIN_DATADESC( CCombineDropshipContainer )
 END_DATADESC()
 
 //-----------------------------------------------------------------------------
-// Precache 
+// Precache
 //-----------------------------------------------------------------------------
 void CCombineDropshipContainer::Precache()
 {
@@ -441,7 +441,7 @@ void CCombineDropshipContainer::Precache()
 
 
 //-----------------------------------------------------------------------------
-// Spawn 
+// Spawn
 //-----------------------------------------------------------------------------
 void CCombineDropshipContainer::Spawn()
 {
@@ -496,7 +496,7 @@ void CCombineDropshipContainer::CreateCorpse()
 	Vector vecAbsPoint;
 	CPASFilter filter( GetAbsOrigin() );
 	CollisionProp()->RandomPointInBounds( vecNormalizedMins, vecNormalizedMaxs, &vecAbsPoint);
-	te->Explosion( filter, 0.0f, &vecAbsPoint, g_sModelIndexFireball, 
+	te->Explosion( filter, 0.0f, &vecAbsPoint, g_sModelIndexFireball,
 		random->RandomInt( 4, 10 ), random->RandomInt( 8, 15 ), TE_EXPLFLAG_NOPARTICLES, 100, 0 );
 
 	// Break into chunks
@@ -549,7 +549,7 @@ void CCombineDropshipContainer::ThrowFlamingGib( void )
 	pChunk->m_lifeTime = random->RandomFloat( 6.0f, 8.0f );
 	pChunk->SetCollisionGroup( COLLISION_GROUP_DEBRIS );
 	IPhysicsObject *pPhysicsObject = pChunk->VPhysicsInitNormal( SOLID_VPHYSICS, pChunk->GetSolidFlags(), false );
-	
+
 	// Set the velocity
 	if ( pPhysicsObject )
 	{
@@ -561,7 +561,7 @@ void CCombineDropshipContainer::ThrowFlamingGib( void )
 		angles.y = random->RandomFloat( 0, 360 );
 		angles.z = 0.0f;
 		AngleVectors( angles, &vecVelocity );
-		
+
 		vecVelocity *= random->RandomFloat( 300, 900 );
 		vecVelocity += GetAbsVelocity();
 
@@ -615,7 +615,7 @@ void CCombineDropshipContainer::Event_Killed( const CTakeDamageInfo &info )
 
 
 //-----------------------------------------------------------------------------
-// Damage effects 
+// Damage effects
 //-----------------------------------------------------------------------------
 int CCombineDropshipContainer::OnTakeDamage( const CTakeDamageInfo &info )
 {
@@ -638,7 +638,7 @@ int CCombineDropshipContainer::OnTakeDamage( const CTakeDamageInfo &info )
 		{
 			m_iHealth -= (m_iMaxHealth / DROPSHIP_CRATE_ROCKET_HITS) + 1;
 			m_hLastInflictor = info.GetInflictor();
-			m_flLastHitTime = gpGlobals->curtime; 
+			m_flLastHitTime = gpGlobals->curtime;
 		}
 	}
 	else
@@ -663,7 +663,7 @@ int CCombineDropshipContainer::OnTakeDamage( const CTakeDamageInfo &info )
 
 		if ( ShouldTriggerDamageEffect( nPrevHealth, MAX_EXPLOSIONS ) )
 		{
-			ExplosionCreate( dmgInfo.GetDamagePosition(), vec3_angle, this, 1000, 500.0f, 
+			ExplosionCreate( dmgInfo.GetDamagePosition(), vec3_angle, this, 1000, 500.0f,
 			SF_ENVEXPLOSION_NODAMAGE | SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 0 );
 			UTIL_ScreenShake( dmgInfo.GetDamagePosition(), 25.0, 150.0, 1.0, 750.0f, SHAKE_START );
 
@@ -681,7 +681,7 @@ int CCombineDropshipContainer::OnTakeDamage( const CTakeDamageInfo &info )
 void CCombineDropshipContainer::AddSmokeTrail( const Vector &vecPos )
 {
 	// Start this trail out with a bang!
-	ExplosionCreate( vecPos, vec3_angle, this, 1000, 500.0f, SF_ENVEXPLOSION_NODAMAGE | 
+	ExplosionCreate( vecPos, vec3_angle, this, 1000, 500.0f, SF_ENVEXPLOSION_NODAMAGE |
 		SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 0 );
 	UTIL_ScreenShake( vecPos, 25.0, 150.0, 1.0, 750.0f, SHAKE_START );
 
@@ -737,8 +737,6 @@ void CCombineDropshipContainer::AddSmokeTrail( const Vector &vecPos )
 //------------------------------------------------------------------------------
 LINK_ENTITY_TO_CLASS( npc_combinedropship, CNPC_CombineDropship );
 
-#pragma warning( push )
-#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CNPC_CombineDropship )
 
 	DEFINE_FIELD( m_flTimeTakeOff, FIELD_TIME ),
@@ -805,7 +803,7 @@ BEGIN_DATADESC( CNPC_CombineDropship )
 	DEFINE_FIELD( m_iAttachmentDeployStart , FIELD_INTEGER ),
 
 	DEFINE_SOUNDPATCH( m_pCannonSound ),
-	
+
 	DEFINE_INPUTFUNC( FIELD_INTEGER, "LandLeaveCrate", InputLandLeave ),
 	DEFINE_INPUTFUNC( FIELD_INTEGER, "LandTakeCrate", InputLandTake ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "SetLandTarget", InputSetLandTarget ),
@@ -818,7 +816,7 @@ BEGIN_DATADESC( CNPC_CombineDropship )
 	DEFINE_INPUTFUNC( FIELD_VOID, "StopWaitingForDropoff", InputStopWaitingForDropoff ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "Hover", InputHover ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "FlyToPathTrack", InputFlyToPathTrack ),
-	
+
 	DEFINE_OUTPUT( m_OnFinishedDropoff, "OnFinishedDropoff" ),
 	DEFINE_OUTPUT( m_OnFinishedPickup, "OnFinishedPickup" ),
 
@@ -826,7 +824,7 @@ BEGIN_DATADESC( CNPC_CombineDropship )
 	DEFINE_OUTPUT( m_OnContainerShotDownAfterDropoff, "OnCrateShotDownAfterDropoff" ),
 
 END_DATADESC()
-#pragma warning( pop )
+
 
 //------------------------------------------------------------------------------
 // Purpose : Destructor
@@ -917,7 +915,7 @@ void CNPC_CombineDropship::Spawn( void )
 			m_hContainer = (CBaseAnimating*)gEntList.FindEntityByName( NULL, m_iszAPCVehicleName );
 			if ( !m_hContainer )
 			{
-				Warning("Unable to find APC %s\n", STRING( m_iszAPCVehicleName ) ); 		
+				Warning("Unable to find APC %s\n", STRING( m_iszAPCVehicleName ) );
 				break;
 			}
 
@@ -1127,15 +1125,15 @@ void CNPC_CombineDropship::Precache( void )
 }
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
 void CNPC_CombineDropship::Flight( void )
 {
 	// Only run the flight model in some flight states
-	bool bRunFlight = ( GetLandingState() == LANDING_NO || 
-							GetLandingState() == LANDING_LEVEL_OUT || 
+	bool bRunFlight = ( GetLandingState() == LANDING_NO ||
+							GetLandingState() == LANDING_LEVEL_OUT ||
 							GetLandingState() == LANDING_LIFTOFF ||
 							GetLandingState() == LANDING_SWOOPING ||
 							GetLandingState() == LANDING_DESCEND ||
@@ -1157,9 +1155,9 @@ void CNPC_CombineDropship::Flight( void )
 		{
 			Vector vCurrentLocalOrigin = m_hContainer->GetLocalOrigin();
 			Vector vLocalOrigin;
-	
+
 			VectorLerp( vCurrentLocalOrigin, vec3_origin, 0.05f, vLocalOrigin );
-	
+
 			m_hContainer->SetLocalOrigin( vLocalOrigin );
 		}
 
@@ -1216,7 +1214,7 @@ void CNPC_CombineDropship::Flight( void )
 		accel.x = 2.0 * (deltaPos.x - GetAbsVelocity().x * dt) / (dt * dt);
 		accel.y = 2.0 * (deltaPos.y - GetAbsVelocity().y * dt) / (dt * dt);
 		accel.z = 2.0 * (deltaPos.z - GetAbsVelocity().z * dt + 0.5 * 384 * dt * dt) / (dt * dt);
-		
+
 		float flDistFromPath = 0.0f;
 		Vector vecPoint, vecDelta;
 		if ( IsOnPathTrack() && GetLandingState() == LANDING_NO )
@@ -1282,7 +1280,7 @@ void CNPC_CombineDropship::Flight( void )
 
 		ApplySidewaysDrag( right );
 		ApplyGeneralDrag();
-		
+
 		QAngle angVel = GetLocalAngularVelocity();
 		angVel += m_vecAngAcceleration * 0.1;
 
@@ -1292,10 +1290,10 @@ void CNPC_CombineDropship::Flight( void )
 
 		SetLocalAngularVelocity( angVel );
 
-		m_flForce = m_flForce * 0.8 + (accel.z + fabs( accel.x ) * 0.1 + fabs( accel.y ) * 0.1) * 0.1 * 0.2;
+		m_flForce = m_flForce * 0.8 + (accel.z + fabsf( accel.x ) * 0.1 + fabsf( accel.y ) * 0.1) * 0.1 * 0.2;
 
 		vecImpulse = m_flForce * up;
-		
+
 		if ( m_lifeState == LIFE_DYING )
 		{
 			vecImpulse.z = -38.4;  // 64ft/sec
@@ -1327,7 +1325,7 @@ void CNPC_CombineDropship::Flight( void )
 				VectorMA( vecImpulse, -flDot * 0.1f, vecDelta, vecImpulse );
 			}
 		}
-		
+
 		// Find our acceleration direction
 		Vector	vecAccelDir = vecImpulse;
 		VectorNormalize( vecAccelDir );
@@ -1362,7 +1360,7 @@ void CNPC_CombineDropship::Flight( void )
 	}
 
 	// If we're landing, deliberately tuck in the back end
-	if ( GetLandingState() == LANDING_DESCEND || GetLandingState() == LANDING_TOUCHDOWN || 
+	if ( GetLandingState() == LANDING_DESCEND || GetLandingState() == LANDING_TOUCHDOWN ||
 		 GetLandingState() == LANDING_UNLOADING || GetLandingState() == LANDING_UNLOADED || IsHovering() )
 	{
 		finspeed = -60;
@@ -1393,7 +1391,7 @@ void CNPC_CombineDropship::Flight( void )
 //------------------------------------------------------------------------------
 // Deals damage to what's behing carried
 //------------------------------------------------------------------------------
-int CNPC_CombineDropship::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo ) 
+int CNPC_CombineDropship::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 {
 	// FIXME: To make this work for CRATE_STRIDER or CRATE_APC, we need to
 	// add code to the strider + apc to make them not take double-damage from rockets
@@ -1408,7 +1406,7 @@ int CNPC_CombineDropship::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 	}
 
 	// don't die
-	return 0; 
+	return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -1441,11 +1439,11 @@ void CNPC_CombineDropship::UpdateFacingDirection( void )
 			GetVectors( &m_vecDesiredFaceDir, NULL, NULL );
 		}
 	}
-	VectorNormalize( m_vecDesiredFaceDir ); 
+	VectorNormalize( m_vecDesiredFaceDir );
 }
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -1475,7 +1473,7 @@ void CNPC_CombineDropship::InitializeRotorSound( void )
 	{
 		controller.Play( m_pRotorOnGroundSound, 0.0, 100 );
 	}
-	
+
 	if ( m_pNearRotorSound )
 	{
 		controller.Play( m_pNearRotorSound, 0.0, 100 );
@@ -1488,7 +1486,7 @@ void CNPC_CombineDropship::InitializeRotorSound( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_CombineDropship::StopLoopingSounds()
 {
@@ -1534,9 +1532,9 @@ void CNPC_CombineDropship::UpdateRotorWashVolume( CSoundPatch *pRotorSound, floa
 	float flVolDelta = flVolume - controller.SoundGetVolume( pRotorSound );
 	if ( flVolDelta )
 	{
-		// We can change from 0 to 1 in 3 seconds. 
+		// We can change from 0 to 1 in 3 seconds.
 		// Figure out how many seconds flVolDelta will take.
-		float flRampTime = fabs( flVolDelta ) * flDeltaTime; 
+		float flRampTime = fabsf( flVolDelta ) * flDeltaTime;
 		controller.SoundChangeVolume( pRotorSound, flVolume, flRampTime );
 	}
 }
@@ -1547,7 +1545,7 @@ void CNPC_CombineDropship::UpdateRotorWashVolume( CSoundPatch *pRotorSound, floa
 //------------------------------------------------------------------------------
 void CNPC_CombineDropship::UpdateRotorWashVolume()
 {
-	float flNearFactor = 0.0f; 
+	float flNearFactor = 0.0f;
 	CBaseEntity *pPlayer = UTIL_PlayerByIndex( 1 );
 	if (pPlayer)
 	{
@@ -1598,12 +1596,12 @@ void CNPC_CombineDropship::UpdateRotorSoundPitch( int iPitch )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : iSoldiers - 
+// Purpose:
+// Input  : iSoldiers -
 //-----------------------------------------------------------------------------
 void CNPC_CombineDropship::CalculateSoldierCount( int iSoldiers )
 {
-	if ( m_iCrateType >= 0 ) 
+	if ( m_iCrateType >= 0 )
 	{
 		m_soldiersToDrop = clamp( iSoldiers, 0, DROPSHIP_MAX_SOLDIERS );
 	}
@@ -1638,7 +1636,7 @@ void CNPC_CombineDropship::InputLandTake( inputdata_t &inputdata )
 }
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   : bHover - If true, means we're landing on a hover point, not the ground
 // Output  :
 //------------------------------------------------------------------------------
@@ -1677,7 +1675,7 @@ void CNPC_CombineDropship::LandCommon( bool bHover )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_CombineDropship::InputSetLandTarget( inputdata_t &inputdata )
 {
@@ -1821,7 +1819,7 @@ void CNPC_CombineDropship::DropSoldierContainer( )
 
 //-----------------------------------------------------------------------------
 // Purpose: Pick up a specified object
-// Input  : &inputdata - 
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CNPC_CombineDropship::InputPickup( inputdata_t &inputdata )
 {
@@ -1864,7 +1862,7 @@ void CNPC_CombineDropship::InputPickup( inputdata_t &inputdata )
 
 //-----------------------------------------------------------------------------
 // Purpose: Set the range of the container's gun
-// Input  : &inputdata - 
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CNPC_CombineDropship::InputSetGunRange( inputdata_t &inputdata )
 {
@@ -1892,7 +1890,7 @@ void CNPC_CombineDropship::SetLandingState( LandingState_t landingState )
 			controller.SoundChangeVolume( m_pDescendingWarningSound, 0.0f, 0.0f );
 		}
 	}
-	
+
 	m_iLandState = landingState;
 }
 
@@ -1921,12 +1919,12 @@ void CNPC_CombineDropship::UpdateGroundRotorWashSound( float flAltitude )
 
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
 void CNPC_CombineDropship::PrescheduleThink( void )
-{	
+{
 	BaseClass::PrescheduleThink();
 
 	// "npc_kill" destroys our container
@@ -2011,8 +2009,8 @@ void CNPC_CombineDropship::PrescheduleThink( void )
 
 			if( IsHovering() && m_hLandTarget != NULL )
 			{
-				// We're trying to hover above an arbitrary point, not above the ground. 
-				// Recompute flAltitude to indicate the vertical distance from the land 
+				// We're trying to hover above an arbitrary point, not above the ground.
+				// Recompute flAltitude to indicate the vertical distance from the land
 				// target so that touchdown is correctly detected.
 				flAltitude = GetAbsOrigin().z - m_hLandTarget->GetAbsOrigin().z;
 			}
@@ -2027,14 +2025,14 @@ void CNPC_CombineDropship::PrescheduleThink( void )
 			}
 			else
 			{
-				// No land target. 
+				// No land target.
 				targetDir = GetDesiredPosition() - GetAbsOrigin();
 			}
 
 			// Don't unload until we're facing the way the dropoff point specifies
 			float flTargetYaw = UTIL_VecToYaw( targetDir );
 			float flDeltaYaw = UTIL_AngleDiff( flTargetYaw, GetAbsAngles().y );
-			if ( fabs(flDeltaYaw) > 5 )
+			if ( fabsf(flDeltaYaw) > 5 )
 			{
 				bStillOrienting = true;
 			}
@@ -2044,13 +2042,13 @@ void CNPC_CombineDropship::PrescheduleThink( void )
 			float flDistance = vecToTarget.Length();
 			float flRampedSpeed = m_flLandingSpeed * (flDistance / 70);
 			Vector vecVelocity = (flRampedSpeed / flDistance) * vecToTarget;
-			
+
 #define MAX_LAND_VEL	-300.0f
 #define MIN_LAND_VEL	-75.0f
 #define ALTITUDE_CAP	512.0f
 
-			float flFactor = MIN( 1.0,  flAltitude / ALTITUDE_CAP );
-			float flDescendVelocity = MIN( -75, MAX_LAND_VEL * flFactor );
+			float flFactor = MIN( 1.f,  flAltitude / ALTITUDE_CAP );
+			float flDescendVelocity = MIN( -75.f, MAX_LAND_VEL * flFactor );
 
 			vecVelocity.z = flDescendVelocity;
 
@@ -2153,7 +2151,7 @@ void CNPC_CombineDropship::PrescheduleThink( void )
 
 			SetLandingState( LANDING_UNLOADING );
 
-			// If we're dropping off troops, we'll wait for them to be done. 
+			// If we're dropping off troops, we'll wait for them to be done.
 			// Otherwise, just pause on the ground for a few seconds and then leave.
 			if ( m_soldiersToDrop && m_hContainer)
 			{
@@ -2182,10 +2180,10 @@ void CNPC_CombineDropship::PrescheduleThink( void )
 			{
 				float idleVolume = 0.2f;
 				m_engineThrust = UTIL_Approach( idleVolume, m_engineThrust, 0.04f );
-				if ( m_engineThrust > idleVolume ) 
+				if ( m_engineThrust > idleVolume )
 				{
 					// Make sure we're kicking up dust/water as long as engine thrust is up
-					DoRotorWash();				
+					DoRotorWash();
 				}
 
 				// If we've lost the last troop who was leaving, he probably got killed during dustoff.
@@ -2254,7 +2252,7 @@ void CNPC_CombineDropship::PrescheduleThink( void )
 	case LANDING_LIFTOFF:
 		{
 			// Once we're off the ground, start flying again
-			if ( flAltitude > 120 )		
+			if ( flAltitude > 120 )
 			{
 				SetLandingState( LANDING_NO );
 				m_hLandTarget = NULL;
@@ -2386,7 +2384,7 @@ void CNPC_CombineDropship::SpawnTroop( void )
 
 	// HACK: This is a nasty piece of work. We want to make sure the deploy end is clear, and has enough
 	// room with our deploying NPC, but we don't want to create the NPC unless it's clear, and we don't
-	// know how much room he needs without spawning him. 
+	// know how much room he needs without spawning him.
 	// So, because we know that we only ever spawn combine soldiers at the moment, we'll just use their hull.
 	// HACK: Add some bloat because the endpoint isn't perfectly aligned with NPC end origin
 	Vector vecNPCMins = NAI_Hull::Mins( HULL_HUMAN ) - Vector(4,4,4);
@@ -2476,7 +2474,7 @@ void CNPC_CombineDropship::SpawnTroop( void )
 
 //-----------------------------------------------------------------------------
 // Purpose: Returns a safe position above/below the specified origin for the NPC to finish it's dropoff on
-// Input  : vecOrigin - 
+// Input  : vecOrigin -
 //-----------------------------------------------------------------------------
 Vector CNPC_CombineDropship::GetDropoffFinishPosition( Vector vecOrigin, CAI_BaseNPC *pNPC, Vector vecMins, Vector vecMaxs )
 {
@@ -2511,7 +2509,7 @@ Vector CNPC_CombineDropship::GetDropoffFinishPosition( Vector vecOrigin, CAI_Bas
 
 //-----------------------------------------------------------------------------
 // Purpose: A troop we dropped of has now finished the scripted sequence
-// Input  : &inputdata - 
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CNPC_CombineDropship::InputNPCFinishDustoff( inputdata_t &inputdata )
 {
@@ -2554,7 +2552,7 @@ void CNPC_CombineDropship::InputNPCFinishDustoff( inputdata_t &inputdata )
 		pNPC->GetNavigator()->SetArrivalDirection( pDustoff->GetAbsAngles() );
 
 		// Make sure they ignore a bunch of conditions
-		static int g_Conditions[] = 
+		static int g_Conditions[] =
 		{
 			COND_CAN_MELEE_ATTACK1,
 			COND_CAN_MELEE_ATTACK2,
@@ -2583,7 +2581,7 @@ void CNPC_CombineDropship::InputNPCFinishDustoff( inputdata_t &inputdata )
 
 //-----------------------------------------------------------------------------
 // Purpose: Tells the dropship to stop waiting and dustoff
-// Input  : &inputdata - 
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CNPC_CombineDropship::InputStopWaitingForDropoff( inputdata_t &inputdata )
 {
@@ -2612,7 +2610,7 @@ void CNPC_CombineDropship::InputFlyToPathTrack( inputdata_t &inputdata )
 }
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -2686,7 +2684,7 @@ void CNPC_CombineDropship::Hunt( void )
 
 	// don't face player ever, only face nav points
 	Vector desiredDir = GetDesiredPosition() - GetAbsOrigin();
-	VectorNormalize( desiredDir ); 
+	VectorNormalize( desiredDir );
 	// Face our desired position.
 	m_vecDesiredFaceDir = desiredDir;
 
@@ -2699,7 +2697,7 @@ void CNPC_CombineDropship::Hunt( void )
 		}
 		else
 		{
-			// No land target. 
+			// No land target.
 			m_vecDesiredFaceDir = GetDesiredPosition() - GetAbsOrigin();
 		}
 	}
@@ -2789,7 +2787,7 @@ void CNPC_CombineDropship::DoCombatStuff( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Update the container's gun to face the enemy. 
+// Purpose: Update the container's gun to face the enemy.
 // Input  : &vecMuzzle - The gun's muzzle/firing point
 //			&vecAimDir - The gun's current aim direction
 //-----------------------------------------------------------------------------
@@ -2811,7 +2809,7 @@ void CNPC_CombineDropship::UpdateContainerGunFacing( Vector &vecMuzzle, Vector &
 
 	EntityMatrix parentMatrix;
 	parentMatrix.InitFromEntity( m_hContainer, m_iMachineGunBaseAttachment );
-	Vector target = parentMatrix.WorldToLocal( vecToTarget ); 
+	Vector target = parentMatrix.WorldToLocal( vecToTarget );
 
 	float quadTarget = target.LengthSqr();
 	float quadTargetXY = target.x*target.x + target.y*target.y;
@@ -2820,11 +2818,11 @@ void CNPC_CombineDropship::UpdateContainerGunFacing( Vector &vecMuzzle, Vector &
 	if ( quadTarget > vecBarrelPos.LengthSqr() )
 	{
 		// We're trying to aim the offset barrel at an arbitrary point.
-		// To calculate this, I think of the target as being on a sphere with 
+		// To calculate this, I think of the target as being on a sphere with
 		// it's center at the origin of the gun.
-		// The rotation we need is the opposite of the rotation that moves the target 
+		// The rotation we need is the opposite of the rotation that moves the target
 		// along the surface of that sphere to intersect with the gun's shooting direction
-		// To calculate that rotation, we simply calculate the intersection of the ray 
+		// To calculate that rotation, we simply calculate the intersection of the ray
 		// coming out of the barrel with the target sphere (that's the new target position)
 		// and use atan2() to get angles
 
@@ -2867,7 +2865,7 @@ bool CNPC_CombineDropship::FireCannonRound( void )
 	float flRange;
 	Vector vecMuzzle, vecAimDir, vecToEnemy;
 	UpdateContainerGunFacing( vecMuzzle, vecToEnemy, vecAimDir, &flRange );
-	
+
 	// Out of range?
 	if ( flRange > m_flGunRange )
 		return false;
@@ -2910,7 +2908,7 @@ bool CNPC_CombineDropship::FireCannonRound( void )
 	vecAimDir = vecToEnemy;
 
 	// Fire the bullet
-	int ammoType = GetAmmoDef()->Index("CombineCannon"); 
+	int ammoType = GetAmmoDef()->Index("CombineCannon");
 	FireBullets( 1, vecMuzzle, vecAimDir, VECTOR_CONE_2DEGREES, 8192, ammoType, 1, -1, -1, sk_npc_dmg_dropship.GetInt() );
 
 	return true;
@@ -2928,7 +2926,7 @@ void CNPC_CombineDropship::DoImpactEffect( trace_t &tr, int nDamageType )
 
 //------------------------------------------------------------------------------
 // Purpose : The proper way to begin the gunship cannon firing at the enemy.
-// Input   : 
+// Input   :
 //		   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -2946,8 +2944,8 @@ void CNPC_CombineDropship::StartCannon( void )
 }
 
 //------------------------------------------------------------------------------
-// Purpose : The proper way to cease the gunship cannon firing. 
-// Input   : 
+// Purpose : The proper way to cease the gunship cannon firing.
+// Input   :
 //		   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -2972,14 +2970,6 @@ void CNPC_CombineDropship::MakeTracer( const Vector &vecTracerSrc, const trace_t
 	{
 	case TRACER_LINE:
 		{
-			float flTracerDist;
-			Vector vecDir;
-			Vector vecEndPos;
-
-			vecDir = tr.endpos - vecTracerSrc;
-
-			flTracerDist = VectorNormalize( vecDir );
-
 			UTIL_Tracer( vecTracerSrc, tr.endpos, 0, TRACER_DONT_USE_ATTACHMENT, 16000, true, "GunshipTracer" );
 		}
 		break;

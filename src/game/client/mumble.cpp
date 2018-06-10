@@ -226,7 +226,7 @@ void CMumbleSystem::PostRender()
 
 	// Context should be equal for players which should be able to hear each other positional and
 	// differ for those who shouldn't (e.g. it could contain the server+port and team)
-	memcpy( g_pMumbleMemory->context, &m_szSteamIDCurrentServer, m_cubSteamIDCurrentServer );
+	memcpy( g_pMumbleMemory->context, m_szSteamIDCurrentServer, m_cubSteamIDCurrentServer );
 	g_pMumbleMemory->context_len = m_cubSteamIDCurrentServer;
 #endif // NO_STEAM
 }

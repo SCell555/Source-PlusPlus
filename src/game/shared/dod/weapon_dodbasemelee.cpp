@@ -144,7 +144,7 @@ CBaseEntity *CWeaponDODBaseMelee::MeleeAttack( int iDamageAmount, int iDamageTyp
 				float dot = DotProduct( vForward, vecToEnd );
 
 				// sanity that our hit is within range
-				if ( abs(dot) < 0.95 )
+				if ( fabsf(dot) < 0.95 )
 				{
 					// fake that we actually missed
 					tr.fraction = 1.0;

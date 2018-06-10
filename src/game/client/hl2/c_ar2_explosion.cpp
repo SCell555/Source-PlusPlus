@@ -418,7 +418,7 @@ void C_AR2Explosion::SimulateParticles( CParticleSimulateIterator *pIterator )
 					dtime = dt;
 					decay = ExponentialDecay( 0.3, 1.0, dtime );
 				}
-				if (fabs(pParticle->m_RollSpeed) > 0.2)
+				if (fabsf(pParticle->m_RollSpeed) > 0.2f)
 					pParticle->m_RollSpeed = pParticle->m_RollSpeed * decay;
 			}
 		}

@@ -788,7 +788,7 @@ CON_COMMAND_F( killvector, "Kills a player applying force. Usage: killvector <pl
 //------------------------------------------------------------------------------
 CON_COMMAND_F( explodevector, "Kills a player applying an explosive force. Usage: explodevector <player> <x value> <y value> <z value>", FCVAR_CHEAT )
 {
-	killvector_helper( args, false );
+	killvector_helper( args, true );
 }
 
 

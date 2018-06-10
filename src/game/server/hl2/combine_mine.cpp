@@ -588,7 +588,7 @@ void CBounceBomb::CaptiveThink()
 	SetNextThink( gpGlobals->curtime + 0.05 );
 	StudioFrameAdvance();
 
-	float phase = fabs( sin( gpGlobals->curtime * 4.0f ) );
+	float phase = fabsf( sin( gpGlobals->curtime * 4.0f ) );
 	phase *= BOUNCEBOMB_HOOK_RANGE;
 	SetPoseParameter( m_iAllHooks, phase );
 	return;

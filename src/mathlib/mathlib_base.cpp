@@ -199,7 +199,7 @@ void MatrixAngles( const matrix3x4_t &matrix, Quaternion &q, Vector &pos )
 	Quaternion test;
 	AngleQuaternion( ang, test );
 	float d = QuaternionDotProduct( q, test );
-	Assert( fabs(d) > 0.99 && fabs(d) < 1.01 );
+	Assert( fabsf(d) > 0.99 && fabsf(d) < 1.01 );
 #endif
 
 	MatrixGetColumn( matrix, 3, pos );
@@ -369,7 +369,7 @@ bool MatricesAreEqual( const matrix3x4_t &src1, const matrix3x4_t &src2, float f
 	{
 		for ( int j = 0; j < 4; ++j )
 		{
-			if ( fabs( src1[i][j] - src2[i][j] ) > flTolerance )
+			if ( fabsf( src1[i][j] - src2[i][j] ) > flTolerance )
 				return false;
 		}
 	}
@@ -1675,7 +1675,7 @@ float QuaternionAngleDiff( const Quaternion &p, const Quaternion &q )
 
 	// Note if the quaternion is slightly non-normalized the square root below may be more than 1,
 	// the value is clamped to one otherwise it may result in asin() returning an undefined result.
-	float sinang = MIN( 1.0f, sqrt( diff.x * diff.x + diff.y * diff.y + diff.z * diff.z ) );
+	float sinang = MIN( 1.0f, (float)sqrt( diff.x * diff.x + diff.y * diff.y + diff.z * diff.z ) );
 	float angle = RAD2DEG( 2 * asin( sinang ) );
 	return angle;
 #else
@@ -1689,7 +1689,7 @@ float QuaternionAngleDiff( const Quaternion &p, const Quaternion &q )
 	{
 		if ( cosom < 1.0f )
 		{
-			float omega = 2 * fabs( acos( cosom ) );
+			float omega = 2 * fabsf( acos( cosom ) );
 			return RAD2DEG( omega );
 		}
 		return 0.0f;
@@ -1764,7 +1764,7 @@ void QuaternionScale( const Quaternion &p, float t, Quaternion &q )
 	p0.Init( 0.0, 0.0, 0.0, 1.0 );
 
 	// slerp in "reverse order" so that p doesn't get realigned
-	QuaternionSlerp( p, p0, 1.0 - fabs( t ), q );
+	QuaternionSlerp( p, p0, 1.0 - fabsf( t ), q );
 	if (t < 0.0)
 	{
 		q.w = -q.w;
@@ -2101,9 +2101,9 @@ void AngleQuaternion( const QAngle &angles, Quaternion &outQuat )
 //-----------------------------------------------------------------------------
 void BasisToQuaternion( const Vector &vecForward, const Vector &vecRight, const Vector &vecUp, Quaternion &q )
 {
-	Assert( fabs( vecForward.LengthSqr() - 1.0f ) < 1e-3 );
-	Assert( fabs( vecRight.LengthSqr() - 1.0f ) < 1e-3 );
-	Assert( fabs( vecUp.LengthSqr() - 1.0f ) < 1e-3 );
+	Assert( fabsf( vecForward.LengthSqr() - 1.0f ) < 1e-3 );
+	Assert( fabsf( vecRight.LengthSqr() - 1.0f ) < 1e-3 );
+	Assert( fabsf( vecUp.LengthSqr() - 1.0f ) < 1e-3 );
 
 	Vector vecLeft;
 	VectorMultiply( vecRight, -1.0f, vecLeft );
@@ -2168,10 +2168,10 @@ void BasisToQuaternion( const Vector &vecForward, const Vector &vecRight, const 
 //	Quaternion q2;
 	AngleQuaternion( angles, q );
 
-//	Assert( fabs(q.x - q2.x) < 1e-3 );
-//	Assert( fabs(q.y - q2.y) < 1e-3 );
-//	Assert( fabs(q.z - q2.z) < 1e-3 );
-//	Assert( fabs(q.w - q2.w) < 1e-3 );
+//	Assert( fabsf(q.x - q2.x) < 1e-3 );
+//	Assert( fabsf(q.y - q2.y) < 1e-3 );
+//	Assert( fabsf(q.z - q2.z) < 1e-3 );
+//	Assert( fabsf(q.w - q2.w) < 1e-3 );
 }
 
 // FIXME: Optimize!
@@ -2676,7 +2676,7 @@ void Cubic_Spline(
 
 	output.Init();
 
-	Vector a, b, c, d;
+	Vector b, c;
 
 	// matrix row 1
 	VectorScale( p2, tSqrSqr * 2, b );
@@ -2811,7 +2811,7 @@ void Parabolic_Spline(
 
 	output.Init();
 
-	Vector a, b, c, d;
+	Vector a, b, c;
 
 	// matrix row 1
 	// no influence from t cubed
@@ -2873,9 +2873,9 @@ float RangeCompressor( float flValue, float flMin, float flMax, float flBase )
 	// convert to -1 to 1 value
 	float flTarget = flMid * 2 - 1;
 
-	if (fabs(flTarget) > 0.75)
+	if (fabsf(flTarget) > 0.75)
 	{
-		float t = (fabs(flTarget) - 0.75) / (1.25);
+		float t = (fabsf(flTarget) - 0.75) / (1.25);
 		if (t < 1.0)
 		{
 			if (flTarget > 0)
@@ -3264,12 +3264,12 @@ bool CalcLineToLineIntersectionSegment(
    p43.y = p4.y - p3.y;
    p43.z = p4.z - p3.z;
 
-   if (fabs(p43.x)  < LINE_EPS && fabs(p43.y)  < LINE_EPS && fabs(p43.z)  < LINE_EPS)
+   if (fabsf(p43.x)  < LINE_EPS && fabsf(p43.y)  < LINE_EPS && fabsf(p43.z)  < LINE_EPS)
       return false;
    p21.x = p2.x - p1.x;
    p21.y = p2.y - p1.y;
    p21.z = p2.z - p1.z;
-   if (fabs(p21.x)  < LINE_EPS && fabs(p21.y)  < LINE_EPS && fabs(p21.z)  < LINE_EPS)
+   if (fabsf(p21.x)  < LINE_EPS && fabsf(p21.y)  < LINE_EPS && fabsf(p21.z)  < LINE_EPS)
       return false;
 
    d1343 = p13.x * p43.x + p13.y * p43.y + p13.z * p43.z;
@@ -3279,7 +3279,7 @@ bool CalcLineToLineIntersectionSegment(
    d2121 = p21.x * p21.x + p21.y * p21.y + p21.z * p21.z;
 
    denom = d2121 * d4343 - d4321 * d4321;
-   if (fabs(denom) < LINE_EPS)
+   if (fabsf(denom) < LINE_EPS)
       return false;
    numer = d1343 * d4321 - d1321 * d4343;
 
@@ -3330,16 +3330,9 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 	pfFastSinCos = SinCos;
 	pfFastCos = cosf;
 
-	if ( bAllowMMX && pi.m_bMMX )
-	{
-		// Select the MMX specific routines if available
-		// (MMX routines were used by SW span fillers - not currently used for HW)
-		s_bMMXEnabled = true;
-	}
-	else
-	{
-		s_bMMXEnabled = false;
-	}
+	// Select the MMX specific routines if available
+	// (MMX routines were used by SW span fillers - not currently used for HW)
+	s_bMMXEnabled = bAllowMMX && pi.m_bMMX;
 
 	// SSE Generally performs better than 3DNow when present, so this is placed 
 	// first to allow SSE to override these settings.
@@ -3536,7 +3529,7 @@ float AngleNormalizePositive( float angle )
 //--------------------------------------------------------------------------------------------------------------
 bool AnglesAreEqual( float a, float b, float tolerance )
 {
-	return (fabs( AngleDiff( a, b ) ) < tolerance);
+	return (fabsf( AngleDiff( a, b ) ) < tolerance);
 }
 
 void RotationDeltaAxisAngle( const QAngle &srcAngles, const QAngle &destAngles, Vector &deltaAxis, float &deltaAngle )
@@ -3601,7 +3594,7 @@ int PolyFromPlane( Vector *outVerts, const Vector& normal, float dist, float fHa
 	x = -1;
 	for (i=0 ; i<3; i++)
 	{
-		v = fabs(normal[i]);
+		v = fabsf(normal[i]);
 		if (v > max)
 		{
 			x = i;
@@ -4010,7 +4003,7 @@ void CalcTriangleTangentSpace( const Vector &p0, const Vector &p1, const Vector 
 
 	Vector cross;
 	CrossProduct( edge01, edge02, cross );
-	if ( fabs( cross.x ) > SMALL_FLOAT )
+	if ( fabsf( cross.x ) > SMALL_FLOAT )
 	{
 		sVect.x += -cross.y / cross.x;
 		tVect.x += -cross.z / cross.x;
@@ -4021,7 +4014,7 @@ void CalcTriangleTangentSpace( const Vector &p0, const Vector &p1, const Vector 
 	edge02.Init( p2.y - p0.y, t2.x - t0.x, t2.y - t0.y );
 
 	CrossProduct( edge01, edge02, cross );
-	if ( fabs( cross.x ) > SMALL_FLOAT )
+	if ( fabsf( cross.x ) > SMALL_FLOAT )
 	{
 		sVect.y += -cross.y / cross.x;
 		tVect.y += -cross.z / cross.x;
@@ -4032,7 +4025,7 @@ void CalcTriangleTangentSpace( const Vector &p0, const Vector &p1, const Vector 
 	edge02.Init( p2.z - p0.z, t2.x - t0.x, t2.y - t0.y );
 
 	CrossProduct( edge01, edge02, cross );
-	if( fabs( cross.x ) > SMALL_FLOAT )
+	if( fabsf( cross.x ) > SMALL_FLOAT )
 	{
 		sVect.z += -cross.y / cross.x;
 		tVect.z += -cross.z / cross.x;

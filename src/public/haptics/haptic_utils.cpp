@@ -221,7 +221,6 @@ void UpdateAvatarEffect(void)
 
 	Vector vel;
 	Vector vvel;
-	Vector evel;
 	QAngle eye;
 	C_BasePlayer* pPlayer = C_BasePlayer::GetLocalPlayer();
 	if(!pPlayer)
@@ -247,7 +246,7 @@ void UpdateAvatarEffect(void)
 		vel = pPlayer->GetAbsVelocity();
 	}
 
-	Vector PlayerVel = pPlayer->GetAbsVelocity();
+	const Vector& PlayerVel = pPlayer->GetAbsVelocity();
 
 	//Choreo vehicles use player avatar and don't produce their own velocity
 	if(!pPlayer->GetVehicle() || fabsf(vvel.Length()) == 0 )
@@ -257,8 +256,6 @@ void UpdateAvatarEffect(void)
 	else
 		vel = vvel;
 
-
-	
 	VectorYawRotate(vel, -90 -eye[YAW], vel );
 
 	vel.y = -vel.y;

@@ -491,7 +491,7 @@ void CAI_LeadBehavior::GatherConditions( void )
 				ClearCondition( COND_LEAD_SUCCESS );
 
 				// Check Z first, and only check 2d if we're within that
-				bool bWithinZ = fabs(GetLocalOrigin().z - m_goal.z) < 64;
+				bool bWithinZ = fabsf(GetLocalOrigin().z - m_goal.z) < 64;
 				if ( bWithinZ && (GetLocalOrigin() - m_goal).Length2D() <= 64 )
 				{
 					if ( HasCondition( COND_LEAD_FOLLOWER_VERY_CLOSE ) )
@@ -913,7 +913,7 @@ void CAI_LeadBehavior::RunTask( const Task_t *pTask )
 					// Transition to a walk when we get near the player
 					// Check Z first, and only check 2d if we're within that
 					Vector vecGoalPos = GetNavigator()->GetGoalPos();
-					float distance = fabs(vecGoalPos.z - GetLocalOrigin().z);
+					float distance = fabsf(vecGoalPos.z - GetLocalOrigin().z);
 					bool bWithinZ = false;
 					if ( distance < m_retrievedistance )
 					{

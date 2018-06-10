@@ -709,7 +709,7 @@ void CFuncRotating::Spawn( )
 	// Did level designer forget to assign a maximum speed? Prevent a divide by
 	// zero in RampPitchVol as well as allowing the rotator to work.
 	//
-	m_flMaxSpeed = fabs( m_flMaxSpeed );
+	m_flMaxSpeed = fabsf( m_flMaxSpeed );
 	if (m_flMaxSpeed == 0)
 	{
 		m_flMaxSpeed = 100;
@@ -838,7 +838,7 @@ void CFuncRotating::RampPitchVol( void )
 	//
 	// Calc volume and pitch as % of maximum vol and pitch.
 	//
-	float fpct = fabs(m_flSpeed) / m_flMaxSpeed;
+	float fpct = fabsf(m_flSpeed) / m_flMaxSpeed;
 	float fvol = clamp(m_flVolume * fpct, 0.f, 1.f);			  // slowdown volume ramps down to 0
 
 	float fpitch = FANPITCHMIN + (FANPITCHMAX - FANPITCHMIN) * fpct;	
@@ -909,7 +909,7 @@ void CFuncRotating::UpdateSpeed( float flNewSpeed )
 
 		if ( flNewSpeed < 100 )
 		{
-			if ( flNewSpeed <= 25 && fabs( angDelta ) < 1.0f )
+			if ( flNewSpeed <= 25 && fabsf( angDelta ) < 1.0f )
 			{
 				m_flTargetSpeed = 0;
 				m_bStopAtStartPos = false;
@@ -917,14 +917,14 @@ void CFuncRotating::UpdateSpeed( float flNewSpeed )
 
 				SetLocalAngles( m_angStart );
 			}
-			else if ( fabs( angDelta ) > 90.0f )
+			else if ( fabsf( angDelta ) > 90.0f )
 			{
 				// Keep rotating at same speed for now
 				m_flSpeed = flOldSpeed;
 			}
 			else
 			{
-				float minSpeed =  fabs( angDelta );
+				float minSpeed =  fabsf( angDelta );
 				if ( minSpeed < 20 )
 					minSpeed = 20;
 	
@@ -975,8 +975,8 @@ void CFuncRotating::SpinUpMove( void )
 	// Calculate our new speed.
 	//
 	bool bSpinUpDone = false;
-	float flNewSpeed = fabs( m_flSpeed ) + 0.2 * m_flMaxSpeed * m_flFanFriction;
-	if ( fabs( flNewSpeed ) >=  fabs( m_flTargetSpeed ) )
+	float flNewSpeed = fabsf( m_flSpeed ) + 0.2 * m_flMaxSpeed * m_flFanFriction;
+	if ( fabsf( flNewSpeed ) >=  fabsf( m_flTargetSpeed ) )
 	{
 		// Reached our target speed.
 		flNewSpeed = m_flTargetSpeed;
@@ -1017,13 +1017,13 @@ bool CFuncRotating::SpinDown( float flTargetSpeed )
 	// Bleed off a little speed due to friction.
 	//
 	bool bSpinDownDone = false;
-	float flNewSpeed = fabs( m_flSpeed ) - 0.1 * m_flMaxSpeed * m_flFanFriction;
+	float flNewSpeed = fabsf( m_flSpeed ) - 0.1 * m_flMaxSpeed * m_flFanFriction;
 	if ( flNewSpeed < 0 )
 	{
 		flNewSpeed = 0;
 	}
 
-	if ( fabs( flNewSpeed ) <= fabs( flTargetSpeed ) )
+	if ( fabsf( flNewSpeed ) <= fabsf( flTargetSpeed ) )
 	{
 		// Reached our target speed.
 		flNewSpeed = flTargetSpeed;
@@ -1115,7 +1115,7 @@ void CFuncRotating::RotateMove( void )
 		// Delta per tick
 		QAngle avelpertick = avel * TICK_INTERVAL;
 
-		if ( fabs( angDelta ) < fabs( avelpertick[ checkAxis ] ) )
+		if ( fabsf( angDelta ) < fabsf( avelpertick[ checkAxis ] ) )
 		{
 			SetTargetSpeed( 0 );
 			SetLocalAngles( m_angStart );
@@ -1157,7 +1157,7 @@ void CFuncRotating::SetTargetSpeed( float flSpeed )
 	// Make sure the sign is correct - positive for forward rotation,
 	// negative for reverse rotation.
 	//
-	flSpeed = fabs( flSpeed );
+	flSpeed = fabsf( flSpeed );
 	if ( m_bReversed )
 	{
 		flSpeed *= -1;
@@ -1189,14 +1189,14 @@ void CFuncRotating::SetTargetSpeed( float flSpeed )
 		//
 		// If we are below the new target speed, spin up to the target speed.
 		//
-		else if ( fabs( m_flSpeed ) < fabs( m_flTargetSpeed ) )
+		else if ( fabsf( m_flSpeed ) < fabsf( m_flTargetSpeed ) )
 		{
 			SetMoveDone( &CFuncRotating::SpinUpMove );
 		}
 		//
 		// If we are above the new target speed, spin down to the target speed.
 		//
-		else if ( fabs( m_flSpeed ) > fabs( m_flTargetSpeed ) )
+		else if ( fabsf( m_flSpeed ) > fabsf( m_flTargetSpeed ) )
 		{
 			SetMoveDone( &CFuncRotating::SpinDownMove );
 		}
@@ -1259,7 +1259,7 @@ void CFuncRotating::InputSetSpeed( inputdata_t &inputdata )
 	m_bStopAtStartPos = false;
 	float flSpeed = inputdata.value.Float();
 	m_bReversed = flSpeed < 0 ? true : false;
-	flSpeed = fabs(flSpeed);
+	flSpeed = fabsf(flSpeed);
 	SetTargetSpeed( clamp( flSpeed, 0.f, 1.f ) * m_flMaxSpeed );
 }
 

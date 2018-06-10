@@ -79,10 +79,10 @@ void DrawSmokeFogOverlay()
 	static float dist = 10;
 
 	Vector vColor = g_SmokeFogOverlayColor;
-	vColor.x = MIN(MAX(vColor.x, 0), 1);
-	vColor.y = MIN(MAX(vColor.y, 0), 1);
-	vColor.z = MIN(MAX(vColor.z, 0), 1);
-	float alpha = MIN(MAX(g_SmokeFogOverlayAlpha, 0), 1);
+	vColor.x = MIN(MAX(vColor.x, 0.f), 1.f);
+	vColor.y = MIN(MAX(vColor.y, 0.f), 1.f);
+	vColor.z = MIN(MAX(vColor.z, 0.f), 1.f);
+	float alpha = MIN(MAX(g_SmokeFogOverlayAlpha, 0.f), 1.f);
 
 	meshBuilder.Begin( pMesh, MATERIAL_QUADS, 1 );
 

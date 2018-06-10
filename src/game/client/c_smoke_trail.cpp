@@ -45,7 +45,7 @@ public:
 		pParticle->m_flRollDelta += pParticle->m_flRollDelta * ( timeDelta * -8.0f );
 
 		//Cap the minimum roll
-		if ( fabs( pParticle->m_flRollDelta ) < 0.5f )
+		if ( fabsf( pParticle->m_flRollDelta ) < 0.5f )
 		{
 			pParticle->m_flRollDelta = ( pParticle->m_flRollDelta > 0.0f ) ? 0.5f : -0.5f;
 		}
@@ -108,7 +108,7 @@ public:
 		pParticle->m_flRollDelta += pParticle->m_flRollDelta * ( timeDelta * -8.0f );
 
 		//Cap the minimum roll
-		if ( fabs( pParticle->m_flRollDelta ) < 0.5f )
+		if ( fabsf( pParticle->m_flRollDelta ) < 0.5f )
 		{
 			pParticle->m_flRollDelta = ( pParticle->m_flRollDelta > 0.0f ) ? 0.5f : -0.5f;
 		}
@@ -1489,8 +1489,6 @@ void C_FireTrail::Update( float fTimeDelta )
 	CSmartPtr<CSimpleEmitter> pSimple = CSimpleEmitter::Create( "FireTrail" );
 	pSimple->SetSortOrigin( GetAbsOrigin() );
 	
-	Vector			offset;
-
 #define	STARTSIZE			8
 #define	ENDSIZE				16
 #define	PARTICLE_LIFETIME	0.075f
@@ -1510,7 +1508,6 @@ void C_FireTrail::Update( float fTimeDelta )
 
 		SimpleParticle	*pParticle;
 		Vector			offset;
-		Vector			offsetColor;
 		float			step = moveLength / numPuffs;
 
 		//Fill in the gaps

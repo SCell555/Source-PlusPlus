@@ -1610,7 +1610,7 @@ int CParticleMgr::ComputeParticleDefScreenArea( int nInfoCount, RetireInfo_t *pI
 		pInfo[nCollection].m_pCollection = pCollection;
 		pInfo[nCollection].m_bFirstFrame = false;
 
-		Vector vecCenter, vecScreenCenter, vecCenterCam;
+		Vector vecCenter, vecScreenCenter;
 		vecCenter = pCollection->GetControlPointAtCurrentTime( pDef->GetCullControlPoint() );
 
 		Vector3DMultiplyPositionProjective( worldToPixels, vecCenter, vecScreenCenter );
@@ -1619,11 +1619,11 @@ int CParticleMgr::ComputeParticleDefScreenArea( int nInfoCount, RetireInfo_t *pI
 		float flProjRadius = ( lSqr > flCullRadiusSqr ) ? 0.5f * flFocalDist * flCullRadius / sqrt( lSqr - flCullRadiusSqr ) : 1.0f;
 		flProjRadius *= view.width;
 
-		float flMinX = MAX( view.x, vecScreenCenter.x - flProjRadius );
-		float flMaxX = MIN( view.x + view.width, vecScreenCenter.x + flProjRadius );
+		float flMinX = MAX( static_cast<float>( view.x ), vecScreenCenter.x - flProjRadius );
+		float flMaxX = MIN( static_cast<float>( view.x ) + view.width, vecScreenCenter.x + flProjRadius );
 
-		float flMinY = MAX( view.y, vecScreenCenter.y - flProjRadius );
-		float flMaxY = MIN( view.y + view.height, vecScreenCenter.y + flProjRadius );
+		float flMinY = MAX( static_cast<float>( view.y ), vecScreenCenter.y - flProjRadius );
+		float flMaxY = MIN( static_cast<float>( view.y ) + view.height, vecScreenCenter.y + flProjRadius );
 
 		float flArea = ( flMaxX - flMinX ) * ( flMaxY - flMinY );
 		Assert( flArea <= flMaxPixels );
@@ -1728,7 +1728,6 @@ bool CParticleMgr::EarlyRetireParticleSystems( int nCount, ParticleSimListEntry_
 		ppEffects[i].m_pNewParticleEffect->MarkShouldPerformCullCheck( true );
 	}
 
-	Vector vecCameraForward;
 	VMatrix worldToView, viewToProjection, worldToProjection, worldToScreen;
 	render->GetMatricesForView( *pViewSetup, &worldToView, &viewToProjection, &worldToProjection, &worldToScreen );
 	float flFocalDist = tan( DEG2RAD( pViewSetup->fov * 0.5f ) );

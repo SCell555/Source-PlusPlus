@@ -712,8 +712,6 @@ public:
 
 LINK_ENTITY_TO_CLASS( hammer_updateignorelist, CWC_UpdateIgnoreList );
 
-#pragma warning( push )
-#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CWC_UpdateIgnoreList )
 
 	// Be still, classcheck!
@@ -737,7 +735,7 @@ BEGIN_DATADESC( CWC_UpdateIgnoreList )
 	DEFINE_KEYFIELD( m_nIgnoredEntityNames[15], FIELD_STRING, "IgnoredName16" ),
 
 END_DATADESC()
-#pragma warning( pop )
+
 
 
 CON_COMMAND( hammer_update_entity, "Updates the entity's position/angles when in edit mode" )

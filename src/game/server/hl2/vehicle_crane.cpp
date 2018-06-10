@@ -567,7 +567,7 @@ void CPropCrane::DriveCrane( int iDriverButtons, int iButtonsPressed, float flNP
 		float rumbleRange = maxRumble - minRumble;
 		float rumble;
 
-		float factor = fabs(m_flTurn) / maxTurn;
+		float factor = fabsf(m_flTurn) / maxTurn;
 		factor = MIN( factor, 1.0f );
 		rumble = minRumble + (rumbleRange * factor);
 
@@ -616,7 +616,7 @@ void CPropCrane::DriveCrane( int iDriverButtons, int iButtonsPressed, float flNP
 		}
 	}
 
-	float flSpeedPercentage = clamp( fabs(m_flTurn) / m_flMaxTurnSpeed, 0, 1 );
+	float flSpeedPercentage = clamp( fabsf(m_flTurn) / m_flMaxTurnSpeed, 0, 1 );
 	vbs_sound_update_t params;
 	params.Defaults();
 	params.bThrottleDown = (m_iTurning != TURNING_NOT);
@@ -729,7 +729,7 @@ void CPropCrane::RunCraneMovement( float flTime )
 	if ( (m_flNextCreakSound < gpGlobals->curtime) && (m_hCraneMagnet->GetTotalMassAttachedObjects() > 100) )
 	{
 		// Randomly play creaks from the magnet, and increase the chance based on the turning speed
-		float flSpeedPercentage = clamp( fabs(m_flTurn) / m_flMaxTurnSpeed, 0, 1 );
+		float flSpeedPercentage = clamp( fabsf(m_flTurn) / m_flMaxTurnSpeed, 0, 1 );
 		if ( RandomFloat(0,1) > (0.95 - (0.1 * flSpeedPercentage)) )
 		{
 			if ( m_ServerVehicle.m_vehicleSounds.iszSound[VS_MISC4] != NULL_STRING )

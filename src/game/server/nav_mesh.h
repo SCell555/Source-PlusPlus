@@ -199,8 +199,8 @@ public:
 	unsigned int operator()( const NavVisPair_t &item ) const
 	{
 		COMPILE_TIME_ASSERT( sizeof(CNavArea *) == 4 );
-		int key[2] = { (int)item.pAreas[0] + (int)item.pAreas[1]->GetID(), (int)item.pAreas[1] + (int)item.pAreas[0]->GetID() };
-		return Hash8( key );	
+		uint32 key[2] = { (uint32)item.pAreas[0] + item.pAreas[1]->GetID(), (uint32)item.pAreas[1] + item.pAreas[0]->GetID() };
+		return PearsonHash::Hash8( key );
 	}
 };
 
@@ -767,7 +767,7 @@ public:
 			return true;
 		}
 
-		if ( abs( to.x ) < epsilon )
+		if ( fabsf( to.x ) < epsilon )
 		{
 			NavDirType dir = ( to.y < 0.0f ) ? NORTH : SOUTH;
 
@@ -799,7 +799,7 @@ public:
 
 			return false;
 		}
-		else if ( abs( to.y ) < epsilon )
+		else if ( fabsf( to.y ) < epsilon )
 		{
 			NavDirType dir = ( to.x < 0.0f ) ? WEST : EAST;
 

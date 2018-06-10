@@ -522,7 +522,7 @@ int CNPC_Bullsquid::RangeAttack1Conditions( float flDot, float flDist )
 	{
 		if ( GetEnemy() != NULL )
 		{
-			if ( fabs( GetAbsOrigin().z - GetEnemy()->GetAbsOrigin().z ) > 256 )
+			if ( fabsf( GetAbsOrigin().z - GetEnemy()->GetAbsOrigin().z ) > 256 )
 			{
 				// don't try to spit at someone up really high or down really low.
 				return( COND_NONE );

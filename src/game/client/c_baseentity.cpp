@@ -3329,7 +3329,7 @@ void C_BaseEntity::ComputeFxBlend( void )
 		break;
 	
 	case kRenderFxPulseFastWider:
-		blend = ( 0xff * fabs(sin( gpGlobals->curtime * 12 + offset ) ) );
+		blend = ( 0xff * fabsf(sin( gpGlobals->curtime * 12 + offset ) ) );
 		break;
 
 	case kRenderFxPulseSlow:
@@ -3842,6 +3842,36 @@ void C_BaseEntity::operator delete( void *pMem )
 {
 	// get the engine to free the memory
 	MemAlloc_Free( pMem );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+// Input  : *pMem -
+//-----------------------------------------------------------------------------
+void C_BaseEntity::operator delete( void *pMem, int nBlockUse, const char *pFileName, int nLine )
+{
+	// get the engine to free the memory
+	MemAlloc_Free( pMem, pFileName, nLine );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+// Input  : *pMem -
+//-----------------------------------------------------------------------------
+void C_BaseEntity::operator delete[]( void *pMem )
+{
+	// get the engine to free the memory
+	MemAlloc_Free( pMem );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+// Input  : *pMem -
+//-----------------------------------------------------------------------------
+void C_BaseEntity::operator delete[]( void *pMem, int nBlockUse, const char *pFileName, int nLine )
+{
+	// get the engine to free the memory
+	MemAlloc_Free( pMem, pFileName, nLine );
 }
 
 #include "tier0/memdbgon.h"

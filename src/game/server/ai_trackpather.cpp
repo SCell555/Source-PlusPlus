@@ -349,7 +349,7 @@ CPathTrack *CAI_TrackPather::ComputeLeadingPointAlongPath( const Vector &vecStar
 				CPathTrack *pFirstTrack, float flDistance, Vector *pTarget )
 {
 	bool bMovingForward = (flDistance > 0.0f);
-	flDistance = fabs(flDistance);
+	flDistance = fabsf(flDistance);
 
 	CPathTrack *pTravPath = pFirstTrack;
 	if ( (!bMovingForward) && pFirstTrack->GetPrevious() )

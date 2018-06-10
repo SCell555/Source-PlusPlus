@@ -52,7 +52,7 @@ inline float cube( float f )
 // Constructor
 //-----------------------------------------------------------------------------
 
-CAI_PlaneSolver::CAI_PlaneSolver( CAI_BaseNPC *pNpc ) 
+CAI_PlaneSolver::CAI_PlaneSolver( CAI_BaseNPC *pNpc )
  :	m_pNpc( pNpc ),
 	m_fSolvedPrev( false ),
 	m_PrevTarget( FLT_MAX, FLT_MAX, FLT_MAX ),
@@ -100,9 +100,9 @@ bool CAI_PlaneSolver::MoveLimit( Navigation_t navType, const Vector &target, boo
 	}
 
 	CAI_MoveProbe *pProbe = m_pNpc->GetMoveProbe();
-	return pProbe->MoveLimit( navType, GetLocalOrigin(), target, contents, 
-		m_pNpc->GetNavTargetEntity(), (fCheckStep) ? 100 : 0, 
-							  flags, 
+	return pProbe->MoveLimit( navType, GetLocalOrigin(), target, contents,
+		m_pNpc->GetNavTargetEntity(), (fCheckStep) ? 100 : 0,
+							  flags,
 							  pMoveTrace );
 }
 
@@ -181,7 +181,7 @@ float CAI_PlaneSolver::AdjustRegulationWeight( CBaseEntity *pEntity, float weigh
 				{
 					weight *= sq( weight );
 				}
-				else 
+				else
 					weight *= weight;
 			}
 		}
@@ -195,7 +195,7 @@ float CAI_PlaneSolver::AdjustRegulationWeight( CBaseEntity *pEntity, float weigh
 float CAI_PlaneSolver::CalculateRegulationWeight( const AIMoveTrace_t &moveTrace, float pctBlocked )
 {
 	float weight = 0;
-	
+
 	if ( pctBlocked > 0.9)
 		weight = 1;
 	else if ( pctBlocked < 0.1)
@@ -211,8 +211,8 @@ float CAI_PlaneSolver::CalculateRegulationWeight( const AIMoveTrace_t &moveTrace
 
 //-----------------------------------------------------------------------------
 
-void CAI_PlaneSolver::GenerateSuggestionFromTrace( const AILocalMoveGoal_t &goal, 
-												   const AIMoveTrace_t &moveTrace, float probeDist, 
+void CAI_PlaneSolver::GenerateSuggestionFromTrace( const AILocalMoveGoal_t &goal,
+												   const AIMoveTrace_t &moveTrace, float probeDist,
 												   float arcCenter, float arcSpan, int probeOffset )
 {
 	AI_MoveSuggestion_t suggestion;
@@ -224,28 +224,28 @@ void CAI_PlaneSolver::GenerateSuggestionFromTrace( const AILocalMoveGoal_t &goal
 		case AIMR_BLOCKED_WORLD:	type = AIMST_AVOID_WORLD;	break;
 		case AIMR_BLOCKED_NPC:		type = AIMST_AVOID_NPC;		break;
 		case AIMR_ILLEGAL:			type = AIMST_AVOID_DANGER;	break;
-		default:					type = AIMST_NO_KNOWLEDGE;	AssertMsg( 0, "Unexpected mode status" ); break; 
+		default:					type = AIMST_NO_KNOWLEDGE;	AssertMsg( 0, "Unexpected mode status" ); break;
 	}
 
 	if ( goal.pMoveTarget != NULL && goal.pMoveTarget == moveTrace.pObstruction )
 	{
 		suggestion.Set( type, 0,
-						arcCenter, arcSpan, 
+						arcCenter, arcSpan,
 						moveTrace.pObstruction );
-						
+
 		m_Solver.AddRegulation( suggestion );
 
 		return;
 	}
-	
+
 	float clearDist = probeDist - moveTrace.flDistObstructed;
 	float pctBlocked = 1.0 - ( clearDist / probeDist );
-	
+
 	float weight = CalculateRegulationWeight( moveTrace, pctBlocked );
 
 	if ( weight < 0.001 )
 		return;
-	
+
 	if ( pctBlocked < 0.5 )
 	{
 		arcSpan *= pctBlocked * 2.0;
@@ -254,11 +254,11 @@ void CAI_PlaneSolver::GenerateSuggestionFromTrace( const AILocalMoveGoal_t &goal
 	Vector vecToEnd = moveTrace.vEndPosition - GetLocalOrigin();
 	Vector crossProduct;
 	bool favorLeft = false, favorRight = false;
-	
+
 	if ( moveTrace.fStatus == AIMR_BLOCKED_NPC )
 	{
 		Vector vecToOther = moveTrace.pObstruction->GetLocalOrigin() - GetLocalOrigin();
-		
+
 		CrossProduct(vecToEnd, vecToOther, crossProduct);
 
 		favorLeft  = ( crossProduct.z < 0 );
@@ -270,32 +270,32 @@ void CAI_PlaneSolver::GenerateSuggestionFromTrace( const AILocalMoveGoal_t &goal
 		favorLeft  = ( crossProduct.z > 0 );
 		favorRight = ( crossProduct.z < 0 );
 	}
-	
+
 	float thirdSpan = arcSpan / 3.0;
 	float favoredWeight = weight * pctBlocked;
-	
+
 	suggestion.Set( type, weight,
-					arcCenter, thirdSpan, 
+					arcCenter, thirdSpan,
 					moveTrace.pObstruction );
-					
+
 	m_Solver.AddRegulation( suggestion );
 
 	suggestion.Set( type, ( favorRight ) ? favoredWeight : weight,
-					arcCenter - thirdSpan, thirdSpan, 
+					arcCenter - thirdSpan, thirdSpan,
 					moveTrace.pObstruction );
-					
+
 	m_Solver.AddRegulation( suggestion );
 
 	suggestion.Set( type, ( favorLeft ) ? favoredWeight : weight,
-					arcCenter + thirdSpan, thirdSpan, 
+					arcCenter + thirdSpan, thirdSpan,
 					moveTrace.pObstruction );
-					
+
 	m_Solver.AddRegulation( suggestion );
 }
 
 //-----------------------------------------------------------------------------
 
-void CAI_PlaneSolver::CalcYawsFromOffset( float yawScanCenter, float spanPerProbe, int probeOffset, 
+void CAI_PlaneSolver::CalcYawsFromOffset( float yawScanCenter, float spanPerProbe, int probeOffset,
 										  float *pYawTest, float *pYawCenter )
 {
 	if ( probeOffset != 0 )
@@ -337,7 +337,7 @@ void CAI_PlaneSolver::GenerateObstacleNpcs( const AILocalMoveGoal_t &goal, float
 			if ( pAI != m_pNpc && pAI->IsAlive() && ( !goal.pPath || pAI != goal.pPath->GetTarget() ) )
 			{
 				Vector mins, maxs;
-				
+
 				pAI->CollisionProp()->WorldSpaceSurroundingBounds( &mins, &maxs );
 				if ( mins.z < maxsSelf.z + 12.0 && maxs.z > minsSelf.z - 12.0 )
 				{
@@ -355,7 +355,7 @@ void CAI_PlaneSolver::GenerateObstacleNpcs( const AILocalMoveGoal_t &goal, float
 		if ( pPlayer )
 		{
 			Vector mins, maxs;
-			
+
 			pPlayer->CollisionProp()->WorldSpaceSurroundingBounds( &mins, &maxs );
 			if ( mins.z < maxsSelf.z + 12.0 && maxs.z > minsSelf.z - 12.0 )
 			{
@@ -373,7 +373,7 @@ void CAI_PlaneSolver::GenerateObstacleNpcs( const AILocalMoveGoal_t &goal, float
 
 //-----------------------------------------------------------------------------
 
-AI_SuggestorResult_t CAI_PlaneSolver::GenerateObstacleSuggestion( const AILocalMoveGoal_t &goal, float yawScanCenter, 
+AI_SuggestorResult_t CAI_PlaneSolver::GenerateObstacleSuggestion( const AILocalMoveGoal_t &goal, float yawScanCenter,
 																  float probeDist, float spanPerProbe, int probeOffset)
 {
 	AIMoveTrace_t moveTrace;
@@ -400,52 +400,50 @@ AI_SuggestorResult_t CAI_PlaneSolver::GenerateObstacleSuggestion( const AILocalM
 	{
 		fTraceClear = MoveLimit( goal.navType, GetLocalOrigin() + probeDir * probeDist, !ProbeForNpcs(), false, &moveTrace );
 	}
-	
+
 
 	if ( !fTraceClear )
 	{
 		GenerateSuggestionFromTrace( goal, moveTrace, probeDist, arcCenter, spanPerProbe, probeOffset );
 		return SR_OK;
 	}
-	
+
 	return SR_NONE;
 }
 
 //-----------------------------------------------------------------------------
 
-AI_SuggestorResult_t CAI_PlaneSolver::GenerateObstacleSuggestions( const AILocalMoveGoal_t &goal, const AIMoveTrace_t &directTrace, 
+AI_SuggestorResult_t CAI_PlaneSolver::GenerateObstacleSuggestions( const AILocalMoveGoal_t &goal, const AIMoveTrace_t &directTrace,
 																   float distClear, float probeDist, float degreesToProbe, int nProbes )
 {
 	Assert( nProbes % 2 == 1 );
-	
+
 	PLANESOLVER_PROFILE_SCOPE( CAI_PlaneSolver_GenerateObstacleSuggestions );
-	
+
 	AI_SuggestorResult_t seekResult = SR_NONE;
 	bool				 fNewTarget = ( !m_fSolvedPrev || m_PrevTarget != goal.target );
-	
+
 	if ( fNewTarget )
 		m_RefreshSamplesTimer.Force();
 
 	if ( PLANE_SOLVER_THINK_FREQUENCY[AIStrongOpt()] == 0.0 || m_RefreshSamplesTimer.Expired() )
 	{
 		m_Solver.ClearRegulations();
-	
+
 		if ( !ProbeForNpcs() )
 			GenerateObstacleNpcs( goal, probeDist );
-			
+
 		if ( GenerateCircleObstacleSuggestions( goal, probeDist ) )
 			seekResult = SR_OK;
-		
+
 		float spanPerProbe = degreesToProbe / nProbes;
 		int   nSideProbes  = (nProbes - 1) / 2;
 		float yawGoalDir   = UTIL_VecToYaw( goal.dir );
-		
-		Vector 		  probeTarget;
-		AIMoveTrace_t moveTrace;
+
 		int			  i;
-		
+
 		// Generate suggestion from direct trace, or probe if direct trace doesn't match
-		if ( fabs( probeDist - ( distClear + directTrace.flDistObstructed ) ) < 0.1 && 
+		if ( fabsf( probeDist - ( distClear + directTrace.flDistObstructed ) ) < 0.1 &&
 			 ( ProbeForNpcs() || directTrace.fStatus != AIMR_BLOCKED_NPC ) )
 		{
 			if ( directTrace.fStatus != AIMR_OK )
@@ -458,7 +456,7 @@ AI_SuggestorResult_t CAI_PlaneSolver::GenerateObstacleSuggestions( const AILocal
 		{
 			seekResult = SR_OK;
 		}
-		
+
 		// Scan left. Note that in the left and right scan, the algorithm stops as soon
 		// as there is a clear path. This is an optimization in anticipation of the
 		// behavior of the underlying solver. This will break more often the higher
@@ -469,7 +467,7 @@ AI_SuggestorResult_t CAI_PlaneSolver::GenerateObstacleSuggestions( const AILocal
 		{
 			if ( !foundClear )
 			{
-				AI_SuggestorResult_t curSeekResult = GenerateObstacleSuggestion( goal, yawGoalDir, probeDist, 
+				AI_SuggestorResult_t curSeekResult = GenerateObstacleSuggestion( goal, yawGoalDir, probeDist,
 																				 spanPerProbe, i );
 				if ( curSeekResult == SR_OK )
 				{
@@ -494,7 +492,7 @@ AI_SuggestorResult_t CAI_PlaneSolver::GenerateObstacleSuggestions( const AILocal
 		{
 			if ( !foundClear )
 			{
-				AI_SuggestorResult_t curSeekResult = GenerateObstacleSuggestion( goal, yawGoalDir, probeDist, 
+				AI_SuggestorResult_t curSeekResult = GenerateObstacleSuggestion( goal, yawGoalDir, probeDist,
 																				 spanPerProbe, i );
 				if ( curSeekResult == SR_OK )
 				{
@@ -517,7 +515,7 @@ AI_SuggestorResult_t CAI_PlaneSolver::GenerateObstacleSuggestions( const AILocal
 			float arcCenter = yawGoalDir - 180;
 			if ( arcCenter < 0 )
 				arcCenter += 360;
-				
+
 			// Since these are not sampled every think, place a negative arc in all directions not sampled
 			m_Solver.AddRegulation( AI_MoveSuggestion_t( AIMST_NO_KNOWLEDGE, 1, arcCenter, 360 - degreesToProbe ) );
 
@@ -589,7 +587,7 @@ void CAI_PlaneSolver::AdjustSolutionForFliers( const AILocalMoveGoal_t &goal, fl
 	{
 		flUpAmount = 1.0f;
 	}
-	else if ((vecDir.z <= -flRadius) || (fabs(vecDir.z) < 1e-3))
+	else if ((vecDir.z <= -flRadius) || (fabsf(vecDir.z) < 1e-3))
 	{
 		flUpAmount = 0.0f;
 	}
@@ -603,7 +601,7 @@ void CAI_PlaneSolver::AdjustSolutionForFliers( const AILocalMoveGoal_t &goal, fl
 	// Check the deflection amount...
 	pSolution->z += flUpAmount * 5.0f;
 
-	// FIXME: Also, if we've got a bunch of regulations, we may 
+	// FIXME: Also, if we've got a bunch of regulations, we may
 	// also wish to raise up a little bit..because this indicates
 	// that we've got a bunch of stuff to avoid
 	VectorNormalize( *pSolution );
@@ -616,7 +614,7 @@ unsigned CAI_PlaneSolver::ComputeTurnBiasFlags( const AILocalMoveGoal_t &goal, c
 	if ( directTrace.fStatus == AIMR_BLOCKED_WORLD )
 	{
 		// @TODO (toml 11-11-02): stuff plane normal of hit into trace Use here to compute a bias?
-		// 
+		//
 		return 0;
 	}
 
@@ -630,19 +628,19 @@ unsigned CAI_PlaneSolver::ComputeTurnBiasFlags( const AILocalMoveGoal_t &goal, c
 
 //-----------------------------------------------------------------------------
 
-bool CAI_PlaneSolver::RunMoveSolver( const AILocalMoveGoal_t &goal, const AIMoveTrace_t &directTrace, float degreesPositiveArc, 
+bool CAI_PlaneSolver::RunMoveSolver( const AILocalMoveGoal_t &goal, const AIMoveTrace_t &directTrace, float degreesPositiveArc,
 									 bool fDeterOscillation, Vector *pResult )
 {
 	PLANESOLVER_PROFILE_SCOPE( CAI_PlaneSolver_RunMoveSolver );
-		
+
 	AI_MoveSolution_t solution;
-	
+
 	if ( m_Solver.HaveRegulations() )
 	{
 		// @TODO (toml 07-19-02): add a movement threshhold here (the target may be the same,
 		// but the ai is nowhere near where the last solution was derived)
 		bool fNewTarget = ( !m_fSolvedPrev || m_PrevTarget != goal.target );
-		
+
 		// For debugging, visualize our regulations
 		VisualizeRegulations();
 
@@ -715,14 +713,14 @@ bool CAI_PlaneSolver::RunMoveSolver( const AILocalMoveGoal_t &goal, const AIMove
 		}
 		return true;
 	}
-	
+
 	return false;
 }
 
 //-----------------------------------------------------------------------------
 
-float CAI_PlaneSolver::CalcProbeDist( float speed )	
-{ 
+float CAI_PlaneSolver::CalcProbeDist( float speed )
+{
 	// one second or one hull
 	float result = GetLookaheadTime() * speed;
 	if ( result < m_pNpc->GetMoveProbe()->GetHullWidth() )
@@ -748,7 +746,7 @@ bool CAI_PlaneSolver::GenerateCircleObstacleSuggestions( const AILocalMoveGoal_t
 
 	m_pNpc->CollisionProp()->WorldSpaceSurroundingBounds( &mins, &maxs );
 	float radiusNpc = (mins.AsVector2D() - maxs.AsVector2D()).Length() * 0.5;
-	
+
 	for ( int i = 0; i < m_Obstacles.Count(); i++ )
 	{
 		CBaseEntity *pObstacleEntity = NULL;
@@ -769,8 +767,8 @@ bool CAI_PlaneSolver::GenerateCircleObstacleSuggestions( const AILocalMoveGoal_t
 		}
 		else
 			zDistTooFar = GetNpc()->GetHullHeight();
-			
-		if ( fabs( m_Obstacles[i].center.z - npcLoc.z ) > zDistTooFar )
+
+		if ( fabsf( m_Obstacles[i].center.z - npcLoc.z ) > zDistTooFar )
 			continue;
 
 		Vector vecToNpc 		= npcLoc - m_Obstacles[i].center;
@@ -811,7 +809,7 @@ bool CAI_PlaneSolver::GenerateCircleObstacleSuggestions( const AILocalMoveGoal_t
 				weight = 1.0 - (distToObstacle - radius) / probeDist;
 				if ( weight > 0.75 )
 					arc += (arc * 0.5) * (weight - 0.75) / 0.25;
-				
+
 				Assert( weight >= 0.0 && weight <= 1.0 );
 
 #if DEBUG_OBSTACLES
@@ -819,11 +817,11 @@ bool CAI_PlaneSolver::GenerateCircleObstacleSuggestions( const AILocalMoveGoal_t
 				Msg( "Adding arc %f, w %f\n", arc, weight );
 
 				Vector pointTangent = npcLoc + ( vecTangent * distToTangent );
-					
+
 				NDebugOverlay::Line( npcLoc - Vector( 0, 0, 64 ), npcLoc + Vector(0,0,64), 0,255,0, false, 0.1 );
 				NDebugOverlay::Line( center - Vector( 0, 0, 64 ), center + Vector(0,0,64), 0,255,0, false, 0.1 );
 				NDebugOverlay::Line( pointTangent - Vector( 0, 0, 64 ), pointTangent + Vector(0,0,64), 0,255,0, false, 0.1 );
-				
+
 				NDebugOverlay::Line( npcLoc + Vector(0,0,64), center + Vector(0,0,64), 0,0,255, false, 0.1 );
 				NDebugOverlay::Line( center + Vector(0,0,64), pointTangent + Vector(0,0,64), 0,0,255, false, 0.1 );
 				NDebugOverlay::Line( pointTangent + Vector(0,0,64), npcLoc + Vector(0,0,64), 0,0,255, false, 0.1 );
@@ -839,13 +837,13 @@ bool CAI_PlaneSolver::GenerateCircleObstacleSuggestions( const AILocalMoveGoal_t
 			{
 				weight = AdjustRegulationWeight( m_Obstacles[i].hEntity, weight );
 			}
-			
+
 			AI_MoveSuggestion_t suggestion( m_Obstacles[i].type, weight, UTIL_VecToYaw(vecToObstacle), arc );
 			m_Solver.AddRegulation( suggestion );
 			result = true;
 		}
 	}
-	
+
 	m_Obstacles.RemoveAll();
 	return result;
 
@@ -856,9 +854,9 @@ bool CAI_PlaneSolver::GenerateCircleObstacleSuggestions( const AILocalMoveGoal_t
 bool CAI_PlaneSolver::Solve( const AILocalMoveGoal_t &goal, float distClear, Vector *pSolution )
 {
 	bool solved = false;
-	
+
 	//---------------------------------
-	
+
 	if ( goal.speed == 0 )
 		return false;
 
@@ -870,7 +868,7 @@ bool CAI_PlaneSolver::Solve( const AILocalMoveGoal_t &goal, float distClear, Vec
 	bool fVeryClose			 = ( distClear < 1.0 );
 	float degreesPositiveArc = ( !fVeryClose ) ? DEGREES_POSITIVE_ARC : DEGREES_POSITIVE_ARC_CLOSE_OBSTRUCTION;
 	float probeDist			 = CalcProbeDist( goal.speed );
-	
+
 	if ( goal.flags & ( AILMG_TARGET_IS_TRANSITION | AILMG_TARGET_IS_GOAL ) )
 	{
 		probeDist = MIN( goal.maxDist, probeDist );
@@ -887,7 +885,7 @@ bool CAI_PlaneSolver::Solve( const AILocalMoveGoal_t &goal, float distClear, Vec
 			float 		  requiredMovement = goal.speed * GetMotor()->GetMoveInterval();
 
 			MoveLimit( goal.navType, GetLocalOrigin() + *pSolution * requiredMovement, false, true, &moveTrace );
-			
+
 			if ( !IsMoveBlocked( moveTrace ) )
 				solved = true;
 			else

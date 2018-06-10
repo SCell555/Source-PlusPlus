@@ -224,7 +224,7 @@ void CNPC_Barnacle::BarnacleThink ( void )
 			m_flAltitude -= BARNACLE_PULL_SPEED;
 			vecNewEnemyOrigin.z += BARNACLE_PULL_SPEED;
 
-			if ( fabs( GetLocalOrigin().z - ( vecNewEnemyOrigin.z + GetEnemy()->GetViewOffset().z ) ) < BARNACLE_BODY_HEIGHT )
+			if ( fabsf( GetLocalOrigin().z - ( vecNewEnemyOrigin.z + GetEnemy()->GetViewOffset().z ) ) < BARNACLE_BODY_HEIGHT )
 			{
 		// prey has just been lifted into position ( if the victim origin + eye height + 8 is higher than the bottom of the barnacle, it is assumed that the head is within barnacle's body )
 				m_fLiftingPrey = FALSE;
@@ -471,7 +471,7 @@ CBaseEntity *CNPC_Barnacle::TongueTouchEnt ( float *pflLength )
 	UTIL_TraceLine ( GetAbsOrigin(), GetAbsOrigin() - Vector ( 0 , 0 , 2048 ), 
 		MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 	
-	length = fabs( GetAbsOrigin().z - tr.endpos.z );
+	length = fabsf( GetAbsOrigin().z - tr.endpos.z );
 	// Pull it up a tad
 	length -= 16;
 	if ( pflLength )

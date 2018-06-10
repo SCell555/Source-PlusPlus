@@ -251,7 +251,7 @@ void Bot_FlipOut( CPluginBot *pBot, CBotCmd &cmd )
 
 			for ( int i = 0 ; i < 2; i++ )
 			{
-				if ( fabs( pBot->m_LastAngles[ i ] - pBot->m_ForwardAngle[ i ] ) > 15.0f )
+				if ( fabsf( pBot->m_LastAngles[ i ] - pBot->m_ForwardAngle[ i ] ) > 15.0f )
 				{
 					if ( pBot->m_LastAngles[ i ] > pBot->m_ForwardAngle[ i ] )
 					{

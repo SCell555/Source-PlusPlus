@@ -20,7 +20,7 @@ static int BestAxisMatchingNormal( matrix3x4_t &matrix, const Vector &normal )
 	{
 		Vector tmp;
 		MatrixGetColumn( matrix, i, tmp );
-		float dot = fabs(DotProduct( tmp, normal ));
+		float dot = fabsf(DotProduct( tmp, normal ));
 		if ( dot > bestDot )
 		{
 			bestDot = dot;

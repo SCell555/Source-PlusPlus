@@ -54,6 +54,7 @@ protected:
 	Vector	m_vecDirection;
 	float	m_flForce;
 	int		m_fFlags;
+	float	m_flScale;
 
 	PMaterialHandle	m_Material_Smoke;
 	PMaterialHandle m_Material_Embers[2];

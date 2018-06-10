@@ -1378,11 +1378,11 @@ void CNPC_MetroPolice::AimBurstRandomly( int nMinCount, int nMaxCount, float flM
 //-----------------------------------------------------------------------------
 void CNPC_MetroPolice::RandomDirectionBetweenVectors( const Vector &vecStart, const Vector &vecEnd, Vector *pResult )
 {
-	Assert( fabs( vecStart.Length() - 1.0f ) < 1e-3 );
-	Assert( fabs( vecEnd.Length() - 1.0f ) < 1e-3 );
+	Assert( fabsf( vecStart.Length() - 1.0f ) < 1e-3 );
+	Assert( fabsf( vecEnd.Length() - 1.0f ) < 1e-3 );
 
 	float flCosAngle = DotProduct( vecStart, vecEnd );
-	if ( fabs( flCosAngle - 1.0f ) < 1e-3 )
+	if ( fabsf( flCosAngle - 1.0f ) < 1e-3 )
 	{
 		*pResult = vecStart;
 		return;
@@ -1998,7 +1998,7 @@ void CNPC_MetroPolice::AimBurstAlongSideOfEnemy( float flFollowTime )
 
 	vecShootAtVel.z = 0.0f;
 	float flTargetSpeed = VectorNormalize( vecShootAtVel );
-	float flStitchLength = MAX( AIM_IN_FRONT_OF_DEFAULT_STITCH_LENGTH, flTargetSpeed * flFollowTime * 0.9 );
+	float flStitchLength = MAX( AIM_IN_FRONT_OF_DEFAULT_STITCH_LENGTH, flTargetSpeed * flFollowTime * 0.9f );
 
 	// This defines the line of death, which, when crossed, results in damage
 	m_vecBurstLineOfDeathOrigin = vecSidePoint;
@@ -3608,7 +3608,7 @@ float CNPC_MetroPolice::StitchTightWeight( float flDist, float flSpeed, const Ve
 		return 8.0f;
 
 	// If we're on the same level, fire at him!
-	if ( ( fabs(vecTargetToGun.z) < 50.0f ) && ( flDist < STITCH_MIN_DISTANCE ) )
+	if ( ( fabsf(vecTargetToGun.z) < 50.0f ) && ( flDist < STITCH_MIN_DISTANCE ) )
 		return 1.0f;
 
 	flSpeed = clamp( flSpeed, 300.0f, 450.0f );
@@ -4698,7 +4698,6 @@ void CNPC_MetroPolice::RunTask( const Task_t *pTask )
 		{
 			AutoMovement( );
 
-			Vector vecAimPoint;
 			GetMotor()->SetIdealYawToTargetAndUpdate( m_vecBurstTargetPos, AI_KEEP_YAW_SPEED );
 
 			if ( IsActivityFinished() )
@@ -4766,7 +4765,7 @@ void CNPC_MetroPolice::RunTask( const Task_t *pTask )
 			if ( GetEnemy() && FacingIdeal() )
 			{
 				float flNewIdealYaw = CalcIdealYaw( GetEnemy()->EyePosition() );
-				if ( fabs(UTIL_AngleDiff( GetMotor()->GetIdealYaw(), flNewIdealYaw )) >= 45.0f )
+				if ( fabsf(UTIL_AngleDiff( GetMotor()->GetIdealYaw(), flNewIdealYaw )) >= 45.0f )
 				{
 					GetMotor()->SetIdealYawToTarget( GetEnemy()->EyePosition() );
 					SetTurnActivity(); 

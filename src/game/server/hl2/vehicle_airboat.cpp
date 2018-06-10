@@ -1232,18 +1232,18 @@ void CPropAirboat::UpdatePropeller()
 	}
 
 	// Update prop & blur based on new spin rate.
-	if (fabs(m_flSpinRate) > SPIN_RATE_HIGH)
+	if (fabsf(m_flSpinRate) > SPIN_RATE_HIGH)
 	{
-		if (fabs(flPrevSpinRate) <= SPIN_RATE_HIGH)
+		if (fabsf(flPrevSpinRate) <= SPIN_RATE_HIGH)
 		{
 			SetBodygroup(AIRBOAT_BODYGROUP_PROP, false);
 			SetBodygroup(AIRBOAT_BODYGROUP_BLUR, true);
 			SetSequence(LookupSequence("propeller_spin1"));
 		}
 	}
-	else if (fabs(m_flSpinRate) > SPIN_RATE_MED)
+	else if (fabsf(m_flSpinRate) > SPIN_RATE_MED)
 	{
-		if ((fabs(flPrevSpinRate) <= SPIN_RATE_MED) || (fabs(flPrevSpinRate) > SPIN_RATE_HIGH))
+		if ((fabsf(flPrevSpinRate) <= SPIN_RATE_MED) || (fabsf(flPrevSpinRate) > SPIN_RATE_HIGH))
 		{
 			SetBodygroup(AIRBOAT_BODYGROUP_PROP, true);
 			SetBodygroup(AIRBOAT_BODYGROUP_BLUR, true);
@@ -1252,7 +1252,7 @@ void CPropAirboat::UpdatePropeller()
 	}
 	else
 	{
-		if (fabs(flPrevSpinRate) > SPIN_RATE_MED)
+		if (fabsf(flPrevSpinRate) > SPIN_RATE_MED)
 		{
 			SetBodygroup(AIRBOAT_BODYGROUP_PROP, true);
 			SetBodygroup(AIRBOAT_BODYGROUP_BLUR, false);
@@ -1417,11 +1417,11 @@ void CPropAirboat::UpdateFanSound( CSoundEnvelopeController &controller, float s
 	else
 	{
 		m_bFadeOutFan = false;
-		controller.SoundChangeVolume( m_pFanSound, RemapValClamped( fabs(m_flThrottle), 0, 1.0, FAN_MIN_VOLUME, FAN_MAX_VOLUME ), 0.25 );
+		controller.SoundChangeVolume( m_pFanSound, RemapValClamped( fabsf(m_flThrottle), 0, 1.0, FAN_MIN_VOLUME, FAN_MAX_VOLUME ), 0.25 );
 		controller.SoundChangeVolume( m_pFanMaxSpeedSound, 0.0, 0.0 );
 	}
 
-	controller.SoundChangePitch( m_pFanSound, 100 * (fabs(m_flThrottle) + 0.2), 0.25 );
+	controller.SoundChangePitch( m_pFanSound, 100 * (fabsf(m_flThrottle) + 0.2), 0.25 );
 }
 
 
@@ -1444,12 +1444,12 @@ void CPropAirboat::UpdateWaterSound( CSoundEnvelopeController &controller, float
 			Vector vecVelocityWorld;
 			GetVelocity( &vecVelocityWorld, NULL );
 
-			if ( ( fabs( vecVelocityWorld.x ) > 400 ) || ( fabs( vecVelocityWorld.y ) > 400 ) || ( fabs( vecVelocityWorld.z ) > 400 ) )
+			if ( ( fabsf( vecVelocityWorld.x ) > 400 ) || ( fabsf( vecVelocityWorld.y ) > 400 ) || ( fabsf( vecVelocityWorld.z ) > 400 ) )
 			{
 				// Landed in the water. Play a splash sound.
 				EmitSound( "Airboat_impact_splash" );
 
-				if ( fabs( vecVelocityWorld.z ) > 200 )
+				if ( fabsf( vecVelocityWorld.z ) > 200 )
 				{
 					// Landed hard in the water. Play a smack sound.
 					EmitSound( "Airboat_impact_hard" );
@@ -1847,7 +1847,7 @@ void CPropAirboat::CreateDangerSounds( void )
 	float speed = m_VehiclePhysics.GetHLSpeed();
 
 	// Make danger sounds ahead of the vehicle
-	if ( fabs(speed) > 120 )
+	if ( fabsf(speed) > 120 )
 	{
 		Vector	vecSpot;
 

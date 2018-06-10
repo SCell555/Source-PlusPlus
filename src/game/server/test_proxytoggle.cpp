@@ -6,6 +6,9 @@
 //=============================================================================//
 
 #include "cbase.h"
+
+#if 0
+
 #include "baseentity.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -108,3 +111,4 @@ ConCommand cc_Test_ProxyToggle_EnableProxy( "Test_ProxyToggle_EnableProxy", Test
 ConCommand cc_Test_ProxyToggle_SetValue( "Test_ProxyToggle_SetValue", Test_ProxyToggle_SetValue, 0, FCVAR_CHEAT );
 
 
+#endif

@@ -173,7 +173,7 @@ static QAngle AlignAngles( const QAngle &angles, float cosineAlignAngle )
 		MatrixGetColumn( alignMatrix, j, vec );
 		for ( int i = 0; i < 3; i++ )
 		{
-			if ( fabs(vec[i]) > cosineAlignAngle )
+			if ( fabsf(vec[i]) > cosineAlignAngle )
 			{
 				vec[i] = SIGN(vec[i]);
 				vec[(i+1)%3] = 0;
@@ -2264,7 +2264,7 @@ bool CGrabController::UpdateObject( CBasePlayer *pPlayer, float flError )
 	float playerRadius = player2d.Length2D();
 	float flDot = DotProduct( forward, radial );
 
-	float radius = playerRadius + fabs( flDot );
+	float radius = playerRadius + fabsf( flDot );
 
 	float distance = 24 + ( radius * 2.0f );
 

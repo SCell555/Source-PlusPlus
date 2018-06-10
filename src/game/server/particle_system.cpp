@@ -32,8 +32,6 @@ IMPLEMENT_SERVERCLASS_ST_NOBASE(CParticleSystem, DT_ParticleSystem)
 	SendPropBool( SENDINFO(m_bWeatherEffect) ),
 END_SEND_TABLE()
 
-#pragma warning( push )
-#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CParticleSystem )
 	DEFINE_KEYFIELD( m_bStartActive,	FIELD_BOOLEAN, "start_active" ),
 	DEFINE_KEYFIELD( m_bWeatherEffect,	FIELD_BOOLEAN, "flag_as_weather" ),
@@ -122,7 +120,6 @@ BEGIN_DATADESC( CParticleSystem )
 	DEFINE_THINKFUNC( StartParticleSystemThink ),
 
 END_DATADESC()
-#pragma warning( pop )
 
 LINK_ENTITY_TO_CLASS( info_particle_system, CParticleSystem );
 

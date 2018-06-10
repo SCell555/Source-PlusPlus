@@ -59,7 +59,7 @@ void	UTIL_Bubbles( const Vector& mins, const Vector& maxs, int count );
 void	UTIL_Smoke( const Vector &origin, const float scale, const float framerate );
 void	UTIL_ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName = NULL );
 int		UTIL_PrecacheDecal( const char *name, bool preload = false );
-void	UTIL_EmitAmbientSound( C_BaseEntity *entity, const Vector &vecOrigin, const char *samp, float vol, soundlevel_t soundlevel, int fFlags, int pitch );
+void	UTIL_EmitAmbientSound( int entindex, const Vector &vecOrigin, const char *samp, float vol, soundlevel_t soundlevel, int fFlags, int pitch, float soundtime = 0.0f, float *duration = NULL );
 void	UTIL_SetOrigin( C_BaseEntity *entity, const Vector &vecOrigin );
 void	UTIL_ScreenShake( const Vector &center, float amplitude, float frequency, float duration, float radius, ShakeCommand_t eCommand, bool bAirShake=false );
 byte	*UTIL_LoadFileForMe( const char *filename, int *pLength );
@@ -73,7 +73,7 @@ unsigned char UTIL_ComputeEntityFade( C_BaseEntity *pEntity, float flMinDist, fl
 
 client_textmessage_t	*TextMessageGet( const char *pName );
 
-char	*VarArgs( PRINTF_FORMAT_STRING const char *format, ... );
+FMTFUNCTION_WIN( 1, 2 ) const char	*VarArgs( PRINTF_FORMAT_STRING const char *format, ... ) FMTFUNCTION( 1, 2 );
 	
 
 // Get the entity the local player is spectating (can be a player or a ragdoll entity).
@@ -89,7 +89,13 @@ void	NormalizeAngles( QAngle& angles );
 void	InterpolateAngles( const QAngle& start, const QAngle& end, QAngle& output, float frac );
 void	InterpolateVector( float frac, const Vector& src, const Vector& dest, Vector& output );
 
-const char *nexttoken(char *token, const char *str, char sep);
+const char *nexttoken( char* token, const char *str, char sep, size_t tokenLen );
+
+
+template <size_t tokenLen> const char *nexttoken( OUT_Z_ARRAY char( &token )[tokenLen], const char *str, char sep )
+{
+	return nexttoken( token, str, sep, tokenLen );
+}
 
 //-----------------------------------------------------------------------------
 // Base light indices to avoid index collision
@@ -143,7 +149,7 @@ C_BaseEntity *CreateEntityByName( const char *className );
 // does not spawn the entity
 // use the CREATE_ENTITY() macro which wraps this, instead of using it directly
 template< class T >
-T *_CreateEntity( T *newClass, const char *className )
+T *_CreateEntity( const char *className )
 {
 	T *newEnt = dynamic_cast<T*>( CreateEntityByName(className) );
 	if ( !newEnt )
@@ -155,7 +161,7 @@ T *_CreateEntity( T *newClass, const char *className )
 	return newEnt;
 }
 
-#define CREATE_ENTITY( newClass, className ) _CreateEntity( (newClass*)NULL, className )
+#define CREATE_ENTITY( newClass, className ) _CreateEntity< newClass >( className )
 #define CREATE_UNSAVED_ENTITY( newClass, className ) _CreateEntityTemplate( (newClass*)NULL, className )
 
 // Misc useful

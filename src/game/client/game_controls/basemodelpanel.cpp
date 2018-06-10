@@ -797,8 +797,8 @@ void CModelPanel::CalculateFrameDistanceInternal( const model_t *pModel )
 	float flDist = 0.0f;
 	for ( int iPoint = 0; iPoint < 8; ++iPoint )
 	{
-		float flDistZ = fabs( aXFormPoints[iPoint].z / flTanFOVy - aXFormPoints[iPoint].x );
-		float flDistY = fabs( aXFormPoints[iPoint].y / flTanFOVx - aXFormPoints[iPoint].x );
+		float flDistZ = fabsf( aXFormPoints[iPoint].z / flTanFOVy - aXFormPoints[iPoint].x );
+		float flDistY = fabsf( aXFormPoints[iPoint].y / flTanFOVx - aXFormPoints[iPoint].x );
 		float flTestDist = MAX( flDistZ, flDistY );
 		flDist = MAX( flDist, flTestDist );
 	}

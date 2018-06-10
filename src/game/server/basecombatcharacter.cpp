@@ -38,6 +38,7 @@
 #include "rumble_shared.h"
 #include "saverestoretypes.h"
 #include "nav_mesh.h"
+#include "rope.h"
 
 #ifdef NEXT_BOT
 #include "NextBot/NextBotManager.h"
@@ -83,6 +84,8 @@ BEGIN_DATADESC( CBaseCombatCharacter )
 	DEFINE_ARRAY( m_flPowerupEndTimes, FIELD_TIME, MAX_POWERUPS ),
 	DEFINE_FIELD( m_flFractionalBoost, FIELD_FLOAT ),
 #endif
+	DEFINE_UTLVECTOR( m_hTriggerFogList, FIELD_EHANDLE ),
+	DEFINE_FIELD( m_hLastFogTrigger, FIELD_EHANDLE ),
 
 	DEFINE_FIELD( m_flNextAttack, FIELD_TIME ),
 	DEFINE_FIELD( m_eHull, FIELD_INTEGER ),
@@ -359,8 +362,8 @@ bool CBaseCombatCharacter::FVisible( CBaseEntity *pEntity, int traceMask, CBaseE
 	{
 		if ( gpGlobals->curtime - g_VisibilityCache[iCache].time < VIS_CACHE_ENTRY_LIFE )
 		{
-			bool bCachedResult = !g_VisibilityCache[iCache].pBlocker.IsValid();
-			if ( bCachedResult )
+			bool bBlockerValid = g_VisibilityCache[iCache].pBlocker.IsValid();
+			if ( bBlockerValid )
 			{
 				if ( ppBlocker )
 				{
@@ -378,7 +381,8 @@ bool CBaseCombatCharacter::FVisible( CBaseEntity *pEntity, int traceMask, CBaseE
 					*ppBlocker = NULL;
 				}
 			}
-			return bCachedResult;
+
+			return !bBlockerValid;
 		}
 	}
 	else
@@ -523,20 +527,12 @@ bool CBaseCombatCharacter::FInViewCone( CBaseEntity *pEntity )
 //=========================================================
 bool CBaseCombatCharacter::FInViewCone( const Vector &vecSpot )
 {
-	Vector los = ( vecSpot - EyePosition() );
+	Vector eyepos = EyePosition();
 
 	// do this in 2D
-	los.z = 0;
-	VectorNormalize( los );
+	eyepos.z = vecSpot.z;
 
-	Vector facingDir = EyeDirection2D( );
-
-	float flDot = DotProduct( los, facingDir );
-
-	if ( flDot > m_flFieldOfView )
-		return true;
-
-	return false;
+	return PointWithinViewAngle( eyepos, vecSpot, EyeDirection2D(), m_flFieldOfView );
 }
 
 #ifdef PORTAL
@@ -1767,7 +1763,6 @@ void CBaseCombatCharacter::ThrowDirForWeaponStrip( CBaseCombatWeapon *pWeapon, c
 		VMatrix zRot;
 		MatrixBuildRotateZ( zRot, random->RandomFloat( -60.0f, 60.0f ) );
 
-		Vector vecThrow;
 		Vector3DMultiply( zRot, vecForward, *pVecThrowDir );
 
 		pVecThrowDir->z = random->RandomFloat( -0.5f, 0.5f );
@@ -2820,7 +2815,7 @@ bool CBaseCombatCharacter::Weapon_IsOnGround( CBaseCombatWeapon *pWeapon )
 		return false;
 	}
 
-	if( fabs(pWeapon->WorldSpaceCenter().z - GetAbsOrigin().z) >= 12.0f )
+	if( fabsf(pWeapon->WorldSpaceCenter().z - GetAbsOrigin().z) >= 12.0f )
 	{
 		return false;
 	}
@@ -3190,9 +3185,11 @@ void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRa
 	{
 		// Even the tiniest explosion gets attention. Don't let the radius
 		// be less than 128 units.
-		float soundRadius = MAX( 128.0f, flRadius * 1.5 );
+		float soundRadius = MAX( 128.0f, flRadius * 1.5f );
 
 		CSoundEnt::InsertSound( SOUND_COMBAT | SOUND_CONTEXT_EXPLOSION, vecSrc, soundRadius, 0.25, info.GetInflictor() );
+
+		CRopeKeyframe::ShakeRopes( vecSrc, flRadius * 1.35f, info.GetDamage() * 5.f );
 	}
 }
 
@@ -3343,6 +3340,52 @@ void CBaseCombatCharacter::DoMuzzleFlash()
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: track the last trigger_fog touched by this character
+//-----------------------------------------------------------------------------
+void CBaseCombatCharacter::OnFogTriggerStartTouch( CBaseEntity *fogTrigger )
+{
+	m_hTriggerFogList.AddToHead( fogTrigger );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: track the last trigger_fog touched by this character
+//-----------------------------------------------------------------------------
+void CBaseCombatCharacter::OnFogTriggerEndTouch( CBaseEntity *fogTrigger )
+{
+	m_hTriggerFogList.FindAndRemove( fogTrigger );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: track the last trigger_fog touched by this character
+//-----------------------------------------------------------------------------
+CBaseEntity *CBaseCombatCharacter::GetFogTrigger( void )
+{
+	float bestDist = 999999.0f;
+	CBaseEntity *bestTrigger = NULL;
+
+	for ( int i=0; i<m_hTriggerFogList.Count(); ++i )
+	{
+		CBaseEntity *fogTrigger = m_hTriggerFogList[i];
+		if ( fogTrigger != NULL )
+		{
+			float dist = WorldSpaceCenter().DistTo( fogTrigger->WorldSpaceCenter() );
+			if ( dist < bestDist )
+			{
+				bestDist = dist;
+				bestTrigger = fogTrigger;
+			}
+		}
+	}
+
+	if ( bestTrigger )
+	{
+		m_hLastFogTrigger = bestTrigger;
+	}
+
+	return m_hLastFogTrigger;
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: return true if given target cant be seen because of fog
 //-----------------------------------------------------------------------------
 bool CBaseCombatCharacter::IsHiddenByFog( const Vector &target ) const
@@ -3400,7 +3443,6 @@ float CBaseCombatCharacter::GetFogObscuredRatio( CBaseEntity *target ) const
 //-----------------------------------------------------------------------------
 float CBaseCombatCharacter::GetFogObscuredRatio( float range ) const
 {
-/* TODO: Get global fog from map somehow since nav mesh fog is gone
 	fogparams_t fog;
 	GetFogParams( &fog );
 
@@ -3414,12 +3456,18 @@ float CBaseCombatCharacter::GetFogObscuredRatio( float range ) const
 		return 1.0f;
 
 	float ratio = (range - fog.start) / (fog.end - fog.start);
-	ratio = MIN( ratio, fog.maxdensity );
+	ratio = MIN( ratio, fog.maxdensity.Get() );
 	return ratio;
-*/
-	return 0.0f;
 }
 
+extern bool GetWorldFogParams( CBaseCombatCharacter *character, fogparams_t &fog );
+bool CBaseCombatCharacter::GetFogParams( fogparams_t *fog ) const
+{
+	if ( !fog )
+		return false;
+
+	return GetWorldFogParams( const_cast< CBaseCombatCharacter * >( this ), *fog );
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: Invoke this to update our last known nav area 

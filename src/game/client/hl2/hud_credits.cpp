@@ -374,7 +374,7 @@ void CHudCredits::DrawLogo( void )
 		{
 			float flDeltaTime = ( m_flFadeTime - gpGlobals->curtime );
 
-			m_Alpha = MAX( 0, RemapValClamped( flDeltaTime, 5.0f, 0, -128, 255 ) );
+			m_Alpha = MAX( 0.f, RemapValClamped( flDeltaTime, 5.0f, 0, -128, 255 ) );
 
 			if ( flDeltaTime <= 0.0f )
 			{

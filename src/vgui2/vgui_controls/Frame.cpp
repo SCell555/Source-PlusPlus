@@ -369,23 +369,23 @@ namespace
 			Assert (tall > 0);
 			
 			bool snapped=false;
-			if (abs(snapToX - boundX) < m_iSnapRange)
+			if (fabsf(snapToX - boundX) < m_iSnapRange)
 			{
 				snapToX = boundX;
 				snapped=true;
 			}
-			else if (abs((snapToX + wide) - (boundX + boundWide)) < m_iSnapRange)
+			else if (fabsf((snapToX + wide) - (boundX + boundWide)) < m_iSnapRange)
 			{
 				snapToX = boundX + boundWide - wide;
 				snapped=true;
 			}
 
-			if (abs(snapToY - boundY) < m_iSnapRange)
+			if (fabsf(snapToY - boundY) < m_iSnapRange)
 			{
 				snapToY = boundY;
 				snapped=true;
 			}
-			else if (abs((snapToY + tall) - (boundY + boundTall)) < m_iSnapRange)
+			else if (fabsf((snapToY + tall) - (boundY + boundTall)) < m_iSnapRange)
 			{
 				snapToY = boundY + boundTall - tall;
 				snapped=true;

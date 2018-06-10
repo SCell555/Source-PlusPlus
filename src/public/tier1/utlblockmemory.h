@@ -21,8 +21,10 @@
 #include "tier0/memalloc.h"
 #include "tier0/memdbgon.h"
 
+#if defined( _MSC_VER )
 #pragma warning (disable:4100)
 #pragma warning (disable:4514)
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -60,8 +62,8 @@ public:
 		Iterator_t( I i ) : index( i ) {}
 		I index;
 
-		bool operator==( const Iterator_t it ) const	{ return index == it.index; }
-		bool operator!=( const Iterator_t it ) const	{ return index != it.index; }
+		bool operator==( const Iterator_t& it ) const	{ return index == it.index; }
+		bool operator!=( const Iterator_t& it ) const	{ return index != it.index; }
 	};
 	Iterator_t First() const							{ return Iterator_t( IsIdxValid( 0 ) ? 0 : InvalidIndex() ); }
 	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( IsIdxValid( it.index + 1 ) ? it.index + 1 : InvalidIndex() ); }

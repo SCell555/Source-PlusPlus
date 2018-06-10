@@ -120,7 +120,7 @@ CPointAngularVelocitySensor::CPointAngularVelocitySensor()
 //-----------------------------------------------------------------------------
 void CPointAngularVelocitySensor::Spawn(void)
 {
-	m_flThreshold = fabs(m_flThreshold);
+	m_flThreshold = fabsf(m_flThreshold);
 	m_nLastFireResult = AVELOCITY_SENSOR_NO_LAST_RESULT;
 	m_nLastCompareResult = AVELOCITY_SENSOR_NO_LAST_RESULT;
 	// m_flFireInterval = 0.2;
@@ -227,9 +227,9 @@ float CPointAngularVelocitySensor::SampleAngularVelocity(CBaseEntity *pEntity)
 	else
 	{
 		QAngle vecAngVel = pEntity->GetLocalAngularVelocity();
-		float flMax = MAX(fabs(vecAngVel[PITCH]), fabs(vecAngVel[YAW]));
+		float flMax = MAX((float)fabsf(vecAngVel[PITCH]), (float)fabsf(vecAngVel[YAW]));
 
-		return MAX(flMax, fabs(vecAngVel[ROLL]));
+		return MAX(flMax, (float)fabsf(vecAngVel[ROLL]));
 	}
 
 	return 0;

@@ -1728,12 +1728,12 @@ bool CNavArea::MergeEdit( CNavArea *adj )
 	// check that these areas can be merged
 	const float tolerance = 1.0f;
 	bool merge = false;
-	if (fabs( m_nwCorner.x - adj->m_nwCorner.x ) < tolerance && 
-		fabs( m_seCorner.x - adj->m_seCorner.x ) < tolerance)
+	if (fabsf( m_nwCorner.x - adj->m_nwCorner.x ) < tolerance && 
+		fabsf( m_seCorner.x - adj->m_seCorner.x ) < tolerance)
 		merge = true;
 
-	if (fabs( m_nwCorner.y - adj->m_nwCorner.y ) < tolerance && 
-		fabs( m_seCorner.y - adj->m_seCorner.y ) < tolerance)
+	if (fabsf( m_nwCorner.y - adj->m_nwCorner.y ) < tolerance && 
+		fabsf( m_seCorner.y - adj->m_seCorner.y ) < tolerance)
 		merge = true;
 
 	if (merge == false)
@@ -2095,8 +2095,6 @@ bool CNavArea::IsFlat( void ) const
  */
 bool CNavArea::IsCoplanar( const CNavArea *area ) const
 {
-	Vector u, v;
-
 	bool isOnDisplacement = ( m_node[ NORTH_WEST ] && m_node[ NORTH_WEST ]->IsOnDisplacement() ) ||
 		( m_node[ NORTH_EAST ] && m_node[ NORTH_EAST ]->IsOnDisplacement() ) ||
 		( m_node[ SOUTH_EAST ] && m_node[ SOUTH_EAST ]->IsOnDisplacement() ) ||
@@ -2672,7 +2670,7 @@ NavDirType CNavArea::ComputeDirection( Vector *point ) const
 	// find closest direction
 	Vector to = *point - m_center;
 
-	if (fabs(to.x) > fabs(to.y))
+	if (fabsf(to.x) > fabsf(to.y))
 	{
 		if (to.x > 0.0f)
 			return EAST;
@@ -2863,7 +2861,7 @@ void CNavArea::Draw( void ) const
 			float lightIntensity = GetLightIntensity(pos);
 			end.z += HumanHeight*lightIntensity;
 			lightIntensity *= 255; // for color
-			NDebugOverlay::Line( end, pos, lightIntensity, lightIntensity, MAX( 192, lightIntensity ), true, DebugDuration );
+			NDebugOverlay::Line( end, pos, lightIntensity, lightIntensity, MAX( 192.f, lightIntensity ), true, DebugDuration );
 		}
 	}
 
@@ -4432,7 +4430,7 @@ void CNavArea::RaiseCorner( NavCornerType corner, int amount, bool raiseAdjacent
 float FindGroundZFromPoint( const Vector& end, const Vector& start )
 {
 	Vector step( 0, 0, StepHeight );
-	if ( fabs( end.x - start.x ) > fabs( end.y - start.y ) )
+	if ( fabsf( end.x - start.x ) > fabsf( end.y - start.y ) )
 	{
 		step.x = GenerationStepSize;
 		if ( end.x < start.x )
@@ -4493,10 +4491,10 @@ float FindGroundZ( const Vector& original, const Vector& corner1, const Vector& 
 	float first = FindGroundZFromPoint( original, corner1 );
 	float second = FindGroundZFromPoint( original, corner2 );
 
-	if ( fabs( first - second ) > StepHeight )
+	if ( fabsf( first - second ) > StepHeight )
 	{
 		// approaching the point from the two directions didn't agree.  Take the one closest to the original z.
-		if ( fabs( original.z - first ) > fabs( original.z - second ) )
+		if ( fabsf( original.z - first ) > fabsf( original.z - second ) )
 		{
 			return second;
 		}
@@ -4516,9 +4514,6 @@ float FindGroundZ( const Vector& original, const Vector& corner1, const Vector& 
  */
 void CNavArea::PlaceOnGround( NavCornerType corner, float inset )
 {
-	trace_t result;
-	Vector from, to;
-
 	Vector nw = m_nwCorner + Vector ( inset, inset, 0 );
 	Vector se = m_seCorner + Vector ( -inset, -inset, 0 );
 	Vector ne, sw;
@@ -4844,8 +4839,8 @@ void CNavArea::UpdateBlocked( bool force, int teamID )
 	Vector origin = GetCenter();
 	origin.z += HalfHumanHeight;
 
-	const float sizeX = MAX( 1, MIN( GetSizeX()/2 - 5, HalfHumanWidth ) );
-	const float sizeY = MAX( 1, MIN( GetSizeY()/2 - 5, HalfHumanWidth ) );
+	const float sizeX = MAX( 1.f, MIN( GetSizeX()/2 - 5, (float)HalfHumanWidth ) );
+	const float sizeY = MAX( 1.f, MIN( GetSizeY()/2 - 5, (float)HalfHumanWidth ) );
 	Extent bounds;
 	bounds.lo.Init( -sizeX, -sizeY, 0 );
 	bounds.hi.Init( sizeX, sizeY, VEC_DUCK_HULL_MAX.z - HalfHumanHeight );

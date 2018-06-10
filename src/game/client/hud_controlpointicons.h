@@ -10,7 +10,6 @@
 #pragma once
 #endif
 
-#include "cbase.h"
 #include "hudelement.h"
 #include <vgui_controls/Panel.h>
 #include <vgui_controls/Label.h>
@@ -18,7 +17,6 @@
 #include "vgui_controls/EditablePanel.h"
 #include "vgui_controls/AnimationController.h"
 #include "vgui_controls/CircularProgressBar.h"
-#include <vgui/ISurface.h>
 #include "tf_controls.h"
 #include "IconPanel.h"
 
@@ -59,9 +57,10 @@ class CControlPointCountdown : public vgui::EditablePanel
 	DECLARE_CLASS_SIMPLE( CControlPointCountdown, vgui::EditablePanel );
 
 public:
-	CControlPointCountdown(Panel *parent, const char *name);
+	CControlPointCountdown( vgui::Panel *parent, const char *name);
 
-	virtual void ApplySchemeSettings( IScheme *scheme );
+
+	virtual void ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void PerformLayout();
 	virtual void OnTick( void );
 
@@ -89,7 +88,7 @@ class CControlPointProgressBar : public vgui::EditablePanel
 public:
 	CControlPointProgressBar(Panel *parent);
 
-	virtual void ApplySchemeSettings( IScheme *pScheme );
+	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
 	virtual void PerformLayout( void );
 	virtual void Paint( void );
 	virtual bool IsVisible( void );
@@ -123,24 +122,7 @@ public:
 		ListenForGameEvent( "localplayer_changeteam" );
 	}
 
-	virtual void PaintBackground( void )
-	{
-		float flElapsedTime = (gpGlobals->curtime - m_flStartCapAnimStart);
-
-		if (GetImage())
-		{
-			surface()->DrawSetColor(255, 255, 255, 255);
-			int iYPos = RemapValClamped( flElapsedTime, 0, STARTCAPANIM_SWOOP_LENGTH, 0, GetTall() );
-			GetImage()->SetPos( 0, iYPos );
-			GetImage()->Paint();
-		}
-
-		// Once we've finished the swoop, go away
-		if ( flElapsedTime >= STARTCAPANIM_SWOOP_LENGTH )
-		{
-			SetVisible( false );
-		}
-	}
+	virtual void PaintBackground( void );
 
 	virtual bool IsVisible( void )
 	{
@@ -174,7 +156,8 @@ class CControlPointIconCapArrow : public vgui::Panel
 {
 	DECLARE_CLASS_SIMPLE( CControlPointIconCapArrow, vgui::Panel );
 public:
-	CControlPointIconCapArrow( CControlPointIcon *pIcon, Panel *parent, const char *name);
+	CControlPointIconCapArrow( CControlPointIcon *pIcon, vgui::Panel *parent, const char *name);
+
 
 	virtual void Paint( void );
 	virtual bool IsVisible( void );
@@ -203,27 +186,7 @@ public:
 		SetShouldScaleImage( true );
 	}
 
-	virtual void PaintBackground( void )
-	{
-		if ( m_flFinishCapAnimStart && gpGlobals->curtime > m_flFinishCapAnimStart )
-		{
-			float flElapsedTime = MAX( 0, (gpGlobals->curtime - m_flFinishCapAnimStart) );
-			if (GetImage())
-			{
-				surface()->DrawSetColor(255, 255, 255, 255);
-				int iSize = RemapValClamped( flElapsedTime, 0, FINISHCAPANIM_SWOOP_LENGTH, GetWide(), m_iShrinkSize );
-				GetImage()->SetPos( (GetWide() - iSize)*0.5, (GetTall() - iSize)*0.5 );
-				GetImage()->SetSize( iSize, iSize );
-				GetImage()->Paint();
-			}
-
-			// Once we've finished the swoop, go away
-			if ( flElapsedTime >= FINISHCAPANIM_SWOOP_LENGTH )
-			{
-				SetVisible( false );
-			}
-		}
-	}
+	virtual void PaintBackground( void );
 
 	void	StartPulse( float flTime, int iShrinkSize )
 	{
@@ -283,7 +246,7 @@ private:
 	float				m_flStartCapAnimStart;
 	float				m_flPulseTime;
 	bool				m_bAccelerateOverCapture;
-	IImage				*m_pPulseImage;
+	vgui::IImage				*m_pPulseImage;
 };
 
 //-----------------------------------------------------------------------------
@@ -296,7 +259,7 @@ public:
 	CControlPointIcon( Panel *parent, const char *pName, int iIndex );
 	~CControlPointIcon( void );
 	
-	virtual void ApplySchemeSettings( IScheme *scheme );
+	virtual void ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void PerformLayout( void );
 
 	void		 UpdateImage( void );
@@ -332,8 +295,8 @@ private:
 	vgui::ImagePanel				*m_pOverlayImage;
 	CControlPointIconPulseable		*m_pBaseImage;
 	CControlPointIconCapArrow		*m_pCapImage;
-	DHANDLE< CControlPointIconSwoop	>	m_pCapHighlightImage;
-	DHANDLE< CControlPointIconCapturePulse > m_pCapPulseImage;
+	vgui::DHANDLE< CControlPointIconSwoop	>	m_pCapHighlightImage;
+	vgui::DHANDLE< CControlPointIconCapturePulse > m_pCapPulseImage;
 	vgui::ImagePanel				*m_pCapPlayerImage;
 	vgui::Label						*m_pCapNumPlayers;
 	bool							m_bSwipeUp;
@@ -345,8 +308,8 @@ private:
 	bool							m_bCachedCountdownState;
 	CControlPointCountdown			*m_pCountdown;
 
-	DHANDLE< CExLabel >				m_pCPTimerLabel; // used to display CCPTimerLogic countdowns
-	DHANDLE< vgui::ImagePanel >		m_pCPTimerBG; // used to display CCPTimerLogic countdowns
+	vgui::DHANDLE< CExLabel >				m_pCPTimerLabel; // used to display CCPTimerLogic countdowns
+	vgui::DHANDLE< vgui::ImagePanel >		m_pCPTimerBG; // used to display CCPTimerLogic countdowns
 	float							m_flCPTimerTime;
 	bool							m_bRedText;
 	Color							m_cRegularColor;
@@ -364,7 +327,7 @@ public:
 	CHudControlPointIcons( const char *pName );
 	virtual ~CHudControlPointIcons( void );
 
-	virtual void ApplySchemeSettings( IScheme *scheme );
+	virtual void ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void PerformLayout( void );
 	virtual void Paint();
 	virtual void Init();

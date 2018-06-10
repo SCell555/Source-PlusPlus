@@ -753,7 +753,7 @@ void C_Prop_Portal::OnDataChanged( DataUpdateType_t updateType )
 						state.m_vecLightOrigin = ptLightOrigin;
 
 						Vector vLightRight, vLightUp( 0.0f, 0.0f, 1.0f );
-						if( fabs( DotProduct( vLightUp, vLightForward ) ) > 0.99f )
+						if( fabsf( DotProduct( vLightUp, vLightForward ) ) > 0.99f )
 							vLightUp.Init( 0.0f, 1.0f, 0.0f );	// Don't want vLightUp and vLightForward to be parallel
 
 						CrossProduct( vLightUp, vLightForward, vLightRight );
@@ -901,9 +901,9 @@ void C_Prop_Portal::UpdateOriginPlane( void )
 	m_plane_Origin.signbits = SignbitsForPlane( &m_plane_Origin );
 
 	Vector vAbsNormal;
-	vAbsNormal.x = fabs(m_plane_Origin.normal.x);
-	vAbsNormal.y = fabs(m_plane_Origin.normal.y);
-	vAbsNormal.z = fabs(m_plane_Origin.normal.z);
+	vAbsNormal.x = fabsf(m_plane_Origin.normal.x);
+	vAbsNormal.y = fabsf(m_plane_Origin.normal.y);
+	vAbsNormal.z = fabsf(m_plane_Origin.normal.z);
 
 	if( vAbsNormal.x > vAbsNormal.y )
 	{

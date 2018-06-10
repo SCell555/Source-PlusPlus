@@ -1138,7 +1138,7 @@ bool CNPC_AntlionGuard::ShouldCharge( const Vector &startPos, const Vector &endP
 			if ( moveTrace.pObstruction == GetContainingEntity( INDEXENT(0) ) )
 			{	
 				// Can't be too far above/below the target
-				if ( fabs( moveTrace.vEndPosition.z - vecTargetPos.z ) > StepHeight() )
+				if ( fabsf( moveTrace.vEndPosition.z - vecTargetPos.z ) > StepHeight() )
 					return false;
 
 				// Allow it if we got pretty close
@@ -1759,7 +1759,6 @@ void CNPC_AntlionGuard::HandleAnimEvent( animevent_t *pEvent )
 				if ( HasCondition( COND_ENEMY_UNREACHABLE ) && HasCondition( COND_ENEMY_FACING_ME ) == false )
 				{
 					// Build an arc around the top of the target that we'll offset our aim by
-					Vector vecOffset;
 					float flSin, flCos;
 					float flRad = random->RandomFloat( 0, M_PI / 6.0f ); // +/- 30 deg
 					if ( random->RandomInt( 0, 1 ) )
@@ -2347,7 +2346,7 @@ void CNPC_AntlionGuard::StartTask( const Task_t *pTask )
 			float targetYaw = UTIL_VecToYaw( dirToTarget );
 			float offset = UTIL_AngleDiff( targetYaw, UTIL_AngleMod( GetLocalAngles().y ) );
 
-			if ( fabs( offset ) > 55 )
+			if ( fabsf( offset ) > 55 )
 			{
 				RememberFailedPhysicsTarget( m_hPhysicsTarget );
 				m_hPhysicsTarget = NULL;

@@ -1174,7 +1174,7 @@ void CBaseHelicopter::Flight( void )
 	else if ( (m_angleVelocity < -20) || (m_angleVelocity < 0 && flDist < 128) )
 	{
 		// ALERT( at_console, "f " );
-		if ( abs(m_angleVelocity) < 5 )
+		if ( fabsf(m_angleVelocity) < 5 )
 		{
 			angleX += 1.0;
 		}
@@ -1186,7 +1186,7 @@ void CBaseHelicopter::Flight( void )
 	else if ( (m_angleVelocity > 20) || (m_angleVelocity > 0 && flDist < 128) )
 	{
 		// ALERT( at_console, "b " );
-		if ( abs(m_angleVelocity) < 5 )
+		if ( fabsf(m_angleVelocity) < 5 )
 		{
 			angleX -= 1.0;
 		}
@@ -1509,9 +1509,9 @@ void CBaseHelicopter::InputActivate( inputdata_t &inputdata )
 void CBaseHelicopter::ApplySidewaysDrag( const Vector &vecRight )
 {
 	Vector vecNewVelocity = GetAbsVelocity();
-	vecNewVelocity.x *= 1.0 - fabs( vecRight.x ) * 0.05;
-	vecNewVelocity.y *= 1.0 - fabs( vecRight.y ) * 0.05;
-	vecNewVelocity.z *= 1.0 - fabs( vecRight.z ) * 0.05;
+	vecNewVelocity.x *= 1.0 - fabsf( vecRight.x ) * 0.05;
+	vecNewVelocity.y *= 1.0 - fabsf( vecRight.y ) * 0.05;
+	vecNewVelocity.z *= 1.0 - fabsf( vecRight.z ) * 0.05;
 	SetAbsVelocity( vecNewVelocity );
 }
 

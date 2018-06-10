@@ -624,7 +624,7 @@ bool CBaseFlex::HandleStartGestureSceneEvent( CSceneEventInfo *info, CChoreoScen
 							CEventAbsoluteTag *ptag = event->FindAbsoluteTag( CChoreoEvent::ORIGINAL, pkvTags->GetName() );
 							if (ptag)
 							{
-								if (fabs(ptag->GetPercentage() - percentage) > 0.05)
+								if (fabsf(ptag->GetPercentage() - percentage) > 0.05)
 								{
 									DevWarning("%s repositioned tag: %s : %.3f -> %.3f (%s:%s:%s)\n", scene->GetFilename(), pkvTags->GetName(), ptag->GetPercentage(), percentage, scene->GetFilename(), actor->GetName(), event->GetParameters() );
 									// reposition tag
@@ -1412,7 +1412,7 @@ bool CBaseFlex::ProcessMoveToSceneEvent( CSceneEventInfo *info, CChoreoScene *sc
 
 			float flDist = (info->m_hTarget->EyePosition() - GetAbsOrigin()).Length2D();
 
-			if (flDist > MAX( MAX( flDistTolerance, 0.1 ), event->GetDistanceToTarget()))
+			if (flDist > MAX( MAX( flDistTolerance, 0.1f ), event->GetDistanceToTarget()))
 			{
 				// Msg("flDist %.1f\n", flDist );
 				int result = false;

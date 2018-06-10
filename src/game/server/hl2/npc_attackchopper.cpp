@@ -2325,7 +2325,7 @@ void CNPC_AttackHelicopter::UpdateTargetHittability()
 		AngularImpulse vecAngVelocity;
 		GetEnemyVehicle()->GetVelocity( &vecVelocity, &vecAngVelocity );
 
-		float flDist = fabs( vecAngVelocity.z - m_vecLastAngVelocity.z );
+		float flDist = fabsf( vecAngVelocity.z - m_vecLastAngVelocity.z );
 		m_flAvoidMetric += flDist;
 		m_vecLastAngVelocity = vecAngVelocity;
 	}
@@ -3083,7 +3083,7 @@ bool CNPC_AttackHelicopter::ShouldDropBombs( void )
 		return ( flSpeedAlongPath > -BOMB_MIN_SPEED );
 
 	// This is for ALWAYS_LEAD
-	if ( fabs(flSpeedAlongPath) < 50.0f )
+	if ( fabsf(flSpeedAlongPath) < 50.0f )
 		return false;
 
 	float flLeadingDist = ComputeDistanceToLeadingPosition( );
@@ -3852,7 +3852,7 @@ float CNPC_AttackHelicopter::UpdatePerpPathDistance( float flMaxPathOffset )
 	}
 
 	float flMaxChange = 1000.0f * (gpGlobals->curtime - GetLastThink());
-	if ( fabs( flNewPathOffset - m_flCurrPathOffset ) < flMaxChange )
+	if ( fabsf( flNewPathOffset - m_flCurrPathOffset ) < flMaxChange )
 	{
 		m_flCurrPathOffset = flNewPathOffset;
 	}
@@ -3945,7 +3945,7 @@ void CNPC_AttackHelicopter::ComputeVelocity( const Vector &vecTargetPosition,
 	pVecAccel->z = clamp( pVecAccel->z, HELICOPTER_GRAVITY * 0.2f, HELICOPTER_GRAVITY * 2.0f );
 
 	// The lift factor owing to horizontal movement
-	float flHorizLiftFactor = fabs( pVecAccel->x ) * 0.10f + fabs( pVecAccel->y ) * 0.10f;
+	float flHorizLiftFactor = fabsf( pVecAccel->x ) * 0.10f + fabsf( pVecAccel->y ) * 0.10f;
 
 	// If we're way above the path, dampen horizontal lift factor
 	float flNewHorizLiftFactor = clamp( deltaPos.z, HELICOPTER_MAX_DZ_DAMP, HELICOPTER_MIN_DZ_DAMP );
@@ -4173,8 +4173,8 @@ void CNPC_AttackHelicopter::Flight( void )
 	}
 	else
 	{
-		flMinDistFromSegment = fabs(flPerpDist) + 100.0f;
-		flMaxDistFromSegment = fabs(flPerpDist) + 200.0f;
+		flMinDistFromSegment = fabsf(flPerpDist) + 100.0f;
+		flMaxDistFromSegment = fabsf(flPerpDist) + 200.0f;
 		if ( flMaxPathOffset != 0.0 )
 		{
 			if ( flMaxDistFromSegment > flMaxPathOffset - 100.0f )
@@ -4288,7 +4288,7 @@ float CNPC_AttackHelicopter::CreepTowardEnemy( float flSpeed, float flMinSpeed, 
 	// When the player is slow, creep toward him within a second or two
 	float flLeadingDist = ClampSplineRemapVal( flSpeed, flMinSpeed, flMaxSpeed, flMinDist, flMaxDist );
 	float flCurrentDist = GetLeadingDistance( );
-	if ( fabs(flLeadingDist - flCurrentDist) > flEnemyCreepDist )
+	if ( fabsf(flLeadingDist - flCurrentDist) > flEnemyCreepDist )
 	{
 		float flSign = ( flLeadingDist < flCurrentDist ) ? -1.0f : 1.0f;
 		flLeadingDist = flCurrentDist + flSign * flEnemyCreepDist;
@@ -4611,7 +4611,7 @@ void CNPC_AttackHelicopter::UpdateBullrushState( void )
 		{
 			m_flBullrushAdditionalHeight = 0.0f;
 			float flDistanceToGoal = ComputeDistanceToTargetPosition();
-			if ( fabs( flDistanceToGoal ) > 2000.0f )
+			if ( fabsf( flDistanceToGoal ) > 2000.0f )
 			{
 				SetSecondaryMode( BULLRUSH_MODE_DROP_BOMBS_FIXED_SPEED, true );
 				break;

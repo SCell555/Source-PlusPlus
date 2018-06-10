@@ -647,9 +647,9 @@ void CNPC_Nihilanth::Flight( void )
 		flSpeed = -flSpeed;
 
 	// sideways drag
-	m_velocity.x = m_velocity.x * (1.0 - fabs( vRight.x ) * 0.05);
-	m_velocity.y = m_velocity.y * (1.0 - fabs( vRight.y ) * 0.05);
-	m_velocity.z = m_velocity.z * (1.0 - fabs( vRight.z ) * 0.05);
+	m_velocity.x = m_velocity.x * (1.0 - fabsf( vRight.x ) * 0.05);
+	m_velocity.y = m_velocity.y * (1.0 - fabsf( vRight.y ) * 0.05);
+	m_velocity.z = m_velocity.z * (1.0 - fabsf( vRight.z ) * 0.05);
 
 	// general drag
 	m_velocity = m_velocity * 0.995;
@@ -1007,7 +1007,7 @@ void CNPC_Nihilanth::DyingThink( void )
 	{
 		Flight( );
 
-		if (fabs( GetAbsOrigin().z - m_flMaxZ ) < 16)
+		if (fabsf( GetAbsOrigin().z - m_flMaxZ ) < 16)
 		{
 			CBaseEntity *pTrigger = NULL;
 
@@ -1067,7 +1067,7 @@ void CNPC_Nihilanth::DyingThink( void )
 	switch( random->RandomInt( 1, 4 ))
 	{
 	case 1: // head
-		vecDir.z = fabs( vecDir.z ) * 0.5;
+		vecDir.z = fabsf( vecDir.z ) * 0.5;
 		vecDir = vecDir + 2 * vUp;
 		break;
 	case 2: // eyes

@@ -36,6 +36,7 @@ END_DATADESC()
 CServerNetworkProperty::CServerNetworkProperty()
 {
 	Init( NULL );
+	m_bDestroyed = false;
 }
 
 

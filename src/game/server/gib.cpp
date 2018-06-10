@@ -50,11 +50,10 @@ END_DATADESC()
 void CGib::LimitVelocity( void )
 {
 	Vector vecNewVelocity = GetAbsVelocity();
-	float length = VectorNormalize( vecNewVelocity );
 
 	// ceiling at 1500.  The gib velocity equation is not bounded properly.  Rather than tune it
 	// in 3 separate places again, I'll just limit it here.
-	if ( length > 1500.0 )
+	if ( VectorNormalize( vecNewVelocity ) > 1500.0 )
 	{
 		vecNewVelocity *= 1500;		// This should really be sv_maxvelocity * 0.75 or something
 		SetAbsVelocity( vecNewVelocity );
@@ -62,7 +61,7 @@ void CGib::LimitVelocity( void )
 }
 
 
-void CGib::SpawnStickyGibs( CBaseEntity *pVictim, Vector vecOrigin, int cGibs )
+void CGib::SpawnStickyGibs( CBaseEntity *pVictim, const Vector& vecOrigin, int cGibs )
 {
 	int i;
 
@@ -537,12 +536,7 @@ void CGib::BounceGibTouch ( CBaseEntity *pOther )
 
 		if ( m_material != matNone && random->RandomInt(0,2) == 0 )
 		{
-			float volume;
-			float zvel = fabs(GetAbsVelocity().z);
-		
-			volume = 0.8f * MIN(1.0, ((float)zvel) / 450.0f);
-
-			CBreakable::MaterialSoundRandom( entindex(), (Materials)m_material, volume );
+			CBreakable::MaterialSoundRandom( entindex(), static_cast<Materials>( m_material ), 0.8f * MIN(1.f, fabsf(GetAbsVelocity().z) / 450.0f) );
 		}
 	}
 }
@@ -552,7 +546,6 @@ void CGib::BounceGibTouch ( CBaseEntity *pOther )
 //
 void CGib::StickyGibTouch ( CBaseEntity *pOther )
 {
-	Vector	vecSpot;
 	trace_t tr;
 	
 	SetThink ( &CGib::SUB_Remove );

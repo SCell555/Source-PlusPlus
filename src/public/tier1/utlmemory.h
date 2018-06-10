@@ -22,9 +22,10 @@
 #include "tier0/memalloc.h"
 #include "tier0/memdbgon.h"
 
+#if defined( _MSC_VER )
 #pragma warning (disable:4100)
 #pragma warning (disable:4514)
-
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -50,6 +51,9 @@ public:
 	CUtlMemory( int nGrowSize = 0, int nInitSize = 0 );
 	CUtlMemory( T* pMemory, int numElements );
 	CUtlMemory( const T* pMemory, int numElements );
+#ifdef VALVE_RVALUE_REFS
+	CUtlMemory( CUtlMemory<T, I>&& src );
+#endif // VALVE_RVALUE_REFS
 	~CUtlMemory();
 
 	// Set the size by which the memory grows
@@ -61,8 +65,8 @@ public:
 		Iterator_t( I i ) : index( i ) {}
 		I index;
 
-		bool operator==( const Iterator_t it ) const	{ return index == it.index; }
-		bool operator!=( const Iterator_t it ) const	{ return index != it.index; }
+		bool operator==( const Iterator_t& it ) const	{ return index == it.index; }
+		bool operator!=( const Iterator_t& it ) const	{ return index != it.index; }
 	};
 	Iterator_t First() const							{ return Iterator_t( IsIdxValid( 0 ) ? 0 : InvalidIndex() ); }
 	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( IsIdxValid( it.index + 1 ) ? it.index + 1 : InvalidIndex() ); }
@@ -259,8 +263,8 @@ public:
 	public:
 		Iterator_t( int i ) : index( i ) {}
 		int index;
-		bool operator==( const Iterator_t it ) const	{ return index == it.index; }
-		bool operator!=( const Iterator_t it ) const	{ return index != it.index; }
+		bool operator==( const Iterator_t& it ) const	{ return index == it.index; }
+		bool operator!=( const Iterator_t& it ) const	{ return index != it.index; }
 	};
 	Iterator_t First() const							{ return Iterator_t( IsIdxValid( 0 ) ? 0 : InvalidIndex() ); }
 	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( IsIdxValid( it.index + 1 ) ? it.index + 1 : InvalidIndex() ); }
@@ -387,8 +391,8 @@ public:
 		Iterator_t( int i, int _limit ) : index( i ), limit( _limit ) {}
 		int index;
 		int limit;
-		bool operator==( const Iterator_t it ) const	{ return index == it.index; }
-		bool operator!=( const Iterator_t it ) const	{ return index != it.index; }
+		bool operator==( const Iterator_t& it ) const	{ return index == it.index; }
+		bool operator!=( const Iterator_t& it ) const	{ return index != it.index; }
 	};
 	Iterator_t First() const							{ int limit = NumAllocated(); return Iterator_t( limit ? 0 : InvalidIndex(), limit ); }
 	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( ( it.index + 1 < it.limit ) ? it.index + 1 : InvalidIndex(), it.limit ); }
@@ -439,6 +443,19 @@ CUtlMemory<T,I>::CUtlMemory( const T* pMemory, int numElements ) : m_pMemory( (T
 	// Special marker indicating externally supplied modifyable memory
 	m_nGrowSize = EXTERNAL_CONST_BUFFER_MARKER;
 }
+
+#ifdef VALVE_RVALUE_REFS
+template< class T, class I >
+CUtlMemory<T, I>::CUtlMemory( CUtlMemory<T, I>&& src )
+{
+	// Default init this so when we destruct src it doesn't do anything.
+	m_nGrowSize = 0;
+	m_pMemory = 0;
+	m_nAllocationCount = 0;
+
+	Swap( src );
+}
+#endif // VALVE_RVALUE_REFS
 
 template< class T, class I >
 CUtlMemory<T,I>::~CUtlMemory()

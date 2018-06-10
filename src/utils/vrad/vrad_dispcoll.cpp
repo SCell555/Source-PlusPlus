@@ -775,9 +775,9 @@ int	PlaneTypeForNormal (Vector& normal)
 	if (normal[2] == 1.0 || normal[2] == -1.0)
 		return PLANE_Z;
 
-	ax = fabs(normal[0]);
-	ay = fabs(normal[1]);
-	az = fabs(normal[2]);
+	ax = fabsf(normal[0]);
+	ay = fabsf(normal[1]);
+	az = fabsf(normal[2]);
 
 	if (ax >= ay && ax >= az)
 		return PLANE_ANYX;

@@ -44,7 +44,7 @@ public:
 		float flCurHangDist = 0;
 		for ( int i=0; i < NumNodes(); i++ )
 		{
-			float hang = fabs( m_flStartZ - GetNode(i)->m_vPos.z );
+			float hang = fabsf( m_flStartZ - GetNode(i)->m_vPos.z );
 			if ( hang > flCurHangDist )
 				flCurHangDist = hang;
 		}

@@ -214,7 +214,7 @@ void CHudDamageTiles::Paint( void )
 	Color			clrTile;
 
 	(gHUD.m_clrYellowish).GetColor( r, g, b, nUnused );
-	a = (int)( fabs( sin( gpGlobals->curtime * 2 ) ) * 256.0 );
+	a = (int)( fabsf( sin( gpGlobals->curtime * 2 ) ) * 256.0 );
 	clrTile.SetColor( r, g, b, a );
 
 	int i;

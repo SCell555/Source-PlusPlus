@@ -287,9 +287,9 @@ public:
 
 	// Prints the formatted string to the notification area of the screen ( down the right hand edge
 	//  numbered lines starting at position 0
-	virtual void				Con_NPrintf( int pos, PRINTF_FORMAT_STRING const char *fmt, ... ) = 0;
+	FMTFUNCTION_WIN( 3, 4 ) virtual void	Con_NPrintf( int pos, PRINTF_FORMAT_STRING const char *fmt, ... ) = 0;
 	// Similar to Con_NPrintf, but allows specifying custom text color and duration information
-	virtual void				Con_NXPrintf( const struct con_nprint_s *info, PRINTF_FORMAT_STRING const char *fmt, ... ) = 0;
+	FMTFUNCTION_WIN( 3, 4 ) virtual void	Con_NXPrintf( const struct con_nprint_s *info, PRINTF_FORMAT_STRING const char *fmt, ... ) = 0;
 
 	// Is the specified world-space bounding box inside the view frustum?
 	virtual int					IsBoxVisible( const Vector& mins, const Vector& maxs ) = 0;

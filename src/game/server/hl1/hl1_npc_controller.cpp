@@ -609,14 +609,14 @@ int CNPC_Controller::LookupFloat( )
 	float y = DotProduct( vecRight, m_velocity );
 	float z = DotProduct( vecUp, m_velocity );
 
-	if (fabs(x) > fabs(y) && fabs(x) > fabs(z))
+	if (fabsf(x) > fabsf(y) && fabsf(x) > fabsf(z))
 	{
 		if (x > 0)
 			return ACT_CONTROLLER_FORWARD;
 		else
 			return ACT_CONTROLLER_BACKWARD;
 	}
-	else if (fabs(y) > fabs(z))
+	else if (fabsf(y) > fabsf(z))
 	{
 		if (y > 0)
 			return ACT_CONTROLLER_RIGHT;

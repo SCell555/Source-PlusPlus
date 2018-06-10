@@ -604,7 +604,7 @@ void CBaseHelicopter::DoRotorPhysicsPush( const Vector &vecRotorOrigin, float fl
 			Vector vecSpot = pEntity->BodyTarget( vecPhysicsOrigin );
 
 			// Don't push things too far below our starting point (helps reduce through-roof cases w/o doing a trace)
-			if ( fabs( vecSpot.z - vecPhysicsOrigin.z ) > 96 )
+			if ( fabsf( vecSpot.z - vecPhysicsOrigin.z ) > 96 )
 				continue;
 
 			Vector vecToSpot = ( vecSpot - vecPhysicsOrigin );
@@ -1076,7 +1076,7 @@ void CBaseHelicopter::UpdateRotorWashVolume()
 	{
 		// We can change from 0 to 1 in 3 seconds. 
 		// Figure out how many seconds flVolDelta will take.
-		float flRampTime = fabs( flVolDelta ) * 3.0f; 
+		float flRampTime = fabsf( flVolDelta ) * 3.0f; 
 		controller.SoundChangeVolume( m_pRotorSound, GetRotorVolume(), flRampTime );
 	}
 }
@@ -1481,9 +1481,9 @@ void CBaseHelicopter::InputSetAngles( inputdata_t &inputdata )
 void CBaseHelicopter::ApplySidewaysDrag( const Vector &vecRight )
 {
 	Vector vecNewVelocity = GetAbsVelocity();
-	vecNewVelocity.x *= 1.0 - fabs( vecRight.x ) * 0.05;
-	vecNewVelocity.y *= 1.0 - fabs( vecRight.y ) * 0.05;
-	vecNewVelocity.z *= 1.0 - fabs( vecRight.z ) * 0.05;
+	vecNewVelocity.x *= 1.0 - fabsf( vecRight.x ) * 0.05;
+	vecNewVelocity.y *= 1.0 - fabsf( vecRight.y ) * 0.05;
+	vecNewVelocity.z *= 1.0 - fabsf( vecRight.z ) * 0.05;
 	SetAbsVelocity( vecNewVelocity );
 }
 
@@ -1583,11 +1583,11 @@ void ExpandBBox(Vector &vecMins, Vector &vecMaxs)
 	float maxval = 0;
 	for (int i = 0; i < 3; i++)
 	{
-		float v = fabs( vecMins[i]);
+		float v = fabsf( vecMins[i]);
 		if (v > maxval)
 			maxval = v;
 
-		v = fabs( vecMaxs[i]);
+		v = fabsf( vecMaxs[i]);
 		if (v > maxval)
 			maxval = v;
 	}

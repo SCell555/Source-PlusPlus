@@ -662,6 +662,41 @@ void CParticleProperty::UpdateControlPoint( ParticleEffectList_t *pEffect, int i
 				}
 			}
 			break;
+
+		case PATTACH_BONE_FOLLOW:
+			{
+				C_BaseAnimating *pAnimating = pPoint->hEntity->GetBaseAnimating();
+
+				Assert( pAnimating );
+				if ( pAnimating )
+				{
+					matrix3x4_t rootBone;
+					bool bGotBone = false;
+
+					if ( pPoint->iAttachmentPoint >= 0
+						&& pAnimating->GetModelPtr() != NULL
+						&& pPoint->iAttachmentPoint < pAnimating->GetModelPtr()->numbones() )
+					{
+						CBaseAnimating::AutoAllowBoneAccess boneAccess( true, false );
+
+						pAnimating->SetupBones( NULL, -1, BONE_USED_BY_ANYTHING, gpGlobals->curtime );
+
+						rootBone = pAnimating->GetBone( pPoint->iAttachmentPoint );
+						bGotBone = true;
+					}
+					else
+					{
+						bGotBone = pAnimating->GetRootBone( rootBone );
+					}
+
+					if ( bGotBone )
+					{
+						MatrixVectors( rootBone, &vecForward, &vecRight, &vecUp );
+						MatrixPosition( rootBone, vecOrigin );
+					}
+				}
+			}
+			break;
 		}
 	}
 

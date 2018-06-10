@@ -1334,7 +1334,6 @@ void WorldSpaceSlerp(
 			Quaternion srcQ, destQ;
 			Vector srcPos, destPos;
 			Quaternion targetQ;
-			Vector targetPos;
 			Vector tmp;
 
 			BuildBoneChain( pStudioHdr, rootXform, pos1, q1, i, destBoneToWorld, destBoneComputed );
@@ -2470,7 +2469,6 @@ void CalcBoneAdj(
 	int					i, j, k;
 	float				value;
 	mstudiobonecontroller_t *pbonecontroller;
-	Vector p0;
 	RadianEuler a0;
 	Quaternion q0;
 	
@@ -2819,7 +2817,7 @@ bool Studio_SolveIK( int iThigh, int iKnee, int iFoot, Vector &targetFoot, Vecto
 
 	// too close?
 	// limit distance to about an 80 degree knee bend
-	float minDist = max( fabs(l1 - l2) * 1.15, min( l1, l2 ) * 0.15 );
+	float minDist = max( fabsf(l1 - l2) * 1.15f, min( l1, l2 ) * 0.15f );
 	if (ikFoot.Length() < minDist)
 	{
 		// too close to get an accurate vector, just use original vector
@@ -3283,7 +3281,7 @@ void CIKContext::AddDependencies( mstudioseqdesc_t &seqdesc, int iSequence, floa
 		}
 		else
 		{
-			flCycle = max( 0.0, min( flCycle, 0.9999 ) );
+			flCycle = max( 0.f, min( flCycle, 0.9999f ) );
 		}
 	}
 
@@ -3614,7 +3612,6 @@ void CIKTarget::SetNormal( const Vector &normal )
 	MatrixSetColumn( forward, 0, m1 );
 	MatrixSetColumn( right, 1, m1 );
 	MatrixSetColumn( normal, 2, m1 );
-	QAngle a1;
 	Vector p1;
 	MatrixAngles( m1, est.q, p1 );
 }
@@ -3912,7 +3909,7 @@ void CIKContext::UpdateTargets( Vector pos[], Quaternion q[], matrix3x4_t boneTo
 				float d4 = (p3 + pTarget->latched.deltaPos - p1).Length();
 
 				// unstick feet when distance is too great
-				if ((d4 < fabs( d1 - d2 ) || d4 * 0.95 > d1 + d2) && pTarget->est.latched > 0.2)
+				if ((d4 < fabsf( d1 - d2 ) || d4 * 0.95 > d1 + d2) && pTarget->est.latched > 0.2)
 				{
 					pTarget->error.flTime = m_flTime;
 				}
@@ -3920,7 +3917,7 @@ void CIKContext::UpdateTargets( Vector pos[], Quaternion q[], matrix3x4_t boneTo
 				// unstick feet when angle is too great
 				if (pTarget->est.latched > 0.2)
 				{
-					float d = fabs( pTarget->latched.deltaQ.w ) * 2.0f - 1.0f; // QuaternionDotProduct( pTarget->latched.q, pTarget->est.q );
+					float d = fabsf( pTarget->latched.deltaQ.w ) * 2.0f - 1.0f; // QuaternionDotProduct( pTarget->latched.q, pTarget->est.q );
 
 					// FIXME: cos(45), make property of chain
 					if (d < 0.707)
@@ -3936,7 +3933,7 @@ void CIKContext::UpdateTargets( Vector pos[], Quaternion q[], matrix3x4_t boneTo
 			pTarget->trace.kneeToFoot = d2;
 			pTarget->trace.hip = p1;
 			pTarget->trace.knee = p2;
-			pTarget->trace.closest = p1 + dt * (fabs( d1 - d2 ) * 1.01);
+			pTarget->trace.closest = p1 + dt * (fabsf( d1 - d2 ) * 1.01f);
 			pTarget->trace.farthest = p1 + dt * (d1 + d2) * 0.99;
 			pTarget->trace.lowest = p1 + Vector( 0, 0, -1 ) * (d1 + d2) * 0.99;
 			// pTarget->trace.endpos = pTarget->est.pos;
@@ -4421,8 +4418,8 @@ void CIKContext::SolveLock(
 	// eval current ik'd bone
 	BuildBoneChain( pos, q, bone, boneToWorld, boneComputed );
 
-	Vector p1, p2, p3;
-	Quaternion q2, q3;
+	Vector p1, p3;
+	Quaternion q2;
 
 	// current p and q
 	MatrixPosition( boneToWorld[bone], p1 );
@@ -4707,7 +4704,6 @@ void DoQuatInterpBone(
 	)
 {
 	matrix3x4_t			bonematrix;
-	Vector				control;
 
 	mstudioquatinterpbone_t *pProc = (mstudioquatinterpbone_t *)pbones[ibone].pProcedure( );
 	if (pProc && pbones[pProc->control].parent != -1)
@@ -4728,11 +4724,11 @@ void DoQuatInterpBone(
 		int i;
 		for (i = 0; i < pProc->numtriggers; i++)
 		{
-			float dot = fabs( QuaternionDotProduct( pProc->pTrigger( i )->trigger, src ) );
+			float dot = fabsf( QuaternionDotProduct( pProc->pTrigger( i )->trigger, src ) );
 			// FIXME: a fast acos should be acceptable
 			dot = clamp( dot, -1.f, 1.f );
 			weight[i] = 1 - (2 * acos( dot ) * pProc->pTrigger( i )->inv_tolerance );
-			weight[i] = max( 0, weight[i] );
+			weight[i] = max( 0.f, weight[i] );
 			scale += weight[i];
 		}
 
@@ -4874,12 +4870,12 @@ void DoAimAtBone(
 	Vector axis;
 	CrossProduct( userAimVector, aimVector, axis );
 	VectorNormalizeFast( axis );
-	Assert( 1.0f - fabs( DotProduct( userAimVector, aimVector ) ) > FLT_EPSILON );
+	Assert( 1.0f - fabsf( DotProduct( userAimVector, aimVector ) ) > FLT_EPSILON );
 	float angle( acosf( DotProduct( userAimVector, aimVector ) ) );
 	Quaternion aimRotation;
 	AxisAngleQuaternion( axis, RAD2DEG( angle ), aimRotation );
 
-	if ( ( 1.0f - fabs( DotProduct( userUpVector, userAimVector ) ) ) > FLT_EPSILON )
+	if ( ( 1.0f - fabsf( DotProduct( userUpVector, userAimVector ) ) ) > FLT_EPSILON )
 	{
 		matrix3x4_t aimRotationMatrix;
 		QuaternionMatrix( aimRotation, aimRotationMatrix );
@@ -4901,8 +4897,8 @@ void DoAimAtBone(
 		VectorNormalizeFast( pParentUp );
 
 		Quaternion upRotation;
-		//Assert( 1.0f - fabs( DotProduct( pUp, pParentUp ) ) > FLT_EPSILON );
-		if( 1.0f - fabs( DotProduct( pUp, pParentUp ) ) > FLT_EPSILON )
+		//Assert( 1.0f - fabsf( DotProduct( pUp, pParentUp ) ) > FLT_EPSILON );
+		if( 1.0f - fabsf( DotProduct( pUp, pParentUp ) ) > FLT_EPSILON )
 		{
 			angle = acos( DotProduct( pUp, pParentUp ) );
 			CrossProduct( pUp, pParentUp, axis );			

@@ -180,7 +180,7 @@ void CHudObjectiveIcons::FireGameEvent( IGameEvent *event )
 
 		wchar_t wText[12];
 
-		int iSecondsToDraw = abs(m_iSecondsAdded);
+		int iSecondsToDraw = fabsf(m_iSecondsAdded);
 		bool bNegative = ( m_iSecondsAdded < 0 );
 
 		_snwprintf( wText, sizeof(wText)/sizeof(wchar_t), L"%s %d:%02d", bNegative ? L"-" : L"+", iSecondsToDraw / 60, iSecondsToDraw % 60 );
@@ -572,8 +572,8 @@ void CHudObjectiveIcons::Paint()
 						vec1.x = flXPos + quadrants[j].vecTrailing.x * flIconSize - xdir * tan(flAngle) * flHalfWide;
 						vec1.y = flYPos + quadrants[j].vecTrailing.y * flIconSize - ydir * tan(flAngle) * flHalfTall;
 
-						uv1.x = quadrants[j].vecTrailing.x - xdir * abs( quadrants[j].vecLeading.x - quadrants[j].vecTrailing.x ) * tan(flAngle);
-						uv1.y = quadrants[j].vecTrailing.y - ydir * abs( quadrants[j].vecLeading.y - quadrants[j].vecTrailing.y ) * tan(flAngle);
+						uv1.x = quadrants[j].vecTrailing.x - xdir * fabsf( quadrants[j].vecLeading.x - quadrants[j].vecTrailing.x ) * tan(flAngle);
+						uv1.y = quadrants[j].vecTrailing.y - ydir * fabsf( quadrants[j].vecLeading.y - quadrants[j].vecTrailing.y ) * tan(flAngle);
 
 						vert[1].Init( vec1, uv1 );
 
@@ -681,7 +681,7 @@ void CHudObjectiveIcons::Paint()
 							if ( bBombPlanted )
 							{
 								// draw the background behind 1
-								int alpha = (float)( abs( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
+								int alpha = (float)( fabsf( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
 								m_pC4PlantedBG->DrawSelf( xMid - iIconWidth, yIcon - iIconHalfWidth, iIconWidth*2, iIconWidth*2, Color( 255,255,255,alpha) );
 							}
 							m_pC4Icon->DrawSelf( xMid - iIconHalfWidth, yIcon, iIconWidth, iIconWidth, c );
@@ -704,7 +704,7 @@ void CHudObjectiveIcons::Paint()
 							if ( bBombPlanted )
 							{
 								// draw the background behind 1
-								int alpha = (float)( abs( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
+								int alpha = (float)( fabsf( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
 								m_pC4PlantedBG->DrawSelf( xMid1 - iIconWidth, yIcon - iIconHalfWidth, iIconWidth*2, iIconWidth*2, Color( 255,255,255,alpha) );
 							}
 							m_pC4Icon->DrawSelf( xMid1 - iIconHalfWidth, yIcon, iIconWidth, iIconWidth, c );
@@ -714,7 +714,7 @@ void CHudObjectiveIcons::Paint()
 							if ( bBombPlanted )
 							{
 								// draw the background behind 2
-								int alpha = (float)( abs( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
+								int alpha = (float)( fabsf( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
 								m_pC4PlantedBG->DrawSelf( xMid2 - iIconWidth, yIcon - iIconHalfWidth, iIconWidth*2, iIconWidth*2, Color( 255,255,255,alpha) );
 							}
 							m_pC4Icon->DrawSelf( xMid1 - iIconHalfWidth, yIcon, iIconWidth, iIconWidth, c );
@@ -734,7 +734,7 @@ void CHudObjectiveIcons::Paint()
 							if ( bBombPlanted )
 							{
 								// draw the background behind 2
-								int alpha = (float)( abs( sin( 2*gpGlobals->curtime) ) * 205.0 + 50.0 );
+								int alpha = (float)( fabsf( sin( 2*gpGlobals->curtime) ) * 205.0 + 50.0 );
 								m_pC4PlantedBG->DrawSelf( xpos - iIconHalfWidth, yIcon - iIconHalfWidth, iIconWidth*2, iIconWidth*2, Color( 255,255,255,alpha) );
 							}
 

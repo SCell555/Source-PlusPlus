@@ -366,7 +366,7 @@ private:
 
 	struct PlayerLogo
 	{
-		unsigned int			crc;
+		CRC32_t				crc;
 		ITexture			*texture;
 	};
 
@@ -398,7 +398,7 @@ bool CPlayerLogoProxy::Init( IMaterial *pMaterial, KeyValues *pKeyValues )
 	if ( !found )
 		return false;
 
-	m_pDefaultTexture = materials->FindTexture( DEFAULT_DECAL_NAME, TEXTURE_GROUP_DECAL );
+	m_pDefaultTexture = materials->FindTexture( pKeyValues->GetString( "defaultDecal", DEFAULT_DECAL_NAME ), TEXTURE_GROUP_DECAL );
 	if ( IsErrorTexture( m_pDefaultTexture ) )
 		return false;
 
@@ -438,17 +438,17 @@ void CPlayerLogoProxy::OnLogoBindInternal( int playerindex )
 	ITexture *texture = NULL;
 
 	PlayerLogo logo;
-	logo.crc = (unsigned int)info.customFiles[0];
+	logo.crc = info.customFiles[0];
 	logo.texture = NULL;
 
-	int lookup = m_Logos.Find( logo );
-	if ( lookup == m_Logos.InvalidIndex() )
+	const uint16 lookup = m_Logos.Find( logo );
+	if ( lookup == CUtlRBTree<PlayerLogo>::InvalidIndex() )
 	{
 		char crcfilename[ 512 ];
 		char logohex[ 16 ];
-		Q_binarytohex( (byte *)&info.customFiles[0], sizeof( info.customFiles[0] ), logohex, sizeof( logohex ) );
+		V_binarytohex( reinterpret_cast<byte *>( &info.customFiles[0] ), sizeof( info.customFiles[0] ), logohex, sizeof( logohex ) );
 
-		Q_snprintf( crcfilename, sizeof( crcfilename ), "temp/%s", logohex );
+		V_sprintf_safe( crcfilename, "temp/%s", logohex );
 
 		texture = materials->FindTexture( crcfilename, TEXTURE_GROUP_DECAL, false );
 		if ( texture )

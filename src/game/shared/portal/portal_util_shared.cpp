@@ -1258,8 +1258,8 @@ float UTIL_Portal_ShortestDistanceSqr( const Vector &vPoint1, const Vector &vPoi
 						float fRight = vRight.Dot( vCenterToIntersection );
 						float fUp = vUp.Dot( vCenterToIntersection );
 
-						float fAbsRight = fabs( fRight );
-						float fAbsUp = fabs( fUp );
+						float fAbsRight = fabsf( fRight );
+						float fAbsUp = fabsf( fUp );
 						if( (fAbsRight > PORTAL_HALF_WIDTH) ||
 							(fAbsUp > PORTAL_HALF_HEIGHT) )
 							bStraightLine = false;

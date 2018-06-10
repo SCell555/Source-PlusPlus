@@ -936,7 +936,7 @@ side_t *SelectSplitSide (bspbrush_t *brushes, node_t *node)
 				}
 
 				// give a value estimate for using this plane
-				value =  5*facing - 5*splits - abs(front-back);
+				value =  5*facing - 5*splits - fabsf(front-back);
 //					value =  -5*splits;
 //					value =  5*facing - 5*splits;
 				if (g_MainMap->mapplanes[pnum].type < 3)

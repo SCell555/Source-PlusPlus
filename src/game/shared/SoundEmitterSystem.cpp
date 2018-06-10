@@ -220,7 +220,7 @@ public:
 	{
 		Assert( soundemitterbase );
 #if !defined( CLIENT_DLL )
-		m_bLogPrecache = CommandLine()->CheckParm( "-makereslists" ) ? true : false;
+		m_bLogPrecache = CommandLine()->CheckParm( "-makereslists" ) != NULL;
 #endif
 		g_pClosecaption = cvar->FindVar("closecaption");
 		Assert(g_pClosecaption);
@@ -503,7 +503,7 @@ public:
 			params.soundname, 
 			params.soundlevel, 
 			params.volume, 
-			ep.m_nFlags, 
+			ep.m_nFlags | SND_SHOULDPAUSE,
 			params.pitch, 
 			ep.m_pOrigin, 
 			ep.m_flSoundTime,
@@ -533,7 +533,7 @@ public:
 			params.soundname,
 			params.volume,
 			(soundlevel_t)params.soundlevel,
-			ep.m_nFlags,
+			ep.m_nFlags | SND_SHOULDPAUSE,
 			params.pitch,
 			ep.m_nSpecialDSP,
 			ep.m_pOrigin,
@@ -584,7 +584,7 @@ public:
 				ep.m_pSoundName, 
 				ep.m_SoundLevel, 
 				ep.m_flVolume, 
-				ep.m_nFlags, 
+				ep.m_nFlags | SND_SHOULDPAUSE,
 				ep.m_nPitch, 
 				ep.m_pOrigin, 
 				ep.m_flSoundTime,
@@ -612,7 +612,7 @@ public:
 				ep.m_pSoundName, 
 				ep.m_flVolume, 
 				ep.m_SoundLevel, 
-				ep.m_nFlags, 
+				ep.m_nFlags | SND_SHOULDPAUSE,
 				ep.m_nPitch, 
 				ep.m_nSpecialDSP,
 				ep.m_pOrigin,
@@ -836,9 +836,9 @@ public:
 		}
 
 #if defined( CLIENT_DLL )
-		enginesound->EmitAmbientSound( params.soundname, params.volume, params.pitch, iFlags, soundtime );
+		enginesound->EmitAmbientSound( params.soundname, params.volume, params.pitch, iFlags | SND_SHOULDPAUSE, soundtime );
 #else
-		engine->EmitAmbientSound(entindex, origin, params.soundname, params.volume, params.soundlevel, iFlags, params.pitch, soundtime );
+		engine->EmitAmbientSound(entindex, origin, params.soundname, params.volume, params.soundlevel, iFlags | SND_SHOULDPAUSE, params.pitch, soundtime );
 #endif
 
 		bool needsCC = !( iFlags & ( SND_STOP | SND_CHANGE_VOL | SND_CHANGE_PITCH ) );
@@ -952,7 +952,7 @@ public:
 							pSample, 
 							soundlevel, 
 							volume, 
-							flags, 
+							flags | SND_SHOULDPAUSE,
 							pitch, 
 							&origin, 
 							soundtime,
@@ -964,9 +964,9 @@ public:
 		if ( pSample && ( Q_stristr( pSample, ".wav" ) || Q_stristr( pSample, ".mp3" )) )
 		{
 #if defined( CLIENT_DLL )
-			enginesound->EmitAmbientSound( pSample, volume, pitch, flags, soundtime );
+			enginesound->EmitAmbientSound( pSample, volume, pitch, flags | SND_SHOULDPAUSE, soundtime );
 #else
-			engine->EmitAmbientSound( entindex, origin, pSample, volume, soundlevel, flags, pitch, soundtime );
+			engine->EmitAmbientSound( entindex, origin, pSample, volume, soundlevel, flags | SND_SHOULDPAUSE, pitch, soundtime );
 #endif
 
 			if ( duration )
@@ -1389,9 +1389,9 @@ void UTIL_EmitAmbientSound( int entindex, const Vector &vecOrigin, const char *s
 			char name[32];
 			Q_snprintf( name, sizeof(name), "!%d", sentenceIndex );
 #if !defined( CLIENT_DLL )
-			engine->EmitAmbientSound( entindex, vecOrigin, name, vol, soundlevel, fFlags, pitch, soundtime );
+			engine->EmitAmbientSound( entindex, vecOrigin, name, vol, soundlevel, fFlags | SND_SHOULDPAUSE, pitch, soundtime );
 #else
-			enginesound->EmitAmbientSound( name, vol, pitch, fFlags, soundtime );
+			enginesound->EmitAmbientSound( name, vol, pitch, fFlags | SND_SHOULDPAUSE, soundtime );
 #endif
 			if ( duration )
 			{

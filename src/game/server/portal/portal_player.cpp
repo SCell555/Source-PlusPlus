@@ -1549,13 +1549,13 @@ void CPortal_Player::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 	{
 		//the idea here is to handle the notion that the player has portalled, but they sent us an angle update before receiving that message.
 		//If we don't handle this here, we end up sending back their old angles which makes them hiccup their angles for a frame
-		float fOldAngleDiff = fabs( AngleDistance( ucmd->viewangles.x, m_qPrePortalledViewAngles.x ) );
-		fOldAngleDiff += fabs( AngleDistance( ucmd->viewangles.y, m_qPrePortalledViewAngles.y ) );
-		fOldAngleDiff += fabs( AngleDistance( ucmd->viewangles.z, m_qPrePortalledViewAngles.z ) );
+		float fOldAngleDiff = fabsf( AngleDistance( ucmd->viewangles.x, m_qPrePortalledViewAngles.x ) );
+		fOldAngleDiff += fabsf( AngleDistance( ucmd->viewangles.y, m_qPrePortalledViewAngles.y ) );
+		fOldAngleDiff += fabsf( AngleDistance( ucmd->viewangles.z, m_qPrePortalledViewAngles.z ) );
 
-		float fCurrentAngleDiff = fabs( AngleDistance( ucmd->viewangles.x, pl.v_angle.x ) );
-		fCurrentAngleDiff += fabs( AngleDistance( ucmd->viewangles.y, pl.v_angle.y ) );
-		fCurrentAngleDiff += fabs( AngleDistance( ucmd->viewangles.z, pl.v_angle.z ) );
+		float fCurrentAngleDiff = fabsf( AngleDistance( ucmd->viewangles.x, pl.v_angle.x ) );
+		fCurrentAngleDiff += fabsf( AngleDistance( ucmd->viewangles.y, pl.v_angle.y ) );
+		fCurrentAngleDiff += fabsf( AngleDistance( ucmd->viewangles.z, pl.v_angle.z ) );
 
 		if( fCurrentAngleDiff > fOldAngleDiff )
 			ucmd->viewangles = TransformAnglesToWorldSpace( ucmd->viewangles, m_matLastPortalled.As3x4() );

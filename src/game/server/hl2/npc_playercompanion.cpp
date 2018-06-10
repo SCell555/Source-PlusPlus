@@ -32,6 +32,8 @@
 #include <KeyValues.h>
 #include "physics_npc_solver.h"
 
+#include "tier0/memdbgon.h"
+
 ConVar ai_debug_readiness("ai_debug_readiness", "0" );
 ConVar ai_use_readiness("ai_use_readiness", "1" ); // 0 = off, 1 = on, 2 = on for player squad only
 ConVar ai_readiness_decay( "ai_readiness_decay", "120" );// How many seconds it takes to relax completely
@@ -66,7 +68,7 @@ BEGIN_DATADESC( CNPC_PlayerCompanion )
 	DEFINE_EMBEDDED( m_FakeOutMortarTimer ),
 
 // (recomputed)
-//						m_bWeightPathsInCover	
+//						m_bWeightPathsInCover
 
 // These are auto-saved by AI
 //	DEFINE_FIELD( m_AssaultBehavior,	CAI_AssaultBehavior ),
@@ -151,7 +153,7 @@ bool CNPC_PlayerCompanion::CreateBehaviors()
 #ifdef HL2_EPISODIC
 	AddBehavior( &m_FearBehavior );
 	AddBehavior( &m_PassengerBehavior );
-#endif // HL2_EPISODIC	
+#endif // HL2_EPISODIC
 
 	AddBehavior( &m_ActBusyBehavior );
 
@@ -167,7 +169,7 @@ bool CNPC_PlayerCompanion::CreateBehaviors()
 	AddBehavior( &m_FollowBehavior );
 	AddBehavior( &m_LeadBehavior );
 #endif//HL2_EPISODIC
-	
+
 	return BaseClass::CreateBehaviors();
 }
 
@@ -182,7 +184,7 @@ void CNPC_PlayerCompanion::Precache()
 	gm_iszRollerMineClassname = AllocPooledString( "npc_rollermine" );
 
 	PrecacheModel( STRING( GetModelName() ) );
-	
+
 #ifdef HL2_EPISODIC
 	// The flare we're able to pull out
 	PrecacheModel( "models/props_junk/flare.mdl" );
@@ -225,7 +227,7 @@ void CNPC_PlayerCompanion::Spawn()
 	SetMoveType( MOVETYPE_STEP );
 
 	m_HackedGunPos = Vector( 0, 0, 55 );
-	
+
 	SetAimTarget(NULL);
 	m_bReadinessCapable = IsReadinessCapable();
 	SetReadinessValue( 0.0f );
@@ -274,17 +276,17 @@ int CNPC_PlayerCompanion::Restore( IRestore &restore )
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-int CNPC_PlayerCompanion::ObjectCaps() 
-{ 
+int CNPC_PlayerCompanion::ObjectCaps()
+{
 	int caps = UsableNPCObjectCaps( BaseClass::ObjectCaps() );
-	return caps; 
+	return caps;
 }
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CNPC_PlayerCompanion::ShouldAlwaysThink() 
-{ 
-	return ( BaseClass::ShouldAlwaysThink() || ( GetFollowBehavior().GetFollowTarget() && GetFollowBehavior().GetFollowTarget()->IsPlayer() ) ); 
+bool CNPC_PlayerCompanion::ShouldAlwaysThink()
+{
+	return ( BaseClass::ShouldAlwaysThink() || ( GetFollowBehavior().GetFollowTarget() && GetFollowBehavior().GetFollowTarget()->IsPlayer() ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -312,16 +314,16 @@ Disposition_t CNPC_PlayerCompanion::IRelationType( CBaseEntity *pTarget )
 				return D_FR;
 			}
 		}
-		else if ( baseRelationship == D_HT && 
-				  pTarget->IsNPC() && 
-				  ((CAI_BaseNPC *)pTarget)->GetActiveWeapon() && 
+		else if ( baseRelationship == D_HT &&
+				  pTarget->IsNPC() &&
+				  ((CAI_BaseNPC *)pTarget)->GetActiveWeapon() &&
 				  ((CAI_BaseNPC *)pTarget)->GetActiveWeapon()->ClassMatches( gm_iszShotgunClassname ) &&
 				  ( !GetActiveWeapon() || !GetActiveWeapon()->ClassMatches( gm_iszShotgunClassname ) ) )
 		{
 			if ( (pTarget->GetAbsOrigin() - GetAbsOrigin()).LengthSqr() < Square( 25 * 12 ) )
 			{
 				// Ignore enemies on the floor above us
-				if ( fabs(pTarget->GetAbsOrigin().z - GetAbsOrigin().z) < 100 )
+				if ( fabsf(pTarget->GetAbsOrigin().z - GetAbsOrigin().z) < 100 )
 					return D_FR;
 			}
 		}
@@ -391,9 +393,9 @@ void CNPC_PlayerCompanion::GatherConditions()
 			m_AnnounceAttackTimer.Set( 4, 8 );
 		}
 
-		if ( GetFollowBehavior().GetFollowTarget() && 
-			 ( GetFollowBehavior().GetFollowTarget()->IsPlayer() || GetCommandGoal() != vec3_invalid ) && 
-			 GetFollowBehavior().IsMovingToFollowTarget() && 
+		if ( GetFollowBehavior().GetFollowTarget() &&
+			 ( GetFollowBehavior().GetFollowTarget()->IsPlayer() || GetCommandGoal() != vec3_invalid ) &&
+			 GetFollowBehavior().IsMovingToFollowTarget() &&
 			 GetFollowBehavior().GetGoalRange() > 0.1 &&
 			 BaseClass::GetIdealSpeed() > 0.1 )
 		{
@@ -420,7 +422,7 @@ void CNPC_PlayerCompanion::GatherConditions()
 				float lag = dist / GetFollowBehavior().GetGoalRange();
 
 				float mult;
-				
+
 				if ( lag > 10.0 )
 					mult = 2.0;
 				else if ( lag > 5.0 )
@@ -440,7 +442,7 @@ void CNPC_PlayerCompanion::GatherConditions()
 		}
 	}
 
-	// Update our readiness if we're 
+	// Update our readiness if we're
 	if ( IsReadinessCapable() )
 	{
 		UpdateReadiness();
@@ -460,7 +462,7 @@ void CNPC_PlayerCompanion::GatherConditions()
 		}
 	}
 
-	if ( GetMotor()->IsDeceleratingToGoal() && IsCurTaskContinuousMove() && 
+	if ( GetMotor()->IsDeceleratingToGoal() && IsCurTaskContinuousMove() &&
 		 HasCondition( COND_PLAYER_PUSHING) && IsCurSchedule( SCHED_MOVE_AWAY ) )
 	{
 		ClearSchedule( "Being pushed by player" );
@@ -488,7 +490,7 @@ void CNPC_PlayerCompanion::GatherConditions()
 				SetCondition( COND_PC_SAFE_FROM_MORTAR );
 		}
 	}
-	
+
 	// Handle speech AI. Don't do AI speech if we're in scripts unless permitted by the EnableSpeakWhileScripting input.
 	if ( m_NPCState == NPC_STATE_IDLE || m_NPCState == NPC_STATE_ALERT || m_NPCState == NPC_STATE_COMBAT ||
 		( ( m_NPCState == NPC_STATE_SCRIPT ) && CanSpeakWhileScripting() ) )
@@ -510,12 +512,12 @@ void CNPC_PlayerCompanion::GatherConditions()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_PlayerCompanion::DoCustomSpeechAI( void )
 {
 	CBasePlayer *pPlayer = AI_GetSinglePlayer();
-	
+
 	// Don't allow this when we're getting in the car
 #ifdef HL2_EPISODIC
 	bool bPassengerInTransition = ( IsInAVehicle() && ( m_PassengerBehavior.GetPassengerState() == PASSENGER_STATE_ENTERING || m_PassengerBehavior.GetPassengerState() == PASSENGER_STATE_EXITING ) );
@@ -535,7 +537,7 @@ void CNPC_PlayerCompanion::DoCustomSpeechAI( void )
 	else
 	{
 		m_SpeechWatch_PlayerLooking.Start( 1.0f );
-	}	
+	}
 
 	// Mention the player is dead
 	if ( HasCondition( COND_TALKER_PLAYER_DEAD ) )
@@ -564,7 +566,7 @@ void CNPC_PlayerCompanion::PredictPlayerPush()
 void CNPC_PlayerCompanion::BuildScheduleTestBits()
 {
 	BaseClass::BuildScheduleTestBits();
-	
+
 	// Always interrupt to get into the car
 	SetCustomInterruptCondition( COND_PC_BECOMING_PASSENGER );
 
@@ -573,14 +575,14 @@ void CNPC_PlayerCompanion::BuildScheduleTestBits()
 		SetCustomInterruptCondition( COND_PLAYER_PUSHING );
 	}
 
-	if ( ( ConditionInterruptsCurSchedule( COND_GIVE_WAY ) || 
-		   IsCurSchedule(SCHED_HIDE_AND_RELOAD ) || 
-		   IsCurSchedule(SCHED_RELOAD ) || 
-		   IsCurSchedule(SCHED_STANDOFF ) || 
-		   IsCurSchedule(SCHED_TAKE_COVER_FROM_ENEMY ) || 
-		   IsCurSchedule(SCHED_COMBAT_FACE ) || 
+	if ( ( ConditionInterruptsCurSchedule( COND_GIVE_WAY ) ||
+		   IsCurSchedule(SCHED_HIDE_AND_RELOAD ) ||
+		   IsCurSchedule(SCHED_RELOAD ) ||
+		   IsCurSchedule(SCHED_STANDOFF ) ||
+		   IsCurSchedule(SCHED_TAKE_COVER_FROM_ENEMY ) ||
+		   IsCurSchedule(SCHED_COMBAT_FACE ) ||
 		   IsCurSchedule(SCHED_ALERT_FACE )  ||
-		   IsCurSchedule(SCHED_COMBAT_STAND ) || 
+		   IsCurSchedule(SCHED_COMBAT_STAND ) ||
 		   IsCurSchedule(SCHED_ALERT_FACE_BESTSOUND) ||
 		   IsCurSchedule(SCHED_ALERT_STAND) ) )
 	{
@@ -644,9 +646,9 @@ bool CNPC_PlayerCompanion::QueryHearSound( CSound *pSound )
 
 bool CNPC_PlayerCompanion::QuerySeeEntity( CBaseEntity *pEntity, bool bOnlyHateOrFearIfNPC )
 {
-	CAI_BaseNPC *pOther = pEntity->MyNPCPointer(); 
-	if ( pOther && 
-		 ( pOther->GetState() == NPC_STATE_ALERT || GetState() == NPC_STATE_ALERT ||  pOther->GetState() == NPC_STATE_COMBAT || GetState() == NPC_STATE_COMBAT ) && 
+	CAI_BaseNPC *pOther = pEntity->MyNPCPointer();
+	if ( pOther &&
+		 ( pOther->GetState() == NPC_STATE_ALERT || GetState() == NPC_STATE_ALERT ||  pOther->GetState() == NPC_STATE_COMBAT || GetState() == NPC_STATE_COMBAT ) &&
 		 pOther->IsPlayerAlly() )
 	{
 		return true;
@@ -670,7 +672,7 @@ bool CNPC_PlayerCompanion::ShouldIgnoreSound( CSound *pSound )
 		// Ignore vehicle sounds when we're driving in them
 		if ( pSound->m_hOwner && pSound->m_hOwner->GetServerVehicle() != NULL )
 		{
-			if ( m_PassengerBehavior.GetPassengerState() == PASSENGER_STATE_INSIDE && 
+			if ( m_PassengerBehavior.GetPassengerState() == PASSENGER_STATE_INSIDE &&
 				m_PassengerBehavior.GetTargetVehicle() == pSound->m_hOwner->GetServerVehicle()->GetVehicleEnt() )
 				return true;
 		}
@@ -722,7 +724,7 @@ int CNPC_PlayerCompanion::SelectSchedule()
 	int schedule = SelectScheduleDanger();
 	if ( schedule != SCHED_NONE )
 		return schedule;
-	
+
 	schedule = SelectSchedulePriorityAction();
 	if ( schedule != SCHED_NONE )
 		return schedule;
@@ -782,11 +784,11 @@ int CNPC_PlayerCompanion::SelectScheduleDanger()
 		}
 	}
 
-	if ( GetEnemy() && 
-		m_FakeOutMortarTimer.Expired() && 
-		GetFollowBehavior().GetFollowTarget() && 
-		IsMortar( GetEnemy() ) && 
-		assert_cast<CAI_BaseNPC *>(GetEnemy())->GetEnemy() == this && 
+	if ( GetEnemy() &&
+		m_FakeOutMortarTimer.Expired() &&
+		GetFollowBehavior().GetFollowTarget() &&
+		IsMortar( GetEnemy() ) &&
+		assert_cast<CAI_BaseNPC *>(GetEnemy())->GetEnemy() == this &&
 		assert_cast<CAI_BaseNPC *>(GetEnemy())->FInViewCone( this ) &&
 		assert_cast<CAI_BaseNPC *>(GetEnemy())->FVisible( this ) )
 	{
@@ -802,8 +804,8 @@ int CNPC_PlayerCompanion::SelectScheduleDanger()
 		ClearCondition( COND_PC_HURTBYFIRE );
 		return SCHED_MOVE_AWAY;
 	}
-	
-	return SCHED_NONE;	
+
+	return SCHED_NONE;
 }
 
 //-----------------------------------------------------------------------------
@@ -817,8 +819,8 @@ int CNPC_PlayerCompanion::SelectSchedulePriorityAction()
 			return SCHED_PC_GET_OFF_COMPANION;
 		}
 
-		if ( GetGroundEntity()->IsNPC() && 
-			 IRelationType( GetGroundEntity() ) == D_LI && 
+		if ( GetGroundEntity()->IsNPC() &&
+			 IRelationType( GetGroundEntity() ) == D_LI &&
 			 WorldSpaceCenter().z - GetGroundEntity()->WorldSpaceCenter().z > GetHullHeight() * .5 )
 		{
 			return SCHED_PC_GET_OFF_COMPANION;
@@ -877,12 +879,12 @@ int CNPC_PlayerCompanion::SelectScheduleCombat()
 	{
 		return SCHED_HIDE_AND_RELOAD;
 	}
-	
+
 	return SCHED_NONE;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CNPC_PlayerCompanion::CanReload( void )
 {
@@ -898,7 +900,7 @@ bool CNPC_PlayerCompanion::ShouldDeferToFollowBehavior()
 {
 	if ( !GetFollowBehavior().CanSelectSchedule() || !GetFollowBehavior().FarFromFollowTarget() )
 		return false;
-		
+
 	if ( m_StandoffBehavior.CanSelectSchedule() && !m_StandoffBehavior.IsBehindBattleLines( GetFollowBehavior().GetFollowTarget()->GetAbsOrigin() ) )
 		return false;
 
@@ -923,13 +925,13 @@ bool CNPC_PlayerCompanion::ShouldDeferToFollowBehavior()
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
 //-----------------------------------------------------------------------------
 // CalcReasonableFacing() is asking us if there's any reason why we wouldn't
-// want to look in this direction. 
+// want to look in this direction.
 //
 // Right now this is used to help prevent citizens aiming their guns at each other
 //-----------------------------------------------------------------------------
@@ -957,7 +959,7 @@ bool CNPC_PlayerCompanion::IsValidReasonableFacing( const Vector &vecSightDir, f
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-int CNPC_PlayerCompanion::TranslateSchedule( int scheduleType ) 
+int CNPC_PlayerCompanion::TranslateSchedule( int scheduleType )
 {
 	switch( scheduleType )
 	{
@@ -974,7 +976,7 @@ int CNPC_PlayerCompanion::TranslateSchedule( int scheduleType )
 				{
 					CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 					pWeapon = pPlayer->GetActiveWeapon();
-					if( pWeapon && pWeapon->UsesClipsForAmmo1() && 
+					if( pWeapon && pWeapon->UsesClipsForAmmo1() &&
 						pWeapon->Clip1() < ( pWeapon->GetMaxClip1() * .75 ) &&
 						pPlayer->GetAmmoCount( pWeapon->GetPrimaryAmmoType() ) )
 					{
@@ -1030,7 +1032,7 @@ int CNPC_PlayerCompanion::TranslateSchedule( int scheduleType )
 	case SCHED_RANGE_ATTACK1:
 		if ( IsMortar( GetEnemy() ) )
 			return SCHED_TAKE_COVER_FROM_ENEMY;
-			
+
 		if ( GetShotRegulator()->IsInRestInterval() )
 			return SCHED_STANDOFF;
 
@@ -1101,7 +1103,7 @@ void CNPC_PlayerCompanion::StartTask( const Task_t *pTask )
 			Assert( ( GetGroundEntity() && ( GetGroundEntity()->IsPlayer() || ( GetGroundEntity()->IsNPC() && IRelationType( GetGroundEntity() ) == D_LI ) ) ) );
 			GetNavigator()->SetAllowBigStep( GetGroundEntity() );
 			ChainStartTask( TASK_MOVE_AWAY_PATH, 48 );
-			
+
 			/*
 			trace_t tr;
 			UTIL_TraceHull( GetAbsOrigin(), GetAbsOrigin(), GetHullMins(), GetHullMaxs(), MASK_NPCSOLID, this, COLLISION_GROUP_NONE, &tr );
@@ -1233,7 +1235,7 @@ void CNPC_PlayerCompanion::PrepareReadinessRemap( void )
 					{
 						ActRemap.m_bAiming = true;
 					}
-				} 
+				}
 				else if ( !stricmp( pKeyName, "weaponrequired" ) )
 				{
 					ActRemap.m_fUsageBits |= bits_REMAP_WEAPON_REQUIRED;
@@ -1277,7 +1279,7 @@ void CNPC_PlayerCompanion::PrepareReadinessRemap( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_PlayerCompanion::Activate( void )
 {
@@ -1295,8 +1297,8 @@ Activity CNPC_PlayerCompanion::TranslateActivityReadiness( Activity activity )
 	if ( m_ActBusyBehavior.IsActive() )
 		return activity;
 
-	if ( m_bReadinessCapable && 
-		 ( GetReadinessUse() == AIRU_ALWAYS || 
+	if ( m_bReadinessCapable &&
+		 ( GetReadinessUse() == AIRU_ALWAYS ||
 		   ( GetReadinessUse() == AIRU_ONLY_PLAYER_SQUADMATES && (IsInPlayerSquad()||Classify()==CLASS_PLAYER_ALLY_VITAL) ) ) )
 	{
 		bool bShouldAim = ShouldBeAiming();
@@ -1320,7 +1322,7 @@ Activity CNPC_PlayerCompanion::TranslateActivityReadiness( Activity activity )
 				// Must have a weapon
 				if ( GetActiveWeapon() == NULL )
 					continue;
-				
+
 				// Must either not care about aiming, or agree on aiming
 				if ( actremap.m_fUsageBits & bits_REMAP_AIMING )
 				{
@@ -1343,7 +1345,7 @@ Activity CNPC_PlayerCompanion::TranslateActivityReadiness( Activity activity )
 					continue;
 			}
 
-			// We've successfully passed all criteria for remapping this 
+			// We've successfully passed all criteria for remapping this
 			return actremap.mappedActivity;
 		}
 	}
@@ -1393,7 +1395,7 @@ void CNPC_PlayerCompanion::HandleAnimEvent( animevent_t *pEvent )
 		{
 			// Set the model
 			m_hFlare->SetModel( "models/props_junk/flare.mdl" );
-			
+
 			// Set the parent attachment
 			m_hFlare->SetParent( this );
 			m_hFlare->SetParentAttachment( "SetParentAttachment", pEvent->options, false );
@@ -1409,7 +1411,7 @@ void CNPC_PlayerCompanion::HandleAnimEvent( animevent_t *pEvent )
 		{
 			m_hFlare->CreateFlare( 5*60.0f );
 		}
-		
+
 		return;
 	}
 
@@ -1450,7 +1452,7 @@ void CNPC_PlayerCompanion::HandleAnimEvent( animevent_t *pEvent )
 		if ( GetActiveWeapon() )
 		{
 			GetActiveWeapon()->WeaponSound( RELOAD_NPC );
-			GetActiveWeapon()->m_iClip1 = GetActiveWeapon()->GetMaxClip1(); 
+			GetActiveWeapon()->m_iClip1 = GetActiveWeapon()->GetMaxClip1();
 			ClearCondition(COND_LOW_PRIMARY_AMMO);
 			ClearCondition(COND_NO_PRIMARY_AMMO);
 			ClearCondition(COND_NO_SECONDARY_AMMO);
@@ -1512,7 +1514,7 @@ void CNPC_PlayerCompanion::Touch( CBaseEntity *pOther )
 		// Ignore if pissed at player
 		if ( m_afMemory & bits_MEMORY_PROVOKED )
 			return;
-			
+
 		TestPlayerPushing( ( pOther->IsPlayer() ) ? pOther : AI_GetSinglePlayer() );
 	}
 }
@@ -1568,7 +1570,7 @@ bool CNPC_PlayerCompanion::IsReadinessCapable()
 		return false;
 
 #ifndef HL2_EPISODIC
-	// Allow episodic companions to use readiness even if unarmed. This allows for the panicked 
+	// Allow episodic companions to use readiness even if unarmed. This allows for the panicked
 	// citizens in ep1_c17_05 (sjb)
 	if( !GetActiveWeapon() )
 		return false;
@@ -1601,7 +1603,7 @@ void CNPC_PlayerCompanion::SubtractReadiness( float flSub, bool bOverrideLock )
 		return;
 
 	// Prevent readiness from going below 0 (below 0 is only for scripted states)
-	SetReadinessValue( MAX(GetReadinessValue() - flSub, 0) );
+	SetReadinessValue( MAX(GetReadinessValue() - flSub, 0.f) );
 }
 
 //-----------------------------------------------------------------------------
@@ -1628,15 +1630,12 @@ void CNPC_PlayerCompanion::SetReadinessValue( float flSet )
 
 	int priorReadiness = GetReadinessLevel();
 
-	flSet = MIN( 1.0f, flSet );
-	flSet = MAX( READINESS_MIN_VALUE, flSet );
-
-	m_flReadiness = flSet;
+	m_flReadiness = Clamp( flSet, static_cast<float>( READINESS_MIN_VALUE ), 1.f );
 
 	if( GetReadinessLevel() != priorReadiness )
 	{
 		// We've been bumped up into a different readiness level.
-		// Interrupt IDLE schedules (if we're playing one) so that 
+		// Interrupt IDLE schedules (if we're playing one) so that
 		// we can pick the proper animation.
 		SetCondition( COND_IDLE_INTERRUPT );
 
@@ -1656,7 +1655,7 @@ void CNPC_PlayerCompanion::SetReadinessValue( float flSet )
 // if bOverrideLock, you'll change the readiness level even if we're within
 // a time period during which someone else has locked the level.
 //
-// if bSlam, you'll allow the readiness level to be set lower than current. 
+// if bSlam, you'll allow the readiness level to be set lower than current.
 //-----------------------------------------------------------------------------
 void CNPC_PlayerCompanion::SetReadinessLevel( int iLevel, bool bOverrideLock, bool bSlam )
 {
@@ -1837,7 +1836,7 @@ void CNPC_PlayerCompanion::StopAiming( char *pszReason )
 {
 #if 0
 	if( pszReason )
-	{	
+	{
 		Msg("Stopped aiming because %s\n", pszReason );
 	}
 #endif
@@ -1916,11 +1915,11 @@ bool CNPC_PlayerCompanion::PickTacticalLookTarget( AILookTargetArgs_t *pArgs )
 		AI_PROFILE_SCOPE( CNPC_PlayerCompanion_FindHint_PickTacticalLookTarget );
   		pHint = CAI_HintManager::FindHint( this, hintCriteria );
 	}
-	
+
 	if( pHint )
 	{
 		pArgs->hTarget = pHint;
-		
+
 		// Turn this node off for a few seconds to stop others aiming at the same thing (except for stealth nodes)
 		if ( pHint->HintType() != HINT_WORLD_VISUALLY_INTERESTING_STEALTH )
 		{
@@ -2043,7 +2042,7 @@ void CNPC_PlayerCompanion::OnNewLookTarget()
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-bool CNPC_PlayerCompanion::ShouldBeAiming() 
+bool CNPC_PlayerCompanion::ShouldBeAiming()
 {
 	if( !IsAllowedToAim() )
 	{
@@ -2079,7 +2078,7 @@ bool CNPC_PlayerCompanion::IsAllowedToAim()
 	}
 
 	int count = 0;
-	
+
 	// If I'm in a squad, only a certain number of us can aim.
 	AISquadIter_t iter;
 	for ( CAI_BaseNPC *pSquadmate = m_pSquad->GetFirstMember(&iter); pSquadmate; pSquadmate = m_pSquad->GetNextMember(&iter) )
@@ -2124,7 +2123,7 @@ void CNPC_PlayerCompanion::AimGun()
 	{
 		if( GetAimTarget() && FInViewCone(GetAimTarget()) )
 		{
-			float flDist; 
+			float flDist;
 			Vector vecAimTargetLoc = GetAimTarget()->WorldSpaceCenter();
 
 			flDist = (vecAimTargetLoc - GetAbsOrigin()).Length2DSqr();
@@ -2146,7 +2145,7 @@ void CNPC_PlayerCompanion::AimGun()
 			{
 				// LOS is broken.
 				if( !FindNewAimTarget() )
-				{	
+				{
 					// No alternative available right now. Stop aiming.
 					StopAiming("No LOS");
 				}
@@ -2174,7 +2173,7 @@ void CNPC_PlayerCompanion::AimGun()
 
 			if( GetReadinessLevel() == AIRL_AGITATED )
 			{
-				// Aim down! Agitated animations don't have non-aiming versions, so 
+				// Aim down! Agitated animations don't have non-aiming versions, so
 				// just point the weapon down.
 				Vector vecSpot = EyePosition();
 				Vector forward, up;
@@ -2236,7 +2235,7 @@ bool CNPC_PlayerCompanion::IsSafeFromFloorTurret( const Vector &vecLocation, CBa
 		{
 #if 0 // Draws a green line to turrets I'm safe from
 			NDebugOverlay::Line( vecLocation, pTurret->WorldSpaceCenter(), 0, 255, 0, false, 0.1 );
-#endif 
+#endif
 			return true;
 		}
 	}
@@ -2457,7 +2456,7 @@ void CNPC_PlayerCompanion::SetupCoverSearch( CBaseEntity *pEntity )
 {
 	if ( IsTurret( pEntity ) )
 		gm_fCoverSearchType = CT_TURRET;
-	
+
 	gm_bFindingCoverFromAllEnemies = false;
 	g_pMultiCoverSearcher = this;
 
@@ -2519,16 +2518,16 @@ bool CNPC_PlayerCompanion::FindCoverPos( CBaseEntity *pEntity, Vector *pResult)
 	bool result = false;
 
 	SetupCoverSearch( pEntity );
-	
+
 	if ( gm_bFindingCoverFromAllEnemies )
 	{
 		result = BaseClass::FindCoverPos( pEntity, pResult );
 		gm_bFindingCoverFromAllEnemies = false;
 	}
-	
+
 	if ( !result )
 		result = BaseClass::FindCoverPos( pEntity, pResult );
-	
+
 	CleanupCoverSearch();
 
 	return result;
@@ -2557,7 +2556,7 @@ bool CNPC_PlayerCompanion::FindCoverPosInRadius( CBaseEntity *pEntity, const Vec
 	{
 		result = BaseClass::FindCoverPosInRadius( pEntity, goalPos, coverRadius, pResult );
 	}
-	
+
 	CleanupCoverSearch();
 
 	return result;
@@ -2577,14 +2576,14 @@ bool CNPC_PlayerCompanion::FindCoverPos( CSound *pSound, Vector *pResult )
 
 	if ( gm_bFindingCoverFromAllEnemies )
 	{
-		result = ( bIsMortar ) ? FindMortarCoverPos( pSound, pResult ) : 
+		result = ( bIsMortar ) ? FindMortarCoverPos( pSound, pResult ) :
 								 BaseClass::FindCoverPos( pSound, pResult );
 		gm_bFindingCoverFromAllEnemies = false;
 	}
 
 	if ( !result )
 	{
-		result = ( bIsMortar ) ? FindMortarCoverPos( pSound, pResult ) : 
+		result = ( bIsMortar ) ? FindMortarCoverPos( pSound, pResult ) :
 								 BaseClass::FindCoverPos( pSound, pResult );
 	}
 
@@ -2605,14 +2604,14 @@ bool CNPC_PlayerCompanion::FindMortarCoverPos( CSound *pSound, Vector *pResult )
 	result = GetTacticalServices()->FindLateralCover( pSound->GetSoundOrigin(), 0, pResult );
 	if ( !result )
 	{
-		result = GetTacticalServices()->FindCoverPos( pSound->GetSoundOrigin(), 
-													  pSound->GetSoundOrigin(), 
-													  0, 
-													  CoverRadius(), 
+		result = GetTacticalServices()->FindCoverPos( pSound->GetSoundOrigin(),
+													  pSound->GetSoundOrigin(),
+													  0,
+													  CoverRadius(),
 													  pResult );
 	}
 	gm_fCoverSearchType = CT_NORMAL;
-	
+
 	return result;
 }
 
@@ -2641,7 +2640,7 @@ bool CNPC_PlayerCompanion::IsCoverPosition( const Vector &vecThreat, const Vecto
 			gm_bFindingCoverFromAllEnemies = false;
 			bool result = IsCoverPosition( testPos, vecPosition );
 			gm_bFindingCoverFromAllEnemies = true;
-			
+
 			if ( !result )
 				return false;
 		}
@@ -2767,8 +2766,8 @@ void CNPC_PlayerCompanion::OnFriendDamaged( CBaseCombatCharacter *pSquadmate, CB
 	if ( pAttacker )
 	{
 		bool bDirect = ( pSquadmate->FInViewCone(pAttacker) &&
-						 ( ( pSquadmate->IsPlayer() && HasCondition(COND_SEE_PLAYER) ) || 
-						 ( pSquadmate->MyNPCPointer() && pSquadmate->MyNPCPointer()->IsPlayerAlly() && 
+						 ( ( pSquadmate->IsPlayer() && HasCondition(COND_SEE_PLAYER) ) ||
+						 ( pSquadmate->MyNPCPointer() && pSquadmate->MyNPCPointer()->IsPlayerAlly() &&
 						   GetSenses()->DidSeeEntity( pSquadmate ) ) ) );
 		if ( bDirect )
 		{
@@ -2814,7 +2813,7 @@ void CNPC_PlayerCompanion::OnFriendDamaged( CBaseCombatCharacter *pSquadmate, CB
 //-----------------------------------------------------------------------------
 bool CNPC_PlayerCompanion::IsValidMoveAwayDest( const Vector &vecDest )
 {
-	// Don't care what the destination is unless I have an enemy and 
+	// Don't care what the destination is unless I have an enemy and
 	// that enemy is a sniper (for now).
 	if( !GetEnemy() )
 	{
@@ -2883,7 +2882,7 @@ bool CNPC_PlayerCompanion::OverrideMove( float flInterval )
 		string_t iszEnvFire = AllocPooledString( "env_fire" );
 		string_t iszBounceBomb = AllocPooledString( "combine_mine" );
 
-#ifdef HL2_EPISODIC			
+#ifdef HL2_EPISODIC
 		string_t iszNPCTurretFloor = AllocPooledString( "npc_turret_floor" );
 		string_t iszEntityFlame = AllocPooledString( "entityflame" );
 #endif // HL2_EPISODIC
@@ -2900,7 +2899,7 @@ bool CNPC_PlayerCompanion::OverrideMove( float flInterval )
 
 		CBaseEntity *pEntity = NULL;
 		trace_t tr;
-		
+
 		// For each possible entity, compare our known interesting classnames to its classname, via ID
 		while( ( pEntity = OverrideMoveCache_FindTargetsInRadius( pEntity, GetAbsOrigin(), AVOID_TEST_DIST ) ) != NULL )
 		{
@@ -2917,13 +2916,13 @@ bool CNPC_PlayerCompanion::OverrideMove( float flInterval )
 					}
 				}
 			}
-#ifdef HL2_EPISODIC			
+#ifdef HL2_EPISODIC
 			else if ( pEntity->m_iClassname == iszNPCTurretFloor )
 			{
 				UTIL_TraceLine( WorldSpaceCenter(), pEntity->WorldSpaceCenter(), MASK_BLOCKLOS, pEntity, COLLISION_GROUP_NONE, &tr );
 				if (tr.fraction == 1.0 && !tr.startsolid)
 				{
-					float radius = 1.4 * pEntity->CollisionProp()->BoundingRadius2D(); 
+					float radius = 1.4 * pEntity->CollisionProp()->BoundingRadius2D();
 					GetLocalNavigator()->AddObstacle( pEntity->WorldSpaceCenter(), radius, AIMST_AVOID_OBJECT );
 				}
 			}
@@ -2963,7 +2962,7 @@ bool CNPC_PlayerCompanion::OverrideMove( float flInterval )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CNPC_PlayerCompanion::MovementCost( int moveType, const Vector &vecStart, const Vector &vecEnd, float *pCost )
 {
@@ -3033,15 +3032,15 @@ bool CNPC_PlayerCompanion::OnObstructionPreSteer( AILocalMoveGoal_t *pMoveGoal, 
 	{
 		CAI_BaseNPC *pBlocker = pMoveGoal->directTrace.pObstruction->MyNPCPointer();
 		if ( pBlocker && pBlocker->IsPlayerAlly() && !pBlocker->IsMoving() && !pBlocker->IsInAScript() &&
-			 ( IsCurSchedule( SCHED_NEW_WEAPON ) || 
-			   IsCurSchedule( SCHED_GET_HEALTHKIT ) || 
-			   pBlocker->IsCurSchedule( SCHED_FAIL ) || 
+			 ( IsCurSchedule( SCHED_NEW_WEAPON ) ||
+			   IsCurSchedule( SCHED_GET_HEALTHKIT ) ||
+			   pBlocker->IsCurSchedule( SCHED_FAIL ) ||
 			   ( IsInPlayerSquad() && !pBlocker->IsInPlayerSquad() ) ||
 			   Classify() == CLASS_PLAYER_ALLY_VITAL ||
 			   IsInAScript() ) )
 
 		{
-			if ( pBlocker->ConditionInterruptsCurSchedule( COND_GIVE_WAY ) || 
+			if ( pBlocker->ConditionInterruptsCurSchedule( COND_GIVE_WAY ) ||
 				 pBlocker->ConditionInterruptsCurSchedule( COND_PLAYER_PUSHING ) )
 			{
 				// HACKHACK
@@ -3130,7 +3129,7 @@ void CNPC_PlayerCompanion::InputOutsideTransition( inputdata_t &inputdata )
 	while ( pHint )
 	{
 		pHint->Lock(this);
-		pHint->Unlock(0.5); // prevent other squadmates and self from using during transition. 
+		pHint->Unlock(0.5); // prevent other squadmates and self from using during transition.
 
 		pHint->GetPosition( GetHullType(), &teleportLocation );
 		if ( GetNavigator()->CanFitAtPosition( teleportLocation, MASK_NPCSOLID ) )
@@ -3263,7 +3262,7 @@ void CNPC_PlayerCompanion::UnlockReadiness( void )
 #ifdef HL2_EPISODIC
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CNPC_PlayerCompanion::ShouldDeferToPassengerBehavior( void )
@@ -3284,7 +3283,7 @@ bool CNPC_PlayerCompanion::CanEnterVehicle( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CNPC_PlayerCompanion::CanExitVehicle( void )
@@ -3298,8 +3297,8 @@ bool CNPC_PlayerCompanion::CanExitVehicle( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *lpszVehicleName - 
+// Purpose:
+// Input  : *lpszVehicleName -
 //-----------------------------------------------------------------------------
 void CNPC_PlayerCompanion::EnterVehicle( CBaseEntity *pEntityVehicle, bool bImmediately )
 {
@@ -3346,7 +3345,7 @@ void CNPC_PlayerCompanion::InputEnterVehicleImmediately( inputdata_t &inputdata 
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_PlayerCompanion::InputExitVehicle( inputdata_t &inputdata )
 {
@@ -3358,8 +3357,8 @@ void CNPC_PlayerCompanion::InputExitVehicle( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &inputdata - 
+// Purpose:
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CNPC_PlayerCompanion::InputCancelEnterVehicle( inputdata_t &inputdata )
 {
@@ -3379,7 +3378,7 @@ bool CNPC_PlayerCompanion::ExitVehicle( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CNPC_PlayerCompanion::IsInAVehicle( void ) const
@@ -3392,8 +3391,8 @@ bool CNPC_PlayerCompanion::IsInAVehicle( void ) const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Output : IServerVehicle - 
+// Purpose:
+// Output : IServerVehicle -
 //-----------------------------------------------------------------------------
 IServerVehicle *CNPC_PlayerCompanion::GetVehicle( void )
 {
@@ -3408,7 +3407,7 @@ IServerVehicle *CNPC_PlayerCompanion::GetVehicle( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : CBaseEntity
 //-----------------------------------------------------------------------------
 CBaseEntity *CNPC_PlayerCompanion::GetVehicleEntity( void )
@@ -3428,7 +3427,7 @@ CBaseEntity *CNPC_PlayerCompanion::GetVehicleEntity( void )
 // Input  : bInPVS - Whether we're in the PVS or not
 //-----------------------------------------------------------------------------
 void CNPC_PlayerCompanion::UpdateEfficiency( bool bInPVS )
-{ 
+{
 	// If we're transitioning and in the PVS, we override our efficiency
 	if ( IsInAVehicle() && bInPVS )
 	{
@@ -3457,7 +3456,7 @@ bool CNPC_PlayerCompanion::CanRunAScriptedNPCInteraction( bool bForced /*= false
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CNPC_PlayerCompanion::IsAllowedToDodge( void )
 {
@@ -3624,7 +3623,7 @@ void CNPC_PlayerCompanion::OnPlayerKilledOther( CBaseEntity *pVictim, const CTak
 	}
 
 	AI_EnemyInfo_t *pEMemory = GetEnemies()->Find( pVictim );
-	if ( pEMemory != NULL ) 
+	if ( pEMemory != NULL )
 	{
 		// was Alyx being mobbed by this enemy?
 		bVictimWasMob = pEMemory->bMobbedMe;
@@ -3665,7 +3664,7 @@ bool CNPC_PlayerCompanion::IsNavigationUrgent( void )
 	bool bBase = BaseClass::IsNavigationUrgent();
 
 	// Consider follow & assault behaviour urgent
-	if ( !bBase && (m_FollowBehavior.IsActive() || ( m_AssaultBehavior.IsRunning() && m_AssaultBehavior.IsUrgent() )) && Classify() == CLASS_PLAYER_ALLY_VITAL ) 
+	if ( !bBase && (m_FollowBehavior.IsActive() || ( m_AssaultBehavior.IsRunning() && m_AssaultBehavior.IsUrgent() )) && Classify() == CLASS_PLAYER_ALLY_VITAL )
 	{
 		// But only if the blocker isn't the player, and isn't a physics object that's still moving
 		CBaseEntity *pBlocker = GetNavigator()->GetBlockingEntity();
@@ -3766,16 +3765,16 @@ AI_BEGIN_CUSTOM_NPC( player_companion_base, CNPC_PlayerCompanion )
 	"		COND_PC_SAFE_FROM_MORTAR"
 	)
 
-	DEFINE_SCHEDULE	
+	DEFINE_SCHEDULE
 	(
 		SCHED_PC_COWER,
-		  
+
 		"	Tasks"
 		"		TASK_WAIT_RANDOM			0.1"
 		"		TASK_SET_ACTIVITY			ACTIVITY:ACT_COWER"
 		"		TASK_PC_WAITOUT_MORTAR		0"
-		"		TASK_WAIT					0.1"	
-		"		TASK_WAIT_RANDOM			0.5"	
+		"		TASK_WAIT					0.1"
+		"		TASK_WAIT_RANDOM			0.5"
 		""
 		"	Interrupts"
 		"		"
@@ -3859,10 +3858,10 @@ class COverrideMoveCache : public IEntityListener
 public:
 
 	void LevelInitPreEntity( void )
-	{ 
+	{
 		CacheClassnames();
 		gEntList.AddListenerEntity( this );
-		Clear(); 
+		Clear();
 	}
 	void LevelShutdownPostEntity( void  )
 	{
@@ -3871,8 +3870,8 @@ public:
 	}
 
 	inline void Clear( void )
-	{ 
-		m_Cache.Purge(); 
+	{
+		m_Cache.Purge();
 	}
 
 	inline bool MatchesCriteria( CBaseEntity *pEntity )
@@ -3913,14 +3912,14 @@ public:
 		int nIndex = m_Cache.InvalidIndex();
 
 		// If we're starting with an entity, start there and move past it
-		if ( pFirstEntity != NULL ) 
+		if ( pFirstEntity != NULL )
 		{
 			nIndex = m_Cache.Find( pFirstEntity );
 			nIndex = m_Cache.Next( nIndex );
 			if ( nIndex == m_Cache.InvalidIndex() )
 				return NULL;
 		}
-		else 
+		else
 		{
 			nIndex = m_Cache.Head();
 		}

@@ -1477,12 +1477,12 @@ void PreGetBumpNormalsForDisp( texinfo_t *pTexinfo, Vector &vecU, Vector &vecV, 
 	VectorNormalize( vecLightV );
 
 	bool bDoConversion = false;
-	if ( fabs( vecTexU.Dot( vecLightU ) ) < 0.999f )
+	if ( fabsf( vecTexU.Dot( vecLightU ) ) < 0.999f )
 	{
 		bDoConversion = true;
 	}
 
-	if ( fabs( vecTexV.Dot( vecLightV ) ) < 0.999f )
+	if ( fabsf( vecTexV.Dot( vecLightV ) ) < 0.999f )
 	{
 		bDoConversion = true;
 	}
@@ -1497,7 +1497,7 @@ void PreGetBumpNormalsForDisp( texinfo_t *pTexinfo, Vector &vecU, Vector &vecV, 
 		MatrixGetColumn( matTmp, 1, vecV );
 		MatrixGetColumn( matTmp, 2, vecNormal );
 
-		Assert( fabs( vecTexU.Dot( vecTexV ) ) <= 0.001f );
+		Assert( fabsf( vecTexU.Dot( vecTexV ) ) <= 0.001f );
 		return;
 	}
 
@@ -1705,7 +1705,7 @@ void RadWorld_Start()
 				// only rescale them if the current scale is "tighter" than the desired scale
 				// FIXME: since this writes out to the BSP file every run, once it's set high it can't be reset
 				// to a lower value.
-				if (fabs( scale ) > luxeldensity)
+				if (fabsf( scale ) > luxeldensity)
 				{
 					if (scale < 0)
 					{

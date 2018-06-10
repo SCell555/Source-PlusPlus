@@ -1797,7 +1797,7 @@ void CHL2_Player::SuitPower_Update( void )
 		{
 			if( SuitPower_IsDeviceActive(SuitDeviceSprint) )
 			{
-				if( !fabs(GetAbsVelocity().x) && !fabs(GetAbsVelocity().y) )
+				if( !fabsf(GetAbsVelocity().x) && !fabsf(GetAbsVelocity().y) )
 				{
 					// If player's not moving, don't drain sprint juice.
 					flPowerLoad -= SuitDeviceSprint.GetDeviceDrainRate();
@@ -3714,9 +3714,26 @@ const impactdamagetable_t &CHL2_Player::GetPhysicsImpactDamageTable()
 //-----------------------------------------------------------------------------
 void CHL2_Player::Splash( void )
 {
+	Vector start = EyePosition();
+	Vector end = GetAbsOrigin();
+
+	// Straight down
+	end.z -= 64;
+
+	// Fill in default values, just in case.
+
+	Ray_t ray;
+	ray.Init( start, end, GetPlayerMins(), GetPlayerMaxs() );
+
+	trace_t	tr;
+	UTIL_TraceRay( ray, MASK_WATER, this, COLLISION_GROUP_NONE, &tr );
+
+	if ( ( tr.fraction == 1.0f ) )
+		return;
+
 	CEffectData data;
 	data.m_fFlags = 0;
-	data.m_vOrigin = GetAbsOrigin();
+	data.m_vOrigin = tr.endpos;
 	data.m_vNormal = Vector(0,0,1);
 	data.m_vAngles = QAngle( 0, 0, 0 );
 	

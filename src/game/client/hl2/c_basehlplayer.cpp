@@ -53,6 +53,10 @@ void CC_DropPrimary( void )
 
 static ConCommand dropprimary("dropprimary", CC_DropPrimary, "dropprimary: Drops the primary weapon of the player.");
 
+// link to the correct class.
+#if !defined ( HL2MP )
+LINK_ENTITY_TO_CLASS( player, C_BaseHLPlayer );
+#endif
 //-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
@@ -103,7 +107,7 @@ float C_BaseHLPlayer::GetFOV()
 	int min_fov = ( gpGlobals->maxClients == 1 ) ? 5 : default_fov.GetInt();
 	
 	// Don't let it go too low
-	flFOVOffset = MAX( min_fov, flFOVOffset );
+	flFOVOffset = MAX( static_cast<float>( min_fov ), flFOVOffset );
 
 	return flFOVOffset;
 }
@@ -288,8 +292,8 @@ void C_BaseHLPlayer::PerformClientSideObstacleAvoidance( float flFrameTime, CUse
 		
 	bool istryingtomove = false;
 	bool ismovingforward = false;
-	if ( fabs( pCmd->forwardmove ) > 0.0f || 
-		fabs( pCmd->sidemove ) > 0.0f )
+	if ( fabsf( pCmd->forwardmove ) > 0.0f || 
+		fabsf( pCmd->sidemove ) > 0.0f )
 	{
 		istryingtomove = true;
 		if ( pCmd->forwardmove > 1.0f )
@@ -507,19 +511,19 @@ void C_BaseHLPlayer::PerformClientSideObstacleAvoidance( float flFrameTime, CUse
 	//Msg( "PRECLAMP: forwardmove=%f, sidemove=%f\n", pCmd->forwardmove, pCmd->sidemove );
 
 	float flForwardScale = 1.0f;
-	if ( pCmd->forwardmove > fabs( cl_forwardspeed.GetFloat() ) )
+	if ( pCmd->forwardmove > fabsf( cl_forwardspeed.GetFloat() ) )
 	{
-		flForwardScale = fabs( cl_forwardspeed.GetFloat() ) / pCmd->forwardmove;
+		flForwardScale = fabsf( cl_forwardspeed.GetFloat() ) / pCmd->forwardmove;
 	}
-	else if ( pCmd->forwardmove < -fabs( cl_backspeed.GetFloat() ) )
+	else if ( pCmd->forwardmove < -fabsf( cl_backspeed.GetFloat() ) )
 	{
-		flForwardScale = fabs( cl_backspeed.GetFloat() ) / fabs( pCmd->forwardmove );
+		flForwardScale = fabsf( cl_backspeed.GetFloat() ) / fabsf( pCmd->forwardmove );
 	}
 	
 	float flSideScale = 1.0f;
-	if ( fabs( pCmd->sidemove ) > fabs( cl_sidespeed.GetFloat() ) )
+	if ( fabsf( pCmd->sidemove ) > fabsf( cl_sidespeed.GetFloat() ) )
 	{
-		flSideScale = fabs( cl_sidespeed.GetFloat() ) / fabs( pCmd->sidemove );
+		flSideScale = fabsf( cl_sidespeed.GetFloat() ) / fabsf( pCmd->sidemove );
 	}
 	
 	float flScale = MIN( flForwardScale, flSideScale );

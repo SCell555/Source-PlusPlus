@@ -48,7 +48,7 @@ float RemapAngleRange( float startInterval, float endInterval, float value )
 {
 	// Fixup the roll
 	value = AngleNormalize( value );
-	float absAngle = fabs(value);
+	float absAngle = fabsf(value);
 
 	// beneath cutoff?
 	if ( absAngle < startInterval )
@@ -649,12 +649,12 @@ int CFourWheelVehiclePhysics::DrawDebugTextOverlays( int nOffset )
 	Q_snprintf( tempstr,sizeof(tempstr), "Speed %.1f  T/S/B (%.0f/%.0f/%.1f)", params.speed, m_controls.throttle, m_controls.steering, m_controls.brake );
 	m_pOuter->EntityText( nOffset, tempstr, 0 );
 	nOffset++;
-	Msg( "%s", tempstr );
+	//Msg( "%s", tempstr );
 
 	Q_snprintf( tempstr,sizeof(tempstr), "Gear: %d, RPM %4d", params.gear, (int)params.engineRPM );
 	m_pOuter->EntityText( nOffset, tempstr, 0 );
 	nOffset++;
-	Msg( " %s\n", tempstr );
+	//Msg( " %s\n", tempstr );
 
 	return nOffset;
 }
@@ -713,7 +713,7 @@ bool CFourWheelVehiclePhysics::Think()
 	const vehicleparams_t &vehicleData = m_pVehicle->GetVehicleParams();
 
 	// Set save data.
-	float carSpeed = fabs( INS2MPH( carState.speed ) );
+	float carSpeed = fabsf( INS2MPH( carState.speed ) );
 	m_nLastSpeed = m_nSpeed;
 	m_nSpeed = ( int )carSpeed;
 	m_nRPM = ( int )carState.engineRPM;
@@ -749,7 +749,7 @@ bool CFourWheelVehiclePhysics::Think()
 		if ( skidThreshold < DEFAULT_SKID_THRESHOLD )
 		{
 			// otherwise, ramp in the skid threshold to avoid the sound at really low speeds unless really skidding
-			skidThreshold = RemapValClamped( fabs(carState.speed), 0, minSpeed, DEFAULT_SKID_THRESHOLD*8, DEFAULT_SKID_THRESHOLD );
+			skidThreshold = RemapValClamped( fabsf(carState.speed), 0, minSpeed, DEFAULT_SKID_THRESHOLD*8, DEFAULT_SKID_THRESHOLD );
 		}
 		// check for skidding, if we're skidding, need to play the sound
 		if ( carState.skidSpeed > skidThreshold && m_bIsOn )
@@ -995,7 +995,7 @@ void CFourWheelVehiclePhysics::SteeringTurn( float carSpeed, const vehicleparams
 	float flSteeringRate = RemapValClamped( carSpeed, vehicleData.steering.speedSlow, vehicleData.steering.speedFast, 
 		vehicleData.steering.steeringRateSlow, vehicleData.steering.steeringRateFast );
 
-	if ( fabs(flSteeringRate) < flSteeringRestRate )
+	if ( fabsf(flSteeringRate) < flSteeringRestRate )
 	{
 		if ( Sign(flTargetSteering) != Sign(m_controls.steering) )
 		{
@@ -1025,7 +1025,7 @@ void CFourWheelVehiclePhysics::SteeringTurnAnalog( float carSpeed, const vehicle
 #if 0
 	float flSteeringRate = STEERING_BASE_RATE;
 
-	float factor = clamp( fabs( sidemove ) / STICK_EXTENTS, 0.0f, 1.0f );
+	float factor = clamp( fabsf( sidemove ) / STICK_EXTENTS, 0.0f, 1.0f );
 
 	factor *= 30;
 	flSteeringRate *= log( factor );
@@ -1037,7 +1037,7 @@ void CFourWheelVehiclePhysics::SteeringTurnAnalog( float carSpeed, const vehicle
 	float steering = ( sidemove / STICK_EXTENTS );
 
 	float flSign = ( steering > 0 ) ? 1.0f : -1.0f;
-	float flSteerAdj = RemapValClamped( fabs( steering ), xbox_steering_deadzone.GetFloat(), 1.0f, 0.0f, 1.0f );
+	float flSteerAdj = RemapValClamped( fabsf( steering ), xbox_steering_deadzone.GetFloat(), 1.0f, 0.0f, 1.0f );
 
 	float flSteeringRate = RemapValClamped( carSpeed, vehicleData.steering.speedSlow, vehicleData.steering.speedFast, 
 		vehicleData.steering.steeringRateSlow, vehicleData.steering.steeringRateFast );
@@ -1070,14 +1070,14 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 	{
 		flCarSign = -1.0f;
 	}
-	float carSpeed = fabs(INS2MPH(carState.speed));
+	float carSpeed = fabsf(INS2MPH(carState.speed));
 
 	// If going forward and turning hard, keep the throttle applied.
 	if( xbox_autothrottle.GetBool() && cmd->forwardmove > 0.0f )
 	{
 		if( carSpeed > GetMaxSpeed() * 0.75 )
 		{
-			if( fabs(cmd->sidemove) > cmd->forwardmove )
+			if( fabsf(cmd->sidemove) > cmd->forwardmove )
 			{
 				cmd->forwardmove = STICK_EXTENTS;
 			}
@@ -1126,7 +1126,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 	{
 		pPlayerDriver = dynamic_cast<CBasePlayer*>(pDriver);
 
-		if( cmd->forwardmove == 0.0f && (fabs(cmd->sidemove) < 200.0f) )
+		if( cmd->forwardmove == 0.0f && (fabsf(cmd->sidemove) < 200.0f) )
 		{
 			// If the stick goes neutral, clear out the bias. When the bias is neutral, it will begin biasing
 			// in whichever direction the user next presses the analog stick.
@@ -1190,7 +1190,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 			m_controls.throttle = 0;
 		}
 
-		float flMaxThrottle = MAX( 0.1, m_maxThrottle );
+		float flMaxThrottle = MAX( 0.1f, m_maxThrottle );
 		if ( m_controls.steering != 0 )
 		{
 			float flThrottleReduce = 0;
@@ -1207,7 +1207,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 					vehicleData.steering.turnThrottleReduceSlow, vehicleData.steering.turnThrottleReduceFast );
 			}
 
-			float limit = 1.0f - (flThrottleReduce * fabs(m_controls.steering));
+			float limit = 1.0f - (flThrottleReduce * fabsf(m_controls.steering));
 			if ( limit < 0 )
 				limit = 0;
 			flMaxThrottle = MIN( flMaxThrottle, limit );
@@ -1230,7 +1230,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 	}
 	else if( cmd->forwardmove < 0.0f )
 	{
-		float flAnalogBrake = fabs(cmd->forwardmove / STICK_EXTENTS);
+		float flAnalogBrake = fabsf(cmd->forwardmove / STICK_EXTENTS);
 
 		flAnalogBrake = clamp( flAnalogBrake, 0.25f, 1.0f );
 
@@ -1240,7 +1240,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 			m_controls.throttle = 0;
 		}
 
-		float flMaxThrottle = MIN( -0.1, m_flMaxRevThrottle  );
+		float flMaxThrottle = MIN( -0.1f, m_flMaxRevThrottle  );
 		m_controls.throttle = Approach( flMaxThrottle * flAnalogBrake, m_controls.throttle, flFrameTime * m_throttleRate );
 
 		// Apply the brake.
@@ -1265,7 +1265,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 			m_controls.throttle = 0;
 		}
 
-		float flMaxThrottle = MAX( 0.1, m_maxThrottle );
+		float flMaxThrottle = MAX( 0.1f, m_maxThrottle );
 
 		if ( m_controls.steering != 0 )
 		{
@@ -1283,7 +1283,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 					vehicleData.steering.turnThrottleReduceSlow, vehicleData.steering.turnThrottleReduceFast );
 			}
 			
-			float limit = 1.0f - (flThrottleReduce * fabs(m_controls.steering));
+			float limit = 1.0f - (flThrottleReduce * fabsf(m_controls.steering));
 			if ( limit < 0 )
 				limit = 0;
 			flMaxThrottle = MIN( flMaxThrottle, limit );
@@ -1312,7 +1312,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 			m_controls.throttle = 0;
 		}
 
-		float flMaxThrottle = MIN( -0.1, m_flMaxRevThrottle );
+		float flMaxThrottle = MIN( -0.1f, m_flMaxRevThrottle );
 		m_controls.throttle = Approach( flMaxThrottle, m_controls.throttle, flFrameTime * m_throttleRate );
 
 		// Apply the brake.

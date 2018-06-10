@@ -34,11 +34,14 @@ public:
 		void		Init( const Vector &vPos )
 		{
 			m_vPos = m_vPrevPos = m_vPredicted = vPos;
+			m_vAbsImpulse.Init();
 		}
 		
 		Vector		m_vPos;			// At time t
 		Vector		m_vPrevPos;		// At time t - m_flTimeStep
 		Vector		m_vPredicted;	// Predicted position
+
+		Vector		m_vAbsImpulse;
 	};
 
 	class IHelper

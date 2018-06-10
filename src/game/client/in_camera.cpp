@@ -528,7 +528,7 @@ void CInput::CAM_Think( void )
 	}
 	else
 	{
-		float lag = MAX( 1, 1 + cam_ideallag.GetFloat() );
+		float lag = MAX( 1.f, 1 + cam_ideallag.GetFloat() );
 
 		if( camOffset[ YAW ] - viewangles[ YAW ] != cam_idealyaw.GetFloat() )
 			camOffset[ YAW ] = MoveToward( camOffset[ YAW ], cam_idealyaw.GetFloat() + viewangles[ YAW ], lag );
@@ -619,7 +619,7 @@ void CInput::CAM_CameraThirdThink( void )
 	VectorCopy( g_ThirdPersonManager.GetCameraOffsetAngles(), vecCamOffset );
 
 	// Move the camera.
-	float flLag = MAX( 1, 1 + m_pCameraThirdData->m_flLag );
+	float flLag = MAX( 1.f, 1 + m_pCameraThirdData->m_flLag );
 	if( vecCamOffset[PITCH] - angView[PITCH] != m_pCameraThirdData->m_flPitch )
 	{
 		vecCamOffset[PITCH] = MoveToward( vecCamOffset[PITCH], ( m_pCameraThirdData->m_flPitch + angView[PITCH] ), flLag );

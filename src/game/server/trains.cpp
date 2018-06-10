@@ -1457,7 +1457,7 @@ void CFuncTrackTrain::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 				delta = 0;
 		}
 		SetDirForward( delta >= 0 );
-		delta = fabs(delta);
+		delta = fabsf(delta);
 		SetSpeed( m_maxSpeed * delta );
 	}
 }
@@ -1494,7 +1494,7 @@ void CFuncTrackTrain::InputSetSpeedDir( inputdata_t &inputdata )
 {
 	float newSpeed = inputdata.value.Float();
 	SetDirForward( newSpeed >= 0 );
-	newSpeed = fabs(newSpeed);
+	newSpeed = fabsf(newSpeed);
 	float flScale = clamp( newSpeed, 0.f, 1.f );
 	SetSpeed( m_maxSpeed * flScale );
 }
@@ -1517,7 +1517,7 @@ void CFuncTrackTrain::SetSpeedDirAccel( float flNewSpeed )
 {
 	float newSpeed = flNewSpeed;
 	SetDirForward( newSpeed >= 0 );
-	newSpeed = fabs( newSpeed );
+	newSpeed = fabsf( newSpeed );
 	float flScale = clamp( newSpeed, 0.f, 1.f );
 	SetSpeed( m_maxSpeed * flScale, true );
 }
@@ -1536,7 +1536,7 @@ void CFuncTrackTrain::InputSetSpeedForwardModifier( inputdata_t &inputdata )
 void CFuncTrackTrain::SetSpeedForwardModifier( float flModifier )
 {
 	float flSpeedForwardModifier = flModifier;
-	flSpeedForwardModifier = fabs( flSpeedForwardModifier );
+	flSpeedForwardModifier = fabsf( flSpeedForwardModifier );
 
 	m_flSpeedForwardModifier = clamp( flSpeedForwardModifier, 0.f, 1.f );
 	SetSpeed( m_flUnmodifiedDesiredSpeed, true );
@@ -1575,7 +1575,7 @@ void CFuncTrackTrain::SetSpeed( float flSpeed, bool bAccel /*= false */  )
 
 	if ( m_bAccelToSpeed )
 	{
-		m_flDesiredSpeed = fabs( flSpeed ) * m_dir;
+		m_flDesiredSpeed = fabsf( flSpeed ) * m_dir;
 		m_flSpeedChangeTime = gpGlobals->curtime;
 
 		if ( m_flSpeed == 0.0f && fabsf(m_flDesiredSpeed) > 0.0f )
@@ -1593,7 +1593,7 @@ void CFuncTrackTrain::SetSpeed( float flSpeed, bool bAccel /*= false */  )
 		return;		
 	}
 
-	m_flSpeed = fabs( flSpeed ) * m_dir;
+	m_flSpeed = fabsf( flSpeed ) * m_dir;
 
 	if ( m_flSpeed != flOldSpeed)
 	{
@@ -1680,7 +1680,7 @@ void CFuncTrackTrain::Blocked( CBaseEntity *pOther )
 	if ( ( pOther->GetFlags() & FL_ONGROUND ) && pOther->GetGroundEntity() == this )
 	{
 		DevMsg( 1, "TRAIN(%s): Blocked by %s\n", GetDebugName(), pOther->GetClassname() );
-		float deltaSpeed = fabs(m_flSpeed);
+		float deltaSpeed = fabsf(m_flSpeed);
 		if ( deltaSpeed > 50 )
 			deltaSpeed = 50;
 
@@ -1806,11 +1806,11 @@ void CFuncTrackTrain::SoundUpdate( void )
 	float flSpeedRatio = 0;
 	if ( HasSpawnFlags( SF_TRACKTRAIN_USE_MAXSPEED_FOR_PITCH ) )
 	{
-		flSpeedRatio = clamp( fabs( m_flSpeed ) / m_maxSpeed, 0.f, 1.f );
+		flSpeedRatio = clamp( fabsf( m_flSpeed ) / m_maxSpeed, 0.f, 1.f );
 	}
 	else
 	{
-		flSpeedRatio = clamp( fabs( m_flSpeed ) / TRAIN_MAXSPEED, 0.f, 1.f );
+		flSpeedRatio = clamp( fabsf( m_flSpeed ) / TRAIN_MAXSPEED, 0.f, 1.f );
 	}
 
 	float flpitch = RemapVal( flSpeedRatio, 0, 1, m_nMoveSoundMinPitch, m_nMoveSoundMaxPitch );
@@ -1943,7 +1943,7 @@ void CFuncTrackTrain::UpdateTrainVelocity( CPathTrack *pPrev, CPathTrack *pNext,
 		{
 			Vector velDesired = nextPos - GetLocalOrigin();
 			VectorNormalize( velDesired );
-			velDesired *= fabs( m_flSpeed );
+			velDesired *= fabsf( m_flSpeed );
 			SetLocalVelocity( velDesired );
 			break;
 		}
@@ -2003,7 +2003,7 @@ void CFuncTrackTrain::UpdateTrainVelocity( CPathTrack *pPrev, CPathTrack *pNext,
 
 			Vector velDesired = nextPos - GetLocalOrigin();
 			VectorNormalize( velDesired );
-			velDesired *= fabs( m_flSpeed );
+			velDesired *= fabsf( m_flSpeed );
 			SetLocalVelocity( velDesired );
 			break;
 		}
@@ -2208,11 +2208,11 @@ void CFuncTrackTrain::DoUpdateOrientation( const QAngle &curAngles, const QAngle
 	
 	// HACKHACK: Clamp really small angular deltas to avoid rotating movement on things
 	// that are close enough
-	if ( fabs(vx) < 0.1 )
+	if ( fabsf(vx) < 0.1 )
 	{
 		vx = 0;
 	}
-	if ( fabs(vy) < 0.1 )
+	if ( fabsf(vy) < 0.1 )
 	{
 		vy = 0;
 	}
@@ -2396,7 +2396,7 @@ void CFuncTrackTrain::Next( void )
 		if ( distance > 0 )
 		{
 			// no, how long to get there?
-			float flTime = distance / fabs( m_oldSpeed );
+			float flTime = distance / fabsf( m_oldSpeed );
 			SetLocalVelocity( GetLocalVelocity() * (m_oldSpeed / distance) );
 			SetMoveDone( &CFuncTrackTrain::DeadEnd );
 			SetNextThink( TICK_NEVER_THINK );

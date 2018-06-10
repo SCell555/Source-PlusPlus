@@ -253,7 +253,7 @@ bool NMatrixMN::InverseGeneral( NMatrixMN &mInverse ) const
 		iLargest = -1;
 		for(iTest=iRow; iTest < N; iTest++)
 		{
-			fTest = (float)fabs(mat[rowMap[iTest]][iRow]);
+			fTest = (float)fabsf(mat[rowMap[iTest]][iRow]);
 			if(fTest > fLargest)
 			{
 				iLargest = iTest;

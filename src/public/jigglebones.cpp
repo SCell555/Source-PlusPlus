@@ -598,7 +598,7 @@ void CJiggleBones::BuildJiggleTransformations( int boneIndex, float currenttime,
 		const float minReBoingTime = 0.5f;
 		if ( ( speed > minSpeed || data->boingSpeed > minSpeed ) && data->boingTime > minReBoingTime )
 		{
-			if ( fabs( data->boingSpeed - speed ) > jiggleInfo->boingImpactSpeed || DotProduct( vel, data->boingVelDir ) < jiggleInfo->boingImpactAngle )
+			if ( fabsf( data->boingSpeed - speed ) > jiggleInfo->boingImpactSpeed || DotProduct( vel, data->boingVelDir ) < jiggleInfo->boingImpactAngle )
 			{
 				data->boingTime = 0.0f;
 				data->boingDir = -vel;
@@ -654,7 +654,7 @@ void CJiggleBones::BuildJiggleTransformations( int boneIndex, float currenttime,
 
 			// build transform into "boing space", where Z is along primary boing axis
 			Vector boingSide;
-			if ( fabs( data->boingDir.x ) < 0.9f )
+			if ( fabsf( data->boingDir.x ) < 0.9f )
 			{
 				boingSide = CrossProduct( data->boingDir, Vector( 1.0f, 0, 0 ) );
 			}

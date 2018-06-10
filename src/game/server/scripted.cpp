@@ -42,8 +42,6 @@ ConVar ai_task_pre_script(  "ai_task_pre_script", "0", FCVAR_NONE );
 // spawnflags - (stop if blocked, stop if player seen)
 //
 
-#pragma warning( push )
-#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CAI_ScriptedSequence )
 
 	DEFINE_KEYFIELD( m_iszEntry, FIELD_STRING, "m_iszEntry" ),
@@ -118,7 +116,7 @@ BEGIN_DATADESC( CAI_ScriptedSequence )
 	DEFINE_OUTPUT(m_OnScriptEvent[7], "OnScriptEvent08"),
 
 END_DATADESC()
-#pragma warning( pop )
+
 
 LINK_ENTITY_TO_CLASS( scripted_sequence, CAI_ScriptedSequence );
 #define CLASSNAME "scripted_sequence"

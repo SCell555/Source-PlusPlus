@@ -224,7 +224,7 @@ void CCSBot::UpdateLookAngles( void )
 		if (toCurrent * toDesired < 0.0f)
 		{
 			// if the sum of the angles is greater than 180, turn the "long" way around
-			if (abs( toCurrent - toDesired ) >= 180.0f)
+			if (fabsf( toCurrent - toDesired ) >= 180.0f)
 			{
 				if (angleDiff > 0.0f)
 					angleDiff -= 360.0f;
@@ -258,7 +258,7 @@ void CCSBot::UpdateLookAngles( void )
 
 		// keep track of how long our view remains steady
 		const float steadyYaw = 1000.0f;
-		if (fabs( accel ) > steadyYaw)
+		if (fabsf( accel ) > steadyYaw)
 		{
 			m_viewSteadyTimer.Start();
 		}
@@ -295,7 +295,7 @@ void CCSBot::UpdateLookAngles( void )
 
 		// keep track of how long our view remains steady
 		const float steadyPitch = 1000.0f;
-		if (fabs( accel ) > steadyPitch)
+		if (fabsf( accel ) > steadyPitch)
 		{
 			m_viewSteadyTimer.Start();
 		}
@@ -837,8 +837,8 @@ void CCSBot::UpdateLookAround( bool updateNow )
 			// figure out how far along the path segment we are
 			Vector delta = m_spotEncounter->path.to - m_spotEncounter->path.from;
 			float length = delta.Length();
-			float adx = (float)fabs(delta.x);
-			float ady = (float)fabs(delta.y);
+			float adx = (float)fabsf(delta.x);
+			float ady = (float)fabsf(delta.y);
 			float t;
 			Vector myOrigin = GetCentroid( this );
 

@@ -247,9 +247,9 @@ IMPLEMENT_SERVERCLASS_ST(CBaseAnimating, DT_BaseAnimating)
 	SendPropInt( SENDINFO( m_bClientSideAnimation ), 1, SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_bClientSideFrameReset ), 1, SPROP_UNSIGNED ),
 
-	SendPropInt( SENDINFO( m_nNewSequenceParity ), EF_PARITY_BITS, SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO( m_nResetEventsParity ), EF_PARITY_BITS, SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO( m_nMuzzleFlashParity ), EF_MUZZLEFLASH_BITS, SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO( m_nNewSequenceParity ), EF_PARITY_BITS, SPROP_UNSIGNED|SPROP_CHANGES_OFTEN ),
+	SendPropInt( SENDINFO( m_nResetEventsParity ), EF_PARITY_BITS, SPROP_UNSIGNED|SPROP_CHANGES_OFTEN ),
+	SendPropInt( SENDINFO( m_nMuzzleFlashParity ), EF_MUZZLEFLASH_BITS, SPROP_UNSIGNED|SPROP_CHANGES_OFTEN ),
 
 	SendPropEHandle( SENDINFO( m_hLightingOrigin ) ),
 	SendPropEHandle( SENDINFO( m_hLightingOriginRelative ) ),
@@ -368,7 +368,10 @@ void CBaseAnimating::OnRestore()
 	BaseClass::OnRestore();
 
 	if ( m_nSequence != -1 && GetModelPtr() && !IsValidSequence( m_nSequence ) )
+	{
+		InvalidatePhysicsRecursive( SEQUENCE_CHANGED );
 		m_nSequence = 0;
+	}
 
 	m_flEstIkFloor = GetLocalOrigin().z;
 	PopulatePoseParameters();
@@ -420,6 +423,11 @@ void CBaseAnimating::StudioFrameAdvanceInternal( CStudioHdr *pStudioHdr, float f
 	float flNewCycle = GetCycle() + flCycleDelta;
 	if (flNewCycle < 0.0 || flNewCycle >= 1.0) 
 	{
+		if (flNewCycle >= 1.0f)
+		{
+			ReachedEndOfSequence();
+		}
+
 		if (m_bSequenceLoops)
 		{
 			flNewCycle -= (int)(flNewCycle);
@@ -470,9 +478,10 @@ void CBaseAnimating::StudioFrameAdvanceManual( float flInterval )
 	if ( !pStudioHdr )
 		return;
 
+	UpdateModelScale();
 	m_flAnimTime = gpGlobals->curtime;
 	m_flPrevAnimTime = m_flAnimTime - flInterval;
-	float flCycleRate = GetSequenceCycleRate( pStudioHdr, GetSequence() ) * m_flPlaybackRate;
+	float flCycleRate = GetSequenceCycleRate( pStudioHdr, GetSequence() ) * GetPlaybackRate();
 	StudioFrameAdvanceInternal( GetModelPtr(), flInterval * flCycleRate );
 }
 
@@ -488,6 +497,8 @@ void CBaseAnimating::StudioFrameAdvance()
 	{
 		return;
 	}
+
+	UpdateModelScale();
 
 	if ( !m_flPrevAnimTime )
 	{
@@ -511,7 +522,7 @@ void CBaseAnimating::StudioFrameAdvance()
 	m_flAnimTime = gpGlobals->curtime;
 
 	// Drive cycle
-	float flCycleRate = GetSequenceCycleRate( pStudioHdr, GetSequence() ) * m_flPlaybackRate;
+	float flCycleRate = GetSequenceCycleRate( pStudioHdr, GetSequence() ) * GetPlaybackRate();
 
 	StudioFrameAdvanceInternal( pStudioHdr, flInterval * flCycleRate );
 
@@ -860,7 +871,7 @@ bool CBaseAnimating::BecomeRagdollOnClient( const Vector &force )
 
 bool CBaseAnimating::IsRagdoll()
 {
-	return ( m_nRenderFX == kRenderFxRagdoll ) ? true : false;
+	return m_nRenderFX == kRenderFxRagdoll;
 }
 
 bool CBaseAnimating::CanBecomeRagdoll( void ) 
@@ -882,6 +893,11 @@ bool CBaseAnimating::CanBecomeRagdoll( void )
 //=========================================================
 void CBaseAnimating::ResetSequenceInfo ( )
 {
+	if (ai_sequence_debug.GetBool() == true && (m_debugOverlays & OVERLAY_NPC_SELECTED_BIT))
+	{
+		DevMsg("ResetSequenceInfo");
+	}
+
 	if (GetSequence() == -1)
 	{
 		// This shouldn't happen.  Setting m_nSequence blindly is a horrible coding practice.
@@ -918,11 +934,7 @@ bool CBaseAnimating::IsValidSequence( int iSequence )
 {
 	AssertMsg( GetModelPtr(), "GetModelPtr NULL. %s", STRING(GetEntityName()) ? STRING(GetEntityName()) : "" );
 	CStudioHdr* pstudiohdr = GetModelPtr( );
-	if (iSequence < 0 || iSequence >= pstudiohdr->GetNumSeq())
-	{
-		return false;
-	}
-	return true;
+	return !(!pstudiohdr || iSequence < 0 || iSequence >= pstudiohdr->GetNumSeq());
 }
 
 //=========================================================
@@ -930,7 +942,14 @@ bool CBaseAnimating::IsValidSequence( int iSequence )
 void CBaseAnimating::SetSequence( int nSequence )
 {
 	Assert( nSequence == 0 || IsDynamicModelLoading() || ( GetModelPtr( ) && ( nSequence < GetModelPtr( )->GetNumSeq() ) && ( GetModelPtr( )->GetNumSeq() < (1 << ANIMATION_SEQUENCE_BITS) ) ) );
+
+	int oldSequence = m_nSequence;
 	m_nSequence = nSequence;
+	if ( oldSequence != m_nSequence )
+	{
+		InvalidatePhysicsRecursive( SEQUENCE_CHANGED );
+		OnSequenceSet( oldSequence );
+	}
 }
 
 //=========================================================
@@ -1629,7 +1648,7 @@ void CBaseAnimating::CalculateIKLocks( float currentTime )
 					VectorMA( estGround, pTarget->est.height, up, p1 );
 					VectorMA( estGround, -pTarget->est.height, up, p2 );
 
-					float r = MAX(pTarget->est.radius,1);
+					float r = MAX(pTarget->est.radius, 1.f);
 
 					// don't IK to other characters
 					ray.Init( p1, p2, Vector(-r,-r,0), Vector(r,r,1) );
@@ -1756,7 +1775,7 @@ ConVar ai_setupbones_debug( "ai_setupbones_debug", "0", 0, "Shows that bones tha
 
 
 
-inline bool CBaseAnimating::CanSkipAnimation( void )
+bool CBaseAnimating::CanSkipAnimation( void )
 {
 	if ( !sv_pvsskipanimation.GetBool() )
 		return false;
@@ -2158,6 +2177,13 @@ const char *CBaseAnimating::GetBodygroupName( int iGroup )
 	return IsDynamicModelLoading() ? "" : ::GetBodygroupName( GetModelPtr( ), iGroup );
 }
 
+const char *CBaseAnimating::GetBodygroupPartName( int iGroup, int iPart )
+{
+	Assert( GetModelPtr() );
+
+	return ::GetBodygroupPartName( GetModelPtr(), iGroup, iPart );
+}
+
 int CBaseAnimating::FindBodygroupByName( const char *name )
 {
 	Assert( IsDynamicModelLoading() || GetModelPtr() );
@@ -2174,6 +2200,134 @@ int CBaseAnimating::GetNumBodyGroups( void )
 {
 	Assert( IsDynamicModelLoading() || GetModelPtr() );
 	return IsDynamicModelLoading() ? 0 : ::GetNumBodyGroups( GetModelPtr( ) );
+}
+
+int CBaseAnimating::CountBodyGroupVariants( int group )
+{
+	Assert( GetModelPtr() );
+
+	int numVariants = 0;
+
+	int count = GetBodygroupCount( group );
+	for ( int j=0; j<count; ++j )
+	{
+		const char *partName = GetBodygroupPartName( group, j );
+
+		char c = *partName;
+		int val = -1;
+		if ( c != '\0' )
+		{
+			val = atoi( partName + 1 );
+		}
+		if ( val != -1 && c != 'D' )
+		{
+			++numVariants;
+		}
+	}
+
+	return numVariants;
+}
+
+/**
+ * Find undamaged bodygroup part index
+ */
+int CBaseAnimating::FindBodyGroupVariant( int group, int variant )
+{
+	Assert( GetModelPtr() );
+
+	int numVariants = 0;
+
+	int count = GetBodygroupCount( group );
+	for ( int j=0; j<count; ++j )
+	{
+		const char *partName = GetBodygroupPartName( group, j );
+
+		char c = *partName;
+		int val = -1;
+		if ( c != '\0' )
+		{
+			val = atoi( partName + 1 );
+		}
+		if ( val != -1 && c != 'D' )
+		{
+			++numVariants;
+		}
+
+		if ( variant == numVariants )
+		{
+			return j;
+		}
+	}
+
+	return -1;
+}
+
+
+/**
+* Find a damaged version of the current part for the given bodygroup
+*/
+int CBaseAnimating::FindDamagedBodyGroupVariant( int group )
+{
+	Assert( GetModelPtr() );
+
+	if ( group < 0 || group >= GetNumBodyGroups() )
+		return -1;
+
+	int current = GetBodygroup( group );
+	const char *currentName = GetBodygroupPartName( group, current );
+
+	CUtlVector< int > damaged;
+	int count = GetBodygroupCount( group );
+	for ( int j=0; j<count; ++j )
+	{
+		const char *partName = GetBodygroupPartName( group, j );
+		if ( *partName == 'D' && Q_strstr( partName, currentName ) )
+		{
+			damaged.AddToTail( j );
+		}
+	}
+
+	if ( !damaged.Count() )
+	{
+		return -1;
+	}
+
+	return damaged[ RandomInt( 0, damaged.Count()-1 ) ];
+}
+
+
+void CBaseAnimating::RandomizeBodygroups( CUtlVector< const char * >& groups )
+{
+	CUtlVector< int > groupIndex;
+
+	int i;
+	int numVariants = 10000;
+	for ( i=0; i<groups.Count(); ++i )
+	{
+		int index = FindBodygroupByName( groups[i] );
+		if ( index < 0 )
+			continue;
+
+		groupIndex.AddToTail( index );
+		numVariants = MIN( numVariants, CountBodyGroupVariants( index ) );
+	}
+
+	if ( !numVariants )
+	{
+		return;
+	}
+
+	int variant = RandomInt( 1, numVariants );
+	int partIndex;
+
+	for ( i=0; i<groupIndex.Count(); ++i )
+	{
+		partIndex = FindBodyGroupVariant( groupIndex[i], variant );
+		if ( partIndex >= 0 )
+		{
+			SetBodygroup( groupIndex[i], partIndex );
+		}
+	}
 }
 
 int CBaseAnimating::ExtractBbox( int sequence, Vector& mins, Vector& maxs )
@@ -2350,11 +2504,11 @@ float CBaseAnimating::GetInstantaneousVelocity( float flInterval )
 		return 0;
 
 	// FIXME: someone needs to check for last frame, etc.
-	float flNextCycle = GetCycle() + flInterval * GetSequenceCycleRate( GetSequence() ) * m_flPlaybackRate;
+	float flNextCycle = GetCycle() + flInterval * GetSequenceCycleRate( GetSequence() ) * GetPlaybackRate();
 
 	Vector vecVelocity;
 	Studio_SeqVelocity( pstudiohdr, GetSequence(), flNextCycle, GetPoseParameterArray(), vecVelocity );
-	vecVelocity *= m_flPlaybackRate;
+	vecVelocity *= GetPlaybackRate();
 
 	return vecVelocity.Length();
 }
@@ -2401,11 +2555,11 @@ bool CBaseAnimating::GetIntervalMovement( float flIntervalUsed, bool &bMoveSeqFi
 
 	float flComputedCycleRate = GetSequenceCycleRate( GetSequence() );
 	
-	float flNextCycle = GetCycle() + flIntervalUsed * flComputedCycleRate * m_flPlaybackRate;
+	float flNextCycle = GetCycle() + flIntervalUsed * flComputedCycleRate * GetPlaybackRate();
 
 	if ((!m_bSequenceLoops) && flNextCycle > 1.0)
 	{
-		flIntervalUsed = GetCycle() / (flComputedCycleRate * m_flPlaybackRate);
+		flIntervalUsed = GetCycle() / (flComputedCycleRate * GetPlaybackRate());
 		flNextCycle = 1.0;
 		bMoveSeqFinished = true;
 	}
@@ -3157,6 +3311,37 @@ bool CBaseAnimating::ComputeEntitySpaceHitboxSurroundingBox( Vector *pVecWorldMi
 		VectorMin( *pVecWorldMins, vecBoxAbsMins, *pVecWorldMins );
 		VectorMax( *pVecWorldMaxs, vecBoxAbsMaxs, *pVecWorldMaxs );
 	}
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Computes a box that surrounds a single hitboxes, in entity space
+//-----------------------------------------------------------------------------
+bool CBaseAnimating::ComputeHitboxSurroundingBox( int iHitbox, Vector *pVecWorldMins, Vector *pVecWorldMaxs )
+{
+	// Note that this currently should not be called during position recomputation because of IK.
+	// The code below recomputes bones so as to get at the hitboxes,
+	// which causes IK to trigger, which causes raycasts against the other entities to occur,
+	// which is illegal to do while in the computeabsposition phase.
+
+	CStudioHdr *pStudioHdr = GetModelPtr();
+	if (!pStudioHdr)
+		return false;
+
+	mstudiohitboxset_t *set = pStudioHdr->pHitboxSet( m_nHitboxSet );
+	if ( !set || !set->numhitboxes || iHitbox < 0 || iHitbox >= set->numhitboxes )
+		return false;
+
+	CBoneCache *pCache = GetBoneCache();
+
+	mstudiobbox_t *pbox = set->pHitbox( iHitbox );
+	matrix3x4_t *pMatrix = pCache->GetCachedBone(pbox->bone);
+
+	if ( !pMatrix )
+		return false;
+
+	TransformAABB( *pMatrix, pbox->bbmin, pbox->bbmax, *pVecWorldMins, *pVecWorldMaxs );
+
 	return true;
 }
 

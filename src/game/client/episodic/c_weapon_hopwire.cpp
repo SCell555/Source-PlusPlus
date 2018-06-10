@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
 
@@ -26,7 +26,7 @@ class C_HopwireExplosion : public C_EnvelopeFX
 	typedef C_EnvelopeFX	BaseClass;
 
 public:
-	C_HopwireExplosion( void ) : 
+	C_HopwireExplosion( void ) :
 	  m_hOwner( NULL )
 	{
 		m_FXCoreScale.SetAbsolute( 0.0f );
@@ -83,7 +83,7 @@ bool C_HopwireExplosion::SetupEmitters( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_HopwireExplosion::AddParticles( void )
 {
@@ -93,7 +93,7 @@ void C_HopwireExplosion::AddParticles( void )
 
 	float tempDelta = gpGlobals->frametime;
 	while( m_ParticleTimer.NextEvent( tempDelta ) )
-	{	
+	{
 		// ========================
 		// Attracted dust particles
 		// ========================
@@ -110,7 +110,7 @@ void C_HopwireExplosion::AddParticles( void )
 
 		if ( sParticle == NULL )
 			return;
-		
+
 		sParticle->m_vecVelocity	= Vector(0,0,8);
 		sParticle->m_flDieTime		= 0.5f;
 		sParticle->m_flLifetime		= 0.0f;
@@ -141,7 +141,7 @@ void C_HopwireExplosion::AddParticles( void )
 
 		if ( sParticle == NULL )
 			return;
-		
+
 		sParticle->m_vecVelocity	= vec3_origin;
 		sParticle->m_flDieTime		= 0.2f;
 		sParticle->m_flLifetime		= 0.0f;
@@ -175,8 +175,6 @@ void C_HopwireExplosion::AddParticles( void )
 		vecDustColor.y = 0.3f;
 		vecDustColor.z = 0.25f;
 
-		Vector	color;
-
 		int	numRingSprites = 8;
 		float yaw;
 		Vector forward, vRight, vForward;
@@ -209,7 +207,7 @@ void C_HopwireExplosion::AddParticles( void )
 
 				sParticle->m_vecVelocity = forward * -random->RandomFloat( 1000, 1500 );
 				sParticle->m_vecVelocity[2] += 128.0f;
-			
+
 				#if __EXPLOSION_DEBUG
 				debugoverlay->AddLineOverlay( m_vecOrigin, m_vecOrigin + sParticle->m_vecVelocity, 255, 0, 0, false, 3 );
 				#endif
@@ -223,7 +221,7 @@ void C_HopwireExplosion::AddParticles( void )
 
 				sParticle->m_uchStartAlpha	= random->RandomFloat( 16, 64 );
 				sParticle->m_uchEndAlpha	= 0;
-				
+
 				sParticle->m_flRoll			= random->RandomInt( 0, 360 );
 				sParticle->m_flRollDelta	= random->RandomFloat( -16.0f, 16.0f );
 			}
@@ -232,8 +230,8 @@ void C_HopwireExplosion::AddParticles( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pOwner - 
+// Purpose:
+// Input  : *pOwner -
 //-----------------------------------------------------------------------------
 void C_HopwireExplosion::SetOwner( C_BaseEntity *pOwner )
 {
@@ -273,7 +271,7 @@ int C_HopwireExplosion::DrawModel( int flags )
 	pVar->SetFloatValue( refract );
 
 	pRenderContext->Bind( pMat, (IClientRenderable*)this );
-	
+
 	float sin1 = sinf( gpGlobals->curtime * 10 );
 	float sin2 = sinf( gpGlobals->curtime );
 
@@ -299,7 +297,7 @@ void C_HopwireExplosion::GetRenderBounds( Vector& mins, Vector& maxs )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_HopwireExplosion::StartExplosion( void )
 {
@@ -311,7 +309,7 @@ void C_HopwireExplosion::StartExplosion( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_HopwireExplosion::StopExplosion( void )
 {
@@ -319,7 +317,7 @@ void C_HopwireExplosion::StopExplosion( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_HopwireExplosion::StartPreExplosion( void )
 {
@@ -397,8 +395,8 @@ void C_GrenadeHopwire::ReceiveMessage( int classID, bf_read &msg )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : updateType - 
+// Purpose:
+// Input  : updateType -
 //-----------------------------------------------------------------------------
 void C_GrenadeHopwire::OnDataChanged( DataUpdateType_t updateType )
 {
@@ -408,8 +406,8 @@ void C_GrenadeHopwire::OnDataChanged( DataUpdateType_t updateType )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flags - 
+// Purpose:
+// Input  : flags -
 //-----------------------------------------------------------------------------
 int	C_GrenadeHopwire::DrawModel( int flags )
 {

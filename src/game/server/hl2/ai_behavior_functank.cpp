@@ -270,7 +270,7 @@ void CAI_FuncTankBehavior::StartTask( const Task_t *pTask )
 
 			// More leniency in Z.
 			Vector vecDelta = (vecManPos - GetAbsOrigin());
-			if ( fabs(vecDelta.x) > 16 || fabs(vecDelta.y) > 16 || fabs(vecDelta.z) > 48 )
+			if ( fabsf(vecDelta.x) > 16 || fabsf(vecDelta.y) > 16 || fabsf(vecDelta.z) > 48 )
 			{
 				TaskFail( "Not correctly on func_tank man point" );
 				m_hFuncTank->NPC_InterruptRoute();

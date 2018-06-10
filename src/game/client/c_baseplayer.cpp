@@ -194,6 +194,7 @@ BEGIN_RECV_TABLE_NOBASE( CPlayerLocalData, DT_Local )
 	RecvPropFloat( RECVINFO( m_skybox3d.fog.start ) ),
 	RecvPropFloat( RECVINFO( m_skybox3d.fog.end ) ),
 	RecvPropFloat( RECVINFO( m_skybox3d.fog.maxdensity ) ),
+	RecvPropFloat( RECVINFO( m_skybox3d.fog.HDRColorScale ) ),
 
 	// fog data
 	RecvPropEHandle( RECVINFO( m_PlayerFog.m_hCtrl ) ),
@@ -210,6 +211,14 @@ BEGIN_RECV_TABLE_NOBASE( CPlayerLocalData, DT_Local )
 	RecvPropInt( RECVINFO( m_audio.soundscapeIndex ) ),
 	RecvPropInt( RECVINFO( m_audio.localBits ) ),
 	RecvPropEHandle( RECVINFO( m_audio.ent ) ),
+
+	//Tony; tonemap stuff! -- TODO! Optimize this with bit sizes from env_tonemap_controller.
+	RecvPropFloat( RECVINFO( m_TonemapParams.m_flTonemapScale ) ),
+	RecvPropFloat( RECVINFO( m_TonemapParams.m_flTonemapRate ) ),
+	RecvPropFloat( RECVINFO( m_TonemapParams.m_flBloomScale ) ),
+
+	RecvPropFloat( RECVINFO( m_TonemapParams.m_flAutoExposureMin ) ),
+	RecvPropFloat( RECVINFO( m_TonemapParams.m_flAutoExposureMax ) ),
 END_RECV_TABLE()
 
 // -------------------------------------------------------------------------------- //
@@ -251,6 +260,8 @@ END_RECV_TABLE()
 
 		RecvPropInt			( RECVINFO( m_nWaterLevel ) ),
 		RecvPropFloat		( RECVINFO( m_flLaggedMovementValue )),
+
+		RecvPropEHandle		( RECVINFO(m_hTonemapController) ),
 
 	END_RECV_TABLE()
 
@@ -303,6 +314,8 @@ END_RECV_TABLE()
 #if defined USES_ECON_ITEMS
 		RecvPropUtlVector( RECVINFO_UTLVECTOR( m_hMyWearables ), MAX_WEARABLES_SENT_FROM_SERVER,	RecvPropEHandle(NULL, 0, 0) ),
 #endif
+
+		RecvPropEHandle		( RECVINFO(m_hColorCorrectionCtrl) ),
 
 	END_RECV_TABLE()
 
@@ -403,7 +416,6 @@ BEGIN_PREDICTION_DATA( C_BasePlayer )
 
 END_PREDICTION_DATA()
 
-LINK_ENTITY_TO_CLASS( player, C_BasePlayer );
 
 // -------------------------------------------------------------------------------- //
 // Functions.
@@ -493,7 +505,7 @@ void C_BasePlayer::Spawn( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-bool C_BasePlayer::AudioStateIsUnderwater( Vector vecMainViewOrigin )
+bool C_BasePlayer::AudioStateIsUnderwater( const Vector& vecMainViewOrigin ) const
 {
 	if ( IsObserver() )
 	{
@@ -1264,13 +1276,6 @@ void C_BasePlayer::UpdateFlashlight()
 void C_BasePlayer::Flashlight( void )
 {
 	UpdateFlashlight();
-
-	// Check for muzzle flash and apply to view model
-	C_BaseAnimating *ve = this;
-	if ( GetObserverMode() == OBS_MODE_IN_EYE )
-	{
-		ve = dynamic_cast< C_BaseAnimating* >( GetObserverTarget() );
-	}
 }
 
 
@@ -1674,7 +1679,7 @@ void C_BasePlayer::CalcFreezeCamView( Vector& eyeOrigin, QAngle& eyeAngles, floa
 		vecCamTarget = vecCamDesired;
 
 		// To stop all close in views looking up at character's chins, move the view up.
-		vecTargetPos.z += fabs(vecCamTarget.z - vecTargetPos.z) * 0.85;
+		vecTargetPos.z += fabsf(vecCamTarget.z - vecTargetPos.z) * 0.85f;
 		C_BaseEntity::PushEnableAbsRecomputations( false ); // HACK don't recompute positions while doing RayTrace
 		UTIL_TraceHull( vecCamTarget, vecTargetPos, WALL_MIN, WALL_MAX, MASK_SOLID, pTarget, COLLISION_GROUP_NONE, &trace );
 		C_BaseEntity::PopEnableAbsRecomputations();
@@ -2211,6 +2216,7 @@ Vector C_BasePlayer::GetAutoaimVector( float flScale )
 
 void C_BasePlayer::PlayPlayerJingle()
 {
+	return;
 #ifndef _XBOX
 	// Find player sound for shooter
 	player_info_t info;
@@ -2725,7 +2731,7 @@ void C_BasePlayer::FogControllerChanged( bool bSnap )
 {
 	if ( m_Local.m_PlayerFog.m_hCtrl )
 	{
-		fogparams_t	*pFogParams = &(m_Local.m_PlayerFog.m_hCtrl->m_fog);
+		const fogparams_t& pFogParams = m_Local.m_PlayerFog.m_hCtrl->m_fog;
 
 		/*
 		Msg("Updating Fog Target: (%d,%d,%d) %.0f,%.0f -> (%d,%d,%d) %.0f,%.0f (%.2f seconds)\n", 
@@ -2739,14 +2745,22 @@ void C_BasePlayer::FogControllerChanged( bool bSnap )
 		m_Local.m_PlayerFog.m_OldColor = m_CurrentFog.colorPrimary;
 		m_Local.m_PlayerFog.m_flOldStart = m_CurrentFog.start;
 		m_Local.m_PlayerFog.m_flOldEnd = m_CurrentFog.end;
+		m_Local.m_PlayerFog.m_flOldMaxDensity = m_CurrentFog.maxdensity;
+		m_Local.m_PlayerFog.m_flOldHDRColorScale = m_CurrentFog.HDRColorScale;
+		m_Local.m_PlayerFog.m_flOldFarZ = m_CurrentFog.farz;
 
-		m_Local.m_PlayerFog.m_NewColor = pFogParams->colorPrimary;
-		m_Local.m_PlayerFog.m_flNewStart = pFogParams->start;
-		m_Local.m_PlayerFog.m_flNewEnd = pFogParams->end;
+		m_Local.m_PlayerFog.m_NewColor = pFogParams.colorPrimary;
+		m_Local.m_PlayerFog.m_flNewStart = pFogParams.start;
+		m_Local.m_PlayerFog.m_flNewEnd = pFogParams.end;
+		m_Local.m_PlayerFog.m_flNewMaxDensity = pFogParams.maxdensity;
+		m_Local.m_PlayerFog.m_flNewHDRColorScale = pFogParams.HDRColorScale;
+		m_Local.m_PlayerFog.m_flNewFarZ = pFogParams.farz;
 
 		m_Local.m_PlayerFog.m_flTransitionTime = bSnap ? -1 : gpGlobals->curtime;
 
-		m_CurrentFog = *pFogParams;
+		m_Local.m_PlayerFog.m_flTransitionTime = bSnap ? -1 : gpGlobals->curtime;
+
+		m_CurrentFog = pFogParams;
 
 		// Update the fog player's local fog data with the fog controller's data if need be.
 		UpdateFogController();
@@ -2761,10 +2775,10 @@ void C_BasePlayer::UpdateFogController( void )
 	if ( m_Local.m_PlayerFog.m_hCtrl )
 	{
 		// Don't bother copying while we're transitioning, since it'll be stomped in UpdateFogBlend();
-		if ( m_Local.m_PlayerFog.m_flTransitionTime == -1 && (m_hOldFogController == m_Local.m_PlayerFog.m_hCtrl) )
+		if ( m_Local.m_PlayerFog.m_flTransitionTime == -1 && m_hOldFogController == m_Local.m_PlayerFog.m_hCtrl )
 		{
-			fogparams_t	*pFogParams = &(m_Local.m_PlayerFog.m_hCtrl->m_fog);
-			if ( m_CurrentFog != *pFogParams )
+			const fogparams_t& pFogParams = m_Local.m_PlayerFog.m_hCtrl->m_fog;
+			if ( m_CurrentFog != pFogParams )
 			{
 				/*
 					Msg("FORCING UPDATE: (%d,%d,%d) %.0f,%.0f -> (%d,%d,%d) %.0f,%.0f (%.2f seconds)\n", 
@@ -2774,7 +2788,7 @@ void C_BasePlayer::UpdateFogController( void )
 										pFogParams->start.Get(), pFogParams->end.Get(), pFogParams->duration.Get() );*/
 					
 
-				m_CurrentFog = *pFogParams;
+				m_CurrentFog = pFogParams;
 			}
 		}
 	}
@@ -2930,7 +2944,6 @@ void C_BasePlayer::BuildFirstPersonMeathookTransformations( CStudioHdr *hdr, Vec
 	// Find out where the player's head (driven by the HMD) is in the world.
 	// We can't move this with animations or effects without causing nausea, so we need to move
 	// the whole body so that the animated head is in the right place to match the player-controlled head.
-	Vector vHeadUp;
 	Vector vRealPivotPoint;
 	if( UseVR() )
 	{

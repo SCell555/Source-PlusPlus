@@ -52,8 +52,6 @@ ConVar ai_ally_manager_debug("ai_ally_manager_debug", "0" );
 
 LINK_ENTITY_TO_CLASS( ai_ally_manager, CAI_AllyManager );
 
-#pragma warning( push )
-#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CAI_AllyManager )
 	DEFINE_KEYFIELD( m_iMaxAllies,	FIELD_INTEGER, "maxallies" ),
 	DEFINE_KEYFIELD( m_iMaxMedics,	FIELD_INTEGER, "maxmedics" ),
@@ -85,7 +83,6 @@ BEGIN_DATADESC( CAI_AllyManager )
 	DEFINE_OUTPUT( m_OnZeroMedicAllies, "OnZeroMedicAllies" ),
 
 END_DATADESC()
-#pragma warning( pop )
 
 //-----------------------------------------------------------------------------
 // Purpose: 

@@ -22,7 +22,7 @@
 
 #undef LOCAL_STEP_SIZE
 // FIXME: this should be based in their hull width
-#define	LOCAL_STEP_SIZE	16.0 // 8 // 16
+#define	LOCAL_STEP_SIZE	16.f // 8 // 16
 
 // If set to 1, results will be drawn for moveprobes done by player-selected NPCs
 ConVar	ai_moveprobe_debug( "ai_moveprobe_debug", "0" );
@@ -42,7 +42,7 @@ ConVar ai_old_check_stand_position( "ai_old_check_stand_position", "0" );
 
 // We may be able to remove this, but due to certain collision
 // problems on displacements, and due to the fact that CheckStep is currently
-// being called from code outside motor code, we may need to give it a little 
+// being called from code outside motor code, we may need to give it a little
 // room to avoid boundary condition problems. Also note that this will
 // cause us to start 2*EPSILON above the ground the next time that this
 // function is called, but for now, that appears to not be a problem.
@@ -109,11 +109,11 @@ bool CAI_MoveProbe::ShouldBrushBeIgnored( CBaseEntity *pEntity )
 
 //-----------------------------------------------------------------------------
 
-void CAI_MoveProbe::TraceLine( const Vector &vecStart, const Vector &vecEnd, unsigned int mask, 
+void CAI_MoveProbe::TraceLine( const Vector &vecStart, const Vector &vecEnd, unsigned int mask,
 							   bool bUseCollisionGroup, trace_t *pResult ) const
 {
-	int collisionGroup 	= (bUseCollisionGroup) ? 
-							GetCollisionGroup() : 
+	int collisionGroup 	= (bUseCollisionGroup) ?
+							GetCollisionGroup() :
 							COLLISION_GROUP_NONE;
 
 	CTraceFilterNav traceFilter( const_cast<CAI_BaseNPC *>(GetOuter()), m_bIgnoreTransientEntities, GetOuter(), collisionGroup );
@@ -147,8 +147,8 @@ CAI_MoveProbe::~CAI_MoveProbe()
 
 //-----------------------------------------------------------------------------
 
-void CAI_MoveProbe::TraceHull( 
-	const Vector &vecStart, const Vector &vecEnd, const Vector &hullMin, 
+void CAI_MoveProbe::TraceHull(
+	const Vector &vecStart, const Vector &vecEnd, const Vector &hullMin,
 	const Vector &hullMax, unsigned int mask, trace_t *pResult ) const
 {
 	AI_PROFILE_SCOPE( CAI_MoveProbe_TraceHull );
@@ -183,7 +183,7 @@ void CAI_MoveProbe::TraceHull(
 
 //-----------------------------------------------------------------------------
 
-void CAI_MoveProbe::TraceHull( const Vector &vecStart, const Vector &vecEnd, 
+void CAI_MoveProbe::TraceHull( const Vector &vecStart, const Vector &vecEnd,
 	unsigned int mask, trace_t *pResult ) const
 {
 	TraceHull( vecStart, vecEnd, WorldAlignMins(), WorldAlignMaxs(), mask, pResult);
@@ -241,7 +241,7 @@ bool CAI_MoveProbe::CheckStep( const CheckStepArgs_t &args, CheckStepResult_t *p
 	Vector vecEnd;
 	unsigned collisionMask = args.collisionMask;
 	VectorMA( args.vecStart, args.stepSize, args.vecStepDir, vecEnd );
-	
+
 	pResult->endPoint = args.vecStart;
 	pResult->fStartSolid = false;
 	pResult->hitNormal = vec3_origin;
@@ -368,7 +368,7 @@ bool CAI_MoveProbe::CheckStep( const CheckStepArgs_t &args, CheckStepResult_t *p
 	// seems okay, now find the ground
 	// The ground is only valid if it's within a step height of the original position
 	Assert( VectorsAreEqual( trace.endpos, stepEnd, 1e-3 ) );
-	stepStart = stepEnd; 
+	stepStart = stepEnd;
 	stepEnd.z = args.vecStart.z - args.stepHeight * args.stepDownMultiplier - MOVE_HEIGHT_EPSILON;
 
 	TraceHull( stepStart, stepEnd, collisionMask, &trace );
@@ -463,7 +463,7 @@ bool CAI_MoveProbe::CheckStep( const CheckStepArgs_t &args, CheckStepResult_t *p
 // a *desired* end position; it works this way because the ground-based movement
 // is 2 1/2D, and we may end up on a ledge above or below the actual desired endpoint.
 //-----------------------------------------------------------------------------
-bool CAI_MoveProbe::TestGroundMove( const Vector &vecActualStart, const Vector &vecDesiredEnd, 
+bool CAI_MoveProbe::TestGroundMove( const Vector &vecActualStart, const Vector &vecDesiredEnd,
 	unsigned int collisionMask, float pctToCheckStandPositions, unsigned flags, AIMoveTrace_t *pMoveTrace ) const
 {
 	AIMoveTrace_t ignored;
@@ -484,7 +484,7 @@ bool CAI_MoveProbe::TestGroundMove( const Vector &vecActualStart, const Vector &
 	{
 		return true;
 	}
-	
+
 	// If it starts hanging over an edge, tough it out until it's not
 	// This allows us to blow an NPC in an invalid region + allow him to walk out
 	StepGroundTest_t groundTest;
@@ -528,7 +528,7 @@ bool CAI_MoveProbe::TestGroundMove( const Vector &vecActualStart, const Vector &
 	checkStepResult.endPoint = vecActualStart;
 	checkStepResult.hitNormal = vec3_origin;
 	checkStepResult.pBlocker = NULL;
-	
+
 	float distStartToIgnoreGround = (pctToCheckStandPositions == 100) ? pMoveTrace->flTotalDist : pMoveTrace->flTotalDist * ( pctToCheckStandPositions * 0.01);
 	bool bTryNavIgnore = ( ( vecActualStart - GetLocalOrigin() ).Length2DSqr() < 0.1 && fabsf(vecActualStart.z - GetLocalOrigin().z) < checkStepArgs.stepHeight * 0.5 );
 
@@ -546,7 +546,7 @@ bool CAI_MoveProbe::TestGroundMove( const Vector &vecActualStart, const Vector &
 
 		Assert( !m_pTraceListData || m_pTraceListData->IsEmpty() );
 		SetupCheckStepTraceListData( checkStepArgs );
-		
+
 		for ( i = 0; i < 16; i++ )
 		{
 			CheckStep( checkStepArgs, &checkStepResult );
@@ -588,7 +588,7 @@ bool CAI_MoveProbe::TestGroundMove( const Vector &vecActualStart, const Vector &
 		}
 
 		ResetTraceListData();
-		
+
 		if ( flags & AITGM_DRAW_RESULTS )
 		{
 			if ( !CheckStandPosition(checkStepResult.endPoint, collisionMask) )
@@ -609,13 +609,13 @@ bool CAI_MoveProbe::TestGroundMove( const Vector &vecActualStart, const Vector &
 			distClear += ( checkStepResult.endPoint - checkStepArgs.vecStart ).Length2D();
 			break;
 		}
-		
+
 		float dz = checkStepResult.endPoint.z - checkStepArgs.vecStart.z;
 		if ( dz < 0 )
 		{
 			dz = 0;
 		}
-		
+
 		pMoveTrace->flStepUpDistance += dz;
 		distClear += flStepSize;
 		checkStepArgs.vecStart = checkStepResult.endPoint;
@@ -627,7 +627,7 @@ bool CAI_MoveProbe::TestGroundMove( const Vector &vecActualStart, const Vector &
 	}
 
 	pMoveTrace->vEndPosition = checkStepResult.endPoint;
-	
+
 	if (checkStepResult.pBlocker)
 	{
 		pMoveTrace->pObstruction	 = checkStepResult.pBlocker;
@@ -643,16 +643,16 @@ bool CAI_MoveProbe::TestGroundMove( const Vector &vecActualStart, const Vector &
 		return false;
 	}
 
-	// FIXME: If you started on a ledge and ended on a ledge, 
+	// FIXME: If you started on a ledge and ended on a ledge,
 	// should it return an error condition (that you hit the world)?
 	// Certainly not for Step(), but maybe for GroundMoveLimit()?
-	
-	// Make sure we actually made it to the target position 
+
+	// Make sure we actually made it to the target position
 	// and not a ledge above or below the target.
 	if (!(flags & AITGM_2D))
 	{
-		float threshold = MAX(  0.5f * GetHullHeight(), StepHeight() + 0.1 );
-		if (fabs(pMoveTrace->vEndPosition.z - vecDesiredEnd.z) > threshold)
+		float threshold = MAX(  0.5f * GetHullHeight(), StepHeight() + 0.1f );
+		if (fabsf(pMoveTrace->vEndPosition.z - vecDesiredEnd.z) > threshold)
 		{
 #if 0
 			NDebugOverlay::Cross3D( vecDesiredEnd, 8, 0, 255, 0, false, 0.1 );
@@ -674,7 +674,7 @@ bool CAI_MoveProbe::TestGroundMove( const Vector &vecActualStart, const Vector &
 // Tries to generate a route from the specified start to end positions
 // Will return the results of the attempt in the AIMoveTrace_t structure
 //-----------------------------------------------------------------------------
-void CAI_MoveProbe::GroundMoveLimit( const Vector &vecStart, const Vector &vecEnd, 
+void CAI_MoveProbe::GroundMoveLimit( const Vector &vecStart, const Vector &vecEnd,
 	unsigned int collisionMask, const CBaseEntity *pTarget, unsigned testGroundMoveFlags, float pctToCheckStandPositions, AIMoveTrace_t* pTrace ) const
 {
 	// NOTE: Never call this directly!!! Always use MoveLimit!!
@@ -698,10 +698,10 @@ void CAI_MoveProbe::GroundMoveLimit( const Vector &vecStart, const Vector &vecEn
 		//DevMsg( "Warning: attempting to path from/to a point that is in solid space or is too high\n" );
 		return;
 	}
-	
-	// find out where they (in theory) should have ended up  
+
+	// find out where they (in theory) should have ended up
 	if (!(testGroundMoveFlags & AITGM_2D))
-		IterativeFloorPoint( vecEnd, collisionMask, &vecDesiredEnd ); 
+		IterativeFloorPoint( vecEnd, collisionMask, &vecDesiredEnd );
 	else
 		vecDesiredEnd = vecEnd;
 
@@ -741,7 +741,7 @@ void CAI_MoveProbe::GroundMoveLimit( const Vector &vecStart, const Vector &vecEn
 //
 //			if the move fails, returns the distance remaining to vecEnd
 //-----------------------------------------------------------------------------
-void CAI_MoveProbe::FlyMoveLimit( const Vector &vecStart, const Vector &vecEnd, 
+void CAI_MoveProbe::FlyMoveLimit( const Vector &vecStart, const Vector &vecEnd,
 	unsigned int collisionMask, const CBaseEntity *pTarget, AIMoveTrace_t *pMoveTrace ) const
 {
 	// NOTE: Never call this directly!!! Always use MoveLimit!!
@@ -785,7 +785,7 @@ void CAI_MoveProbe::FlyMoveLimit( const Vector &vecStart, const Vector &vecEnd,
 //			if the jump fails, returns the distance
 //			that can be travelled before an obstacle is hit
 //-----------------------------------------------------------------------------
-void CAI_MoveProbe::JumpMoveLimit( const Vector &vecStart, const Vector &vecEnd, 
+void CAI_MoveProbe::JumpMoveLimit( const Vector &vecStart, const Vector &vecEnd,
 	unsigned int collisionMask, const CBaseEntity *pTarget, AIMoveTrace_t *pMoveTrace ) const
 {
 	pMoveTrace->vJumpVelocity.Init( 0, 0, 0 );
@@ -855,8 +855,8 @@ void CAI_MoveProbe::JumpMoveLimit( const Vector &vecStart, const Vector &vecEnd,
 	Vector rawJumpVel = CalcJumpLaunchVelocity(vecFrom, vecTo, gravity.z, &minJumpHeight, maxHorzVel, &vecApex );
 	float baselineJumpHeight = minJumpHeight;
 
-	// FIXME: this is a binary search, which really isn't the right thing to do.  If there's a gap 
-	// the npc can jump through, this won't reliably find it.  The only way I can think to do this is a 
+	// FIXME: this is a binary search, which really isn't the right thing to do.  If there's a gap
+	// the npc can jump through, this won't reliably find it.  The only way I can think to do this is a
 	// linear search trying ever higher jumps until the gap is either found or the jump is illegal.
 	do
 	{
@@ -873,7 +873,7 @@ void CAI_MoveProbe::JumpMoveLimit( const Vector &vecStart, const Vector &vecEnd,
 		{
 			// Calculate the total time of the jump minus a tiny fraction
 			float jumpTime		= (vecFrom - vecTo).Length2D()/rawJumpVel.Length2D();
-			float timeStep		= jumpTime / 10.0;	
+			float timeStep		= jumpTime / 10.0;
 
 			Vector vecTest = vecFrom;
 			bool bMadeIt = true;
@@ -892,7 +892,7 @@ void CAI_MoveProbe::JumpMoveLimit( const Vector &vecStart, const Vector &vecEnd,
 				if (trace.startsolid || trace.fraction < 0.99) // FIXME: getting inconsistant trace fractions, revisit after Jay resolves collision eplisons
 				{
 					// NDebugOverlay::Box( trace.endpos, WorldAlignMins(), WorldAlignMaxs(), 255, 255, 0, 0, 10.0 );
-					
+
 					// save error state
 					pObstruction = trace.m_pEnt;
 					fStatus = AIComputeBlockerMoveResult( pObstruction );
@@ -910,7 +910,7 @@ void CAI_MoveProbe::JumpMoveLimit( const Vector &vecStart, const Vector &vecEnd,
 						minJumpStep = minJumpStep / 2.0;
 						minJumpHeight += minJumpStep;
 					}
-					
+
 					if ( ai_moveprobe_jump_debug.GetBool() )
 					{
 						NDebugOverlay::Line( vecTest, nextPos, 255, 0, 0, true, 2.0f );
@@ -965,10 +965,10 @@ void CAI_MoveProbe::JumpMoveLimit( const Vector &vecStart, const Vector &vecEnd,
 // Purpose: returns zero if the caller can climb from
 //			vecStart to vecEnd ignoring collisions with pTarget
 //
-//			if the climb fails, returns the distance remaining 
+//			if the climb fails, returns the distance remaining
 //			before the obstacle is hit
 //-----------------------------------------------------------------------------
-void CAI_MoveProbe::ClimbMoveLimit( const Vector &vecStart, const Vector &vecEnd, 
+void CAI_MoveProbe::ClimbMoveLimit( const Vector &vecStart, const Vector &vecEnd,
 	const CBaseEntity *pTarget, AIMoveTrace_t *pMoveTrace ) const
 {
 	trace_t tr;
@@ -991,7 +991,7 @@ void CAI_MoveProbe::ClimbMoveLimit( const Vector &vecStart, const Vector &vecEnd
 			pMoveTrace->fStatus = AIComputeBlockerMoveResult( pEntity );
 
 			float flDist = (1.0 - tr.fraction) * ComputePathDistance( NAV_CLIMB, vecStart, vecEnd );
-			if (flDist <= 0.001) 
+			if (flDist <= 0.001)
 			{
 				flDist = 0.001;
 			}
@@ -1002,10 +1002,10 @@ void CAI_MoveProbe::ClimbMoveLimit( const Vector &vecStart, const Vector &vecEnd
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-bool CAI_MoveProbe::MoveLimit( Navigation_t navType, const Vector &vecStart, 
-	const Vector &vecEnd, unsigned int collisionMask, const CBaseEntity *pTarget, 
+bool CAI_MoveProbe::MoveLimit( Navigation_t navType, const Vector &vecStart,
+	const Vector &vecEnd, unsigned int collisionMask, const CBaseEntity *pTarget,
 	float pctToCheckStandPositions, unsigned flags, AIMoveTrace_t* pTrace)
 {
 	AIMoveTrace_t ignoredTrace;
@@ -1022,7 +1022,7 @@ bool CAI_MoveProbe::MoveLimit( Navigation_t navType, const Vector &vecStart,
 
 	switch (navType)
 	{
-	case NAV_GROUND:	
+	case NAV_GROUND:
 	{
 		unsigned testGroundMoveFlags = AITGM_DEFAULT;
 		if (flags & AIMLF_2D )
@@ -1067,7 +1067,7 @@ bool CAI_MoveProbe::MoveLimit( Navigation_t navType, const Vector &vecStart,
 		JumpMoveLimit(vecStart, vecEnd, collisionMask, pTarget, pTrace);
 		break;
 
-	case NAV_CLIMB:		
+	case NAV_CLIMB:
 		ClimbMoveLimit(vecStart, vecEnd, pTarget, pTrace);
 		break;
 
@@ -1081,7 +1081,7 @@ bool CAI_MoveProbe::MoveLimit( Navigation_t navType, const Vector &vecStart,
 	{
 		m_hLastBlockingEnt = pTrace->pObstruction;
 	}
-	
+
 	return !IsMoveBlocked(pTrace->fStatus);
 }
 
@@ -1114,7 +1114,7 @@ Vector CAI_MoveProbe::CalcJumpLaunchVelocity(const Vector &startPos, const Vecto
 	// time from start to apex
 	float t0 = sqrt( ( 2.0 * *pminHeight) / flGravity );
 	// time from apex to end
-	float t1 = sqrt( ( 2.0 * fabs( *pminHeight - stepHeight) ) / flGravity );
+	float t1 = sqrt( ( 2.0 * fabsf( *pminHeight - stepHeight) ) / flGravity );
 
 	float velHorz = distance / (t0 + t1);
 
@@ -1176,11 +1176,11 @@ bool CAI_MoveProbe::CheckStandPosition( const Vector &vecStart, unsigned int col
 	contactMax.z = vHullMins.z;
 
 	trace_t trace1, trace2;
-	
+
 	if ( !GetOuter()->IsFlaggedEfficient() )
 	{
 		AI_PROFILE_SCOPE( CAI_Motor_CheckStandPosition_Sides );
-		
+
 		Vector vHullBottomCenter;
 		vHullBottomCenter.Init( 0, 0, vHullMins.z );
 
@@ -1248,7 +1248,7 @@ bool CAI_MoveProbe::OldCheckStandPosition( const Vector &vecStart, unsigned int 
 	contactMax.z = vHullMins.z;
 
 	trace_t trace;
-	
+
 	AI_PROFILE_SCOPE_BEGIN( CAI_Motor_CheckStandPosition_Center );
 	TraceHull( vecUp, vecDown, contactMin, contactMax, collisionMask, &trace );
 	AI_PROFILE_SCOPE_END();
@@ -1261,7 +1261,7 @@ bool CAI_MoveProbe::OldCheckStandPosition( const Vector &vecStart, unsigned int 
 	if ( !GetOuter()->IsFlaggedEfficient() )
 	{
 		AI_PROFILE_SCOPE( CAI_Motor_CheckStandPosition_Sides );
-		
+
 		// check a box for each quadrant, allow one failure
 		int already_failed = false;
 		for	(int x = 0; x <= 1 ;x++)
@@ -1273,7 +1273,7 @@ bool CAI_MoveProbe::OldCheckStandPosition( const Vector &vecStart, unsigned int 
 				contactMax[0] = x ? vHullMaxs.x : 0;
 				contactMin[1] = y ? 0 : vHullMins.y;
 				contactMax[1] = y ? vHullMaxs.y : 0;
-				
+
 				TraceHull( vecUp, vecDown, contactMin, contactMax, collisionMask, &trace );
 
 				sumFraction += trace.fraction;
@@ -1305,7 +1305,7 @@ bool CAI_MoveProbe::OldCheckStandPosition( const Vector &vecStart, unsigned int 
 // Computes a point on the floor below the start point, somewhere
 // between vecStart.z + flStartZ and vecStart.z + flEndZ
 //-----------------------------------------------------------------------------
-bool CAI_MoveProbe::FloorPoint( const Vector &vecStart, unsigned int collisionMask, 
+bool CAI_MoveProbe::FloorPoint( const Vector &vecStart, unsigned int collisionMask,
 						   float flStartZ, float flEndZ, Vector *pVecResult ) const
 {
 	AI_PROFILE_SCOPE( CAI_Motor_FloorPoint );
@@ -1317,7 +1317,7 @@ bool CAI_MoveProbe::FloorPoint( const Vector &vecStart, unsigned int collisionMa
 	// trace down step height and a bit more
 	Vector vecUp( vecStart.x, vecStart.y, vecStart.z + flStartZ + MOVE_HEIGHT_EPSILON );
 	Vector vecDown( vecStart.x, vecStart.y, vecStart.z + flEndZ );
-	
+
 	trace_t trace;
 	TraceHull( vecUp, vecDown, mins, maxs, collisionMask, &trace );
 
@@ -1325,7 +1325,7 @@ bool CAI_MoveProbe::FloorPoint( const Vector &vecStart, unsigned int collisionMa
 
 	if (trace.startsolid)
 	{
-		if ( trace.m_pEnt && 
+		if ( trace.m_pEnt &&
 			 ( trace.m_pEnt->GetMoveType() == MOVETYPE_VPHYSICS || trace.m_pEnt->IsNPC() ) &&
 			 ( vecStart - GetLocalOrigin() ).Length() < 0.1 )
 		{

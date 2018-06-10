@@ -129,7 +129,7 @@ struct ClipBox
 	int m_maxx, m_maxy;
 };
 
-static void DrawClippedScreenSpaceRectangle( 
+static void DrawClippedScreenSpaceRectangle(
 	IMaterial *pMaterial,
 	int destx, int desty,
 	int width, int height,
@@ -188,7 +188,7 @@ void ApplyPostProcessingPasses(PostProcessingPass *pass_list, // table of effect
 	CMatRenderContextPtr pRenderContext( materials );
 	ITexture *pSaveRenderTarget = pRenderContext->GetRenderTarget();
 	int pcount=0;
-	if ( debug_postproc.GetInt() == 1 ) 
+	if ( debug_postproc.GetInt() == 1 )
 	{
 		pRenderContext->SetRenderTarget(NULL);
 		int dest_width,dest_height;
@@ -295,7 +295,7 @@ void ApplyPostProcessingPasses(PostProcessingPass *pass_list, // table of effect
 					DrawClippedScreenSpaceRectangle(src_mat,10+col*220,10+row*220,
 						200,200,
 						0,0,1,1,1,1,cb);
-				}	
+				}
 			}
 			if (dest_coords_out)
 			{
@@ -351,7 +351,7 @@ static void SetRenderTargetAndViewPort(ITexture *rt)
 // destination than we actually intend to, so as to replicate the border pixels so that garbage
 // pixels do not get sucked into the sampling. To deal with this, we always add FILTER_KERNEL_SLOP
 // to our widths/heights if there is room for them in the destination.
-static void DrawScreenSpaceRectangleWithSlop( 
+static void DrawScreenSpaceRectangleWithSlop(
 	ITexture *dest_rt,
 	IMaterial *pMaterial,
 	int destx, int desty,
@@ -936,7 +936,7 @@ void CLuminanceHistogramSystem::DisplayHistogram( void )
 			}
 		}
 
-		int width = MAX( 1, 500 * ( e.m_max_lum - e.m_min_lum ) );
+		int width = Max<int>( 1, 500 * ( e.m_max_lum - e.m_min_lum ) );
 		nTotalGraphPixelsWide += width + 2;
 	}
 
@@ -947,10 +947,10 @@ void CLuminanceHistogramSystem::DisplayHistogram( void )
 	{
 		engine->Con_NPrintf( 17, "(All values in linear space)" );
 
-		engine->Con_NPrintf( 21, "AvgLum @ %4.2f%%  mat_tonemap_min_avglum = %4.2f%%  Using %d pixels of %d pixels on screen (%3d%%)", 
+		engine->Con_NPrintf( 21, "AvgLum @ %4.2f%%  mat_tonemap_min_avglum = %4.2f%%  Using %d pixels of %d pixels on screen (%3d%%)",
 			MAX( 0.0f, FindLocationOfPercentBrightPixels( 50.0f ) ) * 100.0f, mat_tonemap_min_avglum.GetFloat(),
 			nTotalValidPixels, ( dest_width * dest_height ), int( float( nTotalValidPixels ) * 100.0f / float( dest_width * dest_height ) ) );
-		engine->Con_NPrintf( 23, "BloomScale = %4.2f  mat_hdr_manual_tonemap_rate = %4.2f  mat_accelerate_adjust_exposure_down = %4.2f", 
+		engine->Con_NPrintf( 23, "BloomScale = %4.2f  mat_hdr_manual_tonemap_rate = %4.2f  mat_accelerate_adjust_exposure_down = %4.2f",
 			GetCurrentBloomScale(), mat_hdr_manual_tonemap_rate.GetFloat(), mat_accelerate_adjust_exposure_down.GetFloat() );
 	}
 
@@ -1017,13 +1017,13 @@ void CLuminanceHistogramSystem::DisplayHistogram( void )
 		CHistogram_entry_t &e = CurHistogram[l];
 		if ( e.ContainsValidData() )
 			np += e.m_npixels_in_range;
-		int width = MAX( 1, 500 * ( e.m_max_lum - e.m_min_lum ) );
+		int width = Max<int>( 1, 500 * ( e.m_max_lum - e.m_min_lum ) );
 
 		//Warning( "Bucket %d: min/max %f / %f.  m_npixels_in_range=%d   m_npixels=%d\n", l, e.m_min_lum, e.m_max_lum, e.m_npixels_in_range, e.m_npixels );
 
 		if ( np )
 		{
-			int height = MAX( 1, MIN( HISTOGRAM_BAR_SIZE, ( (float)np / (float)nMaxValidPixels ) * HISTOGRAM_BAR_SIZE ) );
+			int height = Max<int>( 1, Min<int>( HISTOGRAM_BAR_SIZE, ( (float)np / (float)nMaxValidPixels ) * HISTOGRAM_BAR_SIZE ) );
 
 			pRenderContext->ClearColor3ub( 255, 0, 0 );
 			pRenderContext->Viewport( xp, 4 + HISTOGRAM_BAR_SIZE - height, width, height );
@@ -1171,7 +1171,7 @@ static void SetToneMapScale(IMatRenderContext *pRenderContext, float newvalue, f
 		int sample_pt = ARRAYSIZE( s_MovingAverageToneMapScale ) / 2;
 		for( int i = 0;i < ARRAYSIZE( s_MovingAverageToneMapScale );i ++ )
 		{
-			float weight = abs( i - sample_pt ) * ( 1.0 / ( ARRAYSIZE( s_MovingAverageToneMapScale ) / 2 ));
+			float weight = fabsf( i - sample_pt ) * ( 1.0 / ( ARRAYSIZE( s_MovingAverageToneMapScale ) / 2 ));
 			sumweights += weight;
 			avg += weight * s_MovingAverageToneMapScale[i];
 		}
@@ -1377,7 +1377,7 @@ EXPOSE_INTERFACE( CEnginePostMaterialProxy, IMaterialProxy, "engine_post" IMATER
 
 static void DrawBloomDebugBoxes( IMatRenderContext *pRenderContext )
 {
-	// draw inset rects which should have a centered bloom 
+	// draw inset rects which should have a centered bloom
 	pRenderContext->SetRenderTarget(NULL);
 	int dest_width, dest_height;
 	pRenderContext->GetRenderTargetDimensions( dest_width, dest_height );
@@ -1406,15 +1406,15 @@ static void DrawBloomDebugBoxes( IMatRenderContext *pRenderContext )
 	// upper right
 	pRenderContext->Viewport( dest_width - inset - size, inset, size, size );
 	pRenderContext->ClearBuffers( true, true );
-	
+
 	// lower right
 	pRenderContext->Viewport( dest_width - inset - size, dest_height - inset - size, size, size );
 	pRenderContext->ClearBuffers( true, true );
-	
+
 	// lower left
 	pRenderContext->Viewport( inset, dest_height - inset - size, size, size );
 	pRenderContext->ClearBuffers( true, true );
-	
+
 	// restore
 	pRenderContext->Viewport( 0, 0, dest_width, dest_height );
 }
@@ -1428,7 +1428,7 @@ static float GetBloomAmount( void )
 	HDRType_t hdrType = g_pMaterialSystemHardwareConfig->GetHDRType();
 
 	bool bBloomEnabled = (mat_hdr_level.GetInt() >= 1);
-	
+
 	if ( !engine->MapHasHDRLighting() )
 		bBloomEnabled = false;
 	if ( mat_force_bloom.GetInt() )
@@ -1443,7 +1443,7 @@ static float GetBloomAmount( void )
 	}
 	if( !g_pMaterialSystemHardwareConfig->CanDoSRGBReadFromRTs() && g_pMaterialSystemHardwareConfig->FakeSRGBWrite() )
 	{
-		bBloomEnabled = false;		
+		bBloomEnabled = false;
 	}
 
 	float flBloomAmount=0.0;
@@ -1622,7 +1622,7 @@ static void DoPreBloomTonemapping( IMatRenderContext *pRenderContext, int nX, in
 			{
 				SetToneMapScale( pRenderContext, flTargetScalarClamped, flAutoExposureMin, flAutoExposureMax );
 			}
-			
+
 			if ( mat_debug_autoexposure.GetInt() || mat_show_histogram.GetInt() )
 			{
 				bool bDrawTextThisFrame = true;
@@ -1828,23 +1828,23 @@ static void CreatePyroSide( int nSide, Vector2D &vMaxSize )
 
 static float PryoVignetteSTHorizontal[ 6 ][ 2 ] =
 {
-	{	0.0f, 0.0f },		 
-	{	0.0f, 1.0f },		 
-	{	1.0f, 1.0f },		 
+	{	0.0f, 0.0f },
+	{	0.0f, 1.0f },
+	{	1.0f, 1.0f },
 
-	{	1.0f, 1.0f },		 
-	{	0.0f, 0.0f },		 
+	{	1.0f, 1.0f },
+	{	0.0f, 0.0f },
 	{	1.0f, 0.0f }
 };
 
 static float PryoVignetteSTVertical[ 6 ][ 2 ] =
 {
-	{	0.0f, 0.0f },		 
-	{	1.0f, 0.0f },		 
-	{	1.0f, 1.0f },		 
+	{	0.0f, 0.0f },
+	{	1.0f, 0.0f },
+	{	1.0f, 1.0f },
 
-	{	1.0f, 1.0f },		 
-	{	0.0f, 0.0f },		 
+	{	1.0f, 1.0f },
+	{	0.0f, 0.0f },
 	{	0.0f, 1.0f }
 };
 
@@ -1987,7 +1987,7 @@ static void DrawPyroVignette( int nDestX, int nDestY, int nWidth, int nHeight,	/
 }
 
 
-static void DrawPyroPost( IMaterial *pMaterial, 
+static void DrawPyroPost( IMaterial *pMaterial,
 	int nDestX, int nDestY, int nWidth, int nHeight,	// Rect to draw into in screen space
 	float flSrcTextureX0, float flSrcTextureY0,		// which texel you want to appear at destx/y
 	float flSrcTextureX1, float flSrcTextureY1,		// which texel you want to appear at destx+width-1, desty+height-1
@@ -2092,7 +2092,7 @@ static void DrawPyroPost( IMaterial *pMaterial,
 	meshBuilder.Position3f( flLeftX   + (float) 0 * flWidth, flTopY - (float) (0+1) * flHeight, 0.0f );
 	meshBuilder.TexCoord2f( 0, flLeftU   + (float) 0 * flUWidth, flTopV + (float)(0+1) * flVHeight);
 	meshBuilder.AdvanceVertex();
-	
+
 	// Bottom Bar
 
 	// Top left
@@ -2265,7 +2265,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 	}
 
 	switch( hdrType )
-	{   
+	{
 		case HDR_TYPE_NONE:
 		case HDR_TYPE_INTEGER:
 		{
@@ -2326,7 +2326,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			// bloom, software-AA and colour-correction (applied in 1 pass, after generation of the bloom texture)
 			bool  bPerformSoftwareAA	= IsX360() && ( engine->GetDXSupportLevel() >= 90 ) && ( flAAStrength != 0.0f );
 			bool  bPerformBloom			= !bPostVGui && ( flBloomScale > 0.0f ) && ( engine->GetDXSupportLevel() >= 90 );
-			bool  bPerformColCorrect	= !bPostVGui && 
+			bool  bPerformColCorrect	= !bPostVGui &&
 										  ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() >= 90) &&
 										  ( g_pMaterialSystemHardwareConfig->GetHDRType() != HDR_TYPE_FLOAT ) &&
 										  g_pColorCorrectionMgr->HasNonZeroColorCorrectionWeights() &&
@@ -2390,7 +2390,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 					CenterScaleQuadUVs( partialViewportPostSrcCorners, uvScale );
 				}
 
-				// Temporary hack... Color correction was crashing on the first frame 
+				// Temporary hack... Color correction was crashing on the first frame
 				// when run outside the debugger for some mods (DoD). This forces it to skip
 				// a frame, ensuring we don't get the weird texture crash we otherwise would.
 				// FIXME: This will be removed when the true cause is found [added: Main CL 144694]
@@ -2412,10 +2412,10 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 
 						pRenderContext->DrawScreenSpaceRectangle(post_mat,
                                                                  // TomF - offset already done by the viewport.
-																 0,0, //partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-																 partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-																 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-																 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
+																 0,0, //partialViewportPostDestRect.x,				partialViewportPostDestRect.y,
+																 partialViewportPostDestRect.width,			partialViewportPostDestRect.height,
+																 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y,
+																 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w,
 																 dest_rt1->GetActualWidth(),dest_rt1->GetActualHeight(),
 																 GetClientWorldEntity()->GetClientRenderable(),
 																 mat_postprocess_x.GetInt(), mat_postprocess_y.GetInt() );
@@ -2440,10 +2440,10 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 
 							pRenderContext->DrawScreenSpaceRectangle(aa_mat,
                                                                      // TODO: check if offsets should be 0,0 here, as with the combined-pass case
-																	 partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-																	 partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-																	 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-																	 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
+																	 partialViewportPostDestRect.x,				partialViewportPostDestRect.y,
+																	 partialViewportPostDestRect.width,			partialViewportPostDestRect.height,
+																	 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y,
+																	 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w,
 																	 dest_rt1->GetActualWidth(),dest_rt1->GetActualHeight(),
 																	 GetClientWorldEntity()->GetClientRenderable());
 
@@ -2465,10 +2465,10 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 
 							pRenderContext->DrawScreenSpaceRectangle(bloom_mat,
                                                                      // TODO: check if offsets should be 0,0 here, as with the combined-pass case
-																	 partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-																	 partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-																	 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-																	 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
+																	 partialViewportPostDestRect.x,				partialViewportPostDestRect.y,
+																	 partialViewportPostDestRect.width,			partialViewportPostDestRect.height,
+																	 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y,
+																	 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w,
 																	 dest_rt1->GetActualWidth(),dest_rt1->GetActualHeight(),
 																	 GetClientWorldEntity()->GetClientRenderable());
 
@@ -2496,10 +2496,10 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 
 							pRenderContext->DrawScreenSpaceRectangle(colcorrect_mat,
                                                                      // TODO: check if offsets should be 0,0 here, as with the combined-pass case
-																	 partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-																	 partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-																	 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-																	 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
+																	 partialViewportPostDestRect.x,				partialViewportPostDestRect.y,
+																	 partialViewportPostDestRect.width,			partialViewportPostDestRect.height,
+																	 partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y,
+																	 partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w,
 																	 dest_rt1->GetActualWidth(),dest_rt1->GetActualHeight(),
 																	 GetClientWorldEntity()->GetClientRenderable());
 
@@ -2523,19 +2523,19 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 
 						DrawPyroVignette(
                             // TODO: check if offsets should be 0,0 here, as with the combined-pass case
-                            partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-							partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-							partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-							partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
+                            partialViewportPostDestRect.x,				partialViewportPostDestRect.y,
+							partialViewportPostDestRect.width,			partialViewportPostDestRect.height,
+							partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y,
+							partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w,
 							GetClientWorldEntity()->GetClientRenderable() );
 
 						IMaterial *pPyroVisionPostMaterial = materials->FindMaterial( "dev/pyro_post", TEXTURE_GROUP_OTHER, true);
 						DrawPyroPost( pPyroVisionPostMaterial,
                             // TODO: check if offsets should be 0,0 here, as with the combined-pass case
-							partialViewportPostDestRect.x,				partialViewportPostDestRect.y, 
-							partialViewportPostDestRect.width,			partialViewportPostDestRect.height, 
-							partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y, 
-							partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w, 
+							partialViewportPostDestRect.x,				partialViewportPostDestRect.y,
+							partialViewportPostDestRect.width,			partialViewportPostDestRect.height,
+							partialViewportPostSrcCorners.x,			partialViewportPostSrcCorners.y,
+							partialViewportPostSrcCorners.z,			partialViewportPostSrcCorners.w,
 							dest_rt1->GetActualWidth(),dest_rt1->GetActualHeight(),
 							GetClientWorldEntity()->GetClientRenderable() );
 					}
@@ -2565,21 +2565,21 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 				//				Warning("avg_lum=%f\n",g_HDR_HistogramSystem.GetTargetTonemapScalar());
 				if ( mat_dynamic_tonemapping.GetInt() )
 				{
-					float avg_lum = MAX( 0.0001, g_HDR_HistogramSystem.GetTargetTonemapScalar() );
+					float avg_lum = MAX( 0.0001f, g_HDR_HistogramSystem.GetTargetTonemapScalar() );
 					float scalevalue = MAX( flAutoExposureMin,
-										 MIN( flAutoExposureMax, 0.18 / avg_lum ));
+										 MIN( flAutoExposureMax, 0.18f / avg_lum ));
 					pRenderContext->SetGoalToneMappingScale( scalevalue );
 					mat_hdr_tonemapscale.SetValue( scalevalue );
 				}
 			}
-			
+
 			IMaterial *pBloomMaterial;
 			pBloomMaterial = materials->FindMaterial( "dev/floattoscreen_combine", "" );
 			IMaterialVar *pBloomAmountVar = pBloomMaterial->FindVar( "$bloomamount", NULL );
 			pBloomAmountVar->SetFloatValue( flBloomScale );
-			
+
 			PostProcessingPass* selectedHDR;
-			
+
 			if ( flBloomScale > 0.0 )
 			{
 				selectedHDR = HDRFinal_Float;
@@ -2588,25 +2588,25 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			{
 				selectedHDR = HDRFinal_Float_NoBloom;
 			}
-			
+
 			if (mat_show_ab_hdr.GetInt())
 			{
 				ClipBox splitScreenClip;
-				
+
 				splitScreenClip.m_minx = splitScreenClip.m_miny = 0;
 
 				// Left half
 				splitScreenClip.m_maxx = dest_width / 2;
 				splitScreenClip.m_maxy = dest_height - 1;
-				
+
 				ApplyPostProcessingPasses(HDRSimulate_NonHDR, &splitScreenClip);
-				
+
 				// Right half
 				splitScreenClip.m_minx = splitScreenClip.m_maxx;
 				splitScreenClip.m_maxx = dest_width - 1;
-				
+
 				ApplyPostProcessingPasses(selectedHDR, &splitScreenClip);
-				
+
 			}
 			else
 			{
@@ -2618,9 +2618,9 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 				g_HDR_HistogramSystem.DisplayHistogram();
 			if ( mat_dynamic_tonemapping.GetInt() )
 			{
-				float avg_lum = MAX( 0.0001, g_HDR_HistogramSystem.GetTargetTonemapScalar() );
+				float avg_lum = MAX( 0.0001f, g_HDR_HistogramSystem.GetTargetTonemapScalar() );
 				float scalevalue = MAX( flAutoExposureMin,
-									 MIN( flAutoExposureMax, 0.023 / avg_lum ));
+									 MIN( flAutoExposureMax, 0.023f / avg_lum ));
 				SetToneMapScale( pRenderContext, scalevalue, flAutoExposureMin, flAutoExposureMax );
 			}
 			pRenderContext->SetRenderTarget( NULL );
@@ -2830,7 +2830,7 @@ void DoImageSpaceMotionBlur( const CViewSetup &view, int x, int y, int w, int h 
 			if ( mat_motion_blur_forward_enabled.GetBool() ) // Want forward and falling
 				g_vMotionBlurValues[2] = flViewDotMotion;
 			else // Falling only
-				g_vMotionBlurValues[2] = flViewDotMotion * fabs( vCurrentForwardVec[2] ); // Only want this if we're looking up or down;
+				g_vMotionBlurValues[2] = flViewDotMotion * fabsf( vCurrentForwardVec[2] ); // Only want this if we're looking up or down;
 
 			//====================================//
 			// Yaw (Compensate for circle strafe) //
@@ -2851,14 +2851,14 @@ void DoImageSpaceMotionBlur( const CViewSetup &view, int x, int y, int w, int h 
 
 			// Use pitch to dampen yaw
 			float flUndampenedYaw = flYawDiffAdjusted / flHorizontalFov;
-			g_vMotionBlurValues[0] = flUndampenedYaw * ( 1.0f - ( fabs( flCurrentPitch ) / 90.0f ) ); // Dampen horizontal yaw blur based on pitch
+			g_vMotionBlurValues[0] = flUndampenedYaw * ( 1.0f - ( fabsf( flCurrentPitch ) / 90.0f ) ); // Dampen horizontal yaw blur based on pitch
 
 			//engine->Con_NPrintf( 4, "flSideDotMotion: %6.2f   yaw diff: %6.2f  ( %6.2f, %6.2f )", flSideDotMotion, ( s_flPreviousYaw - flCurrentYaw ), flYawDiffOriginal, flYawDiffAdjusted );
 
 			//=======================================//
 			// Pitch (Compensate for forward motion) //
 			//=======================================//
-			float flPitchCompensateMask = 1.0f - ( ( 1.0f - fabs( vCurrentForwardVec[2] ) ) * ( 1.0f - fabs( vCurrentForwardVec[2] ) ) );
+			float flPitchCompensateMask = 1.0f - ( ( 1.0f - fabsf( vCurrentForwardVec[2] ) ) * ( 1.0f - fabsf( vCurrentForwardVec[2] ) ) );
 			float flPitchDiffOriginal = s_flPreviousPitch - flCurrentPitch;
 			float flPitchDiffAdjusted = flPitchDiffOriginal;
 
@@ -2881,7 +2881,7 @@ void DoImageSpaceMotionBlur( const CViewSetup &view, int x, int y, int w, int h 
 			// Roll (Enabled when we're looking down and yaw changes) //
 			//========================================================//
 			g_vMotionBlurValues[3] = flUndampenedYaw; // Roll starts out as undampened yaw intensity and is then scaled by pitch
-			g_vMotionBlurValues[3] *= ( fabs( flCurrentPitch ) / 90.0f ) * ( fabs( flCurrentPitch ) / 90.0f ) * ( fabs( flCurrentPitch ) / 90.0f ); // Dampen roll based on pitch^3
+			g_vMotionBlurValues[3] *= ( fabsf( flCurrentPitch ) / 90.0f ) * ( fabsf( flCurrentPitch ) / 90.0f ) * ( fabsf( flCurrentPitch ) / 90.0f ); // Dampen roll based on pitch^3
 
 			//engine->Con_NPrintf( 4, "[2] before scale and bias: %6.2f", g_vMotionBlurValues[2] );
 			//engine->Con_NPrintf( 5, "[3] before scale and bias: %6.2f", g_vMotionBlurValues[3] );
@@ -2895,7 +2895,7 @@ void DoImageSpaceMotionBlur( const CViewSetup &view, int x, int y, int w, int h 
 				g_vMotionBlurValues[2] = 0.0f;
 
 			// Scale and bias values after time adjustment
-			g_vMotionBlurValues[2] = clamp( ( fabs( g_vMotionBlurValues[2] ) - flMotionBlurFallingMin ) / ( flMotionBlurFallingMax - flMotionBlurFallingMin ), 0.0f, 1.0f ) * ( g_vMotionBlurValues[2] >= 0.0f ? 1.0f : -1.0f );
+			g_vMotionBlurValues[2] = clamp( ( fabsf( g_vMotionBlurValues[2] ) - flMotionBlurFallingMin ) / ( flMotionBlurFallingMax - flMotionBlurFallingMin ), 0.0f, 1.0f ) * ( g_vMotionBlurValues[2] >= 0.0f ? 1.0f : -1.0f );
 			g_vMotionBlurValues[2] /= 30.0f; // To counter-adjust for time adjustment above
 
 			//=================//

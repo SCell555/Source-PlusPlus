@@ -120,7 +120,7 @@ int	GetVertexnum (Vector& in)
 
 	for (i=0 ; i<3 ; i++)
 	{
-		if ( fabs(in[i] - (int)(in[i]+0.5)) < INTEGRAL_EPSILON)
+		if ( fabsf(in[i] - (int)(in[i]+0.5)) < INTEGRAL_EPSILON)
 			vert[i] = (int)(in[i]+0.5);
 		else
 			vert[i] = in[i];
@@ -131,9 +131,9 @@ int	GetVertexnum (Vector& in)
 	for (vnum=hashverts[h] ; vnum ; vnum=vertexchain[vnum])
 	{
 		Vector& p = dvertexes[vnum].point;
-		if ( fabs(p[0]-vert[0])<POINT_EPSILON
-		&& fabs(p[1]-vert[1])<POINT_EPSILON
-		&& fabs(p[2]-vert[2])<POINT_EPSILON )
+		if ( fabsf(p[0]-vert[0])<POINT_EPSILON
+		&& fabsf(p[1]-vert[1])<POINT_EPSILON
+		&& fabsf(p[2]-vert[2])<POINT_EPSILON )
 			return vnum;
 	}
 	
@@ -173,7 +173,7 @@ int	GetVertexnum (Vector& v)
 	// make really close values exactly integral
 	for (i=0 ; i<3 ; i++)
 	{
-		if ( fabs(v[i] - (int)(v[i]+0.5)) < INTEGRAL_EPSILON )
+		if ( fabsf(v[i] - (int)(v[i]+0.5)) < INTEGRAL_EPSILON )
 			v[i] = (int)(v[i]+0.5);
 		if (v[i] < MIN_COORD_INTEGER || v[i] > MAX_COORD_INTEGER)
 			Error ("GetVertexnum: outside world, vertex %.1f %.1f %.1f", v.x, v.y, v.z);
@@ -967,9 +967,9 @@ winding_t *TryMergeWinding (winding_t *f1, winding_t *f2, Vector& planenormal)
 			p4 = &f2->p[(j+1)%f2->numpoints];
 			for (k=0 ; k<3 ; k++)
 			{
-				if (fabs((*p1)[k] - (*p4)[k]) > EQUAL_EPSILON)
+				if (fabsf((*p1)[k] - (*p4)[k]) > EQUAL_EPSILON)
 					break;
-				if (fabs((*p2)[k] - (*p3)[k]) > EQUAL_EPSILON)
+				if (fabsf((*p2)[k] - (*p3)[k]) > EQUAL_EPSILON)
 					break;
 			}
 			if (k==3)
@@ -1520,7 +1520,7 @@ static void SubdivideFaceBySubdivSize( face_t *f, float subdivsize )
 	WindingPlane( f->w, hackNormal, &dummy );
 
 	// HACK - only subdivide stuff that is facing up or down (for water)
-	if( fabs(hackNormal[2]) < .9f )
+	if( fabsf(hackNormal[2]) < .9f )
 	{
 		return;
 	}

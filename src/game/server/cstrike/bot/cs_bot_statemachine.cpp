@@ -402,7 +402,7 @@ void CCSBot::Attack( CCSPlayer *victim )
 	QAngle idealAngle;
 	VectorAngles( toEnemy, idealAngle );
 
-	float deltaYaw = (float)fabs(m_lookYaw - idealAngle.y);
+	float deltaYaw = (float)fabsf(m_lookYaw - idealAngle.y);
 
 	while( deltaYaw > 180.0f )
 		deltaYaw -= 360.0f;

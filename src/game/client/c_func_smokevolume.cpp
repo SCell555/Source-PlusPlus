@@ -326,9 +326,9 @@ void C_FuncSmokeVolume::Update( float fTimeDelta )
 	const Vector &curOrigin = GetAbsOrigin();
 	const QAngle &curAngles = GetAbsAngles();
 	if ( !VectorsAreEqual( curOrigin, m_vLastOrigin, 0.1 ) || 
-		fabs( curAngles.x - m_vLastAngles.x ) > 0.1 || 
-		fabs( curAngles.y - m_vLastAngles.y ) > 0.1 || 
-		fabs( curAngles.z - m_vLastAngles.z ) > 0.1 ||
+		fabsf( curAngles.x - m_vLastAngles.x ) > 0.1 || 
+		fabsf( curAngles.y - m_vLastAngles.y ) > 0.1 || 
+		fabsf( curAngles.z - m_vLastAngles.z ) > 0.1 ||
 		m_bFirstUpdate )
 	{
 		m_bFirstUpdate = false;

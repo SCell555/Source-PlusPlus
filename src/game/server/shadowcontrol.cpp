@@ -115,7 +115,7 @@ bool CShadowControl::KeyValue( const char *szKeyName, const char *szValue )
 	if ( FStrEq( szKeyName, "direction" ) )
 	{
 		// Only use this if angles haven't been set...
-		if ( fabs(m_shadowDirection->LengthSqr() - 1.0f) > 1e-3 )
+		if ( fabsf(m_shadowDirection->LengthSqr() - 1.0f) > 1e-3f )
 		{
 			Vector vTemp;
 			UTIL_StringToVector( vTemp.Base(), szValue );

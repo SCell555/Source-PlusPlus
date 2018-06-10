@@ -1048,7 +1048,11 @@ void CBaseCombatWeapon::SetActivity( Activity act, float duration )
 		{
 			// FIXME: does this even make sense in non-shoot animations?
 			m_flPlaybackRate = SequenceDuration( sequence ) / duration;
-			m_flPlaybackRate = MIN( m_flPlaybackRate, 12.0);  // FIXME; magic number!, network encoding range
+#ifdef CLIENT_DLL
+			m_flPlaybackRate = MIN( m_flPlaybackRate, 12.f );  // FIXME; magic number!, network encoding range
+#else
+			m_flPlaybackRate = MIN( m_flPlaybackRate.Get(), 12.f );  // FIXME; magic number!, network encoding range
+#endif
 		}
 		else
 		{
@@ -2311,7 +2315,8 @@ void CBaseCombatWeapon::PrimaryAttack( void )
 	// Make sure we don't fire more than the amount in the clip
 	if ( UsesClipsForAmmo1() )
 	{
-		info.m_iShots = MIN( info.m_iShots, m_iClip1 );
+		info.m_iShots = MIN( info.m_iShots, m_iClip1.Get() );
+
 		m_iClip1 -= info.m_iShots;
 	}
 	else
@@ -2539,13 +2544,13 @@ void CDmgAccumulator::AccumulateMultiDamage( const CTakeDamageInfo &info, CBaseE
 		if ( pInfo )
 		{
 			// Update
-			m_TargetsDmgInfo[iIndex].AddDamageType( info.GetDamageType() );
-			m_TargetsDmgInfo[iIndex].SetDamage( pInfo->GetDamage() + info.GetDamage() );
-			m_TargetsDmgInfo[iIndex].SetDamageForce( pInfo->GetDamageForce() + info.GetDamageForce() );
-			m_TargetsDmgInfo[iIndex].SetDamagePosition( info.GetDamagePosition() );
-			m_TargetsDmgInfo[iIndex].SetReportedPosition( info.GetReportedPosition() );
-			m_TargetsDmgInfo[iIndex].SetMaxDamage( MAX( pInfo->GetMaxDamage(), info.GetDamage() ) );
-			m_TargetsDmgInfo[iIndex].SetAmmoType( info.GetAmmoType() );
+			pInfo->AddDamageType( info.GetDamageType() );
+			pInfo->AddDamage( info.GetDamage() );
+			pInfo->SetDamageForce( pInfo->GetDamageForce() + info.GetDamageForce() );
+			pInfo->SetDamagePosition( info.GetDamagePosition() );
+			pInfo->SetReportedPosition( info.GetReportedPosition() );
+			pInfo->SetMaxDamage( MAX( pInfo->GetMaxDamage(), info.GetDamage() ) );
+			pInfo->SetAmmoType( info.GetAmmoType() );
 		}
 
 	}

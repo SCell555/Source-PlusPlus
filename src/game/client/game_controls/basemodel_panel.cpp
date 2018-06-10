@@ -622,8 +622,8 @@ void CBaseModelPanel::LookAtBounds( const Vector &vecBoundsMin, const Vector &ve
 	float flDist = 0.0f;
 	for ( int iPoint = 0; iPoint < 8; ++iPoint )
 	{
-		float flDistY = fabs( aXFormPoints[iPoint].y / flTanFOVx ) - aXFormPoints[iPoint].x;
-		float flDistZ = fabs( aXFormPoints[iPoint].z / flTanFOVy ) - aXFormPoints[iPoint].x;
+		float flDistY = fabsf( aXFormPoints[iPoint].y / flTanFOVx ) - aXFormPoints[iPoint].x;
+		float flDistZ = fabsf( aXFormPoints[iPoint].z / flTanFOVy ) - aXFormPoints[iPoint].x;
 		dist[iPoint].x = flDistY;
 		dist[iPoint].y = flDistZ;
 		float flTestDist = MAX( flDistZ, flDistY );
@@ -826,11 +826,11 @@ void CBaseModelPanel::PostPaint3D( IMatRenderContext *pRenderContext )
 
 	FOR_EACH_VEC( m_particleList, i )
 	{
-		if ( m_particleList[i]->m_bIsUpdateToDate )
+		if ( !m_particleList[i]->m_bIsUpdateToDate )
 		{
 			m_particleList[i]->m_pParticleSystem->Simulate( gpGlobals->frametime, false );
 			m_particleList[i]->m_pParticleSystem->Render( pRenderContext );
-			m_particleList[i]->m_bIsUpdateToDate = false;
+			m_particleList[i]->m_bIsUpdateToDate = true;
 		}
 	}
 

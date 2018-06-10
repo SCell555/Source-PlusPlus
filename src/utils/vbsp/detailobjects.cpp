@@ -645,7 +645,7 @@ static void PlaceDetail( DetailModel_t const& model, const Vector& pt, const Vec
 
 		// Choose any two arbitrary axes which are perpendicular to the normal
 		Vector xaxis( 1, 0, 0 );
-		if (fabs(xaxis.Dot(zaxis)) - 1.0 > -1e-3)
+		if (fabsf(xaxis.Dot(zaxis)) - 1.0 > -1e-3)
 			xaxis.Init( 0, 1, 0 );
 		Vector yaxis;
 		CrossProduct( zaxis, xaxis, yaxis );
@@ -679,7 +679,7 @@ static void PlaceDetail( DetailModel_t const& model, const Vector& pt, const Vec
 			float flScale = 1.0f;
 			if ( model.m_flRandomScaleStdDev != 0.0f ) 
 			{
-				flScale = fabs( RandomGaussianFloat( 1.0f, model.m_flRandomScaleStdDev ) );
+				flScale = fabsf( RandomGaussianFloat( 1.0f, model.m_flRandomScaleStdDev ) );
 			}
 
 			AddDetailSpriteToLump( pt, angles, model, flScale );
@@ -703,12 +703,12 @@ static void EmitDetailObjectsOnFace( dface_t* pFace, DetailObject_t& detail )
 	// Turn the face into a bunch of polygons, and compute the area of each
 	int* pSurfEdges = &dsurfedges[pFace->firstedge];
 	int vertexIdx = (pSurfEdges[0] < 0);
-	int firstVertexIndex = dedges[abs(pSurfEdges[0])].v[vertexIdx];
+	int firstVertexIndex = dedges[fabsf(pSurfEdges[0])].v[vertexIdx];
 	dvertex_t* pFirstVertex = &dvertexes[firstVertexIndex];
 	for (int i = 1; i < pFace->numedges - 1; ++i )
 	{
 		int vertexIdx = (pSurfEdges[i] < 0);
-		dedge_t* pEdge = &dedges[abs(pSurfEdges[i])];
+		dedge_t* pEdge = &dedges[fabsf(pSurfEdges[i])];
 
 		// Compute two triangle edges
 		Vector e1, e2;
@@ -773,12 +773,12 @@ static float ComputeDisplacementFaceArea( dface_t* pFace )
 	// Compute the area of the base face
 	int* pSurfEdges = &dsurfedges[pFace->firstedge];
 	int vertexIdx = (pSurfEdges[0] < 0);
-	int firstVertexIndex = dedges[abs(pSurfEdges[0])].v[vertexIdx];
+	int firstVertexIndex = dedges[fabsf(pSurfEdges[0])].v[vertexIdx];
 	dvertex_t* pFirstVertex = &dvertexes[firstVertexIndex];
 	for (int i = 1; i <= 2; ++i )
 	{
 		int vertexIdx = (pSurfEdges[i] < 0);
-		dedge_t* pEdge = &dedges[abs(pSurfEdges[i])];
+		dedge_t* pEdge = &dedges[fabsf(pSurfEdges[i])];
 
 		// Compute two triangle edges
 		Vector e1, e2;

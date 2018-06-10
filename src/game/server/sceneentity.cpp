@@ -3632,11 +3632,11 @@ public:
 		if (pActor)
 		{
 			m_vecPos1 = pActor->GetAbsOrigin();
-			m_flMaxSegmentDistance = MIN( flMaxRadius, (m_vecPos1 - m_vecPos2).Length() + 1.0 );
+			m_flMaxSegmentDistance = MIN( flMaxRadius, (m_vecPos1 - m_vecPos2).Length() + 1.f );
 			if (m_flMaxSegmentDistance <= 1.0)
 			{
 				// must be closest to self
-				m_flMaxSegmentDistance = MIN( flMaxRadius, MAX_TRACE_LENGTH );
+				m_flMaxSegmentDistance = MIN( flMaxRadius, (float)MAX_TRACE_LENGTH );
 			}
 		}
 	}
@@ -4651,7 +4651,7 @@ void CInstancedSceneEntity::DoThink( float frametime )
 
 	if ( m_flPreDelay > 0 )
 	{
-		m_flPreDelay = MAX( 0, m_flPreDelay - frametime );
+		m_flPreDelay = MAX( 0.f, m_flPreDelay - frametime );
 		StartPlayback();
 		if ( !m_bIsPlayingBack )
 			return;
@@ -4829,7 +4829,7 @@ void CSceneManager::Think()
 	// The manager is always thinking at 20 hz
 	SetNextThink( gpGlobals->curtime + SCENE_THINK_INTERVAL );
 	float frameTime = ( gpGlobals->curtime - GetLastThink() );
-	frameTime = MIN( 0.1, frameTime );
+	frameTime = MIN( 0.1f, frameTime );
 
 	// stop if AI is diabled
 	if (CAI_BaseNPC::m_nDebugBits & bits_debugDisableAI)
@@ -4925,7 +4925,7 @@ void CSceneManager::OnClientActive( CBasePlayer *player )
 			continue;
 
 		// Blow off sounds too far in past to encode over networking layer
-		if ( fabs( 1000.0f * sound->time_in_past ) > MAX_SOUND_DELAY_MSEC )
+		if ( fabsf( 1000.0f * sound->time_in_past ) > MAX_SOUND_DELAY_MSEC )
 			continue;
 
 		CPASAttenuationFilter filter( sound->actor );
@@ -5334,8 +5334,6 @@ bool IsRunningScriptedSceneWithSpeechAndNotPaused( CBaseFlex *pActor, bool bIgno
 //===========================================================================================================
 LINK_ENTITY_TO_CLASS( logic_scene_list_manager, CSceneListManager );
 
-#pragma warning( push )
-#pragma warning( disable : 4838 )
 BEGIN_DATADESC( CSceneListManager )
 	DEFINE_UTLVECTOR( m_hListManagers, FIELD_EHANDLE ),
 
@@ -5377,7 +5375,7 @@ BEGIN_DATADESC( CSceneListManager )
 	// Inputs
 	DEFINE_INPUTFUNC( FIELD_VOID, "Shutdown", InputShutdown ),
 END_DATADESC()
-#pragma warning( pop )
+
 
 //-----------------------------------------------------------------------------
 // Purpose: 

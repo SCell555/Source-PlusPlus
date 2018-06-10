@@ -45,6 +45,7 @@ class CColorPickerPanel : public vgui::EditablePanel
 public:
 	// constructor
 	CColorPickerPanel( vgui::Panel *pParent, const char *pName );
+	~CColorPickerPanel() {}
 	void SetInitialColor( Color initialColor );
 	void GetCurrentColor( Color *pColor );
 	void GetInitialColor( Color *pColor );

@@ -436,7 +436,7 @@ void CViewRender::DriftPitch (void)
 	// Don't count small mouse motion
 	if ( m_PitchDrift.nodrift )
 	{
-		if ( fabs( input->GetLastForwardMove() ) < cl_forwardspeed.GetFloat() )
+		if ( fabsf( input->GetLastForwardMove() ) < cl_forwardspeed.GetFloat() )
 		{
 			m_PitchDrift.driftmove = 0;
 		}
@@ -739,7 +739,7 @@ void CViewRender::SetUpViews()
 	float flFOVOffset = fDefaultFov - view.fov;
 
 	//Adjust the viewmodel's FOV to move with any FOV offsets on the viewer's end
-	view.fovViewmodel = g_pClientMode->GetViewModelFOV() - flFOVOffset;
+	view.fovViewmodel = Max( g_pClientMode->GetViewModelFOV() - flFOVOffset, 0.f );
 
 	if ( UseVR() )
 	{
@@ -1315,7 +1315,63 @@ void CViewRender::Render( vrect_t *rect )
 
 }
 
+void CViewRender::PostSimulate()
+{
+	C_BasePlayer *pLocal = C_BasePlayer::GetLocalPlayer();
+	if ( !pLocal )
+		return;
 
+	//Tony; if the local player is in a vehicle, then we need to kill the bone cache, and re-calculate the view.
+	if ( !pLocal->IsInAVehicle() && !pLocal->GetVehicle() )
+		return;
+
+	IClientVehicle *pVehicle = pLocal->GetVehicle();
+	Assert( pVehicle );
+	if ( !pVehicle || !pVehicle->GetVehicleEnt() )
+		return;
+	CBaseAnimating *pVehicleEntity = pVehicle->GetVehicleEnt()->GetBaseAnimating();
+	Assert( pVehicleEntity );
+	if ( !pVehicleEntity )
+		return;
+
+	int nRole = pVehicle->GetPassengerRole( pLocal );
+
+	//Tony; we have to invalidate the bone cache in order for the attachment lookups to be correct!
+	pVehicleEntity->InvalidateBoneCache();
+	pVehicle->GetVehicleViewPosition( nRole, &m_View.origin, &m_View.angles,
+									  &m_View.fov );
+
+	//Tony; everything below is from SetupView - the things that should be recalculated.. are recalculated!
+	pLocal->CalcViewModelView( m_View.origin, m_View.angles );
+
+	// Compute the world->main camera transform
+	ComputeCameraVariables( m_View.origin, m_View.angles,
+							&g_vecVForward, &g_vecVRight, &g_vecVUp, &g_matCamInverse );
+
+	// set up the hearing origin...
+	AudioState_t audioState;
+	audioState.m_Origin = m_View.origin;
+	audioState.m_Angles = m_View.angles;
+	audioState.m_bIsUnderwater = pLocal && pLocal->AudioStateIsUnderwater( m_View.origin );
+
+	ToolFramework_SetupAudioState( audioState );
+
+	m_View.origin = audioState.m_Origin;
+	m_View.angles = audioState.m_Angles;
+
+	engine->SetAudioState( audioState );
+
+	g_vecPrevRenderOrigin = g_vecRenderOrigin;
+	g_vecPrevRenderAngles = g_vecRenderAngles;
+	g_vecRenderOrigin = m_View.origin;
+	g_vecRenderAngles = m_View.angles;
+
+#ifdef _DEBUG
+	s_DbgSetupOrigin = m_View.origin;
+	s_DbgSetupAngles = m_View.angles;
+#endif
+
+}
 
 
 static void GetPos( const CCommand &args, Vector &vecOrigin, QAngle &angles )

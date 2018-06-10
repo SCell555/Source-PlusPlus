@@ -1397,7 +1397,7 @@ float CNPC_Ichthyosaur::MaxYawSpeed( void )
 		return 16.0f;
 
 	//Ramp up the yaw speed as we increase our speed
-	return ICH_MIN_TURN_SPEED + ( (ICH_MAX_TURN_SPEED-ICH_MIN_TURN_SPEED) * ( fabs(GetAbsVelocity().Length()) / ICH_SWIM_SPEED_RUN ) );
+	return ICH_MIN_TURN_SPEED + ( (ICH_MAX_TURN_SPEED-ICH_MIN_TURN_SPEED) * ( fabsf(GetAbsVelocity().Length()) / ICH_SWIM_SPEED_RUN ) );
 }
 
 //-----------------------------------------------------------------------------

@@ -24,14 +24,14 @@ static bool CompareLights( dworldlight_t *a, dworldlight_t *b )
 	bool a1  = VectorsAreEqual( a->origin,    b->origin,    flEpsilon );
 	bool a2  = VectorsAreEqual( a->intensity, b->intensity, 1.1f ); // intensities are huge numbers
 	bool a3  = VectorsAreEqual( a->normal,    b->normal,    flEpsilon );
-	bool a4  = fabs( a->constant_attn - b->constant_attn ) < flEpsilon;
-	bool a5  = fabs( a->linear_attn - b->linear_attn ) < flEpsilon;
-	bool a6  = fabs( a->quadratic_attn - b->quadratic_attn ) < flEpsilon;
-	bool a7  = fabs( float( a->flags - b->flags ) ) < flEpsilon;
-	bool a8  = fabs( a->stopdot - b->stopdot ) < flEpsilon;
-	bool a9  = fabs( a->stopdot2 - b->stopdot2 ) < flEpsilon;
-	bool a10 = fabs( a->exponent - b->exponent ) < flEpsilon;
-	bool a11 = fabs( a->radius - b->radius ) < flEpsilon;
+	bool a4  = fabsf( a->constant_attn - b->constant_attn ) < flEpsilon;
+	bool a5  = fabsf( a->linear_attn - b->linear_attn ) < flEpsilon;
+	bool a6  = fabsf( a->quadratic_attn - b->quadratic_attn ) < flEpsilon;
+	bool a7  = fabsf( float( a->flags - b->flags ) ) < flEpsilon;
+	bool a8  = fabsf( a->stopdot - b->stopdot ) < flEpsilon;
+	bool a9  = fabsf( a->stopdot2 - b->stopdot2 ) < flEpsilon;
+	bool a10 = fabsf( a->exponent - b->exponent ) < flEpsilon;
+	bool a11 = fabsf( a->radius - b->radius ) < flEpsilon;
 
 	return a1 && a2 && a3 && a4 && a5 && a6 && a7 && a8 && a9 && a10 && a11;
 }

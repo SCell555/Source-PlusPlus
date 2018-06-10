@@ -29,7 +29,7 @@ DECLARE_HUD_MESSAGE( CHudHistoryResource, AmmoDenied );
 //-----------------------------------------------------------------------------
 CHudHistoryResource::CHudHistoryResource( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudHistoryResource" )
-{	
+{
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
 	m_bDoNotDraw = true;
@@ -39,7 +39,7 @@ CHudHistoryResource::CHudHistoryResource( const char *pElementName ) :
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudHistoryResource::ApplySchemeSettings( IScheme *pScheme )
 {
@@ -55,7 +55,7 @@ void CHudHistoryResource::ApplySchemeSettings( IScheme *pScheme )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudHistoryResource::Init( void )
 {
@@ -66,7 +66,7 @@ void CHudHistoryResource::Init( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudHistoryResource::Reset( void )
 {
@@ -102,7 +102,7 @@ void CHudHistoryResource::AddToHistory( C_BaseCombatWeapon *weapon )
 			return;
 		}
 	}
-	
+
 	AddIconToHistory( HISTSLOT_WEAP, iId, weapon, 0, NULL );
 }
 
@@ -155,7 +155,7 @@ void CHudHistoryResource::AddToHistory( int iType, const char *szName, int iCoun
 	// Get the item's icon
 	CHudTexture *i = gHUD.GetIcon( szName );
 	if ( i == NULL )
-		return;  
+		return;
 
 	AddIconToHistory( iType, 1, NULL, iCount, i );
 }
@@ -176,10 +176,10 @@ void CHudHistoryResource::AddIconToHistory( int iType, int iId, C_BaseCombatWeap
 	// If the history resource is appearing, slide the hint message element down
 	if ( m_iCurrentHistorySlot == 0 )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HintMessageLower" ); 
+		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HintMessageLower" );
 	}
 
-	// ensure the size 
+	// ensure the size
 	m_PickupHistory.EnsureCount(m_iCurrentHistorySlot + 1);
 
 	// default to just writing to the first slot
@@ -216,7 +216,7 @@ void CHudHistoryResource::AddIconToHistory( int iType, int iId, C_BaseCombatWeap
 void CHudHistoryResource::MsgFunc_ItemPickup( bf_read &msg )
 {
 	char szName[1024];
-	
+
 	msg.ReadString( szName, sizeof(szName) );
 
 	// Add the item to the history
@@ -270,12 +270,12 @@ void CHudHistoryResource::CheckClearHistory( void )
 	m_iCurrentHistorySlot = 0;
 
 	// Slide the hint message element back up
-	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HintMessageRaise" ); 
+	g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HintMessageRaise" );
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Save CPU cycles by letting the HUD system early cull
-// costly traversal.  Called per frame, return true if thinking and 
+// costly traversal.  Called per frame, return true if thinking and
 // painting need to occur.
 //-----------------------------------------------------------------------------
 bool CHudHistoryResource::ShouldDraw( void )
@@ -312,7 +312,7 @@ void CHudHistoryResource::Paint( void )
 		{
 			m_PickupHistory[i].DisplayTime = MIN( m_PickupHistory[i].DisplayTime, gpGlobals->curtime + hud_drawhistory_time.GetFloat() );
 			if ( m_PickupHistory[i].DisplayTime <= gpGlobals->curtime )
-			{  
+			{
 				// pic drawing time has expired
 				memset( &m_PickupHistory[i], 0, sizeof(HIST_ITEM) );
 				CheckClearHistory();
@@ -322,7 +322,7 @@ void CHudHistoryResource::Paint( void )
 			float elapsed = m_PickupHistory[i].DisplayTime - gpGlobals->curtime;
 			float scale = elapsed * 80;
 			Color clr = gHUD.m_clrNormal;
-			clr[3] = MIN( scale, 255 );
+			clr[3] = MIN( scale, 255.f );
 
 			bool bUseAmmoFullMsg = false;
 
@@ -354,7 +354,7 @@ void CHudHistoryResource::Paint( void )
 
 #ifdef CSTRIKE_DLL
 					// show grenades as the weapon icon
-					if ( pWpnInfo && pWpnInfo->iFlags & ITEM_FLAG_EXHAUSTIBLE )	
+					if ( pWpnInfo && pWpnInfo->iFlags & ITEM_FLAG_EXHAUSTIBLE )
 					{
 						itemIcon = pWpnInfo->iconActive;
 						itemAmmoIcon = NULL;
@@ -371,8 +371,8 @@ void CHudHistoryResource::Paint( void )
 					iAmount = 0;
 					bUseAmmoFullMsg = true;
 					// display as red
-					clr = gHUD.m_clrCaution;	
-					clr[3] = MIN( scale, 255 );
+					clr = gHUD.m_clrCaution;
+					clr[3] = MIN( scale, 255.f );
 				}
 				break;
 
@@ -385,8 +385,8 @@ void CHudHistoryResource::Paint( void )
 					if ( !pWeapon->HasAmmo() )
 					{
 						// if the weapon doesn't have ammo, display it as red
-						clr = gHUD.m_clrCaution;	
-						clr[3] = MIN( scale, 255 );
+						clr = gHUD.m_clrCaution;
+						clr[3] = MIN( scale, 255.f );
 					}
 
 					itemIcon = pWeapon->GetSpriteInactive();

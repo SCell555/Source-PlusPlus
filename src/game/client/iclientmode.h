@@ -112,6 +112,9 @@ public:
 
 	virtual bool	CanRecordDemo( char *errorMsg, int length ) const = 0;
 
+	virtual void	OnColorCorrectionWeightsReset( void ) = 0;
+	virtual float	GetColorCorrectionScale( void ) const = 0;
+
 	virtual void	ComputeVguiResConditions( KeyValues *pkvConditions ) = 0;
 
 	//=============================================================================

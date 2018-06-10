@@ -46,12 +46,12 @@ enum AIReadinessUse_t
 class CCompanionActivityRemap : public CActivityRemap
 {
 public:
-	CCompanionActivityRemap( void ) : 
+	CCompanionActivityRemap( void ) :
 	  m_fUsageBits( 0 ),
 	  m_readiness( AIRL_RELAXED ),
 	  m_bAiming( false ),
 	  m_bWeaponRequired( false ),
-	  m_bInVehicle( false ) {} 
+	  m_bInVehicle( false ) {}
 
 	// This bitfield maps which bits of data are being utilized by this data structure, since not all criteria
 	// in the parsed file are essential.  You must add corresponding bits to the definitions below and maintain
@@ -110,7 +110,7 @@ public:
 	bool 			ShouldAlwaysThink();
 
 	Disposition_t	IRelationType( CBaseEntity *pTarget );
-	
+
 	bool			IsSilentSquadMember() const;
 
 	//---------------------------------
@@ -124,7 +124,7 @@ public:
 	bool			QueryHearSound( CSound *pSound );
 	bool			QuerySeeEntity( CBaseEntity *pEntity, bool bOnlyHateOrFearIfNPC = false );
 	bool			ShouldIgnoreSound( CSound * );
-	
+
 	int 			SelectSchedule();
 
 	virtual int 	SelectScheduleDanger();
@@ -139,19 +139,19 @@ public:
 	bool			ShouldDeferToPassengerBehavior( void );
 
 	bool			IsValidReasonableFacing( const Vector &vecSightDir, float sightDist );
-	
+
 	int 			TranslateSchedule( int scheduleType );
-	
+
 	void 			StartTask( const Task_t *pTask );
 	void 			RunTask( const Task_t *pTask );
-	
+
 	Activity		TranslateActivityReadiness( Activity activity );
 	Activity		NPC_TranslateActivity( Activity eNewActivity );
 	void 			HandleAnimEvent( animevent_t *pEvent );
 	bool			HandleInteraction(int interactionType, void *data, CBaseCombatCharacter* sourceEnt);
 
 	int				GetSoundInterests();
-	
+
 	void 			Touch( CBaseEntity *pOther );
 
 	virtual bool	IgnorePlayerPushing( void );
@@ -160,7 +160,7 @@ public:
 	void			Activate( void );
 
 	void			PrepareReadinessRemap( void );
-	
+
 	virtual bool	IsNavigationUrgent( void );
 
 	//---------------------------------
@@ -256,7 +256,7 @@ public:
 	bool			Weapon_CanUse( CBaseCombatWeapon *pWeapon );
 	void			Weapon_Equip( CBaseCombatWeapon *pWeapon );
 	void			PickupWeapon( CBaseCombatWeapon *pWeapon );
-	
+
 	bool 			FindCoverPos( CBaseEntity *pEntity, Vector *pResult);
 	bool			FindCoverPosInRadius( CBaseEntity *pEntity, const Vector &goalPos, float coverRadius, Vector *pResult );
 	bool			FindCoverPos( CSound *pSound, Vector *pResult );
@@ -264,12 +264,12 @@ public:
 	bool 			IsCoverPosition( const Vector &vecThreat, const Vector &vecPosition );
 
 	bool			IsEnemyTurret() { return ( GetEnemy() && IsTurret(GetEnemy()) ); }
-	
+
 	static bool		IsMortar( CBaseEntity *pEntity );
 	static bool		IsSniper( CBaseEntity *pEntity );
 	static bool		IsTurret(  CBaseEntity *pEntity );
 	static bool		IsGunship( CBaseEntity *pEntity );
-	
+
 	//---------------------------------
 	// Damage handling
 	//---------------------------------
@@ -338,7 +338,7 @@ private:
 	void CleanupCoverSearch();
 
 	//-----------------------------------------------------
-	
+
 	bool			m_bMovingAwayFromPlayer;
 	bool			m_bWeightPathsInCover;
 
@@ -378,7 +378,7 @@ protected:
 
 	// Readiness is a value that's fed by various events in the NPC's AI. It is used
 	// to make decisions about what type of posture the NPC should be in (relaxed, agitated).
-	// It is not used to make decisions about what to do in the AI. 
+	// It is not used to make decisions about what to do in the AI.
 	float m_flReadiness;
 	float m_flReadinessSensitivity;
 	bool m_bReadinessCapable;
@@ -393,7 +393,7 @@ protected:
 	float m_flBoostSpeed;
 
 	//-----------------------------------------------------
-	
+
 	CSimpleSimTimer m_AnnounceAttackTimer;
 
 	//-----------------------------------------------------

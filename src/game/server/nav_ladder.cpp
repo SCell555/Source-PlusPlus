@@ -112,7 +112,7 @@ void CNavLadder::ConnectTo( CNavArea *area )
 		NavDirType dir;
 
 		Vector dirVector = area->GetCenter() - m_top;
-		if ( fabs( dirVector.x ) > fabs( dirVector.y ) )
+		if ( fabsf( dirVector.x ) > fabsf( dirVector.y ) )
 		{
 			if ( dirVector.x > 0.0f ) // east
 			{

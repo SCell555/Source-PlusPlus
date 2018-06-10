@@ -60,9 +60,9 @@ void DBG_AssertFunction(bool fExpr, const char* szExpr, const char* szFile, int 
 // entity creation
 // creates an entity that has not been linked to a classname
 template< class T >
-T *_CreateEntityTemplate( T *newEnt, const char *className )
+T *_CreateEntityTemplate( const char *className )
 {
-	newEnt = new T; // this is the only place 'new' should be used!
+	T* newEnt = new T; // this is the only place 'new' should be used!
 	newEnt->PostConstructor( className );
 	return newEnt;
 }
@@ -75,7 +75,7 @@ CBaseEntity *CreateEntityByName( const char *className, int iForceEdictIndex );
 // does not spawn the entity
 // use the CREATE_ENTITY() macro which wraps this, instead of using it directly
 template< class T >
-T *_CreateEntity( T *newClass, const char *className )
+T *_CreateEntity( const char *className )
 {
 	T *newEnt = dynamic_cast<T*>( CreateEntityByName(className, -1) );
 	if ( !newEnt )
@@ -87,8 +87,8 @@ T *_CreateEntity( T *newClass, const char *className )
 	return newEnt;
 }
 
-#define CREATE_ENTITY( newClass, className ) _CreateEntity( (newClass*)NULL, className )
-#define CREATE_UNSAVED_ENTITY( newClass, className ) _CreateEntityTemplate( (newClass*)NULL, className )
+#define CREATE_ENTITY( newClass, className ) _CreateEntity<newClass>( className )
+#define CREATE_UNSAVED_ENTITY( newClass, className ) _CreateEntityTemplate<newClass>( className )
 
 
 // This is the glue that hooks .MAP entity class names to our CPP classes
@@ -128,7 +128,7 @@ public:
 
 	IServerNetworkable *Create( const char *pClassName )
 	{
-		T* pEnt = _CreateEntityTemplate((T*)NULL, pClassName);
+		T* pEnt = _CreateEntityTemplate<T>(pClassName);
 		return pEnt->NetworkProp();
 	}
 
@@ -340,7 +340,7 @@ void		UTIL_EmitAmbientSound	( int entindex, const Vector &vecOrigin, const char 
 void		UTIL_ParticleEffect		( const Vector &vecOrigin, const Vector &vecDirection, ULONG ulColor, ULONG ulCount );
 void		UTIL_ScreenShake		( const Vector &center, float amplitude, float frequency, float duration, float radius, ShakeCommand_t eCommand, bool bAirShake=false );
 void		UTIL_ScreenShakeObject	( CBaseEntity *pEnt, const Vector &center, float amplitude, float frequency, float duration, float radius, ShakeCommand_t eCommand, bool bAirShake=false );
-void		UTIL_ViewPunch			( const Vector &center, QAngle angPunch, float radius, bool bInAir );
+void		UTIL_ViewPunch			( const Vector &center, const QAngle& angPunch, float radius, bool bInAir );
 void		UTIL_ShowMessage		( const char *pString, CBasePlayer *pPlayer );
 void		UTIL_ShowMessageAll		( const char *pString );
 void		UTIL_ScreenFadeAll		( const color32 &color, float fadeTime, float holdTime, int flags );
@@ -366,7 +366,7 @@ void		UTIL_Beam( Vector &Start, Vector &End, int nModelIndex, int nHaloIndex, un
 				float Life, unsigned char Width, unsigned char EndWidth, unsigned char FadeLength, unsigned char Noise, unsigned char Red, unsigned char Green,
 				unsigned char Blue, unsigned char Brightness, unsigned char Speed);
 
-const char	*UTIL_VarArgs( PRINTF_FORMAT_STRING const char *format, ... ) FMTFUNCTION( 1, 2 );
+FMTFUNCTION_WIN( 1, 2 ) const char*	UTIL_VarArgs( PRINTF_FORMAT_STRING const char *format, ... ) FMTFUNCTION( 1, 2 );
 bool		UTIL_IsValidEntity( CBaseEntity *pEnt );
 bool		UTIL_TeamsMatch( const char *pTeamName1, const char *pTeamName2 );
 
@@ -476,7 +476,7 @@ void			UTIL_HudMessage( CBasePlayer *pToPlayer, const hudtextparms_t &textparms,
 void			UTIL_HudHintText( CBaseEntity *pEntity, const char *pMessage );
 
 // Writes message to console with timestamp and FragLog header.
-void			UTIL_LogPrintf( PRINTF_FORMAT_STRING const char *fmt, ... ) FMTFUNCTION( 1, 2 );
+FMTFUNCTION_WIN( 1, 2 ) void	UTIL_LogPrintf( PRINTF_FORMAT_STRING const char *fmt, ... ) FMTFUNCTION( 1, 2 );
 
 // Sorta like FInViewCone, but for nonNPCs. 
 float UTIL_DotPoints ( const Vector &vecSrc, const Vector &vecCheck, const Vector &vecDir );
@@ -593,7 +593,7 @@ inline float UTIL_DistApprox( const Vector &vec1, const Vector &vec2 )
 	dy = vec1.y - vec2.y;
 	dz = vec1.z - vec2.z;
 
-	return fabs(dx) + fabs(dy) + fabs(dz);
+	return fabsf(dx) + fabsf(dy) + fabsf(dz);
 }
 
 //---------------------------------------------------------
@@ -606,7 +606,7 @@ inline float UTIL_DistApprox2D( const Vector &vec1, const Vector &vec2 )
 	dx = vec1.x - vec2.x;
 	dy = vec1.y - vec2.y;
 
-	return fabs(dx) + fabs(dy);
+	return fabsf(dx) + fabsf(dy);
 }
 
 // Find out if an entity is facing another entity or position within a given tolerance range

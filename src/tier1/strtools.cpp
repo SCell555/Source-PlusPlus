@@ -1411,7 +1411,7 @@ int _V_UCS2ToUnicode( const ucs2 *pUCS2, wchar_t *pUnicode, int cubDestSizeInByt
 	size_t nMaxUTF8 = cubDestSizeInBytes;
 	char *pIn = (char *)pUCS2;
 	char *pOut = (char *)pUnicode;
-	if ( conv_t > 0 )
+	if ( conv_t != (iconv_t)-1 )
 	{
 		cchResult = iconv( conv_t, &pIn, &nLenUnicde, &pOut, &nMaxUTF8 );
 		iconv_close( conv_t );
@@ -1451,7 +1451,7 @@ int _V_UnicodeToUCS2( const wchar_t *pUnicode, int cubSrcInBytes, char *pUCS2, i
 	size_t nMaxUCS2 = cubDestSizeInBytes;
 	char *pIn = (char*)pUnicode;
 	char *pOut = pUCS2;
-	if ( conv_t > 0 )
+	if ( conv_t != (iconv_t)-1 )
 	{
 		cchResult = iconv( conv_t, &pIn, &nLenUnicde, &pOut, &nMaxUCS2 );
 		iconv_close( conv_t );
@@ -1499,7 +1499,7 @@ int _V_UCS2ToUTF8( const ucs2 *pUCS2, char *pUTF8, int cubDestSizeInBytes )
 	size_t nMaxUTF8 = cubDestSizeInBytes - 1;
 	char *pIn = (char *)pUCS2;
 	char *pOut = (char *)pUTF8;
-	if ( conv_t > 0 )
+	if ( conv_t != (iconv_t)-1 )
 	{
 		const size_t nBytesToWrite = nMaxUTF8;
 		cchResult = iconv( conv_t, &pIn, &nLenUnicde, &pOut, &nMaxUTF8 );
@@ -1544,7 +1544,7 @@ int _V_UTF8ToUCS2( const char *pUTF8, int cubSrcInBytes, ucs2 *pUCS2, int cubDes
 	size_t nMaxUTF8 = cubDestSizeInBytes;
 	char *pIn = (char *)pUTF8;
 	char *pOut = (char *)pUCS2;
-	if ( conv_t > 0 )
+	if ( conv_t != (iconv_t)-1 )
 	{
 		cchResult = iconv( conv_t, &pIn, &nLenUnicde, &pOut, &nMaxUTF8 );
 		iconv_close( conv_t );
@@ -2144,6 +2144,46 @@ bool V_RemoveDotSlashes( char *pFilename, char separator, bool bRemoveDoubleSlas
 	return bRetVal;
 }
 
+int V_StrTrim( char *pStr )
+{
+	char *pSource = pStr;
+	char *pDest = pStr;
+
+	// skip white space at the beginning
+	while ( *pSource != 0 && isspace( *pSource ) )
+	{
+		pSource++;
+	}
+
+	// copy everything else
+	char *pLastWhiteBlock = NULL;
+	char *pStart = pDest;
+	while ( *pSource != 0 )
+	{
+		*pDest = *pSource++;
+		if ( isspace( *pDest ) )
+		{
+			if ( pLastWhiteBlock == NULL )
+				pLastWhiteBlock = pDest;
+		}
+		else
+		{
+			pLastWhiteBlock = NULL;
+		}
+		pDest++;
+	}
+	*pDest = 0;
+
+	// did we end in a whitespace block?
+	if ( pLastWhiteBlock != NULL )
+	{
+		// yep; shorten the string
+		pDest = pLastWhiteBlock;
+		*pLastWhiteBlock = 0;
+	}
+
+	return pDest - pStart;
+}
 
 void V_AppendSlash( char *pStr, int strSize )
 {

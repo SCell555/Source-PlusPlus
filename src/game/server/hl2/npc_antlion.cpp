@@ -1982,7 +1982,7 @@ bool CNPC_Antlion::IsFirmlyOnGround( void )
 
 	trace_t tr;
 
-	float flHeight =  fabs( GetHullMaxs().z - GetHullMins().z );
+	float flHeight =  fabsf( GetHullMaxs().z - GetHullMins().z );
 	
 	Vector vOrigin = GetAbsOrigin() + Vector( GetHullMins().x, GetHullMins().y, 0 );
 //	NDebugOverlay::Line( vOrigin, vOrigin - Vector( 0, 0, flHeight * 0.5  ), 255, 0, 0, true, 5 );

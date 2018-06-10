@@ -21,6 +21,7 @@
 #include "tier1/utlvector.h"
 #include "tier1/utlstring.h"
 #include "icvar.h"
+#include "Color.h"
 
 #ifdef _WIN32
 #define FORCEINLINE_CVAR FORCEINLINE
@@ -352,6 +353,10 @@ public:
 	FORCEINLINE_CVAR int			GetInt( void ) const;
 	FORCEINLINE_CVAR bool			GetBool() const {  return !!GetInt(); }
 	FORCEINLINE_CVAR char const	   *GetString( void ) const;
+	FORCEINLINE_CVAR Color			GetColor( void ) const;
+
+	void SetMin(float min);
+	void SetMax(float max);
 
 	// Any function that allocates/frees memory needs to be virtual or else you'll have crashes
 	//  from alloc/free across dll/exe boundaries.
@@ -416,6 +421,17 @@ private:
 	FnChangeCallback_t			m_fnChangeCallback;
 };
 
+FORCEINLINE_CVAR void ConVar::SetMin( float v )
+{
+	m_pParent->m_bHasMin = true;
+	m_pParent->m_fMinVal = v;
+}
+
+FORCEINLINE_CVAR void ConVar::SetMax( float v )
+{
+	m_pParent->m_bHasMax = true;
+	m_pParent->m_fMaxVal = v;
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: Return ConVar value as a float
@@ -448,6 +464,13 @@ FORCEINLINE_CVAR const char *ConVar::GetString( void ) const
 	return ( m_pParent->m_pszString ) ? m_pParent->m_pszString : "";
 }
 
+FORCEINLINE_CVAR Color ConVar::GetColor() const
+{
+	Color clr;
+	extern void CONVAR_StringToColor( Color &color, const char *pString );
+	CONVAR_StringToColor( clr, m_pParent->m_pszString );
+	return clr;
+}
 
 //-----------------------------------------------------------------------------
 // Used to read/write convars that already exist (replaces the FindVar method)
@@ -455,11 +478,10 @@ FORCEINLINE_CVAR const char *ConVar::GetString( void ) const
 class ConVarRef
 {
 public:
-	ConVarRef( const char *pName );
-	ConVarRef( const char *pName, bool bIgnoreMissing );
+	ConVarRef( const char *pName, bool bIgnoreMissing = false );
 	ConVarRef( IConVar *pConVar );
 
-	void Init( const char *pName, bool bIgnoreMissing );
+	void Init( const char *pName, bool bIgnoreMissing = false );
 	bool IsValid() const;
 	bool IsFlagSet( int nFlags ) const;
 	IConVar *GetLinkedConVar();
@@ -469,6 +491,7 @@ public:
 	int GetInt( void ) const;
 	bool GetBool() const { return !!GetInt(); }
 	const char *GetString( void ) const;
+	Color GetColor(void) const;
 
 	void SetValue( const char *pValue );
 	void SetValue( float flValue );
@@ -519,6 +542,14 @@ FORCEINLINE_CVAR float ConVarRef::GetFloat( void ) const
 FORCEINLINE_CVAR int ConVarRef::GetInt( void ) const 
 {
 	return m_pConVarState->m_nValue;
+}
+
+FORCEINLINE_CVAR Color ConVarRef::GetColor() const
+{
+	Color clr;
+	extern void CONVAR_StringToColor( Color &color, const char *pString );
+	CONVAR_StringToColor( clr, m_pConVarState->m_pszString );
+	return clr;
 }
 
 //-----------------------------------------------------------------------------
@@ -574,7 +605,10 @@ void ConVar_PrintDescription( const ConCommandBase *pVar );
 //-----------------------------------------------------------------------------
 // Purpose: Utility class to quickly allow ConCommands to call member methods
 //-----------------------------------------------------------------------------
-#pragma warning (disable : 4355 )
+#if defined( _MSC_VER )
+#pragma warning ( push )
+#pragma warning ( disable : 4355 )
+#endif
 
 template< class T >
 class CConCommandMemberAccessor : public ConCommand, public ICommandCallback, public ICommandCompletionCallback
@@ -621,8 +655,9 @@ private:
 	FnMemberCommandCompletionCallback_t m_CompletionFunc;
 };
 
-#pragma warning ( default : 4355 )
-
+#if defined( _MSC_VER )
+#pragma warning ( pop )
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Utility macros to quicky generate a simple console command

@@ -535,7 +535,7 @@ bool CNPC_CeilingTurret::UpdateFacing( void )
 	
 	SetPoseParameter( m_poseAim_Pitch, GetPoseParameter( m_poseAim_Pitch ) + ( flDiff / 1.5f ) );
 
-	if ( fabs( flDiff ) > 0.1f )
+	if ( fabsf( flDiff ) > 0.1f )
 	{
 		bMoved = true;
 	}
@@ -545,7 +545,7 @@ bool CNPC_CeilingTurret::UpdateFacing( void )
 
 	SetPoseParameter( m_poseAim_Yaw, GetPoseParameter( m_poseAim_Yaw ) + ( flDiff / 1.5f ) );
 
-	if ( fabs( flDiff ) > 0.1f )
+	if ( fabsf( flDiff ) > 0.1f )
 	{
 		bMoved = true;
 	}
@@ -842,9 +842,6 @@ void CNPC_CeilingTurret::Shoot( const Vector &vecSrc, const Vector &vecDirToEnem
 	else
 	{
 		// Just shoot where you're facing!
-		Vector vecMuzzle, vecMuzzleDir;
-		QAngle vecMuzzleAng;
-		
 		info.m_vecSrc = vecSrc;
 		info.m_vecDirShooting = vecDirToEnemy;
 		info.m_iTracerFreq = 1;

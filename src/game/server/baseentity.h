@@ -69,6 +69,7 @@ class CTeam;
 class Vector;
 struct gamevcollisionevent_t;
 class CBaseAnimating;
+class CBaseAnimatingOverlay;
 class CBasePlayer;
 class IServerVehicle;
 struct solid_t;
@@ -593,6 +594,11 @@ public:
 	bool		ClassMatches( const char *pszClassOrWildcard );
 	bool		NameMatches( string_t nameStr );
 	bool		ClassMatches( string_t nameStr );
+	bool		NameMatchesExact( string_t nameStr );
+	bool		ClassMatchesExact( string_t nameStr );
+
+	template <typename T>
+	bool		Downcast( string_t iszClass, T **ppResult );
 
 private:
 	bool		NameMatchesComplex( const char *pszNameOrWildcard );
@@ -1099,21 +1105,21 @@ public:
 #endif
 
 	void FunctionCheck( void *pFunction, const char *name );
-	ENTITYFUNCPTR TouchSet( ENTITYFUNCPTR func, char *name ) 
+	ENTITYFUNCPTR TouchSet( ENTITYFUNCPTR func, const char *name )
 	{ 
 		COMPILE_TIME_ASSERT( sizeof(func) == ENTITYFUNCPTR_SIZE );
 		m_pfnTouch = func; 
 		FunctionCheck( *(reinterpret_cast<void **>(&m_pfnTouch)), name ); 
 		return func;
 	}
-	USEPTR	UseSet( USEPTR func, char *name ) 
+	USEPTR	UseSet( USEPTR func, const char *name )
 	{ 
 		COMPILE_TIME_ASSERT( sizeof(func) == ENTITYFUNCPTR_SIZE );
 		m_pfnUse = func; 
 		FunctionCheck( *(reinterpret_cast<void **>(&m_pfnUse)), name ); 
 		return func;
 	}
-	ENTITYFUNCPTR	BlockedSet( ENTITYFUNCPTR func, char *name ) 
+	ENTITYFUNCPTR	BlockedSet( ENTITYFUNCPTR func, const char *name )
 	{ 
 		COMPILE_TIME_ASSERT( sizeof(func) == ENTITYFUNCPTR_SIZE );
 		m_pfnBlocked = func; 
@@ -1950,6 +1956,16 @@ inline bool CBaseEntity::NameMatches( string_t nameStr )
 	return NameMatchesComplex( STRING(nameStr) );
 }
 
+inline bool CBaseEntity::NameMatchesExact( string_t nameStr )
+{
+	return IDENT_STRINGS(m_iName, nameStr);
+}
+
+inline bool CBaseEntity::ClassMatchesExact( string_t nameStr )
+{
+	return IDENT_STRINGS(m_iClassname, nameStr );
+}
+
 inline bool CBaseEntity::ClassMatches( const char *pszClassOrWildcard )
 {
 	if ( IDENT_STRINGS(m_iClassname, pszClassOrWildcard ) )
@@ -1968,6 +1984,18 @@ inline bool CBaseEntity::ClassMatches( string_t nameStr )
 	if ( IDENT_STRINGS(m_iClassname, nameStr ) )
 		return true;
 	return ClassMatchesComplex( STRING(nameStr) );
+}
+
+template <typename T>
+inline bool CBaseEntity::Downcast( string_t iszClass, T **ppResult )
+{
+	if ( IDENT_STRINGS( iszClass, m_iClassname ) )
+	{
+		*ppResult = static_cast< T* >( this );
+		return true;
+	}
+	*ppResult = NULL;
+	return false;
 }
 
 inline int CBaseEntity::GetSpawnFlags( void ) const

@@ -221,14 +221,13 @@ CTesselateVert::CTesselateVert( CVertIndex const &index, int iNode )
 
 CVertInfo::CVertInfo()
 {
-	int i;
-	for( i=0; i < sizeof(m_Dependencies)/sizeof(m_Dependencies[0]); i++ )
+	for( size_t i=0; i < sizeof(m_Dependencies)/sizeof(m_Dependencies[0]); i++ )
 	{
 		m_Dependencies[i].m_iVert = CVertIndex( -1, -1 );
 		m_Dependencies[i].m_iNeighbor = -1;
 	}
 
-	for( i=0; i < sizeof(m_ReverseDependencies)/sizeof(m_ReverseDependencies[0]); i++ )
+	for( size_t i=0; i < sizeof(m_ReverseDependencies)/sizeof(m_ReverseDependencies[0]); i++ )
 	{
 		m_ReverseDependencies[i].m_iVert = CVertIndex( -1, -1 );
 		m_ReverseDependencies[i].m_iNeighbor = -1;

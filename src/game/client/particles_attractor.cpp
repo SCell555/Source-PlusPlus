@@ -32,7 +32,6 @@ CParticleAttractor *CParticleAttractor::Create( const Vector &center, const char
 void CParticleAttractor::UpdateVelocity( SimpleParticle *pParticle, float timeDelta )
 {
 	float	speed = VectorNormalize( pParticle->m_vecVelocity );
-	Vector	offset;
 
 	Vector dir = ( m_vecAttractorOrigin - pParticle->m_Pos );
 	VectorNormalize( dir );

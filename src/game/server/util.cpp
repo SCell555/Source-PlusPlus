@@ -953,7 +953,7 @@ void UTIL_ScreenShakeObject( CBaseEntity *pEnt, const Vector &center, float ampl
 //			radius - Radius of effect, 0 punches all clients.
 //			bInAir - if this is false, then it will only punch players standing on the ground.
 //-----------------------------------------------------------------------------
-void UTIL_ViewPunch( const Vector &center, QAngle angPunch, float radius, bool bInAir )
+void UTIL_ViewPunch( const Vector &center, const QAngle& angPunch, float radius, bool bInAir )
 {
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
@@ -1357,7 +1357,7 @@ void UTIL_SnapDirectionToAxis( Vector &direction, float epsilon )
 	float proj = 1 - epsilon;
 	for ( int i = 0; i < 3; i ++ )
 	{
-		if ( fabs(direction[i]) > proj )
+		if ( fabsf(direction[i]) > proj )
 		{
 			// snap to axis unit vector
 			if ( direction[i] < 0 )
@@ -2734,18 +2734,18 @@ void LoadAndSpawnEntities_ParseEntKVBlockHelper( CBaseEntity *pNode, KeyValues *
 //-----------------------------------------------------------------------------
 bool UTIL_LoadAndSpawnEntitiesFromScript( CUtlVector <CBaseEntity*> &entities, const char *pScriptFile, const char *pBlock, bool bActivate )
 {
-	KeyValues *pkvFile = new KeyValues( pBlock );
+	KeyValuesAD kvFile( pBlock );
 
-	if ( pkvFile->LoadFromFile( filesystem, pScriptFile, "MOD" ) )
+	if ( kvFile->LoadFromFile( filesystem, pScriptFile, "MOD" ) )
 	{	
 		// Load each block, and spawn the entities
-		KeyValues *pkvNode = pkvFile->GetFirstSubKey();
+		KeyValues *pkvNode = kvFile->GetFirstSubKey();
 		while ( pkvNode )
 		{
 			// Get name
 			const char *pNodeName = pkvNode->GetName();
 
-			if ( stricmp( pNodeName, "entity" ) )
+			if ( Q_stricmp( pNodeName, "entity" ) )
 			{
 				pkvNode = pkvNode->GetNextKey();
 				continue;
@@ -3033,7 +3033,6 @@ void CC_KDTreeTest( const CCommand &args )
 
 			int nCount = 0;
 
-			Vector vecDelta;
 			trace_t trace;
 			CBaseEntity *pList[1024];
 			for ( iTest = 0; iTest < NUM_KDTREE_TESTS; ++iTest )
@@ -3235,11 +3234,11 @@ void CC_CollisionTest( const CCommand &args )
 		for ( i = 0; i < NUM_COLLISION_TESTS; i++ )
 		{
 			radius += NUM_COLLISION_TESTS * 123.123;
-			radius = fabs(fmod(radius, 128));
+			radius = fabsf(fmod(radius, 128.f));
 			theta += NUM_COLLISION_TESTS * 76.76;
-			theta = fabs(fmod(theta, DEG2RAD(360)));
+			theta = fabsf(fmod(theta, DEG2RAD(360)));
 			phi += NUM_COLLISION_TESTS * 1997.99;
-			phi = fabs(fmod(phi, DEG2RAD(180)));
+			phi = fabsf(fmod(phi, DEG2RAD(180)));
 			
 			float st, ct, sp, cp;
 			SinCos( theta, &st, &ct );

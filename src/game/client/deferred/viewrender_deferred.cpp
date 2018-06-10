@@ -1583,7 +1583,7 @@ void CBaseWaterDeferredView::CalcWaterEyeAdjustments( const VisibleFogVolumeInfo
 	float eyeToWaterZDelta = origin[2] - fogInfo.m_flWaterHeight;
 	float epsilon = r_eyewaterepsilon.GetFloat();
 	waterZAdjust = 0.0f;
-	if( fabs( eyeToWaterZDelta ) < epsilon )
+	if( fabsf( eyeToWaterZDelta ) < epsilon )
 	{
 		if( eyeToWaterZDelta > 0 )
 		{
@@ -2363,7 +2363,7 @@ void CDeferredViewRender::BeginRadiosity( const CViewSetup &view )
 	Vector fwd;
 	AngleVectors( view.angles, &fwd );
 
-	float flAmtVertical = abs( DotProduct( fwd, Vector( 0, 0, 1 ) ) );
+	float flAmtVertical = fabsf( DotProduct( fwd, Vector( 0, 0, 1 ) ) );
 	flAmtVertical = RemapValClamped( flAmtVertical, 0, 1, 1, 0.5f );
 
 	for ( int iCascade = 0; iCascade < 2; iCascade++ )

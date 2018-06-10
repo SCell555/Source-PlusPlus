@@ -2867,7 +2867,7 @@ void CHudCloseCaption::FindSound( char const *pchANSI )
 
 			// Now we have the data
 			const ucs2 *pIn = ( const ucs2 *)&block[ lu.offset ];
-			Q_memcpy( (void *)stream, pIn, MIN( lu.length, sizeof( stream ) ) );
+			Q_memcpy( (void *)stream, pIn, MIN( (unsigned)lu.length, sizeof( stream ) ) );
 
 			// Now search for search text
 			V_UCS2ToUTF8( stream, streamANSI, sizeof( streamANSI ) );

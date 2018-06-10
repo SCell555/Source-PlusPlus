@@ -50,7 +50,7 @@ extern ConVar cl_leveloverview;
 //			... - 
 // Output : char
 //-----------------------------------------------------------------------------
-char *VarArgs( const char *format, ... )
+const char *VarArgs( const char *format, ... )
 {
 	va_list		argptr;
 	static char		string[1024];
@@ -729,7 +729,7 @@ CBaseEntity *CEntitySphereQuery::GetCurrentEntity()
 //			sep - Character to use as separator. UNDONE: allow multiple separator chars
 // Output : Returns a pointer to the next token to be parsed.
 //-----------------------------------------------------------------------------
-const char *nexttoken(char *token, const char *str, char sep)
+const char *nexttoken( char* token, const char *str, char sep, size_t tokenLen )
 {
 	if ((str == NULL) || (*str == '\0'))
 	{
@@ -741,11 +741,24 @@ const char *nexttoken(char *token, const char *str, char sep)
 	// Copy everything up to the first separator into the return buffer.
 	// Do not include separators in the return buffer.
 	//
-	while ((*str != sep) && (*str != '\0'))
+	while ((*str != sep) && (*str != '\0') && ( tokenLen > 1 ) )
 	{
 		*token++ = *str++;
+		--tokenLen;
 	}
+
+	//
+	// If the token is too big for the return buffer, skip the rest of the token
+	//
+	while ( ( *str != sep ) && ( *str != '\0' ) )
+	{
+		str++;
+	}
+	
+	if ( tokenLen )
+	{
 	*token = '\0';
+	}
 
 	//
 	// Advance the pointer unless we hit the end of the input string.

@@ -351,13 +351,7 @@ void CViewEffects::ApplyShake( Vector& origin, QAngle& angles, float factor )
 //-----------------------------------------------------------------------------
 void CViewEffects::ClearAllShakes()
 {
-	int nShakeCount = m_ShakeList.Count();
-	for ( int i = 0; i < nShakeCount; i++ )
-	{
-		delete m_ShakeList.Element( i );
-	}
-
-	m_ShakeList.Purge();
+	m_ShakeList.PurgeAndDeleteElements();
 }
 
 
@@ -542,7 +536,7 @@ void CViewEffects::FadeCalculate( void )
 			{
 				iFadeAlpha += pFade->alpha;
 			}
-			iFadeAlpha = MIN( iFadeAlpha, pFade->alpha );
+			iFadeAlpha = MIN( iFadeAlpha, static_cast<int>( pFade->alpha ) );
 			iFadeAlpha = MAX( 0, iFadeAlpha );
 		}
 		else
@@ -596,12 +590,7 @@ void CViewEffects::ClearPermanentFades( void )
 //-----------------------------------------------------------------------------
 void CViewEffects::ClearAllFades( void )
 {
-	int iSize = m_FadeList.Size();
-	for (int i =  iSize-1; i >= 0; i-- )
-	{
-		delete m_FadeList[i];
-	}
-	m_FadeList.Purge();
+	m_FadeList.PurgeAndDeleteElements();
 }
 
 //-----------------------------------------------------------------------------

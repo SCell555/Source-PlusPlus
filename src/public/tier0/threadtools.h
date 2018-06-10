@@ -32,6 +32,9 @@
 #pragma once
 #pragma warning(push)
 #pragma warning(disable:4251)
+#pragma warning(disable:4127)
+#pragma warning(disable:4100)
+#pragma warning(disable:4324)
 #endif
 
 // #define THREAD_PROFILER 1
@@ -1075,7 +1078,7 @@ inline int ThreadWaitForEvents( int nEvents, CThreadEvent * const *pEvents, bool
 	return WAIT_TIMEOUT;
 #else
 	HANDLE handles[64];
-	for ( unsigned int i = 0; i < min( nEvents, ARRAYSIZE(handles) ); i++ )
+	for ( unsigned int i = 0; i < min( (uint32)nEvents, ARRAYSIZE(handles) ); i++ )
 		handles[i] = pEvents[i]->GetHandle();
 	return ThreadWaitForObjects( nEvents, handles, bWaitAll, timeout );
 #endif

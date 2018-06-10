@@ -139,7 +139,7 @@ FX_PlayerTracer
 
 #define	TRACER_BASE_OFFSET	8
 
-void FX_PlayerTracer( Vector& start, Vector& end )
+void FX_PlayerTracer( const Vector& start, const Vector& end )
 {
 	VPROF_BUDGET( "FX_PlayerTracer", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	Vector	shotDir, dStart, dEnd;
@@ -289,7 +289,7 @@ void FX_TracerSound( const Vector &start, const Vector &end, int iTracerType )
 }
 
 
-void FX_Tracer( Vector& start, Vector& end, int velocity, bool makeWhiz )
+void FX_Tracer( const Vector& start, const Vector& end, int velocity, bool makeWhiz )
 {
 	VPROF_BUDGET( "FX_Tracer", VPROF_BUDGETGROUP_PARTICLE_RENDERING );
 	//Don't make small tracers

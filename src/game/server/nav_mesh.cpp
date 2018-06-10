@@ -804,12 +804,12 @@ CNavArea *CNavMesh::GetNavArea( CBaseEntity *pEntity, int nFlags, float flBeneat
 	}
 
 	// Check LOS if necessary
-	if ( use && ( nFlags && GETNAVAREA_CHECK_LOS ) && ( useZ < testPos.z - flStepHeight ) )
+	if ( use && ( nFlags & GETNAVAREA_CHECK_LOS ) && ( useZ < testPos.z - flStepHeight ) )
 	{
 		// trace directly down to see if it's below us and unobstructed
 		trace_t result;
 		UTIL_TraceLine( testPos, Vector( testPos.x, testPos.y, useZ ), MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &result );
-		if ( ( result.fraction != 1.0f ) && ( fabs( result.endpos.z - useZ ) > flStepHeight ) )
+		if ( ( result.fraction != 1.0f ) && ( fabsf( result.endpos.z - useZ ) > flStepHeight ) )
 			return NULL;
 	}
 	return use;
@@ -958,7 +958,7 @@ CNavArea *CNavMesh::GetNearestNavArea( const Vector &pos, bool anyZ, float maxDi
 						}
 
 						// Don't bother tracing from the nav area up to safePos.z if it's within StepHeight of the area, since areas can be embedded in the ground a bit
-						float heightDelta = fabs(areaPos.z - safePos.z);
+						float heightDelta = fabsf(areaPos.z - safePos.z);
 						if ( heightDelta > StepHeight )
 						{
 							// trace to the height of the original point

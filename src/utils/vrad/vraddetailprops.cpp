@@ -39,7 +39,7 @@ void DumpRayToGlView( Ray_t const& ray, float dist, Vector* pColor, const char *
 
 	Vector up( 0, 0, 1 );
 	Vector crossDir;
-	if (fabs(DotProduct(up, dir)) - 1.0f < -1e-3 )
+	if (fabsf(DotProduct(up, dir)) - 1.0f < -1e-3 )
 	{
 		CrossProduct( dir, up, crossDir );
 		VectorNormalize(crossDir);

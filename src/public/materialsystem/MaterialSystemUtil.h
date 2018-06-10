@@ -88,6 +88,8 @@ public:
 	operator ITexture const*() const { return m_pTexture; }
 	ITexture* operator->() { return m_pTexture; }
 
+	ITexture* Get() const { return m_pTexture; }
+
 	// Assignment operator
 	void operator=( CTextureReference &ref );
 

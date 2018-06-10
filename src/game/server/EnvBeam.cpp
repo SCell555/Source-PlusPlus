@@ -143,7 +143,7 @@ void CEnvBeam::Spawn( void )
 
 	BaseClass::Spawn();
 
-	m_noiseAmplitude = MIN(MAX_BEAM_NOISEAMPLITUDE, m_noiseAmplitude);
+	m_noiseAmplitude = MIN(static_cast<float>(MAX_BEAM_NOISEAMPLITUDE), m_noiseAmplitude);
 
 	// Check for tapering
 	if ( HasSpawnFlags( SF_BEAM_TAPEROUT ) )

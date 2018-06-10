@@ -430,7 +430,7 @@ AIMoveResult_t CAI_LocalNavigator::MoveCalc( AILocalMoveGoal_t *pMoveGoal, bool 
 
 		// Clamp yaw
 		goalYaw = UTIL_VecToYaw( pMoveGoal->facing );
-		deltaYaw = fabs( UTIL_AngleDiff( goalYaw, currentYaw ) );
+		deltaYaw = fabsf( UTIL_AngleDiff( goalYaw, currentYaw ) );
 		if ( deltaYaw > 15 )
 		{
 			speed = deltaYaw * 4.0; // i.e., any maneuver takes a quarter a second

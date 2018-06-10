@@ -179,7 +179,7 @@ int CWeaponCrowbar::WeaponMeleeAttack1Condition( float flDot, float flDist )
 	Vector vecDelta;
 	VectorSubtract( vecExtrapolatedPos, pNPC->WorldSpaceCenter(), vecDelta );
 
-	if ( fabs( vecDelta.z ) > 70 )
+	if ( fabsf( vecDelta.z ) > 70 )
 	{
 		return COND_TOO_FAR_TO_ATTACK;
 	}

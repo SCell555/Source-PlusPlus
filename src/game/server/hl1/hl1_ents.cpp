@@ -454,7 +454,7 @@ void CPendulum::Spawn( void )
 		if ( m_flSpeed == 0 )
 			 m_flSpeed = 100;
 
-		m_flAccel = ( m_flSpeed * m_flSpeed ) / ( 2 * fabs( m_flMoveDistance ));	// Calculate constant acceleration from speed and distance
+		m_flAccel = ( m_flSpeed * m_flSpeed ) / ( 2 * fabsf( m_flMoveDistance ));	// Calculate constant acceleration from speed and distance
 		m_flMaxSpeed = m_flSpeed;
 		m_vStart = GetAbsAngles();
 		m_vCenter = GetAbsAngles() + ( m_flMoveDistance * 0.05 ) * m_vecMoveAng;
@@ -1523,7 +1523,7 @@ void CHL1Gib::BounceGibTouch ( CBaseEntity *pOther )
 		if ( m_material != matNone && random->RandomInt( 0, 2 ) == 0 )
 		{
 			float volume;
-			float zvel = fabs( GetAbsVelocity().z );
+			float zvel = fabsf( GetAbsVelocity().z );
 		
 			volume = 0.8 * min(1.0, ((float)zvel) / 450.0);
 

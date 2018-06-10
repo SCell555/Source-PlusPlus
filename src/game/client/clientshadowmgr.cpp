@@ -2188,7 +2188,7 @@ float CClientShadowMgr::ComputeLocalShadowOrigin( IClientRenderable* pRenderable
 //-----------------------------------------------------------------------------
 static inline void SortAbsVectorComponents( const Vector& src, int* pVecIdx )
 {
-	Vector absVec( fabs(src[0]), fabs(src[1]), fabs(src[2]) );
+	Vector absVec( fabsf(src[0]), fabsf(src[1]), fabsf(src[2]) );
 
 	int maxIdx = (absVec[0] > absVec[1]) ? 0 : 1;
 	if (absVec[2] > absVec[maxIdx])
@@ -2401,7 +2401,7 @@ void CClientShadowMgr::BuildOrthoShadow( IClientRenderable* pRenderable,
 	AngleVectors( pRenderable->GetRenderAngles(), &vec[0], &vec[1], &vec[2] );
 	vec[1] *= -1.0f;
 
-	Vector vecShadowDir = GetShadowDirection( pRenderable );
+	Vector vecShadowDir = GetShadowDirection( handle );
 
 	// Project the shadow casting direction into the space of the object
 	Vector localShadowDir;
@@ -2433,12 +2433,12 @@ void CClientShadowMgr::BuildOrthoShadow( IClientRenderable* pRenderable,
 	// We project the two longest sides into the vectors perpendicular
 	// to the projection direction, then add in the projection of the perp direction
 	Vector2D size( boxSize[vecIdx[0]], boxSize[vecIdx[1]] );
-	size.x *= fabs( DotProduct( vec[vecIdx[0]], xvec ) );
-	size.y *= fabs( DotProduct( vec[vecIdx[1]], yvec ) );
+	size.x *= fabsf( DotProduct( vec[vecIdx[0]], xvec ) );
+	size.y *= fabsf( DotProduct( vec[vecIdx[1]], yvec ) );
 
 	// Add the third component into x and y
-	size.x += boxSize[vecIdx[2]] * fabs( DotProduct( vec[vecIdx[2]], xvec ) );
-	size.y += boxSize[vecIdx[2]] * fabs( DotProduct( vec[vecIdx[2]], yvec ) );
+	size.x += boxSize[vecIdx[2]] * fabsf( DotProduct( vec[vecIdx[2]], xvec ) );
+	size.y += boxSize[vecIdx[2]] * fabsf( DotProduct( vec[vecIdx[2]], yvec ) );
 
 	// Bloat a bit, since the shadow wants to extend outside the model a bit
 	size.x += 10.0f;
@@ -2584,7 +2584,7 @@ void CClientShadowMgr::BuildRenderToTextureShadow( IClientRenderable* pRenderabl
 	AngleVectors( pRenderable->GetRenderAngles(), &vec[0], &vec[1], &vec[2] );
 	vec[1] *= -1.0f;
 
-	Vector vecShadowDir = GetShadowDirection( pRenderable );
+	Vector vecShadowDir = GetShadowDirection( handle );
 
 //	Debugging aid
 //	const model_t *pModel = pRenderable->GetModel();
@@ -2623,12 +2623,12 @@ void CClientShadowMgr::BuildRenderToTextureShadow( IClientRenderable* pRenderabl
 	// We project the two longest sides into the vectors perpendicular
 	// to the projection direction, then add in the projection of the perp direction
 	Vector2D size;
-	size.x = boxSize.x * fabs( DotProduct( vec[0], xvec ) ) + 
-		boxSize.y * fabs( DotProduct( vec[1], xvec ) ) + 
-		boxSize.z * fabs( DotProduct( vec[2], xvec ) );
-	size.y = boxSize.x * fabs( DotProduct( vec[0], yvec ) ) + 
-		boxSize.y * fabs( DotProduct( vec[1], yvec ) ) + 
-		boxSize.z * fabs( DotProduct( vec[2], yvec ) );
+	size.x = boxSize.x * fabsf( DotProduct( vec[0], xvec ) ) + 
+		boxSize.y * fabsf( DotProduct( vec[1], xvec ) ) + 
+		boxSize.z * fabsf( DotProduct( vec[2], xvec ) );
+	size.y = boxSize.x * fabsf( DotProduct( vec[0], yvec ) ) + 
+		boxSize.y * fabsf( DotProduct( vec[1], yvec ) ) + 
+		boxSize.z * fabsf( DotProduct( vec[2], yvec ) );
 
 	size.x += 2.0f * TEXEL_SIZE_PER_CASTER_SIZE;
 	size.y += 2.0f * TEXEL_SIZE_PER_CASTER_SIZE;
@@ -3561,8 +3561,10 @@ void CClientShadowMgr::AddShadowToReceiver( ClientShadowHandle_t handle,
 
 	int flags = SHADOW_FLAGS_PROJECTED_TEXTURE_TYPE_MASK;
 	extern ClientShadowHandle_t g_hFlashlightHandle[MAX_PLAYERS + 1];
-	for ( ClientShadowHandle_t flashlight_handle : g_hFlashlightHandle )
+	for ( const ClientShadowHandle_t& flashlight_handle : g_hFlashlightHandle )
 	{
+		if ( &g_hFlashlightHandle[0] == &flashlight_handle )
+			continue;
 		if ( flashlight_handle == handle )
 		{
 			flags |= SHADOW_FLAGS_PLAYER_FLASHLIGHT;

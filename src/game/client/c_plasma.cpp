@@ -254,7 +254,7 @@ void C_Plasma::AddFlames( void )
 	float	dot		= viewDir.Dot( Vector( 0, 0, 1 ) );	//NOTENOTE: Flames always point up
 	float	alpha	= 1.0f;
 
-	dot = fabs( dot );
+	dot = fabsf( dot );
 
 	if ( dot < FLAME_ALPHA_START )
 	{
@@ -407,7 +407,7 @@ void C_Plasma::UpdateFlames( void )
 		offset[2] = m_entFlames[i].GetAbsOrigin()[2];
 
 		// Note: Sprite render assumes 0 scale means 1.0
-		m_entFlames[i].SetScale ( MAX(0.000001,newScale) );
+		m_entFlames[i].SetScale ( MAX(0.000001f,newScale) );
 		
 		if ( i != 0 )
 		{

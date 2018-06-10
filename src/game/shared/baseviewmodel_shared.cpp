@@ -140,10 +140,8 @@ void CBaseViewModel::SpawnControlPanels()
 
 	// If we're attached to an entity, spawn control panels on it instead of use
 	CBaseAnimating *pEntityToSpawnOn = this;
-	char *pOrgLL = "controlpanel%d_ll";
-	char *pOrgUR = "controlpanel%d_ur";
-	char *pAttachmentNameLL = pOrgLL;
-	char *pAttachmentNameUR = pOrgUR;
+	const char *pAttachmentNameLL = "controlpanel%d_ll";
+	const char *pAttachmentNameUR = "controlpanel%d_ur";
 	/*
 	if ( IsBuiltOnAttachment() )
 	{
@@ -176,7 +174,7 @@ void CBaseViewModel::SpawnControlPanels()
 		{
 			// Try and use my panels then
 			pEntityToSpawnOn = this;
-			Q_snprintf( buf, sizeof( buf ), pOrgLL, nPanel );
+			Q_snprintf( buf, sizeof( buf ), pAttachmentNameLL, nPanel );
 			nLLAttachmentIndex = pEntityToSpawnOn->LookupAttachment(buf);
 			if (nLLAttachmentIndex <= 0)
 				return;
@@ -187,7 +185,7 @@ void CBaseViewModel::SpawnControlPanels()
 		if (nURAttachmentIndex <= 0)
 		{
 			// Try and use my panels then
-			Q_snprintf( buf, sizeof( buf ), pOrgUR, nPanel );
+			Q_snprintf( buf, sizeof( buf ), pAttachmentNameUR, nPanel );
 			nURAttachmentIndex = pEntityToSpawnOn->LookupAttachment(buf);
 			if (nURAttachmentIndex <= 0)
 				return;

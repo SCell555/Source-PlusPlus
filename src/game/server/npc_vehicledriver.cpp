@@ -325,7 +325,7 @@ int	CNPC_VehicleDriver::RangeAttack1Conditions( float flDot, float flDist )
 	VectorNormalize(vecToTarget);
 	m_hVehicleEntity->GetVectors( &vecForward, NULL, NULL );
 	float flForwardDot = DotProduct( vecForward, vecToTarget );
-	if ( flForwardDot < 0 && fabs(flDot) < 0.5 )
+	if ( flForwardDot < 0 && fabsf(flDot) < 0.5f )
 		return COND_NOT_FACING_ATTACK;
 
 	return COND_CAN_RANGE_ATTACK1;
@@ -690,7 +690,7 @@ bool CNPC_VehicleDriver::WaypointReached( void )
 	m_pNextWaypoint = m_Waypoints[1];
 
 	// Drop the spline marker back
-	m_flDistanceAlongSpline = MAX( 0, m_flDistanceAlongSpline - 1.0 );
+	m_flDistanceAlongSpline = MAX( 0.f, m_flDistanceAlongSpline - 1.f );
 
 	CheckForTeleport();
 
@@ -794,7 +794,7 @@ bool CNPC_VehicleDriver::OverridePathMove( float flInterval )
 	Vector vecNormVel = m_vecDesiredVelocity;
 	VectorNormalize( vecNormVel );
 	float flDotRight = DotProduct( vecRight, vecNormVel );
-	flSpeed = (1.0 - fabs(flDotRight));
+	flSpeed = (1.0f - fabsf(flDotRight));
 	// Don't go slower than we've been told to go
 	if ( flSpeed < m_flDriversMinSpeed )
 	{

@@ -142,7 +142,7 @@ void CHUDQuickInfo::VidInit( void )
 
 void CHUDQuickInfo::DrawWarning( int x, int y, CHudTexture *icon, float &time )
 {
-	float scale	= (int)( fabs(sin(gpGlobals->curtime*8.0f)) * 128.0);
+	float scale	= (int)( fabsf(sin(gpGlobals->curtime*8.0f)) * 128.0);
 
 	// Only fade out at the low point of our blink
 	if ( time <= (gpGlobals->frametime * 200.0f) )
@@ -326,7 +326,7 @@ void CHUDQuickInfo::Paint()
 	if ( !hud_quickinfo.GetInt() )
 		return;
 
-	int	sinScale = (int)( fabs(sin(gpGlobals->curtime*8.0f)) * 128.0f );
+	int	sinScale = (int)( fabsf(sin(gpGlobals->curtime*8.0f)) * 128.0f );
 
 	// Update our health
 	if ( m_healthFade > 0.0f )

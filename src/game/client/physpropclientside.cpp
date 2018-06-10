@@ -602,7 +602,7 @@ void C_PhysPropClientside::ImpactTrace( trace_t *pTrace, int iDamageType, const 
 
 const char *C_PhysPropClientside::ParseEntity( const char *pEntData )
 {
-	CEntityMapData entData( (char*)pEntData );
+	CEntityMapData entData( pEntData );
 	char className[MAPKEY_MAXLENGTH];
 	
 	MDLCACHE_CRITICAL_SECTION();

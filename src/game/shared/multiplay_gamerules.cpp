@@ -27,7 +27,6 @@
 	#include "items.h"
 	#include "entitylist.h"
 	#include "in_buttons.h" 
-	#include <ctype.h>
 	#include "voice_gamemgr.h"
 	#include "iscorer.h"
 	#include "hltvdirector.h"
@@ -1115,8 +1114,7 @@ ConVarRef suitcharger( "sk_suitcharger" );
 	//=========================================================
 	bool CMultiplayRules::FAllowNPCs( void )
 	{
-		return true; // E3 hack
-		return ( allowNPCs.GetInt() != 0 );
+		return allowNPCs.GetBool();
 	}
 
 	//=========================================================

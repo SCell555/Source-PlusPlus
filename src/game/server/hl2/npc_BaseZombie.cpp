@@ -82,7 +82,7 @@ envelopePoint_t envDefaultZombieMoanVolume[] =
 
 
 // if the zombie doesn't find anything closer than this, it doesn't swat.
-#define ZOMBIE_FARTHEST_PHYSICS_OBJECT	40.0*12.0
+#define ZOMBIE_FARTHEST_PHYSICS_OBJECT	40.f*12.f
 #define ZOMBIE_PHYSICS_SEARCH_DEPTH	100
 
 // Don't swat objects unless player is closer than this.
@@ -91,12 +91,12 @@ envelopePoint_t envDefaultZombieMoanVolume[] =
 //
 // How much health a Zombie torso gets when a whole zombie is broken
 // It's whole zombie's MAX Health * this value
-#define ZOMBIE_TORSO_HEALTH_FACTOR 0.5
+#define ZOMBIE_TORSO_HEALTH_FACTOR 0.5f
 
 //
 // When the zombie has health < m_iMaxHealth * this value, it will
 // try to release its headcrab.
-#define ZOMBIE_RELEASE_HEALTH_FACTOR	0.5
+#define ZOMBIE_RELEASE_HEALTH_FACTOR	0.5f
 
 //
 // The heaviest physics object that a zombie should try to swat. (kg)
@@ -290,7 +290,7 @@ bool CNPC_BaseZombie::FindNearestPhysicsObject( int iMaxMass )
 		return false;
 	}
 
-	float flNearestDist = MIN( dist, ZOMBIE_FARTHEST_PHYSICS_OBJECT * 0.5 );
+	float flNearestDist = MIN( dist, ZOMBIE_FARTHEST_PHYSICS_OBJECT * 0.5f );
 	Vector vecDelta( flNearestDist, flNearestDist, GetHullHeight() * 2.0 );
 
 	class CZombieSwatEntitiesEnum : public CFlaggedEntitiesEnum
@@ -396,14 +396,7 @@ bool CNPC_BaseZombie::FindNearestPhysicsObject( int iMaxMass )
 
 	m_hPhysicsEnt = pNearest;
 
-	if( m_hPhysicsEnt == NULL )
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
+	return m_hPhysicsEnt != NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -844,7 +837,7 @@ int CNPC_BaseZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 
 	// flDamageThreshold is what percentage of the creature's max health
 	// this amount of damage represents. (clips at 1.0)
-	float flDamageThreshold = MIN( 1, info.GetDamage() / m_iMaxHealth );
+	float flDamageThreshold = MIN( 1.f, info.GetDamage() / m_iMaxHealth );
 	
 	// Being chopped up by a sharp physics object is a pretty special case
 	// so we handle it with some special code. Mainly for 
@@ -1029,7 +1022,7 @@ void CNPC_BaseZombie::MoanSound( envelopePoint_t *pEnvelope, int iEnvelopeSize )
 //-----------------------------------------------------------------------------
 bool CNPC_BaseZombie::IsChopped( const CTakeDamageInfo &info )
 {
-	float flDamageThreshold = MIN( 1, info.GetDamage() / m_iMaxHealth );
+	float flDamageThreshold = MIN( 1.f, info.GetDamage() / m_iMaxHealth );
 
 	if ( m_iHealth > 0 || flDamageThreshold <= 0.5 )
 		return false;
@@ -1215,7 +1208,7 @@ void CNPC_BaseZombie::Ignite( float flFlameLifetime, bool bNPCOnly, float flSize
 #endif // HL2_EPISODIC
 
 	// Set the zombie up to burn to death in about ten seconds.
-	SetHealth( MIN( m_iHealth, FLAME_DIRECT_DAMAGE_PER_SEC * (ZOMBIE_BURN_TIME + random->RandomFloat( -ZOMBIE_BURN_TIME_NOISE, ZOMBIE_BURN_TIME_NOISE)) ) );
+	SetHealth( MIN( m_iHealth.Get(), static_cast<int>(FLAME_DIRECT_DAMAGE_PER_SEC * (ZOMBIE_BURN_TIME + random->RandomFloat( -ZOMBIE_BURN_TIME_NOISE, ZOMBIE_BURN_TIME_NOISE)) ) ) );
 
 	// FIXME: use overlays when they come online
 	//AddOverlay( ACT_ZOM_WALK_ON_FIRE, false );
@@ -2087,7 +2080,6 @@ void CNPC_BaseZombie::StartTask( const Task_t *pTask )
 
 	case TASK_ZOMBIE_GET_PATH_TO_PHYSOBJ:
 		{
-			Vector vecGoalPos;
 			Vector vecDir;
 
 			vecDir = GetLocalOrigin() - m_hPhysicsEnt->GetLocalOrigin();

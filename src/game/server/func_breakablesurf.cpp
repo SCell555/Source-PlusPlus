@@ -282,11 +282,11 @@ void CBreakableSurface::SurfaceTouch( CBaseEntity *pOther )
 	float flMaxsWidth,flMaxsHeight;
 	PanePos(vTouchPos, &flMaxsWidth, &flMaxsHeight);
 
-	int nMinWidth = Floor2Int(MAX(0,		MIN(flMinsWidth,flMaxsWidth)));
-	int nMaxWidth = Ceil2Int(MIN(m_nNumWide,MAX(flMinsWidth,flMaxsWidth)));
+	int nMinWidth = Floor2Int(MAX(0.f,		MIN(flMinsWidth,flMaxsWidth)));
+	int nMaxWidth = Ceil2Int(MIN(m_nNumWide.Get(), (int)MAX(flMinsWidth,flMaxsWidth)));
 
-	int nMinHeight = Floor2Int(MAX(0,		MIN(flMinsHeight,flMaxsHeight)));
-	int nMaxHeight = Ceil2Int(MIN(m_nNumHigh,MAX(flMinsHeight,flMaxsHeight)));
+	int nMinHeight = Floor2Int(MAX(0.f,		MIN(flMinsHeight,flMaxsHeight)));
+	int nMaxHeight = Ceil2Int(MIN(m_nNumHigh.Get(), (int)MAX(flMinsHeight,flMaxsHeight)));
 
 	Vector vHitVel;
 	pOther->GetVelocity( &vHitVel, NULL );
@@ -657,7 +657,7 @@ void CBreakableSurface::Die( CBaseEntity *pBreaker, const Vector &vAttackDir )
 	AngleVectors(vAngles,NULL,&vWidthDir,&vHeightDir);
 
 	float flWDist = DotProduct(vWidthDir,vWidth);
-	if (fabs(flWDist)<0.5)
+	if (fabsf(flWDist)<0.5f)
 	{
 		Vector vSaveHeight	= vHeight;
 		vHeight				= vWidth * flDir;
@@ -832,7 +832,7 @@ void CBreakableSurface::SetSupport( int w, int h, float support )
 //------------------------------------------------------------------------------
 float CBreakableSurface::GetSupport(int nWidth, int nHeight)
 {
-	return MAX(0,m_flSupport[nWidth][nHeight]);
+	return MAX(0.f, m_flSupport[nWidth][nHeight]);
 }
 
 //------------------------------------------------------------------------------
@@ -1193,19 +1193,22 @@ void CBreakableSurface::Spawn(void)
 
 	if (m_nQuadError == QUAD_ERR_MULT_FACES)
 	{
-		Warning("Rejecting func_breakablesurf.  Has multiple faces that aren't NODRAW.\n");
+		Vector center = WorldSpaceCenter();
+		Warning( "Rejecting func_breakablesurf at (%2.2f, %2.2f, %2.2f).  Has multiple faces that aren't NODRAW.\n", XYZ( center ) );
 		UTIL_Remove(this);
 	}
 	else if (m_nQuadError == QUAD_ERR_NOT_QUAD)
 	{
-		Warning("Rejecting func_breakablesurf.  Drawn face isn't a quad.\n");
+		Vector center = WorldSpaceCenter();
+		Warning( "Rejecting func_breakablesurf at (%2.2f, %2.2f, %2.2f).  Drawn face isn't a quad.\n", XYZ( center ) );
 		UTIL_Remove(this);
 	}
 
 	int materialCount = modelinfo->GetModelMaterialCount( const_cast<model_t*>(GetModel()) );
 	if( materialCount != 1 )
 	{
-		Warning( "Encountered func_breakablesurf that has a material applied to more than one surface!\n" );
+		Vector center = WorldSpaceCenter();
+		Warning( "Encountered func_breakablesurf at (%2.2f, %2.2f, %2.2f) that has a material applied to more than one surface!\n", XYZ( center ) );
 		UTIL_Remove(this);
 	}
 

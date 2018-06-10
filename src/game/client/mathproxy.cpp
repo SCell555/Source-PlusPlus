@@ -823,7 +823,7 @@ public:
 
 void CAbsProxy::OnBind( void *pC_BaseEntity )
 {	
-	SetFloatResult( fabs(m_pSrc1->GetFloatValue( )) );
+	SetFloatResult( fabsf(m_pSrc1->GetFloatValue( )) );
 
 	if ( ToolsEnabled() )
 	{

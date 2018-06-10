@@ -1344,12 +1344,12 @@ void CAI_PassengerBehavior::GatherVehicleStateConditions( void )
 	{
 		SetCondition( COND_PASSENGER_HARD_IMPACT );
 	}
-	else if ( fabs( deltaVelocity.x ) > 200.0f || fabs( deltaVelocity.z ) > 75.0f )
+	else if ( fabsf( deltaVelocity.x ) > 200.0f || fabsf( deltaVelocity.z ) > 75.0f )
 	{
 		// The X axis represents lateral movement and the Z axis represents vertical movement{
    		SetCondition( COND_PASSENGER_ERRATIC_DRIVING );
 	} 
-	else if ( fabs( deltaVelocity.x ) > 50.0f || fabs( deltaVelocity.z ) > 25.0f )
+	else if ( fabsf( deltaVelocity.x ) > 50.0f || fabsf( deltaVelocity.z ) > 25.0f )
 	{
 		// Lightly jostled
       	SetCondition( COND_PASSENGER_JOSTLE_SMALL );

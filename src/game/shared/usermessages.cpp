@@ -74,7 +74,7 @@ const char *CUserMessages::GetUserMessageName( int index )
 {
 	if ( index < 0 || index >= (int)m_UserMessages.Count() )
 	{
-		Error( "CUserMessages::GetUserMessageSize( %i ) out of range!!!\n", index );
+		Error( "CUserMessages::GetUserMessageName( %i ) out of range!!!\n", index );
 	}
 
 	return m_UserMessages.GetElementName( index );

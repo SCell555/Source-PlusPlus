@@ -24,7 +24,6 @@
 #include "ai_networkmanager.h"
 #include "ndebugoverlay.h"
 #include "ivoiceserver.h"
-#include <stdarg.h>
 #include "movehelper_server.h"
 #include "networkstringtable_gamedll.h"
 #include "filesystem.h"
@@ -897,7 +896,7 @@ void AddRestoredEntity( CBaseEntity *pEntity )
 	if ( !pEntity )
 		return;
 
-	g_RestoredEntities.AddToTail( EHANDLE(pEntity) );
+	g_RestoredEntities.AddToTail( pEntity );
 }
 
 void EndRestoreEntities()
@@ -2657,6 +2656,32 @@ void CServerGameEnts::CheckTransmit( CCheckTransmitInfo *pInfo, const unsigned s
 }
 
 
+bool CMapLoadEntityFilter::ShouldCreateEntity( const char *pClassname )
+{
+	// During map load, create all the entities.
+	return true;
+}
+
+CBaseEntity* CMapLoadEntityFilter::CreateNextEntity( const char *pClassname )
+{
+	CBaseEntity *pRet = CreateEntityByName( pClassname );
+
+	CMapEntityRef ref;
+	ref.m_iEdict = -1;
+	ref.m_iSerialNumber = -1;
+
+	if ( pRet )
+	{
+		ref.m_iEdict = pRet->entindex();
+		if ( pRet->edict() )
+			ref.m_iSerialNumber = pRet->edict()->m_NetworkSerialNumber;
+	}
+
+	g_MapEntityRefs.AddToTail( ref );
+	return pRet;
+}
+
+
 CServerGameClients g_ServerGameClients;
 // INTERFACEVERSION_SERVERGAMECLIENTS_VERSION_3 is compatible with the latest since we're only adding things to the end, so expose that as well.
 EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CServerGameClients, IServerGameClients003, INTERFACEVERSION_SERVERGAMECLIENTS_VERSION_3, g_ServerGameClients );
@@ -3302,6 +3327,14 @@ void MessageWriteByte( int iValue)
 	g_pMsgBuffer->WriteByte( iValue );
 }
 
+void MessageWriteBytes( const void *pBuf, int nBytes )
+{
+	if (!g_pMsgBuffer)
+		Error("WRITE_BYTES called with no active message\n");
+
+	g_pMsgBuffer->WriteBytes( pBuf, nBytes );
+}
+
 void MessageWriteChar( int iValue)
 {
 	if (!g_pMsgBuffer)
@@ -3326,7 +3359,7 @@ void MessageWriteWord( int iValue )
 	g_pMsgBuffer->WriteWord( iValue );
 }
 
-void MessageWriteLong( int iValue)
+void MessageWriteLong( long iValue)
 {
 	if (!g_pMsgBuffer)
 		Error( "WriteLong called with no active message\n" );
@@ -3487,6 +3520,16 @@ private:
 };
 
 EXPOSE_SINGLE_INTERFACE( CServerDLLSharedAppSystems, IServerDLLSharedAppSystems, SERVER_DLL_SHARED_APPSYSTEMS );
+
+
+class CServerGameTags : public IServerGameTags
+{
+public:
+	virtual void GetTaggedConVarList( KeyValues *pCvarTagList ) OVERRIDE;
+
+};
+
+EXPOSE_SINGLE_INTERFACE( CServerGameTags, IServerGameTags, INTERFACEVERSION_SERVERGAMETAGS );
 
 
 //-----------------------------------------------------------------------------

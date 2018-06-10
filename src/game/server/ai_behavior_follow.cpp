@@ -544,7 +544,7 @@ bool CAI_FollowBehavior::IsFollowGoalInRange( float tolerance, float zTolerance,
 	float flToleranceSq = (tolerance*tolerance);
 	float flIncreaseRange = flToleranceSq * 0.25;
 	zTolerance += zTolerance * clamp((distanceSq / flIncreaseRange), 0.f, 1.f );
-	if ( fabs( origin.z - goal.z ) > zTolerance )
+	if ( fabsf( origin.z - goal.z ) > zTolerance )
 		return false;
 
 	if ( distanceSq > flToleranceSq )

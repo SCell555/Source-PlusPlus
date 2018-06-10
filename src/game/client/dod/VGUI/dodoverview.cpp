@@ -707,7 +707,7 @@ bool CDODMapOverview::DrawCapturePoint( int iCP, MapObject_t *obj )
 						if ( bBombPlanted )
 						{
 							// draw the background behind 1
-							int alpha = (float)( abs( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
+							int alpha = (float)( fabsf( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
 							DrawQuad( bombPos, flBombIconScale*2, angle, m_pC4PlantedBG->textureId, alpha );
 						}
 						DrawQuad( bombPos, flBombIconScale, angle, m_pC4Icon->textureId, 255 );
@@ -734,7 +734,7 @@ bool CDODMapOverview::DrawCapturePoint( int iCP, MapObject_t *obj )
 					if ( bBombPlanted )
 					{
 						// draw the background behind 1
-						int alpha = (float)( abs( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
+						int alpha = (float)( fabsf( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
 						DrawQuad( bombPos1, flBombIconScale*2, angle, m_pC4PlantedBG->textureId, alpha );
 					}
 					DrawQuad( bombPos1, flBombIconScale, angle, m_pC4Icon->textureId, 255 );
@@ -744,7 +744,7 @@ bool CDODMapOverview::DrawCapturePoint( int iCP, MapObject_t *obj )
 					if ( bBombPlanted )
 					{
 						// draw the background behind 2
-						int alpha = (float)( abs( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
+						int alpha = (float)( fabsf( sin(2*gpGlobals->curtime) ) * 205.0 + 50.0 );
 						DrawQuad( bombPos2, flBombIconScale*2, angle, m_pC4PlantedBG->textureId, alpha );
 					}
 					DrawQuad( bombPos1, flBombIconScale, angle, m_pC4Icon->textureId, 255 );
@@ -888,8 +888,8 @@ void CDODMapOverview::DrawBombTimerSwipeIcon( Vector pos, int scale, int texture
 			vec1.x = newPos.x + quadrants[j].vecTrailing.x * scale*2 - xdir * tan(flAngle) * scale;
 			vec1.y = newPos.y - quadrants[j].vecTrailing.y * scale*2 + ydir * tan(flAngle) * scale;
 
-			uv1.x = quadrants[j].vecTrailing.x - xdir * abs( quadrants[j].vecLeading.x - quadrants[j].vecTrailing.x ) * tan(flAngle);
-			uv1.y = quadrants[j].vecTrailing.y - ydir * abs( quadrants[j].vecLeading.y - quadrants[j].vecTrailing.y ) * tan(flAngle);
+			uv1.x = quadrants[j].vecTrailing.x - xdir * fabsf( quadrants[j].vecLeading.x - quadrants[j].vecTrailing.x ) * tan(flAngle);
+			uv1.y = quadrants[j].vecTrailing.y - ydir * fabsf( quadrants[j].vecLeading.y - quadrants[j].vecTrailing.y ) * tan(flAngle);
 
 			Vector2D pos1 = WorldToMap( vec1 );
 			vert[1].Init( MapToPanel( pos1 ), uv1 );

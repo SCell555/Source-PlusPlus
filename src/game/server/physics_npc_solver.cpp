@@ -204,7 +204,7 @@ bool CPhysicsNPCSolver::IsContactOnNPCHead( IPhysicsFrictionSnapshot *pSnapshot,
 	// don't care if the object is already moving away
 	if ( vel.LengthSqr() < 10.0f*10.0f )
 	{
-		float topdist = fabs(point.z-heightCheck);
+		float topdist = fabsf(point.z-heightCheck);
 		if ( topdist < 2.0f )
 		{
 			return true;

@@ -1102,7 +1102,7 @@ int Convex2D( Vector2D const *pPoints, int nPoints, int *indices, int nMaxIndice
 			float flAngle = atan2( vTo.y, vTo.x );
 			flAngle = AngleOffset( flEdgeAngle, flAngle );
 
-			if( fabs( flAngle - flMinAngle ) < 0.00001f )
+			if( fabsf( flAngle - flMinAngle ) < 0.00001f )
 			{
 				float flDistToTestSqr = pStartPoint->DistToSqr( pPoints[iMinAngle] );
 
@@ -1183,8 +1183,8 @@ void FindPortalsLeadingToArea_R(
 		{
 			// Make sure the plane normals point the same way.
 			plane_t *pMapPlane = &g_MainMap->mapplanes[p->onnode->planenum];
-			float flDot = fabs( pMapPlane->normal.Dot( pPlane->normal ) );
-			if( fabs( 1 - flDot ) < 0.01f )
+			float flDot = fabsf( pMapPlane->normal.Dot( pPlane->normal ) );
+			if( fabsf( 1 - flDot ) < 0.01f )
 			{
 				Vector vPlanePt1 = pPlane->normal * pPlane->dist;
 				Vector vPlanePt2 = pMapPlane->normal * pMapPlane->dist;
@@ -1437,7 +1437,7 @@ static float ComputeDistFromPlane( winding_t *pWinding, plane_t *pPlane, float m
 	float totaldist = 0.0f;
 	for (int i = 0; i < pWinding->numpoints; ++i)
 	{
-		totaldist += fabs(DotProduct( pPlane->normal, pWinding->p[i] ) - pPlane->dist);
+		totaldist += fabsf(DotProduct( pPlane->normal, pWinding->p[i] ) - pPlane->dist);
 		if (totaldist > maxdist)
 			return totaldist;
 	}

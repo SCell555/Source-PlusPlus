@@ -32,7 +32,6 @@ public:
 	{
 	}
 	// Level init, shutdown
-	virtual void LevelInitPreEntity() {}
 
 	virtual void LevelShutdownPostEntity()
 	{
@@ -65,7 +64,7 @@ float g_flOverlayRange = cos( DEG2RAD( 40 ) );
 // ----------------------------------------------------------------------------- //
 // ----------------------------------------------------------------------------- //
 
-void Do2DRotation( Vector vIn, Vector &vOut, float flDegrees, int i1, int i2, int i3 )
+void Do2DRotation( const Vector& vIn, Vector &vOut, float flDegrees, int i1, int i2, int i3 )
 {
 	float c, s;
 	SinCos( DEG2RAD( flDegrees ), &s, &c );
@@ -126,7 +125,7 @@ bool CGlowOverlay::Update()
 
 ConVar building_cubemaps( "building_cubemaps", "0" );
 
-float CGlowOverlay::CalcGlowAspect()
+float CGlowOverlay::CalcGlowAspect() const
 {
 	if ( m_nSprites )
 	{
@@ -158,13 +157,10 @@ void CGlowOverlay::UpdateSkyGlowObstruction( float zFar, bool bCacheFullSceneSta
 
 	if ( PixelVisibility_IsAvailable() )
 	{
-		// Trace a ray at the object. 
-		Vector pos = CurrentViewOrigin() + m_vDirection * zFar * 0.999f;
-
 		// UNDONE: Can probably do only the pixelvis query in this case if you can figure out where
 		// to put it - or save the position of this trace
 		pixelvis_queryparams_t params;
-		params.Init( pos, m_flProxyRadius );
+		params.Init( CurrentViewOrigin() + m_vDirection * zFar * 0.999f, m_flProxyRadius );
 		params.bSizeInScreenspace = true;
 		m_skyObstructionScale = PixelVisibility_FractionVisible( params, &m_queryHandle );
 		return;
@@ -185,6 +181,35 @@ void CGlowOverlay::UpdateSkyGlowObstruction( float zFar, bool bCacheFullSceneSta
 	}
 }
 
+
+Vector CGlowOverlay::GetGlowDirection()
+{
+	Vector vToGlow;
+	
+	if( m_bDirectional )
+		vToGlow = m_vDirection;
+	else
+		vToGlow = m_vPos - CurrentViewOrigin();
+
+	VectorNormalize( vToGlow );
+
+	return vToGlow;
+}
+
+float CGlowOverlay::GetGlowScale()
+{
+	return m_flGlowObstructionScale;
+}
+
+Vector CGlowOverlay::GetGlowColor()
+{
+	Assert( m_nSprites > 0 );
+
+	if ( m_nSprites > 0 )
+		return m_Sprites[0].m_vColor;
+
+	return Vector( 1, 1, 1 );
+}
 
 void CGlowOverlay::UpdateGlowObstruction( const Vector &vToGlow, bool bCacheFullSceneState )
 {
@@ -207,9 +232,8 @@ void CGlowOverlay::UpdateGlowObstruction( const Vector &vToGlow, bool bCacheFull
 		if ( m_bInSky )
 		{
 			const CViewSetup *pViewSetup = view->GetViewSetup();
-			Vector pos = CurrentViewOrigin() + m_vDirection * (pViewSetup->zFar * 0.999f);
 			pixelvis_queryparams_t params;
-			params.Init( pos, m_flProxyRadius, CalcGlowAspect() );
+			params.Init( CurrentViewOrigin() + m_vDirection * (pViewSetup->zFar * 0.999f), m_flProxyRadius, CalcGlowAspect() );
 			params.bSizeInScreenspace = true;
 			// use a pixel query to occlude with models
 			m_flGlowObstructionScale = PixelVisibility_FractionVisible( params, &m_queryHandle ) * m_skyObstructionScale;
@@ -228,7 +252,7 @@ void CGlowOverlay::UpdateGlowObstruction( const Vector &vToGlow, bool bCacheFull
 		return;
 	}
 
-	bool bFade = false;
+	bool bFade;
 	if ( m_bInSky )
 	{
 		// Trace a ray at the object.
@@ -359,13 +383,13 @@ void CGlowOverlay::Draw( bool bCacheFullSceneState )
 
 	VectorNormalize( vToGlow );
 
-	float flDot = vToGlow.Dot( CurrentViewForward() );
+	const float flDot = vToGlow.Dot( CurrentViewForward() );
 
 	UpdateGlowObstruction( vToGlow, bCacheFullSceneState );
 	if( m_flGlowObstructionScale == 0 )
 		return;
 	
-	bool bWireframe = ShouldDrawInWireFrameMode() || (r_drawsprites.GetInt() == 2);
+	const bool bWireframe = ShouldDrawInWireFrameMode() || (r_drawsprites.GetInt() == 2);
 	
 	CMatRenderContextPtr pRenderContext( materials );
 
@@ -387,7 +411,7 @@ void CGlowOverlay::Draw( bool bCacheFullSceneState )
 		CalcBasis( vToGlow, flHorzSize, flVertSize, vBasePt, vUp, vRight );
 
 		//Get our diagonal radius
-		float radius = (vRight+vUp).Length();
+		const float radius = (vRight+vUp).Length();
 		if ( R_CullSphere( view->GetFrustum(), 5, &vBasePt, radius ) )
 			continue;
 
@@ -405,34 +429,25 @@ void CGlowOverlay::Draw( bool bCacheFullSceneState )
 			pHDRColorScaleVar->SetFloatValue( m_flHDRColorScale );
 		}
 
-		// Draw the sprite.
-		IMesh *pMesh = pRenderContext->GetDynamicMesh( false, 0, 0, m_Sprites[iSprite].m_pMaterial );
-
 		CMeshBuilder builder;
-		builder.Begin( pMesh, MATERIAL_QUADS, 1 );
+		builder.Begin( pRenderContext->GetDynamicMesh( false, 0, 0, m_Sprites[iSprite].m_pMaterial ), MATERIAL_QUADS, 1 );
 		
-		Vector vPt;
-		
-		vPt = vBasePt - vRight + vUp;
-		builder.Position3fv( vPt.Base() );
+		builder.Position3fv( ( vBasePt - vRight + vUp ).Base() );
 		builder.Color4f( VectorExpand(vColor), 1 );
 		builder.TexCoord2f( 0, 0, 1 );
 		builder.AdvanceVertex();
 		
-		vPt = vBasePt + vRight + vUp;
-		builder.Position3fv( vPt.Base() );
+		builder.Position3fv( ( vBasePt + vRight + vUp ).Base() );
 		builder.Color4f( VectorExpand(vColor), 1 );
 		builder.TexCoord2f( 0, 1, 1 );
 		builder.AdvanceVertex();
 		
-		vPt = vBasePt + vRight - vUp;
-		builder.Position3fv( vPt.Base() );
+		builder.Position3fv( ( vBasePt + vRight - vUp ).Base() );
 		builder.Color4f( VectorExpand(vColor), 1 );
 		builder.TexCoord2f( 0, 1, 0 );
 		builder.AdvanceVertex();
 		
-		vPt = vBasePt - vRight - vUp;
-		builder.Position3fv( vPt.Base() );
+		builder.Position3fv( ( vBasePt - vRight - vUp ).Base() );
 		builder.Color4f( VectorExpand(vColor), 1 );
 		builder.TexCoord2f( 0, 0, 0 );
 		builder.AdvanceVertex();
@@ -444,31 +459,21 @@ void CGlowOverlay::Draw( bool bCacheFullSceneState )
 			IMaterial *pWireframeMaterial = materials->FindMaterial( "debug/debugwireframevertexcolor", TEXTURE_GROUP_OTHER );
 			pRenderContext->Bind( pWireframeMaterial );
 			
-			// Draw the sprite.
-			IMesh *pMesh = pRenderContext->GetDynamicMesh( false, 0, 0, pWireframeMaterial );
+			builder.Begin( pRenderContext->GetDynamicMesh( false, 0, 0, pWireframeMaterial ), MATERIAL_QUADS, 1 );
 			
-			CMeshBuilder builder;
-			builder.Begin( pMesh, MATERIAL_QUADS, 1 );
-			
-			Vector vPt;
-			
-			vPt = vBasePt - vRight + vUp;
-			builder.Position3fv( vPt.Base() );
+			builder.Position3fv( ( vBasePt - vRight + vUp ).Base() );
 			builder.Color3f( 1.0f, 0.0f, 0.0f );
 			builder.AdvanceVertex();
 			
-			vPt = vBasePt + vRight + vUp;
-			builder.Position3fv( vPt.Base() );
+			builder.Position3fv( ( vBasePt + vRight + vUp ).Base() );
 			builder.Color3f( 1.0f, 0.0f, 0.0f );
 			builder.AdvanceVertex();
 			
-			vPt = vBasePt + vRight - vUp;
-			builder.Position3fv( vPt.Base() );
+			builder.Position3fv( ( vBasePt + vRight - vUp ).Base() );
 			builder.Color3f( 1.0f, 0.0f, 0.0f );
 			builder.AdvanceVertex();
 			
-			vPt = vBasePt - vRight - vUp;
-			builder.Position3fv( vPt.Base() );
+			builder.Position3fv( ( vBasePt - vRight - vUp ).Base() );
 			builder.Color3f( 1.0f, 0.0f, 0.0f );
 			builder.AdvanceVertex();
 			
@@ -500,7 +505,7 @@ void CGlowOverlay::DrawOverlays( bool bCacheFullSceneState )
 
 	CMatRenderContextPtr pRenderContext( materials );
 
-	bool bClippingEnabled = pRenderContext->EnableClipping( true );
+	const bool bClippingEnabled = pRenderContext->EnableClipping( true );
 
 	unsigned short iNext;
 	for( unsigned short i=g_GlowOverlaySystem.m_GlowOverlays.Head(); i != g_GlowOverlaySystem.m_GlowOverlays.InvalidIndex(); i = iNext )
@@ -513,7 +518,7 @@ void CGlowOverlay::DrawOverlays( bool bCacheFullSceneState )
 
 		if( pOverlay->Update() )
 		{
-			pRenderContext->EnableClipping( ((pOverlay->m_bInSky) ? (false):(bClippingEnabled)) ); //disable clipping in skybox, restore clipping to pre-existing state when not in skybox (it may be off as well)
+			pRenderContext->EnableClipping( pOverlay->m_bInSky ? false : bClippingEnabled ); //disable clipping in skybox, restore clipping to pre-existing state when not in skybox (it may be off as well)
 			pOverlay->Draw( bCacheFullSceneState );
 		}
 		else

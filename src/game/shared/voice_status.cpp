@@ -242,7 +242,7 @@ void CVoiceStatus::DrawHeadLabels()
 		// Align it so it never points up or down.
 		Vector vUp( 0, 0, 1 );
 		Vector vRight = CurrentViewRight();
-		if ( fabs( vRight.z ) > 0.95 )	// don't draw it edge-on
+		if ( fabsf( vRight.z ) > 0.95f )	// don't draw it edge-on
 			continue;
 
 		vRight.z = 0;
@@ -294,7 +294,7 @@ void CVoiceStatus::UpdateSpeakerStatus(int entindex, bool bTalking)
 	// Is it the local player talking?
 	if( entindex == -1 )
 	{
-		m_bTalking = !!bTalking;
+		m_bTalking = bTalking;
 		if( bTalking )
 		{
 			// Enable voice for them automatically if they try to talk.
@@ -347,7 +347,7 @@ void CVoiceStatus::UpdateServerState(bool bForce)
 		return;
 	}
 	
-	int bCVarModEnable = !!voice_modenable.GetInt();
+	int bCVarModEnable = voice_modenable.GetBool();
 	if(bForce || m_bServerModEnable != bCVarModEnable)
 	{
 		m_bServerModEnable = bCVarModEnable;

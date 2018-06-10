@@ -182,7 +182,7 @@ void CHeadIconManager::DrawHeadIcons()
 		// Align it towards the viewer
 		Vector vUp = CurrentViewUp();
 		Vector vRight = CurrentViewRight();
-		if ( fabs( vRight.z ) > 0.95 )	// don't draw it edge-on
+		if ( fabsf( vRight.z ) > 0.95 )	// don't draw it edge-on
 			continue;
 
 		vRight.z = 0;

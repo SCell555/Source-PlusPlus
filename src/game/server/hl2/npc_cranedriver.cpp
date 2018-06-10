@@ -565,9 +565,9 @@ void CNPC_CraneDriver::DriveVehicle( void )
 	// First determine whether we need to extend / retract the arm
 	float flDistToTarget = (vecOrigin2D - vecTarget2D).LengthSqr();
 	float flDistToCurrent = (vecOrigin2D - vecCraneTip2D).LengthSqr();
-	float flDelta = fabs(flDistToTarget - flDistToCurrent);
+	float flDelta = fabsf(flDistToTarget - flDistToCurrent);
 	// Slow down as we get closer, but do it based upon our current extension rate
-	float flMinDelta = 50 + (50 * fabs(m_hCrane->GetExtensionRate() / CRANE_EXTENSION_RATE_MAX));
+	float flMinDelta = 50 + (50 * fabsf(m_hCrane->GetExtensionRate() / CRANE_EXTENSION_RATE_MAX));
 	flMinDelta *= flMinDelta;
 	if ( flDelta > flMinDelta )
 	{
@@ -604,7 +604,7 @@ void CNPC_CraneDriver::DriveVehicle( void )
 	float flTurnInDeg = RAD2DEG( acos(flDotForward) );
 	float flSpeed = m_hCrane->GetMaxTurnRate() * (flTurnInDeg / 15.0);
 	flSpeed = MIN( m_hCrane->GetMaxTurnRate(), flSpeed );
-	if ( fabs(flSpeed) < 0.05 )
+	if ( fabsf(flSpeed) < 0.05 )
 	{
 		// We're approaching the target, so stop turning
 		m_pVehicleInterface->NPC_TurnCenter();

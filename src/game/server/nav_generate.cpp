@@ -282,7 +282,7 @@ void CNavMesh::CreateLadder( const Vector &top, const Vector &bottom, float widt
 	ladder->m_top = top;
 	ladder->m_bottom = bottom;
 	ladder->m_width = width;
-	if ( fabs( ladderDir.x ) > fabs( ladderDir.y ) )
+	if ( fabsf( ladderDir.x ) > fabsf( ladderDir.y ) )
 	{
 		if ( ladderDir.x > 0.0f )
 		{
@@ -655,7 +655,7 @@ void CNavMesh::MarkJumpAreas( void )
 			{
 				// If the ground normal is divergent from the area's normal, mark it as a jump area - it's not
 				// really representative of the ground.
-				float deltaNormalZ = fabs( groundNormal.z - lowestNormalZ );
+				float deltaNormalZ = fabsf( groundNormal.z - lowestNormalZ );
 				if ( deltaNormalZ > nav_slope_tolerance.GetFloat() )
 				{
 					// The area is a jump area, and we don't merge jump areas together
@@ -693,7 +693,7 @@ void AdjustObstacleDistances( float *pObstacleStartDist, float *pObstacleEndDist
 	{		
 		float halfDelta = ( MinObstacleAreaWidth - obstacleWidth ) /2;
 		// move start so it's half of min width from center, but no less than zero
-		*pObstacleStartDist = MAX( *pObstacleStartDist - halfDelta, 0 );
+		*pObstacleStartDist = MAX( *pObstacleStartDist - halfDelta, 0.f );
 		// move end so it's min width from start
 		*pObstacleEndDist = *pObstacleStartDist + MinObstacleAreaWidth;
 
@@ -1015,7 +1015,7 @@ bool CNavMesh::CreateObstacleTopAreaIfNecessary( CNavArea *area, CNavArea *areaO
 								if ( areaOther->Contains( *nodeTowardOtherArea->GetPosition() ) )
 								{
 									float z = areaOther->GetZ( nodeTowardOtherArea->GetPosition()->x, nodeTowardOtherArea->GetPosition()->y );
-									float deltaZ = fabs( nodeTowardOtherArea->GetPosition()->z - z );
+									float deltaZ = fabsf( nodeTowardOtherArea->GetPosition()->z - z );
 									if ( deltaZ < 2.0f )
 									{
 										bInOtherArea = true;
@@ -1029,7 +1029,7 @@ bool CNavMesh::CreateObstacleTopAreaIfNecessary( CNavArea *area, CNavArea *areaO
 									if ( nodeTowardOtherArea2 && areaOther->Contains( *nodeTowardOtherArea2->GetPosition() ) )
 									{										
 										float areaDeltaZ = node->GetPosition()->z - nodeTowardOtherArea2->GetPosition()->z;
-										if ( fabs( areaDeltaZ ) <= MaxTraversableHeight )
+										if ( fabsf( areaDeltaZ ) <= MaxTraversableHeight )
 										{
 											// if we arrived in the other area, the obstacle height to get here was the peak deltaZ of the node above to get here
 											obstacleHeight = deltaZ;
@@ -1285,7 +1285,7 @@ StairTestType IsStairs( const Vector &start, const Vector &end, StairTestType re
 	Vector hullMaxs( inc/2, inc/2, 0 );
 	hullMaxs.z = 1; // don't care about vertical clearance
 
-	if ( fabs( start.x - end.x ) > fabs( start.y - end.y ) )
+	if ( fabsf( start.x - end.x ) > fabsf( start.y - end.y ) )
 	{
 		hullMins.x = -8;
 		hullMaxs.x = 8;
@@ -1332,13 +1332,13 @@ StairTestType IsStairs( const Vector &start, const Vector &end, StairTestType re
 			//NDebugOverlay::Cross3D( ground, 3, 0, 0, 255, true, 100.0f );
 			//NDebugOverlay::Box( ground, hullMins, hullMaxs, 0, 0, 255, 0.0f, 100.0f );
 
-			if ( t == 0.0f && fabs( height - start.z ) > StepHeight )
+			if ( t == 0.0f && fabsf( height - start.z ) > StepHeight )
 			{
 				// Discontinuity at start
 				return STAIRS_NO;
 			}
 
-			if ( t == 1.0f && fabs( height - end.z ) > StepHeight )
+			if ( t == 1.0f && fabsf( height - end.z ) > StepHeight )
 			{
 				// Discontinuity at end
 				return STAIRS_NO;
@@ -1537,8 +1537,8 @@ static void splitX( CNavArea *area )
 	split = TheNavMesh->SnapToGrid( split );
 
 	const float epsilon = 0.1f;
-	if (fabs(split - area->GetCorner( NORTH_WEST ).x) < epsilon ||
-		fabs(split - area->GetCorner( SOUTH_EAST ).x) < epsilon)
+	if (fabsf(split - area->GetCorner( NORTH_WEST ).x) < epsilon ||
+		fabsf(split - area->GetCorner( SOUTH_EAST ).x) < epsilon)
 	{
 		// too small to subdivide
 		return;
@@ -1569,8 +1569,8 @@ static void splitY( CNavArea *area )
 	split = TheNavMesh->SnapToGrid( split );
 
 	const float epsilon = 0.1f;
-	if (fabs(split - area->GetCorner( NORTH_WEST ).y) < epsilon ||
-		fabs(split - area->GetCorner( SOUTH_EAST ).y) < epsilon)
+	if (fabsf(split - area->GetCorner( NORTH_WEST ).y) < epsilon ||
+		fabsf(split - area->GetCorner( SOUTH_EAST ).y) < epsilon)
 	{
 		// too small to subdivide
 		return;
@@ -1913,7 +1913,7 @@ inline bool CheckCliff( const Vector *fromPos, NavDirType dir, bool bExhaustive 
 
 		// if we're looking to south or east, and the first node we found was approximately flat, and this is the top-level
 		// call, recurse one level to check one more step in this direction
-		if ( ( dir == SOUTH || dir == EAST ) && ( fabs( deltaZ ) < StepHeight ) && bExhaustive )
+		if ( ( dir == SOUTH || dir == EAST ) && ( fabsf( deltaZ ) < StepHeight ) && bExhaustive )
 		{	
 			return CheckCliff( &trace.endpos, dir, false ); 
 		}
@@ -2305,7 +2305,7 @@ void CNavMesh::FixConnections( void )
 			GetCornerTypesInDirection( (NavDirType)dir, &cornerType[0], &cornerType[1] );
 
 			// Flat edges of stairs need to connect.  It's the slopes we don't want to climb over things for.
-			float cornerDeltaZ = fabs( area->GetCorner( cornerType[0] ).z - area->GetCorner( cornerType[1] ).z );
+			float cornerDeltaZ = fabsf( area->GetCorner( cornerType[0] ).z - area->GetCorner( cornerType[1] ).z );
 			if ( cornerDeltaZ < StepHeight )
 				continue;
 
@@ -2727,25 +2727,25 @@ bool IsHeightDifferenceValid( float test, float other1, float other2, float othe
 {
 	// Make sure the other nodes are level.
 	const float CloseDelta = StepHeight / 2;
-	if ( fabs( other1 - other2 ) > CloseDelta )
+	if ( fabsf( other1 - other2 ) > CloseDelta )
 		return true;
 
-	if ( fabs( other1 - other3 ) > CloseDelta )
+	if ( fabsf( other1 - other3 ) > CloseDelta )
 		return true;
 
-	if ( fabs( other2 - other3 ) > CloseDelta )
+	if ( fabsf( other2 - other3 ) > CloseDelta )
 		return true;
 
 	// Now make sure the test node is near the others.  If it is more than StepHeight away,
 	// it'll form a distorted jump area.
 	const float MaxDelta = StepHeight;
-	if ( fabs( test - other1 ) > MaxDelta )
+	if ( fabsf( test - other1 ) > MaxDelta )
 		return false;
 
-	if ( fabs( test - other2 ) > MaxDelta )
+	if ( fabsf( test - other2 ) > MaxDelta )
 		return false;
 
-	if ( fabs( test - other3 ) > MaxDelta )
+	if ( fabsf( test - other3 ) > MaxDelta )
 		return false;
 
 	return true;
@@ -3045,7 +3045,7 @@ bool CNavMesh::TestArea( CNavNode *node, int width, int height )
 			// nodes must lie on/near the plane
 			if (width > 1 || height > 1)
 			{
-				float dist = (float)fabs( DotProduct( *horizNode->GetPosition(), normal ) + d );
+				float dist = (float)fabsf( DotProduct( *horizNode->GetPosition(), normal ) + d );
 				if (dist > offPlaneTolerance)
 					return false;
 			}
@@ -3062,7 +3062,7 @@ bool CNavMesh::TestArea( CNavNode *node, int width, int height )
 		// nodes must lie on/near the plane
 		if (width > 1 || height > 1)
 		{
-			float dist = (float)fabs( DotProduct( *vertNode->GetPosition(), normal ) + d );
+			float dist = (float)fabsf( DotProduct( *vertNode->GetPosition(), normal ) + d );
 			if (dist > offPlaneTolerance)
 				return false;
 		}
@@ -3083,7 +3083,7 @@ bool CNavMesh::TestArea( CNavNode *node, int width, int height )
 				return false;
 
 			// nodes must lie on/near the plane
-			float dist = (float)fabs( DotProduct( *horizNode->GetPosition(), normal ) + d );
+			float dist = (float)fabsf( DotProduct( *horizNode->GetPosition(), normal ) + d );
 			if (dist > offPlaneTolerance)
 				return false;
 		}
@@ -4099,11 +4099,11 @@ CNavNode *CNavMesh::AddNode( const Vector &destPos, const Vector &normal, NavDir
 	// optimization: if deltaZ changes very little, assume connection is commutative
 	const float zTolerance = 50.0f;
 	float deltaZ = source->GetPosition()->z - destPos.z;
-	if (fabs( deltaZ ) < zTolerance)
+	if (fabsf( deltaZ ) < zTolerance)
 	{
 		if ( obstacleHeight > 0 )
 		{
-			obstacleHeight = MAX( obstacleHeight + deltaZ, 0 );
+			obstacleHeight = MAX( obstacleHeight + deltaZ, 0.f );
 			Assert( obstacleHeight > 0 );
 		}
 		node->ConnectTo( source, OppositeDirection( dir ), obstacleHeight, GenerationStepSize - obstacleEndDist, GenerationStepSize - obstacleStartDist );

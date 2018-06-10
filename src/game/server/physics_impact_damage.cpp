@@ -421,7 +421,7 @@ float CalculatePhysicsImpactDamage( int index, gamevcollisionevent_t *pEvent, co
 
 		if ( deltaV > 0 && dz < 0 && pEvent->preVelocity[otherIndex].z < 0 )
 		{
-			float factor = fabs(dz / deltaV);
+			float factor = fabsf(dz / deltaV);
 			otherEliminatedEnergy *= (1 + factor * (table.largeMassFallingScale - 1.0f));
 		}
 	}
@@ -473,7 +473,7 @@ float CalculateDefaultPhysicsDamage( int index, gamevcollisionevent_t *pEvent, f
 	// If we have a specified damage table, find it and use it instead
 	if ( iszDamageTableName != NULL_STRING )
 	{
-		for ( int i = 0; i < ARRAYSIZE(gDamageTableRegistry); i++ )
+		for ( uint i = 0; i < ARRAYSIZE(gDamageTableRegistry); i++ )
 		{
 			if ( !Q_strcmp( gDamageTableRegistry[i].pszTableName, STRING(iszDamageTableName) ) )
 				return CalculatePhysicsImpactDamage( index, pEvent, *(gDamageTableRegistry[i].pTable), energyScale, allowStaticDamage, damageType, bDamageFromHeldObjects );

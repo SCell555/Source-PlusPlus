@@ -244,17 +244,18 @@ static int HudElementCompletion( const char *partial, char commands[ COMMAND_COM
 {
 	const char *cmdname = "cl_animationinfo";
 
-	char *substring = (char *)partial;
+	const char *substring = partial;
 	if ( Q_strstr( partial, cmdname ) )
 	{
-		substring = (char *)partial + strlen( cmdname ) + 1;
+		substring = partial + Q_strlen( cmdname ) + 1;
 	}
 
 	int current = 0;
 
+	const size_t pSubstringSize = V_strlen( substring );
+
 	int c = gHUD.m_HudList.Count();
-	int i;
-	for ( i = 0; i < c; i++ )
+	for ( int i = 0; i < c; i++ )
 	{
 		CHudElement *e = gHUD.m_HudList[ i ];
 		if ( !e )
@@ -265,7 +266,7 @@ static int HudElementCompletion( const char *partial, char commands[ COMMAND_COM
 		// Insert into lookup
 		if ( substring[0] )
 		{
-			if ( !Q_strncasecmp( e->GetName(), substring, strlen( substring ) ) )
+			if ( !Q_strncasecmp( e->GetName(), substring, pSubstringSize ) )
 			{
 				add = true;
 			}

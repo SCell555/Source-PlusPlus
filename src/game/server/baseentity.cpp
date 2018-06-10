@@ -4739,8 +4739,7 @@ void CBaseEntity::PrecacheSoundHelper( const char *pName )
 //-----------------------------------------------------------------------------
 void CBaseEntity::PrecacheModelComponents( int nModelIndex )
 {
-
-	model_t *pModel = (model_t *)modelinfo->GetModel( nModelIndex );
+	const model_t *pModel = modelinfo->GetModel( nModelIndex );
 	if ( !pModel || modelinfo->GetModelType( pModel ) != mod_studio )
 	{
 		return;
@@ -4918,6 +4917,7 @@ int CBaseEntity::PrecacheModel( const char *name, bool bPreload )
 		return -1;
 	}
 
+#ifdef STAGING_ONLY
 	// Warn on out of order precache
 	if ( !CBaseEntity::IsPrecacheAllowed() )
 	{
@@ -4926,6 +4926,7 @@ int CBaseEntity::PrecacheModel( const char *name, bool bPreload )
 			DevMsg( "Late precache of %s -- not necessarily a bug now that we allow ~everything to be dynamically loaded.\n", name );
 		}
 	}
+#endif
 #if defined( WATCHACCESS )
 	else
 	{
@@ -7178,7 +7179,7 @@ void CBaseEntity::SUB_PerformFadeOut( void )
 		dt = 0.1f;
 	}
 	m_nRenderMode = kRenderTransTexture;
-	int speed = MAX(1,256*dt); // fade out over 1 second
+	int speed = MAX(1.f, 256*dt); // fade out over 1 second
 	SetRenderColorA( UTIL_Approach( 0, m_clrRender->a, speed ) );
 }
 

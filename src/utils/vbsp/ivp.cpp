@@ -518,7 +518,7 @@ CPhysConvex *CPlaneList::BuildConvexForBrush( int brushnumber, float shrink, CPh
 			Vector end = physcollision->CollideGetExtent( pCollideTest, vec3_origin, vec3_angle, -pplane->normal );
 			float thick = DotProduct( (end-start), pplane->normal );
 			// NOTE: The object must be at least "shrinkMinimum" inches wide on each axis
-			if ( fabs(thick) < shrinkMinimum )
+			if ( fabsf(thick) < shrinkMinimum )
 			{
 #if _DEBUG
 				Warning("Can't shrink brush %d, plane %d (%.2f, %.2f, %.2f)\n", brushnumber, pside->planenum, pplane->normal[0], pplane->normal[1], pplane->normal[2] );
@@ -714,7 +714,7 @@ static bool IsLowerLeaf( const waterleaf_t &newleaf, const waterleaf_t &currentl
 		if ( currentleaf.surfaceNormal.z > newleaf.surfaceNormal.z )
 			return false;
 
-		if ( fabs(currentleaf.surfaceNormal.z - newleaf.surfaceNormal.z) < 0.01 )
+		if ( fabsf(currentleaf.surfaceNormal.z - newleaf.surfaceNormal.z) < 0.01 )
 		{
 			if ( newleaf.surfaceDist < currentleaf.surfaceDist )
 				return true;

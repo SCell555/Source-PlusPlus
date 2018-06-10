@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -23,7 +23,7 @@ using namespace vgui;
 DECLARE_BUILD_FACTORY( ScalableImagePanel );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 ScalableImagePanel::ScalableImagePanel(Panel *parent, const char *name) : Panel(parent, name)
 {
@@ -45,7 +45,7 @@ ScalableImagePanel::ScalableImagePanel(Panel *parent, const char *name) : Panel(
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 ScalableImagePanel::~ScalableImagePanel()
 {
@@ -60,7 +60,7 @@ ScalableImagePanel::~ScalableImagePanel()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ScalableImagePanel::SetImage(const char *imageName)
 {
@@ -90,7 +90,7 @@ void ScalableImagePanel::SetImage(const char *imageName)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ScalableImagePanel::PaintBackground()
 {
@@ -124,7 +124,7 @@ void ScalableImagePanel::PaintBackground()
 		else
 		{
 			//uvh - row 1, is tall - ( 2 * src_corner_height ) ( min 0 )
-			uvh = max( 1.0 - 2 * m_flCornerHeightPercent, 0.0f );
+			uvh = max( 1.f - 2 * m_flCornerHeightPercent, 0.0f );
 			drawH = max( 0, ( tall - 2 * m_iCornerHeight ) );
 		}
 
@@ -139,7 +139,7 @@ void ScalableImagePanel::PaintBackground()
 			else
 			{
 				//uvw - col 1, is wide - ( 2 * src_corner_width ) ( min 0 )
-				uvw = max( 1.0 - 2 * m_flCornerWidthPercent, 0.0f );
+				uvw = max( 1.f - 2 * m_flCornerWidthPercent, 0.0f );
 				drawW = max( 0, ( wide - 2 * m_iCornerWidth ) );
 			}
 
@@ -154,7 +154,7 @@ void ScalableImagePanel::PaintBackground()
 			verts[2].Init( Vector2D( x+drawW, y+drawH ), uv22 );
 			verts[3].Init( Vector2D( x, y+drawH ), uv12  );
 
-			vgui::surface()->DrawTexturedPolygon( 4, verts );	
+			vgui::surface()->DrawTexturedPolygon( 4, verts );
 
 			x += drawW;
 			uvx += uvw;
@@ -188,7 +188,7 @@ void ScalableImagePanel::GetSettings(KeyValues *outResourceData)
 	if (m_pszImageName)
 	{
 		outResourceData->SetString("image", m_pszImageName);
-	}	
+	}
 }
 
 //-----------------------------------------------------------------------------

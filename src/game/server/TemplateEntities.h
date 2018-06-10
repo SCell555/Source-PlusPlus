@@ -28,7 +28,7 @@ void		Templates_ReconnectIOForGroup( CPointTemplate *pGroup );
 // Unique versions of these templates need to be created whenever they're instanced.
 void		Templates_StartUniqueInstance( void );
 bool		Templates_IndexRequiresEntityIOFixup( int iIndex );
-char		*Templates_GetEntityIOFixedMapData( int iIndex );
+const char	*Templates_GetEntityIOFixedMapData( int iIndex );
 
 // Save / Restore
 ISaveRestoreBlockHandler *GetTemplateSaveRestoreBlockHandler( void );

@@ -31,8 +31,6 @@ Vector GetTracerOrigin( const CEffectData &data )
 	// Attachment?
 	if ( data.m_fFlags & TRACER_FLAG_USEATTACHMENT )
 	{
-		C_BaseViewModel *pViewModel = NULL;
-
 		// If the entity specified is a weapon being carried by this player, use the viewmodel instead
 		IClientRenderable *pRenderable = data.GetRenderable();
 		if ( !pRenderable )
@@ -52,7 +50,7 @@ Vector GetTracerOrigin( const CEffectData &data )
 			C_BasePlayer *player = ToBasePlayer( pWpn->GetOwner() );
 
 			// Use GetRenderedWeaponModel() instead?
-			pViewModel = player ? player->GetViewModel( 0 ) : NULL;
+			C_BaseViewModel *pViewModel = player ? player->GetViewModel( 0 ) : NULL;
 			if ( pViewModel )
 			{
 				// Get the viewmodel and use it instead
@@ -92,10 +90,10 @@ void TracerCallback( const CEffectData &data )
 	}
 
 	// Grab the data
-	Vector vecStart = GetTracerOrigin( data );
+	const Vector& vecStart = GetTracerOrigin( data );
 	float flVelocity = data.m_flScale;
-	bool bWhiz = (data.m_fFlags & TRACER_FLAG_WHIZ);
-	int iEntIndex = data.entindex();
+	const bool bWhiz = (data.m_fFlags & TRACER_FLAG_WHIZ);
+	const int iEntIndex = data.entindex();
 
 	if ( iEntIndex && iEntIndex == player->index )
 	{
@@ -109,7 +107,7 @@ void TracerCallback( const CEffectData &data )
 		VectorMA( data.m_vStart, 4, vright, foo );
 		foo[2] -= 0.5f;
 
-		FX_PlayerTracer( foo, (Vector&)data.m_vOrigin );
+		FX_PlayerTracer( foo, data.m_vOrigin );
 		return;
 	}
 	
@@ -120,7 +118,7 @@ void TracerCallback( const CEffectData &data )
 	}
 
 	// Do tracer effect
-	FX_Tracer( (Vector&)vecStart, (Vector&)data.m_vOrigin, flVelocity, bWhiz );
+	FX_Tracer( vecStart, data.m_vOrigin, flVelocity, bWhiz );
 }
 
 DECLARE_CLIENT_EFFECT( "Tracer", TracerCallback );
@@ -147,7 +145,7 @@ void ParticleTracerCallback( const CEffectData &data )
 
 	// Grab the data
 	Vector vecStart = GetTracerOrigin( data );
-	Vector vecEnd = data.m_vOrigin;
+	const Vector& vecEnd = data.m_vOrigin;
 
 	// Adjust view model tracers
 	C_BaseEntity *pEntity = data.GetEntity();
@@ -183,11 +181,8 @@ DECLARE_CLIENT_EFFECT( "ParticleTracer", ParticleTracerCallback );
 //-----------------------------------------------------------------------------
 void TracerSoundCallback( const CEffectData &data )
 {
-	// Grab the data
-	Vector vecStart = GetTracerOrigin( data );
-	
 	// Do tracer effect
-	FX_TracerSound( vecStart, (Vector&)data.m_vOrigin, data.m_fFlags );
+	FX_TracerSound( GetTracerOrigin( data ), data.m_vOrigin, data.m_fFlags );
 }
 
 DECLARE_CLIENT_EFFECT( "TracerSound", TracerSoundCallback );

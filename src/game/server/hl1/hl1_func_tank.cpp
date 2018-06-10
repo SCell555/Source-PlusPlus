@@ -795,7 +795,7 @@ void CFuncTank::Think( void )
 	SetLocalAngularVelocity( vec3_angle );
 	TrackTarget();
 
-	if ( fabs(GetLocalAngularVelocity().x) > 1 || fabs(GetLocalAngularVelocity().y) > 1 )
+	if ( fabsf(GetLocalAngularVelocity().x) > 1 || fabsf(GetLocalAngularVelocity().y) > 1 )
 		StartRotSound();
 	else
 		StopRotSound();
@@ -968,8 +968,8 @@ void CFuncTank::TrackTarget( void )
 	// different values for angles.y. Nothing is lost by not updating yaw
 	// because the target is not in pitch range.
 
-	bool bOutsideYawRange = ( fabs( offsetY ) > m_yawRange + m_yawTolerance );
-	bool bOutsidePitchRange = ( fabs( offsetX ) > m_pitchRange + m_pitchTolerance );
+	bool bOutsideYawRange = ( fabsf( offsetY ) > m_yawRange + m_yawTolerance );
+	bool bOutsidePitchRange = ( fabsf( offsetX ) > m_pitchRange + m_pitchTolerance );
 
 	Vector vecToTarget = m_sightOrigin - GetLocalOrigin();
 
@@ -1018,7 +1018,7 @@ void CFuncTank::TrackTarget( void )
 	if ( m_pController )
 		return;
 
-	if ( CanFire() && ( (fabs(distX) < m_pitchTolerance && fabs(distY) < m_yawTolerance) || (m_spawnflags & SF_TANK_LINEOFSIGHT) ) )
+	if ( CanFire() && ( (fabsf(distX) < m_pitchTolerance && fabsf(distY) < m_yawTolerance) || (m_spawnflags & SF_TANK_LINEOFSIGHT) ) )
 	{
 		bool fire = FALSE;
 		Vector forward;

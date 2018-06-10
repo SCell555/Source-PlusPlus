@@ -59,6 +59,8 @@ public:
 	// Construct from a 3x4 matrix
 	VMatrix( const matrix3x4_t& matrix3x4 );
 
+	VMatrix( const VMatrix& other );
+
 	// Set the values in the matrix.
 	void		Init( 
 		vec_t m00, vec_t m01, vec_t m02, vec_t m03,
@@ -445,6 +447,10 @@ inline VMatrix::VMatrix( const matrix3x4_t& matrix3x4 )
 	Init( matrix3x4 );
 }
 
+inline VMatrix::VMatrix( const VMatrix& other )
+{
+	memcpy( this, other.Base(), sizeof( VMatrix ) );
+}
 
 //-----------------------------------------------------------------------------
 // Creates a matrix where the X axis = forward
@@ -897,7 +903,7 @@ inline bool MatricesAreEqual( const VMatrix &src1, const VMatrix &src2, float fl
 	{
 		for ( int j = 0; j < 3; ++j )
 		{
-			if ( fabs( src1[i][j] - src2[i][j] ) > flTolerance )
+			if ( fabsf( src1[i][j] - src2[i][j] ) > flTolerance )
 				return false;
 		}
 	}

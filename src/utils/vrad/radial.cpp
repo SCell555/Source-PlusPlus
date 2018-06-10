@@ -107,8 +107,8 @@ void AddDirectToRadial( radial_t *rad,
 
 			if (area > EQUAL_EPSILON)
 			{
-				ds = fabs( coord[0] - s );
-				dt = fabs( coord[1] - t );
+				ds = fabsf( coord[0] - s );
+				dt = fabsf( coord[1] - t );
 
 				r = max( ds, dt );
 

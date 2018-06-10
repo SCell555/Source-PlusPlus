@@ -90,7 +90,7 @@ void CFXDiscreetLine::Draw( double frametime )
 	}
 
 	// Get our delta to calculate the tc offset
-	float	dDistance	= fabs( sDistance - eDistance );
+	float	dDistance	= fabsf( sDistance - eDistance );
 	float	dTotal		= ( m_fLength != 0.0f ) ? m_fLength : 0.01f;
 	float	fOffset		= ( dDistance / dTotal );
 

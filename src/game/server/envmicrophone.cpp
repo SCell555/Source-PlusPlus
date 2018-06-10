@@ -404,6 +404,8 @@ void CEnvMicrophone::Think(void)
 				}
 			}
 		}
+		else
+			break;
 
 		nSound = pCurrentSound->NextSound();
 	}
@@ -419,7 +421,7 @@ void CEnvMicrophone::Think(void)
 		// Don't smooth if we are within an epsilon. This allows the output to stop firing
 		// much more quickly.
 		//
-		if (fabs(flMaxVolume - m_SoundLevel.Get()) < MICROPHONE_SETTLE_EPSILON)
+		if (fabsf(flMaxVolume - m_SoundLevel.Get()) < MICROPHONE_SETTLE_EPSILON)
 		{
 			m_SoundLevel.Set(flMaxVolume, this, this);
 		}

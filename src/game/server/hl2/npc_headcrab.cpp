@@ -1121,7 +1121,7 @@ void CBaseHeadcrab::EliminateRollAndPitch()
 
 	float flPitchRate = 90.0f / HEADCRAB_PITCH_ELIMINATION_TIME;
 	float flPitchDelta = flPitchRate * TICK_INTERVAL;
-	if ( fabs( angles.x ) <= flPitchDelta )
+	if ( fabsf( angles.x ) <= flPitchDelta )
 	{
 		angles.x = 0.0f;
 	}
@@ -1133,7 +1133,7 @@ void CBaseHeadcrab::EliminateRollAndPitch()
 
 	float flRollRate = 180.0f / HEADCRAB_ROLL_ELIMINATION_TIME;
 	float flRollDelta = flRollRate * TICK_INTERVAL;
-	if ( fabs( angles.z ) <= flRollDelta )
+	if ( fabsf( angles.z ) <= flRollDelta )
 	{
 		angles.z = 0.0f;
 	}
@@ -1927,7 +1927,7 @@ int CBaseHeadcrab::SelectSchedule( void )
 		{
 			if (HasCondition( COND_LIGHT_DAMAGE ) || HasCondition( COND_HEAVY_DAMAGE ))
 			{
-				if ( fabs( GetMotor()->DeltaIdealYaw() ) < ( 1.0 - m_flFieldOfView) * 60 ) // roughly in the correct direction
+				if ( fabsf( GetMotor()->DeltaIdealYaw() ) < ( 1.0 - m_flFieldOfView) * 60 ) // roughly in the correct direction
 				{
 					return SCHED_TAKE_COVER_FROM_ORIGIN;
 				}
@@ -2997,7 +2997,7 @@ bool CFastHeadcrab::QuerySeeEntity(CBaseEntity *pSightEnt, bool bOnlyHateOrFearI
 
 	if( m_NPCState != NPC_STATE_COMBAT )
 	{
-		if( fabs( pSightEnt->GetAbsOrigin().z - GetAbsOrigin().z ) >= 150 )
+		if( fabsf( pSightEnt->GetAbsOrigin().z - GetAbsOrigin().z ) >= 150 )
 		{
 			// Don't see things much higher or lower than me unless
 			// I'm already pissed.

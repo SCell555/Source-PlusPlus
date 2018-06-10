@@ -901,7 +901,7 @@ static void CalcTriangleTangentSpace( s_source_t *pSrc, int v1, int v2, int v3,
 
 	Vector cross;
 	CrossProduct( edge01, edge02, cross );
-	if( fabs( cross.x ) > SMALL_FLOAT )
+	if( fabsf( cross.x ) > SMALL_FLOAT )
 	{
 		sVect.x += -cross.y / cross.x;
 		tVect.x += -cross.z / cross.x;
@@ -912,7 +912,7 @@ static void CalcTriangleTangentSpace( s_source_t *pSrc, int v1, int v2, int v3,
 	edge02 = Vector( p2.y - p0.y, t2.x - t0.x, t2.y - t0.y );
 
 	CrossProduct( edge01, edge02, cross );
-	if( fabs( cross.x ) > SMALL_FLOAT )
+	if( fabsf( cross.x ) > SMALL_FLOAT )
 	{
 		sVect.y += -cross.y / cross.x;
 		tVect.y += -cross.z / cross.x;
@@ -923,7 +923,7 @@ static void CalcTriangleTangentSpace( s_source_t *pSrc, int v1, int v2, int v3,
 	edge02 = Vector( p2.z - p0.z, t2.x - t0.x, t2.y - t0.y );
 
 	CrossProduct( edge01, edge02, cross );
-	if( fabs( cross.x ) > SMALL_FLOAT )
+	if( fabsf( cross.x ) > SMALL_FLOAT )
 	{
 		sVect.z += -cross.y / cross.x;
 		tVect.z += -cross.z / cross.x;

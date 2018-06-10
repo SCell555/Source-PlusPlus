@@ -344,7 +344,7 @@ void AddSampleToList( CUtlVector<ambientsample_t> &list, const Vector &samplePos
 				// color delta is computed per-component, per cube side
 				for (int s = 0; s < 3; s++ )
 				{
-					float dc = fabs(list[i].cube[k][s] - list[j].cube[k][s]);
+					float dc = fabsf(list[i].cube[k][s] - list[j].cube[k][s]);
 					maxDC = max(maxDC,dc);
 				}
 				totalDC += maxDC;
@@ -392,7 +392,7 @@ int CubeDeltaGammaSpace( Vector *pCube0, Vector *pCube1 )
 		{
 			int val0 = LinearToScreenGamma( pCube0[i][j] );
 			int val1 = LinearToScreenGamma( pCube1[i][j] );
-			int delta = abs(val0-val1);
+			int delta = fabsf(val0-val1);
 			if ( delta > maxDelta )
 				maxDelta = delta;
 		}

@@ -1148,6 +1148,9 @@ void CHLClient::PostInit()
 
 	g_ClientVirtualReality.StartupComplete();
 
+	ConVarRef dsp_room( "dsp_room" );
+	dsp_room.SetValue( 1 );
+
 #ifdef HL1MP_CLIENT_DLL
 	if ( s_cl_load_hl1_content.GetBool() && steamapicontext && steamapicontext->SteamApps() )
 	{
@@ -2166,7 +2169,7 @@ void OnRenderStart()
 	// are at the correct location
 	view->OnRenderStart();
 
-	RopeManager()->OnRenderStart();
+	//RopeManager()->OnRenderStart();
 	
 	// This will place all entities in the correct position in world space and in the KD-tree
 	C_BaseAnimating::UpdateClientSideAnimations();
@@ -2191,6 +2194,8 @@ void OnRenderStart()
 	PhysicsSimulate();
 
 	C_BaseAnimating::ThreadedBoneSetup();
+
+	view->PostSimulate();
 
 	{
 		VPROF_("Client TempEnts", 0, VPROF_BUDGETGROUP_CLIENT_SIM, false, BUDGETFLAG_CLIENT);
