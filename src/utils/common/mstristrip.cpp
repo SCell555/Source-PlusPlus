@@ -25,7 +25,6 @@
 #include <list>
 #include <vector>
 
-#include <assert.h>
 #ifdef _DEBUG
 #include <crtdbg.h>
 #endif
@@ -226,7 +225,7 @@ int CStripper::CreateStrip(int tri, int vert, int maxlen, int *pswaps,
 
             if(nexttriswap != -1 && !m_pused[nexttriswap])
             {
-                assert(nexttri != -1);
+                Assert(nexttri != -1);
 
                 // if the swap neighbor has a lower count, change directions
                 if(GetNeighborCount(nexttriswap) < GetNeighborCount(nexttri))
@@ -390,7 +389,7 @@ int CStripper::CreateManyStrips(STRIPLIST *pstriplist, WORD **ppstripindices)
 
     // alloc the space for all this stuff
     WORD *pstripindices = new WORD [indexcount];
-    assert(pstripindices);
+    Assert(pstripindices);
 
     CVertCache vertcache;
     int numstripindices = 0;
@@ -450,7 +449,7 @@ int CStripper::CreateLongStrip(STRIPLIST *pstriplist, WORD **ppstripindices)
 
     // alloc the space for all this stuff
     WORD *pstripindices = new WORD [indexcount];
-    assert(pstripindices);
+    Assert(pstripindices);
 
     CVertCache vertcache;
     int numstripindices = 0;
@@ -460,7 +459,7 @@ int CStripper::CreateLongStrip(STRIPLIST *pstriplist, WORD **ppstripindices)
     const STRIPVERTS &stripverts = **istriplist;
 
     // first strip should be cw
-    assert(FIsStripCW(stripverts));
+    Assert(FIsStripCW(stripverts));
 
     for(int ivert = 0; ivert < StripLen(stripverts); ivert++)
     {
@@ -494,7 +493,7 @@ int CStripper::CreateLongStrip(STRIPLIST *pstriplist, WORD **ppstripindices)
         {
             // This shouldn't happen - we're currently trying very hard
             // to keep everything oriented correctly.
-            assert(false);
+            Assert(false);
             pstripindices[numstripindices++] = firstvert;
         }
 
@@ -524,7 +523,7 @@ void CStripper::BuildStrips(STRIPLIST *pstriplist, int maxlen, bool flookahead)
     int pstripverts[ctmpverts + 1];
     int pstriptris[ctmpverts + 1];
 
-    assert(maxlen <= ctmpverts);
+    Assert(maxlen <= ctmpverts);
 
     // clear all the used flags for the tris
     memset(m_pused, 0, sizeof(m_pused[0]) * m_numtris);
@@ -546,7 +545,7 @@ void CStripper::BuildStrips(STRIPLIST *pstriplist, int maxlen, bool flookahead)
 
             // get the neighbor count
             int curneightborcount = GetNeighborCount(tri);
-            assert(curneightborcount >= 0 && curneightborcount <= 3);
+            Assert(curneightborcount >= 0 && curneightborcount <= 3);
 
             // push all the singletons to the very end
             if(!curneightborcount)
@@ -562,7 +561,7 @@ void CStripper::BuildStrips(STRIPLIST *pstriplist, int maxlen, bool flookahead)
                 int swaps;
                 int len = CreateStrip(tri, vert, maxlen, &swaps, flookahead,
                     fstartcw, pstriptris, pstripverts);
-                assert(len);
+                Assert(len);
 
                 float ratio = (len == 3) ? 1.0f : (float)swaps / len;
 
@@ -589,7 +588,7 @@ void CStripper::BuildStrips(STRIPLIST *pstriplist, int maxlen, bool flookahead)
         int swaps;
         int len = CreateStrip(besttri, bestvert, maxlen,
             &swaps, flookahead, fstartcw, pstriptris, pstripverts);
-        assert(len);
+        Assert(len);
 
         // mark the tris on the best strip as used
         for(tri = 0; tri < len; tri++)
@@ -597,7 +596,7 @@ void CStripper::BuildStrips(STRIPLIST *pstriplist, int maxlen, bool flookahead)
 
         // create a new STRIPVERTS and stuff in the indices
         STRIPVERTS *pstripvertices = new STRIPVERTS(len + 1);
-        assert(pstripvertices);
+        Assert(pstripvertices);
 
         // store orientation in first entry
         for(tri = 0; tri < len; tri++)
@@ -615,7 +614,7 @@ void CStripper::BuildStrips(STRIPLIST *pstriplist, int maxlen, bool flookahead)
 #ifdef _DEBUG
     // make sure all tris are used
     for(int t = 0; t < m_numtris; t++)
-        assert(m_pused[t]);
+        Assert(m_pused[t]);
 #endif
 }
 
@@ -681,9 +680,9 @@ CStripper::CStripper(int numtris, TRIANGLELIST ptriangles)
     m_ptriangles = ptriangles;
 
     m_pused = new int[numtris];
-    assert(m_pused);
+    Assert(m_pused);
     m_ptriinfo = new TRIANGLEINFO[numtris];
-    assert(m_ptriinfo);
+    Assert(m_ptriinfo);
 
     // init triinfo
 	int itri;
@@ -836,7 +835,7 @@ int Stripify(int numtris, WORD *ptriangles, int *pnumindices, WORD **ppstripindi
             // store the new best list
             striplistbest = striplist;
             bestlistcost = listcost;
-            assert(bestlistcost > 0);
+            Assert(bestlistcost > 0);
         }
         else
         {

@@ -15,7 +15,6 @@
 #include <intrin.h>
 #endif
 
-#include <assert.h>
 #include "tier0/platform.h"
 
 PLATFORM_INTERFACE uint64 g_ClockSpeed;
@@ -421,7 +420,7 @@ inline int64 CFastTimer::GetClockSpeed()
 inline CCycleCount const& CFastTimer::GetDuration() const
 {
 #ifdef DEBUG_FASTTIMER
-	assert( !m_bRunning );
+	Assert( !m_bRunning );
 #endif
 	return m_Duration;
 }

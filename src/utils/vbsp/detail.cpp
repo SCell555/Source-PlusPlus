@@ -8,7 +8,6 @@
 #include "vbsp.h"
 #include "detail.h"
 #include "utlvector.h"
-#include <assert.h>
 
 face_t *NewFaceFromFace (face_t *f);
 face_t *ComputeVisibleBrushSides( bspbrush_t *list );
@@ -115,8 +114,8 @@ bool MergeFace_r( node_t *node, face_t *face, face_t *original )
 		if ( onwinding )
 		{
 			// face is in the split plane, go down the appropriate side according to the facing direction
-			assert( frontwinding == NULL );
-			assert( backwinding == NULL );
+			Assert( frontwinding == NULL );
+			Assert( backwinding == NULL );
 
 			if ( DotProduct( g_MainMap->mapplanes[face->planenum].normal, g_MainMap->mapplanes[node->planenum].normal ) > 0 )
 			{

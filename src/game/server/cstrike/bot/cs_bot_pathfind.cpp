@@ -1427,7 +1427,7 @@ CCSBot::PathResult CCSBot::UpdatePathMovement( bool allowSpeedChange )
 		Jump( MUST_JUMP );
 
 
-	assert( m_pathIndex < m_pathLength );
+	Assert( m_pathIndex < m_pathLength );
 
 	//
 	// Stop path attribute

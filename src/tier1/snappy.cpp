@@ -109,7 +109,7 @@ static const int kMaximumTagLength = 5;  // COPY_4_BYTE_OFFSET plus the actual o
 // Note that this does not match the semantics of either memcpy()
 // or memmove().
 static inline void IncrementalCopy(const char* src, char* op, ssize_t len) {
-  assert(len > 0);
+  Assert(len > 0);
   do {
     *op++ = *src++;
   } while (--len > 0);
@@ -200,8 +200,8 @@ static inline char* EmitLiteral(char* op,
       n >>= 8;
       count++;
     }
-    assert(count >= 1);
-    assert(count <= 4);
+    Assert(count >= 1);
+    Assert(count <= 4);
     *base = LITERAL | ((59+count) << 2);
   }
   memcpy(op, literal, len);
@@ -209,13 +209,13 @@ static inline char* EmitLiteral(char* op,
 }
 
 static inline char* EmitCopyLessThan64(char* op, size_t offset, int len) {
-  assert(len <= 64);
-  assert(len >= 4);
-  assert(offset < 65536);
+  Assert(len <= 64);
+  Assert(len >= 4);
+  Assert(offset < 65536);
 
   if ((len < 12) && (offset < 2048)) {
     size_t len_minus_4 = len - 4;
-    assert(len_minus_4 < 8);            // Must fit in 3 bits
+    Assert(len_minus_4 < 8);            // Must fit in 3 bits
     *op++ = (char)(COPY_1_BYTE_OFFSET + ((len_minus_4) << 2) + ((offset >> 8) << 5));
     *op++ = offset & 0xff;
   } else {
@@ -262,7 +262,7 @@ uint16* WorkingMemory::GetHashTable(size_t input_size, int* table_size) {
   // fill the table, incurring O(hash table size) overhead for
   // compression, and if the input is short, we won't need that
   // many hash table entries anyway.
-  assert(kMaxHashTableSize >= 256);
+  Assert(kMaxHashTableSize >= 256);
   size_t htsize = 256;
   while (htsize < kMaxHashTableSize && htsize < input_size) {
     htsize <<= 1;
@@ -306,8 +306,8 @@ static inline EightBytesReference GetEightBytesAt(const char* ptr) {
 }
 
 static inline uint32 GetUint32AtOffset(uint64 v, int offset) {
-  assert(offset >= 0);
-  assert(offset <= 4);
+  Assert(offset >= 0);
+  Assert(offset <= 4);
   return v >> (LittleEndian::IsLittleEndian() ? 8 * offset : 32 - 8 * offset);
 }
 
@@ -320,8 +320,8 @@ static inline EightBytesReference GetEightBytesAt(const char* ptr) {
 }
 
 static inline uint32 GetUint32AtOffset(const char* v, int offset) {
-  assert(offset >= 0);
-  assert(offset <= 4);
+  Assert(offset >= 0);
+  Assert(offset <= 4);
   return UNALIGNED_LOAD32(v + offset);
 }
 
@@ -346,10 +346,10 @@ char* CompressFragment(const char* input,
                        const int table_size) {
   // "ip" is the input pointer, and "op" is the output pointer.
   const char* ip = input;
-  assert(input_size <= kBlockSize);
-  assert((table_size & (table_size - 1)) == 0); // table must be power of two
+  Assert(input_size <= kBlockSize);
+  Assert((table_size & (table_size - 1)) == 0); // table must be power of two
   const int shift = 32 - Bits::Log2Floor(table_size);
-  assert(static_cast<int>(kuint32max >> shift) == table_size - 1);
+  Assert(static_cast<int>(kuint32max >> shift) == table_size - 1);
   const char* ip_end = input + input_size;
   const char* base_ip = ip;
   // Bytes in [next_emit, ip) will be emitted as literal bytes.  Or
@@ -361,7 +361,7 @@ char* CompressFragment(const char* input,
     const char* ip_limit = input + input_size - kInputMarginBytes;
 
     for (uint32 next_hash = Hash(++ip, shift); ; ) {
-      assert(next_emit < ip);
+      Assert(next_emit < ip);
       // The body of this loop calls EmitLiteral once and then EmitCopy one or
       // more times.  (The exception is that when we're close to exhausting
       // the input we goto emit_remainder.)
@@ -394,7 +394,7 @@ char* CompressFragment(const char* input,
       do {
         ip = next_ip;
         uint32 hash = next_hash;
-        assert(hash == Hash(ip, shift));
+        Assert(hash == Hash(ip, shift));
         uint32 bytes_between_hash_lookups = skip++ >> 5;
         next_ip = ip + bytes_between_hash_lookups;
         if (PREDICT_FALSE(next_ip > ip_limit)) {
@@ -402,8 +402,8 @@ char* CompressFragment(const char* input,
         }
         next_hash = Hash(next_ip, shift);
         candidate = base_ip + table[hash];
-        assert(candidate >= base_ip);
-        assert(candidate < ip);
+        Assert(candidate >= base_ip);
+        Assert(candidate < ip);
 
         table[hash] = ip - base_ip;
       } while (PREDICT_TRUE(UNALIGNED_LOAD32(ip) !=
@@ -412,7 +412,7 @@ char* CompressFragment(const char* input,
       // Step 2: A 4-byte match has been found.  We'll later see if more
       // than 4 bytes match.  But, prior to the match, input
       // bytes [next_emit, ip) are unmatched.  Emit them as "literal bytes."
-      assert(next_emit + 16 <= ip_end);
+      Assert(next_emit + 16 <= ip_end);
       op = EmitLiteral(op, next_emit, ip - next_emit, true);
 
       // Step 3: Call EmitCopy, and then see if another EmitCopy could
@@ -433,7 +433,7 @@ char* CompressFragment(const char* input,
         int matched = 4 + FindMatchLength(candidate + 4, ip + 4, ip_end);
         ip += matched;
         size_t offset = base - candidate;
-        assert(0 == memcmp(base, candidate, matched));
+        Assert(0 == memcmp(base, candidate, matched));
         op = EmitCopy(op, offset, matched);
         // We could immediately start working at ip now, but to improve
         // compression we first update table[Hash(ip - 1, ...)].
@@ -571,9 +571,9 @@ static uint16 MakeEntry(unsigned int extra,
                         unsigned int len,
                         unsigned int copy_offset) {
   // Check that all of the fields fit within the allocated space
-  assert(extra       == (extra & 0x7));          // At most 3 bits
-  assert(copy_offset == (copy_offset & 0x7));    // At most 3 bits
-  assert(len         == (len & 0x7f));           // At most 7 bits
+  Assert(extra       == (extra & 0x7));          // At most 3 bits
+  Assert(copy_offset == (copy_offset & 0x7));    // At most 3 bits
+  Assert(len         == (len & 0x7f));           // At most 7 bits
   return len | (copy_offset << 8) | (extra << 11);
 }
 
@@ -703,7 +703,7 @@ class SnappyDecompressor {
   // On succcess, stores the length in *result and returns true.
   // On failure, returns false.
   bool ReadUncompressedLength(uint32* result) {
-    assert(ip_ == NULL);       // Must not have read anything yet
+    Assert(ip_ == NULL);       // Must not have read anything yet
     // Length is encoded in 1..5 bytes
     *result = 0;
     uint32 shift = 0;
@@ -747,7 +747,7 @@ class SnappyDecompressor {
       if ((c & 0x3) == LITERAL) {
         size_t literal_length = (c >> 2) + 1u;
         if (writer->TryFastAppend(ip, ip_limit_ - ip, literal_length)) {
-          assert(literal_length < 61);
+          Assert(literal_length < 61);
           ip += literal_length;
           // NOTE(user): There is no MAYBE_REFILL() here, as TryFastAppend()
           // will not return true unless there's already at least five spare
@@ -816,11 +816,11 @@ bool SnappyDecompressor::RefillTag() {
   }
 
   // Read the tag character
-  assert(ip < ip_limit_);
+  Assert(ip < ip_limit_);
   const unsigned char c = *(reinterpret_cast<const unsigned char*>(ip));
   const uint32 entry = char_table[c];
   const uint32 needed = (entry >> 11) + 1;  // +1 byte for 'c'
-  assert(needed <= sizeof(scratch_));
+  Assert(needed <= sizeof(scratch_));
 
   // Read more bytes from reader if needed
   uint32 nbuf = ip_limit_ - ip;
@@ -841,7 +841,7 @@ bool SnappyDecompressor::RefillTag() {
       nbuf += to_add;
       reader_->Skip(to_add);
     }
-    assert(nbuf == needed);
+    Assert(nbuf == needed);
     ip_ = scratch_;
     ip_limit_ = scratch_ + needed;
   } else if (nbuf < kMaximumTagLength) {
@@ -900,7 +900,7 @@ size_t Compress(Source* reader, Sink* writer) {
     // Get next block to compress (without copying if possible)
     size_t fragment_size;
     const char* fragment = reader->Peek(&fragment_size);
-    assert(fragment_size != 0);  // premature end of input
+    Assert(fragment_size != 0);  // premature end of input
     const size_t num_to_read = min(N, kBlockSize);
     size_t bytes_read = fragment_size;
 
@@ -927,11 +927,11 @@ size_t Compress(Source* reader, Sink* writer) {
         bytes_read += n;
         reader->Skip(n);
       }
-      assert(bytes_read == num_to_read);
+      Assert(bytes_read == num_to_read);
       fragment = scratch;
       fragment_size = num_to_read;
     }
-    assert(fragment_size == num_to_read);
+    Assert(fragment_size == num_to_read);
 
     // Get encoding table for compression
     int table_size;
@@ -1020,7 +1020,7 @@ class SnappyIOVecWriter {
     }
 
     while (len > 0) {
-      assert(curr_iov_written_ <= output_iov_[curr_iov_index_].iov_len);
+      Assert(curr_iov_written_ <= output_iov_[curr_iov_index_].iov_len);
       if (curr_iov_written_ >= output_iov_[curr_iov_index_].iov_len) {
         // This iovec is full. Go to the next one.
         if (curr_iov_index_ + 1 >= output_iov_count_) {
@@ -1080,14 +1080,14 @@ class SnappyIOVecWriter {
 
       offset -= from_iov_offset;
       --from_iov_index;
-      assert(from_iov_index >= 0);
+      Assert(from_iov_index >= 0);
       from_iov_offset = output_iov_[from_iov_index].iov_len;
     }
 
     // Copy <len> bytes starting from the iovec pointed to by from_iov_index to
     // the current iovec.
     while (len > 0) {
-      assert(from_iov_index <= curr_iov_index_);
+      Assert(from_iov_index <= curr_iov_index_);
       if (from_iov_index != curr_iov_index_) {
         const size_t to_copy = Min(
             output_iov_[from_iov_index].iov_len - from_iov_offset,
@@ -1099,7 +1099,7 @@ class SnappyIOVecWriter {
           from_iov_offset = 0;
         }
       } else {
-        assert(curr_iov_written_ <= output_iov_[curr_iov_index_].iov_len);
+        Assert(curr_iov_written_ <= output_iov_[curr_iov_index_].iov_len);
         size_t to_copy = Min(output_iov_[curr_iov_index_].iov_len -
                                       curr_iov_written_,
                                   len);
@@ -1205,7 +1205,7 @@ class SnappyArrayWriter {
     // to a very big number. This is convenient, as offset==0 is another
     // invalid case that we also want to catch, so that we do not go
     // into an infinite loop.
-    assert(op >= base_);
+    Assert(op >= base_);
     size_t produced = op - base_;
     if (produced <= offset - 1u) {
       return false;

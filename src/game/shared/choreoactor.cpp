@@ -4,7 +4,6 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include "choreoactor.h"
@@ -73,7 +72,7 @@ void CChoreoActor::Init( void )
 //-----------------------------------------------------------------------------
 void CChoreoActor::SetName( const char *name )
 {
-	assert( strlen( name ) < MAX_ACTOR_NAME );
+	Assert( strlen( name ) < MAX_ACTOR_NAME );
 	Q_strncpy( m_szName, name, sizeof( m_szName ) );
 }
 

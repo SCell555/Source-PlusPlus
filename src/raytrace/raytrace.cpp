@@ -323,7 +323,7 @@ void RayTracingEnvironment::Trace4Rays(const FourRays &rays, fltx4 TMin, fltx4 T
 				// ok, now trace between 1 and 3 rays, and output the results
 				RayTracingResult tmpresults;
 				msk=tmprays.CalculateDirectionSignMask();
-				assert(msk!=-1);
+				Assert(msk!=-1);
 				Trace4Rays(tmprays,TMin,TMax,msk,&tmpresults,skip_id, pCallback);
 				// now, move results to proper place
 				for(int i=0;i<4;i++)
@@ -451,7 +451,7 @@ void RayTracingEnvironment::Trace4Rays(const FourRays &rays, fltx4 TMin, fltx4 T
 					// must push far, traverse near
  					//printf("visit %d,%d\n",CurNode->LeftChild()+front_idx[split_plane_number],
  					//	   CurNode->LeftChild()+back_idx[split_plane_number]);
-					assert(stack_ptr>NodeQueue);
+					Assert(stack_ptr>NodeQueue);
 					--stack_ptr;
 					stack_ptr->node=FrontChild+back_idx[split_plane_number];
 					stack_ptr->TMin=MaxSIMD(TMin,dist_to_sep_plane);

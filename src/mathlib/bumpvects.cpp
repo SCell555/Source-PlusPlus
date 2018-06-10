@@ -19,7 +19,6 @@
 #endif
 #include "mathlib/bumpvects.h"
 #include "mathlib/vector.h"
-#include <assert.h>
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -33,7 +32,7 @@ void GetBumpNormals( const Vector& sVect, const Vector& tVect, const Vector& fla
 	bool leftHanded;
 	int i;
 
-	assert( NUM_BUMP_VECTS == 3 );
+	COMPILE_TIME_ASSERT( NUM_BUMP_VECTS == 3 );
 	
 	// Are we left or right handed?
 	CrossProduct( sVect, tVect, tmpNormal );

@@ -36,10 +36,10 @@
 #endif
 
 #include "tier0/platform.h"
+#include "tier0/dbg.h"
 
 #include <string>
 
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -361,7 +361,7 @@ inline int Bits::Log2Floor(uint32 n) {
       log += shift;
     }
   }
-  assert(value == 1);
+  Assert(value == 1);
   return log;
 }
 

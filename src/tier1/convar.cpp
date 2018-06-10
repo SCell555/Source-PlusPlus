@@ -1278,7 +1278,7 @@ void ConVar_PrintDescription( const ConCommandBase *pVar )
 	float fMin, fMax;
 	const char *pStr;
 
-	assert( pVar );
+	Assert( pVar );
 
 	Color clr( 255, 100, 100, 255 );
 

@@ -5,8 +5,6 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include <assert.h>
-
 #include <vgui/IScheme.h>
 #include <vgui/ISystem.h>
 #include <vgui/IInput.h>
