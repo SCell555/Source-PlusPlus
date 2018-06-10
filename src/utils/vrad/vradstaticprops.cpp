@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Revision: $
 // $NoKeywords: $
@@ -79,7 +79,7 @@ public:
 		m_ColorVertsArrays.PurgeAndDeleteElements();
 		m_ColorTexelsArrays.PurgeAndDeleteElements();
 	}
-	
+
 	CUtlVector< CUtlVector<colorVertex_t>* > m_ColorVertsArrays;
 	CUtlVector< CUtlVector<colorTexel_t>* > m_ColorTexelsArrays;
 };
@@ -102,7 +102,7 @@ struct Rasterizer
 	, mResY(resY)
 	, mUvStepX(1.0f / resX)
 	, mUvStepY(1.0f / resY)
-	{ 
+	{
 		Build();
 	}
 
@@ -120,15 +120,15 @@ struct Rasterizer
 		return (size_t)(GetRow(it->uv.y) * mResX)
 			 + (size_t)(GetCol(it->uv.x));
 	}
-	
+
 private:
 	const Vector2D mT0, mT1, mT2;
 	const size_t mResX, mResY;
 	const float mUvStepX, mUvStepY;
 
-	// Right now, we just fill this out and directly iterate over it. 
+	// Right now, we just fill this out and directly iterate over it.
 	// It could be large. This is a memory/speed tradeoff. We could instead generate them
-	// on demand. 
+	// on demand.
 	CUtlVector< Location > mRasterizedLocations;
 };
 
@@ -137,7 +137,7 @@ inline Vector ComputeBarycentric( Vector2D _edgeC, Vector2D _edgeA, Vector2D _ed
 {
 	float dCA = _edgeC.Dot(_edgeA);
 	float dCB = _edgeC.Dot(_edgeB);
-	
+
 	Vector retVal;
 	retVal.y = (_dBB * dCA - _dAB * dCB) * _invDenom;
 	retVal.z = (_dAA * dCB - _dAB * dCA) * _invDenom;
@@ -149,7 +149,7 @@ inline Vector ComputeBarycentric( Vector2D _edgeC, Vector2D _edgeA, Vector2D _ed
 //-----------------------------------------------------------------------------
 void Rasterizer::Build()
 {
-	// For now, use the barycentric method. It's easy, I'm lazy. 
+	// For now, use the barycentric method. It's easy, I'm lazy.
 	// We can optimize later if it's a performance issue.
 	const float baseX = mUvStepX / 2.0f;
 	const float baseY = mUvStepY / 2.0f;
@@ -165,8 +165,8 @@ void Rasterizer::Build()
 		return;
 
 	// Clamp to 0..1
-	fMinX = max(0, fMinX);
-	fMinY = max(0, fMinY);
+	fMinX = max(0.f, fMinX);
+	fMinY = max(0.f, fMinY);
 	fMaxX = min(1.0f, fMaxX);
 	fMaxY = min(1.0f, fMaxY);
 
@@ -182,16 +182,16 @@ void Rasterizer::Build()
 	// Clamp to valid texture (integer) locations
 	iMinX = max(0, iMinX);
 	iMinY = max(0, iMinY);
-	iMaxX = min(iMaxX, mResX - 1);
-	iMaxY = min(iMaxY, mResY - 1);
+	iMaxX = Min<int>(iMaxX, mResX - 1);
+	iMaxY = Min<int>(iMaxY, mResY - 1);
 
-	// Set the size to be as expected. 
+	// Set the size to be as expected.
 	// TODO: Pass this in from outside to minimize allocations
-	int count = (iMaxY - iMinY + 1) 
+	int count = (iMaxY - iMinY + 1)
 		      * (iMaxX - iMinX + 1);
 	mRasterizedLocations.EnsureCount(count);
 	memset( mRasterizedLocations.Base(), 0, mRasterizedLocations.Count() * sizeof( Location ) );
-	
+
 	// Computing Barycentrics adapted from here http://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
 	Vector2D edgeA = mT1 - mT0;
 	Vector2D edgeB = mT2 - mT0;
@@ -201,13 +201,13 @@ void Rasterizer::Build()
 	float dBB = edgeB.Dot(edgeB);
 	float invDenom = 1.0f / (dAA * dBB - dAB * dAB);
 
-	int linearPos = 0; 
+	int linearPos = 0;
 	for (int j = iMinY; j <= iMaxY; ++j) {
 		for (int i = iMinX; i <= iMaxX; ++i) {
 			Vector2D testPt( i * mUvStepX + baseX, j * mUvStepY + baseY );
 			Vector barycentric = ComputeBarycentric( testPt - mT0, edgeA, edgeB, dAA, dAB, dBB, invDenom );
 
-			// Test whether the point is inside the triangle. 
+			// Test whether the point is inside the triangle.
 			// MCJOHNTODO: Edge rules and whatnot--right now we re-rasterize points on the edge.
 			Location& newLoc = mRasterizedLocations[linearPos++];
 			newLoc.barycentric = barycentric;
@@ -224,18 +224,18 @@ void Rasterizer::Build()
 //-----------------------------------------------------------------------------
 CUtlSymbolTable g_ForcedTextureShadowsModels;
 
-// DON'T USE THIS FROM WITHIN A THREAD.  THERE IS A THREAD CONTEXT CREATED 
+// DON'T USE THIS FROM WITHIN A THREAD.  THERE IS A THREAD CONTEXT CREATED
 // INSIDE PropTested_t.  USE THAT INSTEAD.
 IPhysicsCollision *s_pPhysCollision = NULL;
 
 static void ConvertTexelDataToTexture(unsigned int _resX, unsigned int _resY, ImageFormat _destFmt, const CUtlVector<colorTexel_t>& _srcTexels, CUtlMemory<byte>* _outTexture);
 
 // Such a monstrosity. :(
-static void GenerateLightmapSamplesForMesh( const matrix3x4_t& _matPos, const matrix3x4_t& _matNormal, int _iThread, int _skipProp, int _nFlags, int _lightmapResX, int _lightmapResY, 
-											studiohdr_t* _pStudioHdr, mstudiomodel_t* _pStudioModel, OptimizedModel::ModelHeader_t* _pVtxModel, int _meshID, 
+static void GenerateLightmapSamplesForMesh( const matrix3x4_t& _matPos, const matrix3x4_t& _matNormal, int _iThread, int _skipProp, int _nFlags, int _lightmapResX, int _lightmapResY,
+											studiohdr_t* _pStudioHdr, mstudiomodel_t* _pStudioModel, OptimizedModel::ModelHeader_t* _pVtxModel, int _meshID,
 											CComputeStaticPropLightingResults *_pResults );
 
-// Debug function, converts lightmaps to linear space then dumps them out. 
+// Debug function, converts lightmaps to linear space then dumps them out.
 // TODO: Write out the file in a .dds instead of a .tga, in whatever format we're supposed to use.
 static void DumpLightmapLinear( const char* _dstFilename, const CUtlVector<colorTexel_t>& _srcTexels, int _width, int _height );
 
@@ -264,7 +264,7 @@ private:
 	static void VMPI_ReceiveStaticPropResults_Static( uint64 iStaticProp, MessageBuffer *pBuf, int iWorker );
 	void VMPI_ProcessStaticProp( int iThread, int iStaticProp, MessageBuffer *pBuf );
 	void VMPI_ReceiveStaticPropResults( int iStaticProp, MessageBuffer *pBuf, int iWorker );
-	
+
 	// local thread version
 	static void ThreadComputeStaticPropLighting( int iThread, void *pUserData );
 	void ComputeLightingForProp( int iThread, int iStaticProp );
@@ -293,9 +293,22 @@ private:
 
 	struct MeshData_t
 	{
+		MeshData_t& operator=( const MeshData_t& other )
+		{
+			if ( this == &other )
+				return *this;
+			m_VertexColors  = other.m_VertexColors;
+			m_TexelsEncoded.EnsureCapacity( other.m_TexelsEncoded.Count() );
+			V_memcpy( m_TexelsEncoded.Base(), other.m_TexelsEncoded.Base(), other.m_TexelsEncoded.Count() * sizeof( byte ) );
+			m_nLod          = other.m_nLod;
+			return *this;
+		}
+
 		CUtlVector<Vector>	m_VertexColors;
 		CUtlMemory<byte>	m_TexelsEncoded;
 		int					m_nLod;
+
+
 	};
 
 	// A static prop instance
@@ -461,7 +474,7 @@ CPhysCollide* ComputeConvexHull( studiohdr_t* pStudioHdr )
 
 bool LoadStudioModel( char const* pModelName, CUtlBuffer& buf )
 {
-	// No luck, gotta build it	
+	// No luck, gotta build it
 	// Construct the file name...
 	if (!LoadFile( pModelName, buf ))
 	{
@@ -521,7 +534,7 @@ bool LoadStudioCollisionModel( char const* pModelName, CUtlBuffer& buf )
 	char tmp[1024];
 	Q_strncpy( tmp, pModelName, sizeof( tmp ) );
 	Q_SetExtension( tmp, ".phy", sizeof( tmp ) );
-	// No luck, gotta build it	
+	// No luck, gotta build it
 	if (!LoadFile( tmp, buf ))
 	{
 		// this is not an error, the model simply has no PHY file
@@ -591,8 +604,8 @@ inline static Vector* PositionFromIndex( const mstudio_meshvertexdata_t *vertDat
 
 //-----------------------------------------------------------------------------
 // Purpose: Writes a glview text file containing the collision surface in question
-// Input  : *pCollide - 
-//			*pFilename - 
+// Input  : *pCollide -
+//			*pFilename -
 //-----------------------------------------------------------------------------
 void DumpCollideToGlView( vcollide_t *pCollide, const char *pFilename )
 {
@@ -620,13 +633,13 @@ void DumpCollideToGlView( vcollide_t *pCollide, const char *pFilename )
 		for ( int i = 0; i < triCount; i++ )
 		{
 			fprintf( fp, "3\n" );
-			fprintf( fp, "%6.3f %6.3f %6.3f %.2f %.3f %.3f\n", 
+			fprintf( fp, "%6.3f %6.3f %6.3f %.2f %.3f %.3f\n",
 				outVerts[vert].x, outVerts[vert].y, outVerts[vert].z, fr, fg, fb );
 			vert++;
-			fprintf( fp, "%6.3f %6.3f %6.3f %.2f %.3f %.3f\n", 
+			fprintf( fp, "%6.3f %6.3f %6.3f %.2f %.3f %.3f\n",
 				outVerts[vert].x, outVerts[vert].y, outVerts[vert].z, fr, fg, fb );
 			vert++;
-			fprintf( fp, "%6.3f %6.3f %6.3f %.2f %.3f %.3f\n", 
+			fprintf( fp, "%6.3f %6.3f %6.3f %.2f %.3f %.3f\n",
 				outVerts[vert].x, outVerts[vert].y, outVerts[vert].z, fr, fg, fb );
 			vert++;
 		}
@@ -696,7 +709,7 @@ public:
 		*pClampV = (pTex->Flags() & TEXTUREFLAGS_CLAMPT) ? true : false;
 		unsigned char *pDstImage = new unsigned char[ImageLoader::GetMemRequired( iWidth, iHeight, 1, dstFormat, false )];
 
-		if( !ImageLoader::ConvertImageFormat( pSrcImage, srcFormat, 
+		if( !ImageLoader::ConvertImageFormat( pSrcImage, srcFormat,
 			pDstImage, dstFormat, iWidth, iHeight, 0, 0 ) )
 		{
 			delete[] pDstImage;
@@ -792,7 +805,7 @@ public:
 			pTextureList[i] = textureIndex;
 		}
 	}
-	
+
 	int AddMaterialEntry( int shadowTextureIndex, const Vector2D &t0, const Vector2D &t1, const Vector2D &t2 )
 	{
 		int index = m_MaterialEntries.AddToTail();
@@ -847,7 +860,7 @@ public:
 		}
 		return 1.0f;
 	}
-	
+
 	int SampleMaterial( int materialIndex, const Vector &coords, bool bBackface )
 	{
 		const materialentry_t &mat = m_MaterialEntries[materialIndex];
@@ -857,7 +870,7 @@ public:
 		Vector2D uv = coords.x * mat.uv[0] + coords.y * mat.uv[1] + coords.z * mat.uv[2];
 		int u = RoundFloatToInt( uv[0] * tex.width );
 		int v = RoundFloatToInt( uv[1] * tex.height );
-		
+
 		// asume power of 2, clamp or wrap
 		// UNDONE: Support clamp?  This code should work
 #if 0
@@ -872,7 +885,7 @@ public:
 		return tex.pAlphaTexels[v * tex.width + u];
 	}
 
-	struct alphatexture_t 
+	struct alphatexture_t
 	{
 		short width;
 		short height;
@@ -1045,7 +1058,7 @@ void CVradStaticPropMgr::UnserializeModelDict( CUtlBuffer& buf )
 	{
 		StaticPropDictLump_t lump;
 		buf.Get( &lump, sizeof(StaticPropDictLump_t) );
-		
+
 		CreateCollisionModel( lump.m_Name );
 	}
 }
@@ -1056,11 +1069,11 @@ void CVradStaticPropMgr::UnserializeModels( CUtlBuffer& buf )
 
 
 	m_StaticProps.AddMultipleToTail(count);
-	for ( int i = 0; i < count; ++i )				  
+	for ( int i = 0; i < count; ++i )
 	{
 		StaticPropLump_t lump;
 		buf.Get( &lump, sizeof(StaticPropLump_t) );
-		
+
 		VectorCopy( lump.m_Origin, m_StaticProps[i].m_Origin );
 		VectorCopy( lump.m_Angles, m_StaticProps[i].m_Angles );
 		VectorCopy( lump.m_LightingOrigin, m_StaticProps[i].m_LightingOrigin );
@@ -1069,7 +1082,7 @@ void CVradStaticPropMgr::UnserializeModels( CUtlBuffer& buf )
 		m_StaticProps[i].m_Handle = TREEDATA_INVALID_HANDLE;
 		m_StaticProps[i].m_Flags = lump.m_Flags;
 
-		// Changed this from using DXT1 to RGB888 because the compression artifacts were pretty nasty. 
+		// Changed this from using DXT1 to RGB888 because the compression artifacts were pretty nasty.
 		// TODO: Consider changing back or basing this on user selection in hammer.
 		m_StaticProps[i].m_LightmapImageFormat = IMAGE_FORMAT_RGB888;
 		m_StaticProps[i].m_LightmapImageWidth = lump.m_nLightmapResolutionX;
@@ -1116,7 +1129,7 @@ void CVradStaticPropMgr::Init()
 	CreateInterfaceFn physicsFactory = GetPhysicsFactory();
 	if ( !physicsFactory )
 		Error( "Unable to load vphysics DLL." );
-		
+
 	s_pPhysCollision = (IPhysicsCollision *)physicsFactory( VPHYSICS_COLLISION_INTERFACE_VERSION, NULL );
 	if( !s_pPhysCollision )
 	{
@@ -1213,7 +1226,7 @@ void ComputeDirectLightingAtPoint( Vector &position, Vector &normal, Vector &out
 			fudge *= 4.0;
 			adjusted_pos += fudge;
 		}
-		else 
+		else
 		{
 			// push out along normal
 			adjusted_pos += 4.0 * normal;
@@ -1227,7 +1240,7 @@ void ComputeDirectLightingAtPoint( Vector &position, Vector &normal, Vector &out
 
 		GatherSampleLightSSE( sampleOutput, dl, -1, adjusted_pos4, &normal4, 1, iThread, nLFlags | GATHERLFLAGS_FORCE_FAST,
 		                      static_prop_id_to_skip, flEpsilon );
-		
+
 		VectorMA( outColor, sampleOutput.m_flFalloff.m128_f32[0] * sampleOutput.m_flDot[0].m128_f32[0], dl->light.intensity, outColor );
 	}
 }
@@ -1257,10 +1270,10 @@ void CVradStaticPropMgr::ApplyLightingToStaticProp( int iStaticProp, CStaticProp
 		{
 			OptimizedModel::ModelHeader_t* pVtxModel = pVtxBodyPart->pModel( modelID );
 			mstudiomodel_t *pStudioModel = pBodyPart->pModel( modelID );
-						
+
 			const CUtlVector<colorVertex_t> *colorVerts = pResults->m_ColorVertsArrays.Count() ? pResults->m_ColorVertsArrays[iCurColorVertsArray++] : nullptr;
 			const CUtlVector<colorTexel_t> *colorTexels = pResults->m_ColorTexelsArrays.Count() ? pResults->m_ColorTexelsArrays[iCurColorTexelsArray++] : nullptr;
-			
+
 			for ( int nLod = 0; nLod < pVtxHdr->numLODs; nLod++ )
 			{
 				OptimizedModel::ModelLODHeader_t *pVtxLOD = pVtxModel->pLOD( nLod );
@@ -1297,23 +1310,23 @@ void CVradStaticPropMgr::ApplyLightingToStaticProp( int iStaticProp, CStaticProp
 							if (g_bDumpPropLightmaps)
 							{
 								char buffer[_MAX_PATH];
-								V_snprintf( 
-									buffer, 
-									_MAX_PATH - 1, 
-									"staticprop_lightmap_%d_%.0f_%.0f_%.0f_%s_%d_%d_%d_%d_%d.tga", 
-									iStaticProp, 
-									prop.m_Origin.x, 
+								V_snprintf(
+									buffer,
+									_MAX_PATH - 1,
+									"staticprop_lightmap_%d_%.0f_%.0f_%.0f_%s_%d_%d_%d_%d_%d.tga",
+									iStaticProp,
+									prop.m_Origin.x,
 									prop.m_Origin.y,
 									prop.m_Origin.z,
-									dict.m_pStudioHdr->pszName(), 
-									bodyID, 
-									modelID, 
-									nLod, 
-									nMesh, 
-									nGroup 
+									dict.m_pStudioHdr->pszName(),
+									bodyID,
+									modelID,
+									nLod,
+									nMesh,
+									nGroup
 								);
 
-								for ( int i = 0; buffer[i]; ++i ) 
+								for ( int i = 0; buffer[i]; ++i )
 								{
 									if (buffer[i] == '/' || buffer[i] == '\\')
 										buffer[i] = '-';
@@ -1361,7 +1374,7 @@ void CVradStaticPropMgr::ComputeLighting( CStaticProp &prop, int iThread, int pr
 	matrix3x4_t	matPos, matNormal;
 	AngleMatrix(prop.m_Angles, prop.m_Origin, matPos);
 	AngleMatrix(prop.m_Angles, matNormal);
-	
+
 	for ( int bodyID = 0; bodyID < pStudioHdr->numbodyparts; ++bodyID )
 	{
 		OptimizedModel::BodyPartHeader_t* pVtxBodyPart = pVtxHdr->pBodyPart( bodyID );
@@ -1377,12 +1390,12 @@ void CVradStaticPropMgr::ComputeLighting( CStaticProp &prop, int iThread, int pr
 				CUtlVector<colorTexel_t> *pColorTexelArray = new CUtlVector<colorTexel_t>;
 				pResults->m_ColorTexelsArrays.AddToTail(pColorTexelArray);
 			}
-			
+
 			// light all unique vertexes
 			CUtlVector<colorVertex_t> *pColorVertsArray = new CUtlVector<colorVertex_t>;
 			pResults->m_ColorVertsArrays.AddToTail( pColorVertsArray );
-						
-			CUtlVector<colorVertex_t> &colorVerts = *pColorVertsArray; 
+
+			CUtlVector<colorVertex_t> &colorVerts = *pColorVertsArray;
 			colorVerts.EnsureCount( pStudioModel->numvertices );
 			memset( colorVerts.Base(), 0, colorVerts.Count() * sizeof(colorVertex_t) );
 
@@ -1393,7 +1406,7 @@ void CVradStaticPropMgr::ComputeLighting( CStaticProp &prop, int iThread, int pr
 				const mstudio_meshvertexdata_t *vertData = pStudioMesh->GetVertexData((void *)pStudioHdr);
 
 				Assert(vertData); // This can only return NULL on X360 for now
-				
+
 				// TODO: Move this into its own function. In fact, refactor this whole function.
 				if (withTexelLighting)
 				{
@@ -1416,13 +1429,13 @@ void CVradStaticPropMgr::ComputeLighting( CStaticProp &prop, int iThread, int pr
 						badVertex.m_ColorVertex = numVertexes;
 						badVertex.m_Position = samplePosition;
 						badVertex.m_Normal = sampleNormal;
-						badVerts.AddToTail( badVertex );			
+						badVerts.AddToTail( badVertex );
 					}
 					else
 					{
 						Vector direct_pos=samplePosition;
-							
-						
+
+
 
 						Vector directColor(0,0,0);
 						ComputeDirectLightingAtPoint( direct_pos,
@@ -1439,28 +1452,28 @@ void CVradStaticPropMgr::ComputeLighting( CStaticProp &prop, int iThread, int pr
 						else
 						{
 							if (numbounce >= 1)
-								ComputeIndirectLightingAtPoint( 
-									samplePosition, sampleNormal, 
+								ComputeIndirectLightingAtPoint(
+									samplePosition, sampleNormal,
 									indirectColor, iThread, true,
 									( prop.m_Flags & STATIC_PROP_IGNORE_NORMALS) != 0 );
 						}
-						
+
 						colorVerts[numVertexes].m_bValid = true;
 						colorVerts[numVertexes].m_Position = samplePosition;
 						VectorAdd( directColor, indirectColor, colorVerts[numVertexes].m_Color );
 					}
-					
+
 					numVertexes++;
 				}
 			}
-			
+
 			// color in the bad vertexes
 			// when entire model has no lighting origin and no valid neighbors
 			// must punt, leave black coloring
 			if ( badVerts.Count() && ( prop.m_bLightingOriginValid || badVerts.Count() != numVertexes ) )
 			{
 				for ( int nBadVertex = 0; nBadVertex < badVerts.Count(); nBadVertex++ )
-				{		
+				{
 					Vector bestPosition;
 					if ( prop.m_bLightingOriginValid )
 					{
@@ -1520,7 +1533,7 @@ void CVradStaticPropMgr::ComputeLighting( CStaticProp &prop, int iThread, int pr
 					VectorAdd( directColor, indirectColor, colorVerts[badVerts[nBadVertex].m_ColorVertex].m_Color );
 				}
 			}
-			
+
 			// discard bad verts
 			badVerts.Purge();
 		}
@@ -1550,7 +1563,7 @@ void CVradStaticPropMgr::SerializeLighting()
 	for (int i = 0; i < count; ++i)
 	{
 		// no need to write this file if we didn't compute the data
-		// props marked this way will not load the info anyway 
+		// props marked this way will not load the info anyway
 		if ( m_StaticProps[i].m_Flags & STATIC_PROP_NO_PER_VERTEX_LIGHTING )
 			continue;
 
@@ -1570,7 +1583,7 @@ void CVradStaticPropMgr::SerializeLighting()
 		}
 
 		// allocate a buffer with enough padding for alignment
-		size = sizeof( HardwareVerts::FileHeader_t ) + 
+		size = sizeof( HardwareVerts::FileHeader_t ) +
 				m_StaticProps[i].m_MeshData.Count()*sizeof(HardwareVerts::MeshHeader_t) +
 				totalVertexes*4 + 2*512;
 		utlBuf.EnsureCapacity( size );
@@ -1581,7 +1594,7 @@ void CVradStaticPropMgr::SerializeLighting()
 		// align to start of vertex data
 		unsigned char *pVertexData = (unsigned char *)(sizeof( HardwareVerts::FileHeader_t ) + m_StaticProps[i].m_MeshData.Count()*sizeof(HardwareVerts::MeshHeader_t));
 		pVertexData = (unsigned char*)pVhvHdr + ALIGN_TO_POW2( (unsigned int)pVertexData, 512 );
-		
+
 		// construct header
 		pVhvHdr->m_nVersion     = VHV_VERSION;
 		pVhvHdr->m_nChecksum    = m_StaticPropDict[m_StaticProps[i].m_ModelIdx].m_pStudioHdr->checksum;
@@ -1596,7 +1609,7 @@ void CVradStaticPropMgr::SerializeLighting()
 			HardwareVerts::MeshHeader_t *pMesh = pVhvHdr->pMesh( n );
 			pMesh->m_nLod      = m_StaticProps[i].m_MeshData[n].m_nLod;
 			pMesh->m_nVertexes = m_StaticProps[i].m_MeshData[n].m_VertexColors.Count();
-			pMesh->m_nOffset   = (unsigned int)pVertexData - (unsigned int)pVhvHdr; 
+			pMesh->m_nOffset   = (unsigned int)pVertexData - (unsigned int)pVhvHdr;
 
 			// construct vertexes
 			for (int k=0; k<pMesh->m_nVertexes; k++)
@@ -1628,7 +1641,7 @@ void CVradStaticPropMgr::SerializeLighting()
 	{
 		const int kAlignment = 512;
 		// no need to write this file if we didn't compute the data
-		// props marked this way will not load the info anyway 
+		// props marked this way will not load the info anyway
 		if (m_StaticProps[i].m_Flags & STATIC_PROP_NO_PER_TEXEL_LIGHTING)
 			continue;
 
@@ -1643,11 +1656,11 @@ void CVradStaticPropMgr::SerializeLighting()
 		}
 
 		// allocate a buffer with enough padding for alignment
-		size = sizeof(HardwareTexels::FileHeader_t) 
-			 + m_StaticProps[i].m_MeshData.Count() * sizeof(HardwareTexels::MeshHeader_t) 
+		size = sizeof(HardwareTexels::FileHeader_t)
+			 + m_StaticProps[i].m_MeshData.Count() * sizeof(HardwareTexels::MeshHeader_t)
 			 + totalTexelSizeBytes
 			 + 2 * kAlignment;
-		
+
 		utlBuf.EnsureCapacity(size);
 		Q_memset(utlBuf.Base(), 0, size);
 
@@ -1691,7 +1704,7 @@ void CVradStaticPropMgr::VMPI_ReceiveStaticPropResults_Static( uint64 iStaticPro
 {
 	g_StaticPropMgr.VMPI_ReceiveStaticPropResults( iStaticProp, pBuf, iWorker );
 }
-	
+
 //-----------------------------------------------------------------------------
 // Called on workers to do the computation for a static prop and send
 // it to the master.
@@ -1703,11 +1716,11 @@ void CVradStaticPropMgr::VMPI_ProcessStaticProp( int iThread, int iStaticProp, M
 	ComputeLighting( m_StaticProps[iStaticProp], iThread, iStaticProp, &results );
 
 	VMPI_SetCurrentStage( "EncodeLightingResults" );
-	
+
 	// Encode the results.
 	int nLists = results.m_ColorVertsArrays.Count();
 	pBuf->write( &nLists, sizeof( nLists ) );
-	
+
 	for ( int i=0; i < nLists; i++ )
 	{
 		CUtlVector<colorVertex_t> &curList = *results.m_ColorVertsArrays[i];
@@ -1735,15 +1748,15 @@ void CVradStaticPropMgr::VMPI_ReceiveStaticPropResults( int iStaticProp, Message
 {
 	// Read in the results.
 	CComputeStaticPropLightingResults results;
-	
+
 	int nLists;
 	pBuf->read( &nLists, sizeof( nLists ) );
-	
+
 	for ( int i=0; i < nLists; i++ )
 	{
 		CUtlVector<colorVertex_t> *pList = new CUtlVector<colorVertex_t>;
 		results.m_ColorVertsArrays.AddToTail( pList );
-		
+
 		int count;
 		pBuf->read( &count, sizeof( count ) );
 		pList->SetSize( count );
@@ -1762,7 +1775,7 @@ void CVradStaticPropMgr::VMPI_ReceiveStaticPropResults( int iStaticProp, Message
 		pList->SetSize(count);
 		pBuf->read(pList->Base(), count * sizeof(colorTexel_t));
 	}
-	
+
 	// Apply the results.
 	ApplyLightingToStaticProp( iStaticProp, m_StaticProps[iStaticProp], &results );
 }
@@ -1811,11 +1824,11 @@ void CVradStaticPropMgr::ComputeLighting( int iThread )
 	{
 		// Distribute the work among the workers.
 		VMPI_SetCurrentStage( "CVradStaticPropMgr::ComputeLighting" );
-		
-		DistributeWork( 
-			count, 
+
+		DistributeWork(
+			count,
 			VMPI_DISTRIBUTEWORK_PACKETID,
-			&CVradStaticPropMgr::VMPI_ProcessStaticProp_Static, 
+			&CVradStaticPropMgr::VMPI_ProcessStaticProp_Static,
 			&CVradStaticPropMgr::VMPI_ReceiveStaticPropResults_Static );
 	}
 	else
@@ -1883,7 +1896,7 @@ void CVradStaticPropMgr::AddPolysForRayTrace( void )
 				VectorAdd ( dict.m_Maxs, prop.m_Origin, prop.m_maxs );
 				g_RtEnv.AddAxisAlignedRectangularSolid ( TRACE_ID_STATICPROP | nProp, prop.m_mins, prop.m_maxs, fullCoverage );
 			}
-			
+
 			continue;
 		}
 
@@ -1900,7 +1913,7 @@ void CVradStaticPropMgr::AddPolysForRayTrace( void )
 
 		// meshes are deeply hierarchial, divided between three stores, follow the white rabbit
 		// body parts -> models -> lod meshes -> strip groups -> strips
-		// the vertices and indices are pooled, the trick is knowing the offset to determine your indexed base 
+		// the vertices and indices are pooled, the trick is knowing the offset to determine your indexed base
 		for ( int bodyID = 0; bodyID < pStudioHdr->numbodyparts; ++bodyID )
 		{
 			OptimizedModel::BodyPartHeader_t* pVtxBodyPart = pVtxHdr->pBodyPart( bodyID );
@@ -2044,10 +2057,10 @@ struct tl_tri_t
 	Vector	n1;
 	Vector	n2;
 
-	bool operator == (const tl_tri_t &t) const 
-	{ 
-		return ( p0 == t.p0 && 
-				p1 == t.p1 && 
+	bool operator == (const tl_tri_t &t) const
+	{
+		return ( p0 == t.p0 &&
+				p1 == t.p1 &&
 				p2 == t.p2 &&
 				n0 == t.n0 &&
 				n1 == t.n1 &&
@@ -2104,7 +2117,7 @@ void CVradStaticPropMgr::BuildTriList( CStaticProp &prop )
 
 	// meshes are deeply hierarchial, divided between three stores, follow the white rabbit
 	// body parts -> models -> lod meshes -> strip groups -> strips
-	// the vertices and indices are pooled, the trick is knowing the offset to determine your indexed base 
+	// the vertices and indices are pooled, the trick is knowing the offset to determine your indexed base
 	for ( int bodyID = 0; bodyID < pStudioHdr->numbodyparts; ++bodyID )
 	{
 		OptimizedModel::BodyPartHeader_t* pVtxBodyPart = pVtxHdr->pBodyPart( bodyID );
@@ -2204,7 +2217,7 @@ const vertexFileHeader_t * mstudiomodel_t::CacheVertexData( void *pModelData )
 	// mandatory callback to make requested data resident
 	// load and persist the vertex file
 	char fileName[MAX_PATH];
-	strcpy( fileName, "models/" );	
+	strcpy( fileName, "models/" );
 	strcat( fileName, pActiveStudioHdr->pszName() );
 	Q_StripExtension( fileName, fileName, sizeof( fileName ) );
 	strcat( fileName, ".vvd" );
@@ -2314,7 +2327,7 @@ static void GenerateLightmapSamplesForMesh( const matrix3x4_t& _matPos, const ma
 	memset(colorTexels.Base(), 0, colorTexels.Count() * sizeof(colorTexel_t));
 
 	for (int i = 0; i < colorTexels.Count(); ++i) {
-		colorTexels[i].m_fDistanceToTri = FLT_MAX;	
+		colorTexels[i].m_fDistanceToTri = FLT_MAX;
 	}
 
 	mstudiomesh_t* pMesh = _pStudioModel->pMesh(_meshID);
@@ -2372,7 +2385,7 @@ static void GenerateLightmapSamplesForMesh( const matrix3x4_t& _matPos, const ma
 					VectorTransform(modelNormal[1], _matNormal, worldNormal[1]);
 					VectorTransform(modelNormal[2], _matNormal, worldNormal[2]);
 
-					Vector2D texcoord[3] = { 
+					Vector2D texcoord[3] = {
 						*vertData->Texcoord(vertex1),
 						*vertData->Texcoord(vertex2),
 						*vertData->Texcoord(vertex3)
@@ -2389,7 +2402,7 @@ static void GenerateLightmapSamplesForMesh( const matrix3x4_t& _matPos, const ma
 						if ( colorTexels[linearPos].m_bValid )
 						{
 							continue;
-						}						
+						}
 
 						float ourDistancetoTri = ComputeBarycentricDistanceToTri( it->barycentric, texcoord );
 
@@ -2423,7 +2436,7 @@ static void GenerateLightmapSamplesForMesh( const matrix3x4_t& _matPos, const ma
 	// Process neighbors to the valid region. Walk through the existing array, look for samples that
 	// are not valid but are adjacent to valid samples. Works if we are only bilinearly sampling
 	// on the other side.
-	// First attempt: Just pretend the triangle was larger and cast a ray from this new world pos 
+	// First attempt: Just pretend the triangle was larger and cast a ray from this new world pos
 	// as above.
 	int linearPos = 0;
 	for ( int j = 0; j < _lightmapResY; ++j )
@@ -2434,7 +2447,7 @@ static void GenerateLightmapSamplesForMesh( const matrix3x4_t& _matPos, const ma
 			// Are any of the eight neighbors valid??
 			if ( colorTexels[linearPos].m_bPossiblyInteresting )
 			{
-				// Look at our neighborhood (3x3 centerd on us). 
+				// Look at our neighborhood (3x3 centerd on us).
 				shouldProcess = shouldProcess
 				             || colorTexels[ComputeLinearPos( i - 1, j - 1, _lightmapResX, _lightmapResY )].m_bValid  // TL
 							 || colorTexels[ComputeLinearPos( i    , j - 1, _lightmapResX, _lightmapResY )].m_bValid  // T
@@ -2472,22 +2485,22 @@ static void GenerateLightmapSamplesForMesh( const matrix3x4_t& _matPos, const ma
 static int GetTexelCount(unsigned int _resX, unsigned int _resY, bool _mipmaps)
 {
 	// Because they are unsigned, this is a != check--but if we were to change to ints, this would be
-	// the right assert (and it's no worse than != now). 
+	// the right assert (and it's no worse than != now).
 	Assert(_resX > 0 && _resY > 0);
 
 	if (_mipmaps == false)
 		return _resX * _resY;
 
 	int retVal = 0;
-	while (_resX > 1 || _resY > 1) 
+	while (_resX > 1 || _resY > 1)
 	{
 		retVal += _resX * _resY;
-		_resX = max(1, _resX >> 1);
-		_resY = max(1, _resY >> 1);
+		_resX = max(1U, _resX >> 1);
+		_resY = max(1U, _resY >> 1);
 	}
 
-	// Add in the 1x1 mipmap level, which wasn't hit above. This could be done in the initializer of 
-	// retVal, but it's more obvious here. 
+	// Add in the 1x1 mipmap level, which wasn't hit above. This could be done in the initializer of
+	// retVal, but it's more obvious here.
 	retVal += 1;
 
 	return retVal;
@@ -2511,7 +2524,7 @@ static void FilterFineMipmap(unsigned int _resX, unsigned int _resY, const CUtlV
 	const int cRadius = 1;
 	const float cOneOverDiameter = 1.0f / pow(2.0f * cRadius + 1.0f, 2.0f) ;
 	// Filter here.
-	for (int j = 0; j < _resY; ++j) 
+	for (int j = 0; j < _resY; ++j)
 	{
 		for (int i = 0; i < _resX; ++i)
 		{
@@ -2534,7 +2547,7 @@ static void FilterFineMipmap(unsigned int _resX, unsigned int _resY, const CUtlV
 					{
 						finalIndex = thisIndex;
 					}
-						
+
 					value += filterSrc[finalIndex];
 				}
 			}
@@ -2560,7 +2573,7 @@ static void BuildFineMipmap(unsigned int _resX, unsigned int _resY, bool _applyF
 	if (_outLinear)
 		(*_outLinear).EnsureCount(GetTexelCount(_resX, _resY, false));
 
-	// This code can take awhile, so minimize the branchiness of the inner-loop. 
+	// This code can take awhile, so minimize the branchiness of the inner-loop.
 	if (_applyFilter)
 	{
 
@@ -2568,7 +2581,7 @@ static void BuildFineMipmap(unsigned int _resX, unsigned int _resY, bool _applyF
 
 		if ( _outTexelsRGB888 )
 		{
-			for (int i = 0; i < _srcTexels.Count(); ++i) 
+			for (int i = 0; i < _srcTexels.Count(); ++i)
 			{
 				RGBA8888_t encodedColor;
 
@@ -2583,7 +2596,7 @@ static void BuildFineMipmap(unsigned int _resX, unsigned int _resY, bool _applyF
 	}
 	else
 	{
-		for (int i = 0; i < _srcTexels.Count(); ++i) 
+		for (int i = 0; i < _srcTexels.Count(); ++i)
 		{
 			ColorRGBExp32 rgbColor;
 			RGBA8888_t encodedColor;
@@ -2613,7 +2626,7 @@ static void FilterCoarserMipmaps(unsigned int _resX, unsigned int _resY, CUtlVec
 	int dstResY = max(1, (srcResY >> 1));
 	int dstOffset = GetTexelCount(srcResX, srcResY, false);
 
-	// Build mipmaps here, after being converted to linear space. 
+	// Build mipmaps here, after being converted to linear space.
 	// TODO: Should do better filtering for downsampling. But this will work for now.
 	while (srcResX > 1 || srcResY > 1)
 	{
@@ -2716,6 +2729,6 @@ static void DumpLightmapLinear( const char* _dstFilename, const CUtlVector<color
 		linearBuffer[i].g = RoundFloatToByte(linearFloats[i].y * 255.0f);
 		linearBuffer[i].r = RoundFloatToByte(linearFloats[i].x * 255.0f);
 	}
-	
+
 	TGAWriter::WriteTGAFile( _dstFilename, _width, _height, IMAGE_FORMAT_BGR888, (uint8*)(linearBuffer.Base()), _width * ImageLoader::SizeInBytes(IMAGE_FORMAT_BGR888) );
 }

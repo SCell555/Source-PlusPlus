@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -83,7 +83,7 @@ void CDispCollTri::CalcPlane( CDispVector<Vector> &m_aVerts )
 	Vector vecEdges[2];
 	vecEdges[0] = m_aVerts[GetVert( 1 )] - m_aVerts[GetVert( 0 )];
 	vecEdges[1] = m_aVerts[GetVert( 2 )] - m_aVerts[GetVert( 0 )];
-	
+
 	m_vecNormal = vecEdges[1].Cross( vecEdges[0] );
 	VectorNormalize( m_vecNormal );
 	m_flDist = m_vecNormal.Dot( m_aVerts[GetVert( 0 )] );
@@ -109,7 +109,7 @@ void CDispCollTri::CalcPlane( CDispVector<Vector> &m_aVerts )
 //-----------------------------------------------------------------------------
 inline void FindMin( float v1, float v2, float v3, int &iMin )
 {
-	float flMin = v1; 
+	float flMin = v1;
 	iMin = 0;
 	if( v2 < flMin ) { flMin = v2; iMin = 1; }
 	if( v3 < flMin ) { flMin = v3; iMin = 2; }
@@ -201,7 +201,7 @@ FORCEINLINE int IntersectFourBoxPairs( const FourVectors &mins0, const FourVecto
 	fltx4 overlapX = CmpLeSIMD(intersectMins.x,intersectMaxs.x);
 	fltx4 overlapY = CmpLeSIMD(intersectMins.y,intersectMaxs.y);
 	fltx4 overlapZ = CmpLeSIMD(intersectMins.z,intersectMaxs.z);
-	
+
 	// if the boxes overlap in all three dimensions, they intersect
 	fltx4 tmp = AndSIMD( overlapX, overlapY );
 	fltx4 active = AndSIMD( tmp, overlapZ );
@@ -299,7 +299,7 @@ bool CDispCollTree::AABBTree_Create( CCoreDispInfo *pDisp )
 
 	// Copy necessary displacement data.
 	AABBTree_CopyDispData( pDisp );
-	
+
 	// Setup/create the leaf nodes first so the recusion can use this data to stop.
 	AABBTree_CreateLeafs();
 
@@ -463,7 +463,7 @@ void CDispCollTree::AABBTree_GenerateBoxes_r( int nodeIndex, Vector *pMins, Vect
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CDispCollTree::AABBTree_CalcBounds( void )
 {
@@ -492,7 +492,7 @@ void CDispCollTree::AABBTree_CalcBounds( void )
 
 static CThreadFastMutex s_CacheMutex;
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 inline void CDispCollTree::LockCache()
 {
@@ -522,7 +522,7 @@ inline void CDispCollTree::UnlockCache()
 #endif
 }
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CDispCollTree::Cache( void )
 {
@@ -550,7 +550,7 @@ void CDispCollTree::Cache( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CDispCollTree::AABBTree_Ray( const Ray_t &ray, RayDispOutput_t &output )
 {
@@ -644,7 +644,7 @@ void CDispCollTree::AABBTree_TreeTrisRayBarycentricTest( const Ray_t &ray, const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CDispCollTree::AABBTree_Ray( const Ray_t &ray, const Vector &vecInvDelta, CBaseTrace *pTrace, bool bSide )
 {
@@ -679,7 +679,7 @@ bool CDispCollTree::AABBTree_Ray( const Ray_t &ray, const Vector &vecInvDelta, C
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CDispCollTree::AABBTree_TreeTrisRayTest( const Ray_t &ray, const Vector &vecInvDelta, int iNode, CBaseTrace *pTrace, bool bSide, CDispCollTri **pImpactTri )
 {
@@ -702,7 +702,7 @@ void CDispCollTree::AABBTree_TreeTrisRayTest( const Ray_t &ray, const Vector &ve
 			pTrace->fraction = flFrac;
 			(*pImpactTri) = pTri0;
 		}
-		
+
 		flFrac = IntersectRayWithTriangle( ray, m_aVerts[pTri1->GetVert( 0 )], m_aVerts[pTri1->GetVert( 2 )], m_aVerts[pTri1->GetVert( 1 )], bSide );
 		if( ( flFrac >= 0.0f ) && ( flFrac < pTrace->fraction ) )
 		{
@@ -713,7 +713,7 @@ void CDispCollTree::AABBTree_TreeTrisRayTest( const Ray_t &ray, const Vector &ve
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int CDispCollTree::AABBTree_GetTrisInSphere( const Vector &center, float radius, unsigned short *pIndexOut, int indexMax )
 {
@@ -787,14 +787,14 @@ int CDispCollTree::AABBTree_BuildTreeTrisInSphere_r( const Vector &center, float
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CDispCollTree::AABBTree_IntersectAABB( const Vector &absMins, const Vector &absMaxs )
 {
 	// Check for hull test.
 	if ( CheckFlags( CCoreDispInfo::SURF_NOHULL_COLL ) )
 		return false;
-	
+
 	cplane_t plane;
 	Vector center = 0.5f *(absMins + absMaxs);
 	Vector extents = absMaxs - center;
@@ -882,12 +882,12 @@ bool CDispCollTree::AABBTree_IntersectAABB( const Vector &absMins, const Vector 
 	}
 
 	// no collision
-	return false; 
+	return false;
 }
 
 static const Vector g_Vec3DispCollEpsilons(DISPCOLL_DIST_EPSILON,DISPCOLL_DIST_EPSILON,DISPCOLL_DIST_EPSILON);
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CDispCollTree::AABBTree_SweepAABB( const Ray_t &ray, const Vector &vecInvDelta, CBaseTrace *pTrace )
 {
@@ -903,7 +903,7 @@ bool CDispCollTree::AABBTree_SweepAABB( const Ray_t &ray, const Vector &vecInvDe
 	VectorNormalize( rayDir );
 	// Save fraction.
 	float flFrac = pTrace->fraction;
-	
+
 	rayleaflist_t list;
 	// NOTE: This part is loop invariant - should be hoisted up as far as possible
 	list.invDelta.DuplicateVector(vecInvDelta);
@@ -932,7 +932,7 @@ bool CDispCollTree::AABBTree_SweepAABB( const Ray_t &ray, const Vector &vecInvDe
 	// Collision.
 	if ( pTrace->fraction < flFrac )
 		return true;
-	
+
 	// No collision.
 	return false;
 }
@@ -941,11 +941,11 @@ bool CDispCollTree::AABBTree_SweepAABB( const Ray_t &ray, const Vector &vecInvDe
 //-----------------------------------------------------------------------------
 bool CDispCollTree::ResolveRayPlaneIntersect( float flStart, float flEnd, const Vector &vecNormal, float flDist, CDispCollHelper *pHelper )
 {
-	if( ( flStart > 0.0f ) && ( flEnd > 0.0f ) ) 
-		return false; 
+	if( ( flStart > 0.0f ) && ( flEnd > 0.0f ) )
+		return false;
 
-	if( ( flStart < 0.0f ) && ( flEnd < 0.0f ) ) 
-		return true; 
+	if( ( flStart < 0.0f ) && ( flEnd < 0.0f ) )
+		return true;
 
 	float flDenom = flStart - flEnd;
 	bool bDenomIsZero = ( flDenom == 0.0f );
@@ -967,14 +967,14 @@ bool CDispCollTree::ResolveRayPlaneIntersect( float flStart, float flEnd, const 
 		if( t < pHelper->m_flEndFrac )
 		{
 			pHelper->m_flEndFrac = t;
-		}	
+		}
 	}
 
 	return true;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 inline bool CDispCollTree::FacePlane( const Ray_t &ray, const Vector &rayDir, CDispCollTri *pTri, CDispCollHelper *pHelper )
 {
@@ -991,11 +991,11 @@ inline bool CDispCollTree::FacePlane( const Ray_t &ray, const Vector &rayDir, CD
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool FORCEINLINE CDispCollTree::AxisPlanesXYZ( const Ray_t &ray, CDispCollTri *pTri, CDispCollHelper *pHelper )
 {
-	static const TableVector g_ImpactNormalVecs[2][3] = 
+	static const TableVector g_ImpactNormalVecs[2][3] =
 	{
 		{
 			{ -1, 0, 0 },
@@ -1010,9 +1010,8 @@ bool FORCEINLINE CDispCollTree::AxisPlanesXYZ( const Ray_t &ray, CDispCollTri *p
 		}
 	};
 
-	Vector vecImpactNormal;
 	float flDist, flExpDist, flStart, flEnd;
-	
+
 	int iAxis;
 	for ( iAxis = 2; iAxis >= 0; --iAxis )
 	{
@@ -1320,7 +1319,7 @@ inline bool CDispCollTree::EdgeCrossAxisY( const Ray_t &ray, unsigned short iPla
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 inline bool CDispCollTree::EdgeCrossAxisZ( const Ray_t &ray, unsigned short iPlane, CDispCollHelper *pHelper )
 {
@@ -1328,7 +1327,7 @@ inline bool CDispCollTree::EdgeCrossAxisZ( const Ray_t &ray, unsigned short iPla
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CDispCollTree::SweepAABBTriIntersect( const Ray_t &ray, const Vector &rayDir, int iTri, CDispCollTri *pTri, CBaseTrace *pTrace )
 {
@@ -1350,7 +1349,7 @@ void CDispCollTree::SweepAABBTriIntersect( const Ray_t &ray, const Vector &rayDi
 
 	//
 	// There are 9 edge tests - edges 1, 2, 3 cross with the box edges (symmetry) 1, 2, 3.  However, the box
-	// is axis-aligned resulting in axially directional edges -- thus each test is edges 1, 2, and 3 vs. 
+	// is axis-aligned resulting in axially directional edges -- thus each test is edges 1, 2, and 3 vs.
 	// axial planes x, y, and z
 	//
 	// There are potentially 9 more tests with edges, the edge's edges and the direction of motion!
@@ -1385,7 +1384,7 @@ void CDispCollTree::SweepAABBTriIntersect( const Ray_t &ray, const Vector &rayDi
 			{
 				helper.m_flStartFrac = 0.0f;
 			}
-			
+
 			pTrace->fraction = helper.m_flStartFrac;
 			VectorCopy( helper.m_vecImpactNormal, pTrace->plane.normal );
 			pTrace->plane.dist = helper.m_flImpactDist;
@@ -1428,7 +1427,7 @@ CDispCollTree::CDispCollTree()
 // Purpose: deconstructor
 //-----------------------------------------------------------------------------
 CDispCollTree::~CDispCollTree()
-{	
+{
 #ifdef ENGINE_DLL
 	if ( m_hCache != INVALID_MEMHANDLE )
 		g_DispCollTriCache.DestroyResource( m_hCache );
@@ -1450,7 +1449,7 @@ bool CDispCollTree::Create( CCoreDispInfo *pDisp )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-bool CDispCollTree::PointInBounds( const Vector &vecBoxCenter, const Vector &vecBoxMin, 
+bool CDispCollTree::PointInBounds( const Vector &vecBoxCenter, const Vector &vecBoxMin,
 								   const Vector &vecBoxMax, bool bPoint )
 {
 	// Point test inside bounds.
@@ -1458,7 +1457,7 @@ bool CDispCollTree::PointInBounds( const Vector &vecBoxCenter, const Vector &vec
 	{
 		return IsPointInBox( vecBoxCenter, m_mins, m_maxs );
 	}
-	
+
 	// Box test inside bounds
 	Vector vecExtents;
 	VectorSubtract( vecBoxMax, vecBoxMin, vecExtents );

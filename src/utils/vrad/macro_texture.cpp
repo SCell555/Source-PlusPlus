@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -51,13 +51,13 @@ CMacroTextureData* LoadMacroTextureFile( const char *pFilename )
 	tempData.SetSize( g_pFileSystem->Size( hFile ) );
 	g_pFileSystem->Read( tempData.Base(), tempData.Count(), hFile );
 	g_pFileSystem->Close( hFile );
-	
-	
+
+
 	// Now feed the data into a CUtlBuffer (great...)
 	CUtlBuffer buf;
 	buf.Put( tempData.Base(), tempData.Count() );
 
-	
+
 	// Now make a texture out of it.
 	IVTFTexture *pTex = CreateVTFTexture();
 	if ( !pTex->Unserialize( buf ) )
@@ -65,7 +65,7 @@ CMacroTextureData* LoadMacroTextureFile( const char *pFilename )
 
 	pTex->ConvertImageFormat( IMAGE_FORMAT_RGBA8888, false );	// Get it in a format we like.
 
-	
+
 	// Now convert to a CMacroTextureData.
 	CMacroTextureData *pData = new CMacroTextureData;
 	pData->m_Width = pTex->Width();
@@ -108,7 +108,7 @@ void InitMacroTexture( const char *pBSPFilename )
 	Q_snprintf( vtfFilename, sizeof( vtfFilename ), "materials/macro/%s/base.vtf", mapName );
 	g_pGlobalMacroTextureData = LoadMacroTextureFile( vtfFilename );
 
-	
+
 	// Now load the macro texture for each face.
 	g_FaceMacroTextures.SetSize( numfaces );
 	for ( int iFace=0; iFace < numfaces; iFace++ )
@@ -122,7 +122,7 @@ void InitMacroTexture( const char *pBSPFilename )
 			{
 				const char *pMacroTextureName = &g_TexDataStringData[ g_TexDataStringTable[stringID] ];
 				Q_snprintf( vtfFilename, sizeof( vtfFilename ), "%smaterials/%s.vtf", gamedir, pMacroTextureName );
-				
+
 				g_FaceMacroTextures[iFace] = FindMacroTexture( vtfFilename );
 				if ( !g_FaceMacroTextures[iFace] )
 				{
@@ -153,7 +153,6 @@ inline Vector SampleMacroTexture( const CMacroTextureData *t, const Vector &vWor
 void ApplyMacroTextures( int iFace, const Vector &vWorldPos, Vector &outLuxel )
 {
 	// Add the global macro texture.
-	Vector vGlobal;
 	if ( g_pGlobalMacroTextureData )
 		outLuxel *= SampleMacroTexture( g_pGlobalMacroTextureData, vWorldPos );
 

@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -29,6 +29,7 @@
 #include <crtdbg.h>
 #endif
 
+#include "dbg.h"
 #include "mstristrip.h"
 
 using namespace std;
@@ -357,7 +358,7 @@ STRIPLIST::iterator FindBestCachedStrip(STRIPLIST *pstriplist,
     {
         STRIPVERTS &stripverts = **istriplistbest;
         STRIPVERTS::iterator vend = stripverts.end();
-        
+
         reverse(stripverts.begin(), --vend);
     }
 
