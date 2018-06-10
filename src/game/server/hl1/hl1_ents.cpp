@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -31,7 +31,7 @@
 *********************/
 
 // This trigger will fire when the level spawns (or respawns if not fire once)
-// It will check a global state before firing.  
+// It will check a global state before firing.
 #define SF_AUTO_FIREONCE		0x0001
 
 class CAutoTrigger : public CBaseEntity
@@ -176,8 +176,8 @@ void CTriggerRelay::Spawn( void )
 void CTriggerRelay::RefireThink( void )
 {
 	// sending this as Activator and Caller right now. Seems the safest thing
-	// since whatever fired the relay the first time may no longer exist. 
-	Use( this, this, m_TargetUseType, m_flTargetValue ); 
+	// since whatever fired the relay the first time may no longer exist.
+	Use( this, this, m_TargetUseType, m_flTargetValue );
 
 	if( gpGlobals->curtime > m_flTimeRefireDone )
 	{
@@ -192,7 +192,7 @@ void CTriggerRelay::RefireThink( void )
 void CTriggerRelay::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
 	m_OnTrigger.FireOutput(pActivator, this);
-	
+
 	if ( m_spawnflags & SF_RELAY_FIREONCE )
 	{
 		UTIL_Remove( this );
@@ -212,7 +212,7 @@ void CTriggerRelay::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE
 
 
 //**********************************************************
-// The Multimanager Entity - when fired, will fire up to 16 targets 
+// The Multimanager Entity - when fired, will fire up to 16 targets
 // at specified times.
 
 class CMultiManager : public CPointEntity
@@ -230,7 +230,7 @@ public:
 #endif
 
 	bool		HasTarget( string_t targetname );
-	
+
 	int ObjectCaps( void ) { return BaseClass::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
 
 	DECLARE_DATADESC();
@@ -337,16 +337,16 @@ void CMultiManager::Spawn( void )
 
 
 bool CMultiManager::HasTarget( string_t targetname )
-{ 
+{
 	for ( int i = 0; i < m_cTargets; i++ )
 		if ( FStrEq(STRING(targetname), STRING(m_iTargetName[i])) )
 			return true;
-	
+
 	return false;
 }
 
 
-// Designers were using this to fire targets that may or may not exist -- 
+// Designers were using this to fire targets that may or may not exist --
 // so I changed it to use the standard target fire code, made it a little simpler.
 void CMultiManager::ManagerThink ( void )
 {
@@ -363,7 +363,7 @@ void CMultiManager::ManagerThink ( void )
 	if ( m_index >= m_cTargets )// have we fired all targets?
 	{
 		SetThink( NULL );
-		SetUse ( &CMultiManager::ManagerUse );// allow manager re-use 
+		SetUse ( &CMultiManager::ManagerUse );// allow manager re-use
 	}
 	else
 	{
@@ -380,7 +380,7 @@ void CMultiManager::ManagerUse ( CBaseEntity *pActivator, CBaseEntity *pCaller, 
 	m_startTime = gpGlobals->curtime;
 
 	m_OnTrigger.FireOutput(pActivator, this);
-	
+
 	// Calculate the time to re-enable the multimanager - just after the last output is fired.
 	// dvsents2: need to disable multimanager until last output is fired
 	//m_fEnableTime = gpGlobals->curtime + m_OnTrigger.GetMaxDelay();
@@ -420,11 +420,11 @@ BEGIN_DATADESC( CPendulum )
 	DEFINE_FIELD( m_flDampSpeed, FIELD_FLOAT ),
 	DEFINE_FIELD( m_vCenter, FIELD_VECTOR ),
 	DEFINE_FIELD( m_vStart, FIELD_VECTOR ),
-	
+
 	DEFINE_KEYFIELD( m_flMoveDistance, FIELD_FLOAT, "pendistance" ),
 	DEFINE_KEYFIELD( m_flDamp, FIELD_FLOAT, "damp" ),
 	DEFINE_KEYFIELD( m_flBlockDamage, FIELD_FLOAT, "dmg" ),
-	
+
 	DEFINE_FUNCTION( PendulumUse ),
 	DEFINE_FUNCTION( Swing ),
 	DEFINE_FUNCTION( Stop ),
@@ -440,7 +440,7 @@ void CPendulum::Spawn( void )
 	CBaseToggle::AxisDir();
 
 	m_flDamp *=  0.001;
-	
+
 	if ( FBitSet ( m_spawnflags, SF_DOOR_PASSABLE ) )
 		SetSolid( SOLID_NONE );
 	else
@@ -460,7 +460,7 @@ void CPendulum::Spawn( void )
 		m_vCenter = GetAbsAngles() + ( m_flMoveDistance * 0.05 ) * m_vecMoveAng;
 
 		if ( FBitSet( m_spawnflags, SF_BRUSH_ROTATE_START_ON ) )
-		{		
+		{
 			SetThink( &CBaseEntity::SUB_CallUseToggle );
 			SetNextThink( gpGlobals->curtime + 0.1f );
 		}
@@ -484,7 +484,7 @@ void CPendulum::PendulumUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_
 	if ( m_flSpeed )		// Pendulum is moving, stop it and auto-return if necessary
 	{
 		if ( FBitSet( m_spawnflags, SF_BRUSH_ROTATE_START_ON ) )
-		{		
+		{
 			float	delta;
 
 			delta = CBaseToggle::AxisDelta( m_spawnflags, GetAbsAngles(), m_vStart );
@@ -534,14 +534,14 @@ void CPendulum::Blocked( CBaseEntity *pOther )
 void CPendulum::Swing( void )
 {
 	float delta, dt;
-	
+
 	delta = CBaseToggle::AxisDelta( m_spawnflags, GetAbsAngles(), m_vCenter );
 	dt = gpGlobals->curtime - m_flTime;	// How much time has passed?
 	m_flTime = gpGlobals->curtime;		// Remember the last time called
 
 	if ( delta > 0 && m_flAccel > 0 )
 		m_flSpeed -= m_flAccel * dt;	// Integrate velocity
-	else 
+	else
 		m_flSpeed += m_flAccel * dt;
 
 	if ( m_flSpeed > m_flMaxSpeed )
@@ -555,7 +555,7 @@ void CPendulum::Swing( void )
 	// Call this again
 	SetNextThink( gpGlobals->curtime + 0.1f );
 	SetMoveDoneTime( 0.1 );
-	
+
 	if ( m_flDamp )
 	{
 		m_flDampSpeed -= m_flDamp * m_flDampSpeed * dt;
@@ -589,9 +589,9 @@ void CPendulum::Touch ( CBaseEntity *pOther )
 		 damage = -damage;
 
 	pOther->TakeDamage( CTakeDamageInfo( this, this, damage, DMG_CRUSH ) );
-	
+
 	Vector vNewVel = (pOther->GetAbsOrigin() - GetAbsOrigin());
-	
+
 	VectorNormalize( vNewVel );
 
 	pOther->SetAbsVelocity( vNewVel * damage );
@@ -607,7 +607,7 @@ void CPendulum::RopeTouch ( CBaseEntity *pOther )
 
 	if ( pOther == GetEnemy() )
 		 return;
-	
+
 	m_hEnemy = pOther;
 	pOther->SetAbsVelocity( Vector ( 0, 0, 0 ) );
 	pOther->SetMoveType( MOVETYPE_NONE );
@@ -655,7 +655,7 @@ BEGIN_DATADESC( CFuncMortarField )
 	DEFINE_KEYFIELD( m_flSpread,		FIELD_FLOAT,   "m_flSpread" ),
 	DEFINE_KEYFIELD( m_iCount,		FIELD_INTEGER, "m_iCount" ),
 	DEFINE_KEYFIELD( m_fControl,		FIELD_INTEGER, "m_fControl" ),
-	
+
 	DEFINE_INPUTFUNC( FIELD_VOID,		"Trigger",		InputTrigger ),
 END_DATADESC()
 
@@ -742,7 +742,7 @@ void CFuncMortarField::InputTrigger( inputdata_t &inputdata )
 	}
 
 	CPASAttenuationFilter filter( this, ATTN_NONE );
-	EmitSound( filter, entindex(), "MortarField.Trigger" );	
+	EmitSound( filter, entindex(), "MortarField.Trigger" );
 
 	float t = 2.5;
 	for (int i = 0; i < m_iCount; i++)
@@ -848,7 +848,7 @@ bool CNPC_DeadHEV::KeyValue( const char *szKeyName, const char *szValue )
 {
 	if ( FStrEq( szKeyName, "pose" ) )
 		m_iPose = atoi( szValue );
-	else 
+	else
 		CAI_BaseNPC::KeyValue( szKeyName, szValue );
 
 	return true;
@@ -983,7 +983,7 @@ public:
 	void		LightOff( void );
 
 	float		m_flDmgTime;
-	
+
 
 private:
 	CSprite		*m_pGlow;
@@ -1111,7 +1111,7 @@ void CXenHair::Spawn( void )
 	SetModel( "models/hair.mdl" );
 	UTIL_SetSize( this, Vector(-4,-4,0), Vector(4,4,32));
 	SetSequence( 0 );
-	
+
 	if ( !HasSpawnFlags( SF_HAIR_SYNC ) )
 	{
 		SetCycle( random->RandomFloat( 0,1) );
@@ -1148,7 +1148,7 @@ LINK_ENTITY_TO_CLASS( xen_ttrigger, CXenTreeTrigger );
 
 CXenTreeTrigger *CXenTreeTrigger::TriggerCreate( CBaseEntity *pOwner, const Vector &position )
 {
-	CXenTreeTrigger *pTrigger = CREATE_ENTITY( CXenTreeTrigger, "xen_ttrigger" ); 
+	CXenTreeTrigger *pTrigger = CREATE_ENTITY( CXenTreeTrigger, "xen_ttrigger" );
 	pTrigger->SetAbsOrigin( position );
 
 	pTrigger->SetSolid( SOLID_BBOX );
@@ -1180,7 +1180,7 @@ public:
 	void		Think( void );
 	int			OnTakeDamage( const CTakeDamageInfo &info ) { Attack(); return 0; }
 	void		HandleAnimEvent( animevent_t *pEvent );
-	void		Attack( void );	
+	void		Attack( void );
 	Class_T			Classify( void ) { return CLASS_ALIEN_PREDATOR; }
 
 	DECLARE_DATADESC();
@@ -1215,7 +1215,7 @@ void CXenTree::Spawn( void )
 
 	AngleVectors( GetAbsAngles(), &vForward );
 	triggerPosition = GetAbsOrigin() + (vForward * 64);
-	
+
 	// Create the trigger
 	m_pTrigger = CXenTreeTrigger::TriggerCreate( this, triggerPosition );
 	UTIL_SetSize( m_pTrigger, Vector( -24, -24, 0 ), Vector( 24, 24, 128 ) );
@@ -1280,7 +1280,7 @@ void CXenTree::HandleAnimEvent( animevent_t *pEvent )
 					}
 				}
 			}
-					
+
 			if ( sound )
 			{
 				CPASAttenuationFilter filter( this );
@@ -1360,7 +1360,7 @@ public:
 
 CXenHull *CXenHull::CreateHull( CBaseEntity *source, const Vector &mins, const Vector &maxs, const Vector &offset )
 {
-	CXenHull *pHull = CREATE_ENTITY( CXenHull, "xen_hull" ); 
+	CXenHull *pHull = CREATE_ENTITY( CXenHull, "xen_hull" );
 
 	UTIL_SetOrigin( pHull, source->GetAbsOrigin() + offset );
 	pHull->SetSolid( SOLID_BBOX );
@@ -1393,7 +1393,7 @@ void CXenSporeMed::Spawn( void )
 
 
 // I just eyeballed these -- fill in hulls for the legs
-const Vector CXenSporeLarge::m_hullSizes[] = 
+const Vector CXenSporeLarge::m_hullSizes[] =
 {
 	Vector( 90, -25, 0 ),
 	Vector( 25, 75, 0 ),
@@ -1407,7 +1407,7 @@ void CXenSporeLarge::Spawn( void )
 	m_nSkin = 2;
 	CXenSpore::Spawn();
 	UTIL_SetSize( this, Vector(-48,-48,110), Vector(48,48,240));
-	
+
 	Vector forward, right;
 
 	AngleVectors( GetAbsAngles(), &forward, &right, NULL );
@@ -1436,7 +1436,7 @@ void CXenSpore::Spawn( void )
 	SetNextThink( gpGlobals->curtime + random->RandomFloat( 0.1f, 0.4f ) );	// Load balance these a bit
 }
 
-const char *CXenSpore::pModelNames[] = 
+const char *CXenSpore::pModelNames[] =
 {
 	"models/fungus(small).mdl",
 	"models/fungus.mdl",
@@ -1458,7 +1458,7 @@ void CXenSpore::Touch( CBaseEntity *pOther )
 
 //=========================================================
 // WaitTillLand - in order to emit their meaty scent from
-// the proper location, gibs should wait until they stop 
+// the proper location, gibs should wait until they stop
 // bouncing to emit their scent. That's what this function
 // does.
 //=========================================================
@@ -1475,7 +1475,7 @@ void CHL1Gib::WaitTillLand ( void )
 	/*	SetRenderColorA( 255 );
 		m_nRenderMode = kRenderTransTexture;
 		AddSolidFlags( FSOLID_NOT_SOLID );*/
-		
+
 		SetNextThink( gpGlobals->curtime + m_lifeTime );
 		SetThink ( &CBaseEntity::SUB_FadeOut );
 
@@ -1500,7 +1500,7 @@ void CHL1Gib::BounceGibTouch ( CBaseEntity *pOther )
 {
 	Vector	vecSpot;
 	trace_t	tr;
-	
+
 	if ( GetFlags() & FL_ONGROUND)
 	{
 		SetAbsVelocity( GetAbsVelocity() * 0.9 );
@@ -1517,14 +1517,14 @@ void CHL1Gib::BounceGibTouch ( CBaseEntity *pOther )
 
 			UTIL_BloodDecalTrace( &tr, m_bloodColor );
 
-			m_cBloodDecals--; 
+			m_cBloodDecals--;
 		}
 
 		if ( m_material != matNone && random->RandomInt( 0, 2 ) == 0 )
 		{
 			float volume;
 			float zvel = fabsf( GetAbsVelocity().z );
-		
+
 			volume = 0.8 * min(1.0, ((float)zvel) / 450.0);
 
 			CBreakable::MaterialSoundRandom( entindex(), (Materials)m_material, volume );
@@ -1533,13 +1533,12 @@ void CHL1Gib::BounceGibTouch ( CBaseEntity *pOther )
 }
 
 //
-// Sticky gib puts blood on the wall and stays put. 
+// Sticky gib puts blood on the wall and stays put.
 //
 void CHL1Gib::StickyGibTouch ( CBaseEntity *pOther )
 {
-	Vector	vecSpot;
 	trace_t	tr;
-	
+
 	SetThink ( &CHL1Gib::SUB_Remove );
 	SetNextThink( gpGlobals->curtime + 10 );
 
@@ -1573,7 +1572,7 @@ void CHL1Gib::Spawn( const char *szGibModel )
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE );
 
 	SetFriction( 0.55 ); // deading the bounce a bit
-	
+
 	// sometimes an entity inherits the edict from a former piece of glass,
 	// and will spawn using the same render FX or rendermode! bad!
 	SetRenderColorA( 255 );
@@ -1594,7 +1593,7 @@ void CHL1Gib::Spawn( const char *szGibModel )
 	SetTouch ( &CHL1Gib::BounceGibTouch );
 
 	m_material = matNone;
-	m_cBloodDecals = 5;// how many blood decals this gib can place (1 per bounce until none remain). 
+	m_cBloodDecals = 5;// how many blood decals this gib can place (1 per bounce until none remain).
 }
 
 LINK_ENTITY_TO_CLASS( hl1gib, CHL1Gib );
@@ -1620,7 +1619,7 @@ class CTriggerEndSection : public CBaseEntity
 public:
 	void Spawn( void );
 	void InputEndSection( inputdata_t &data  );
-	
+
 	DECLARE_DATADESC();
 };
 

@@ -1,7 +1,7 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Bullseyes act as targets for other NPC's to attack and to trigger
-//			events 
+//			events
 //
 // $Workfile:     $
 // $Date:         $
@@ -63,7 +63,7 @@ int g_iSquadIndex = 0;
 #define GRUNT_SNDLVL					SNDLVL_NORM	// soundlevel of grunt sentences
 #define HGRUNT_LIMP_HEALTH				20
 #define HGRUNT_DMG_HEADSHOT				( DMG_BULLET | DMG_CLUB )	// damage types that can kill a grunt with a single headshot.
-#define HGRUNT_NUM_HEADS				2 // how many grunt heads are there? 
+#define HGRUNT_NUM_HEADS				2 // how many grunt heads are there?
 #define HGRUNT_MINIMUM_HEADSHOT_DAMAGE	15 // must do at least this much damage in one shot to head to score a headshot kill
 #define	HGRUNT_SENTENCE_VOLUME			(float)0.35 // volume of grunt sentences
 
@@ -88,8 +88,8 @@ int g_iSquadIndex = 0;
 #define		HGRUNT_AE_RELOAD		( 2 )
 #define		HGRUNT_AE_KICK			( 3 )
 #define		HGRUNT_AE_BURST1		( 4 )
-#define		HGRUNT_AE_BURST2		( 5 ) 
-#define		HGRUNT_AE_BURST3		( 6 ) 
+#define		HGRUNT_AE_BURST2		( 5 )
+#define		HGRUNT_AE_BURST3		( 6 )
 #define		HGRUNT_AE_GREN_TOSS		( 7 )
 #define		HGRUNT_AE_GREN_LAUNCH	( 8 )
 #define		HGRUNT_AE_GREN_DROP		( 9 )
@@ -97,7 +97,7 @@ int g_iSquadIndex = 0;
 #define		HGRUNT_AE_DROP_GUN		( 11) // grunt (probably dead) is dropping his mp5.
 
 
-const char *CNPC_HGrunt::pGruntSentences[] = 
+const char *CNPC_HGrunt::pGruntSentences[] =
 {
 	"HG_GREN", // grenade scared grunt
 	"HG_ALERT", // sees player
@@ -160,7 +160,7 @@ enum
 //=========================================================
 // monster-specific tasks
 //=========================================================
-enum 
+enum
 {
 	TASK_GRUNT_FACE_TOSS_DIR = LAST_SHARED_TASK + 1,
 	TASK_GRUNT_SPEAK_SENTENCE,
@@ -180,7 +180,7 @@ enum
 //	> Squad slots
 // -----------------------------------------------
 enum SquadSlot_T
-{	
+{
 	SQUAD_SLOT_GRENADE1 = LAST_SHARED_SQUADSLOT,
 	SQUAD_SLOT_GRENADE2,
 	SQUAD_SLOT_ENGAGE1,
@@ -253,7 +253,7 @@ void CNPC_HGrunt::Spawn()
 	CapabilitiesAdd(bits_CAP_INNATE_RANGE_ATTACK2 );
 	// Innate range attack for kicking
 	CapabilitiesAdd(bits_CAP_INNATE_MELEE_ATTACK1 );
-			
+
 	m_fFirstEncounter	= true;// this is true when the grunt spawns, because he hasn't encountered an enemy yet.
 
 	m_HackedGunPos = Vector ( 0, 0, 55 );
@@ -343,7 +343,7 @@ void CNPC_HGrunt::Precache()
 
 	UTIL_PrecacheOther( "grenade_hand" );
 	UTIL_PrecacheOther( "grenade_mp5" );
-}	
+}
 
 //=========================================================
 // someone else is talking - don't speak
@@ -374,9 +374,9 @@ bool CNPC_HGrunt::FOkToSpeak( void )
 // being able to execute the intended action. It's really lame
 // when a grunt says 'COVER ME' and then doesn't move. The problem
 // is that the sentences were played when the decision to TRY
-// to move to cover was made. Now the sentence is played after 
+// to move to cover was made. Now the sentence is played after
 // we know for sure that there is a valid path. The schedule
-// may still fail but in most cases, well after the grunt has 
+// may still fail but in most cases, well after the grunt has
 // started moving.
 //=========================================================
 void CNPC_HGrunt::SpeakSentence( void )
@@ -384,7 +384,7 @@ void CNPC_HGrunt::SpeakSentence( void )
 	if ( m_iSentence == HGRUNT_SENT_NONE )
 	{
 		// no sentence cued up.
-		return; 
+		return;
 	}
 
 	if ( FOkToSpeak() )
@@ -409,7 +409,7 @@ void CNPC_HGrunt::JustSpoke( void )
 void CNPC_HGrunt::PrescheduleThink ( void )
 {
 	BaseClass::PrescheduleThink();
-	
+
 	if ( m_pSquad && GetEnemy() != NULL )
 	{
 		if ( m_pSquad->GetLeader() == NULL )
@@ -418,8 +418,8 @@ void CNPC_HGrunt::PrescheduleThink ( void )
 		CNPC_HGrunt *pSquadLeader = (CNPC_HGrunt*)m_pSquad->GetLeader()->MyNPCPointer();
 
 		if ( pSquadLeader == NULL )
-			 return; //Paranoid, so making sure it's ok.		
-		
+			 return; //Paranoid, so making sure it's ok.
+
 		if ( HasCondition ( COND_SEE_ENEMY ) )
 		{
 			// update the squad's last enemy sighting time.
@@ -457,7 +457,7 @@ int CNPC_HGrunt::SquadRecruit( int searchRadius, int maxMembers )
 
 	// I am my own leader
 	squadCount = 1;
-	
+
 	CBaseEntity *pEntity = NULL;
 
 	if ( m_SquadName != NULL_STRING )
@@ -473,7 +473,7 @@ int CNPC_HGrunt::SquadRecruit( int searchRadius, int maxMembers )
 			{
 				if ( !pRecruit->m_pSquad && pRecruit->Classify() == iMyClass && pRecruit != this )
 				{
-					// minimum protection here against user error.in worldcraft. 
+					// minimum protection here against user error.in worldcraft.
 					if ( pRecruit->m_SquadName != NULL_STRING && FStrEq( STRING( m_SquadName ), STRING( pRecruit->m_SquadName ) ) )
 					{
 						pRecruit->InitSquad();
@@ -481,7 +481,7 @@ int CNPC_HGrunt::SquadRecruit( int searchRadius, int maxMembers )
 					}
 				}
 			}
-	
+
 			pEntity = gEntList.FindEntityByClassname( pEntity, "monster_human_grunt" );
 		}
 
@@ -603,16 +603,16 @@ int CNPC_HGrunt::MeleeAttack1Conditions ( float flDot, float flDist )
 		return COND_TOO_FAR_TO_ATTACK;
 	else if (flDot < 0.7)
 		return COND_NOT_FACING_ATTACK;
-	
+
 	return COND_CAN_MELEE_ATTACK1;
 }
 
 //=========================================================
-// CheckRangeAttack1 - overridden for HGrunt, cause 
+// CheckRangeAttack1 - overridden for HGrunt, cause
 // FCanCheckAttacks() doesn't disqualify all attacks based
 // on whether or not the enemy is occluded because unlike
 // the base class, the HGrunt can attack when the enemy is
-// occluded (throw grenade over wall, etc). We must 
+// occluded (throw grenade over wall, etc). We must
 // disqualify the machine gun attack if the enemy is occluded.
 //=========================================================
 int CNPC_HGrunt::RangeAttack1Conditions ( float flDot, float flDist )
@@ -666,24 +666,24 @@ int CNPC_HGrunt::GetGrenadeConditions( float flDot, float flDist  )
 	// assume things haven't changed too much since last time
 	if (gpGlobals->curtime < m_flNextGrenadeCheck )
 		return m_iLastGrenadeCondition;
-	
+
 	if ( m_flGroundSpeed != 0 )
 		return COND_NONE;
 
 	CBaseEntity *pEnemy = GetEnemy();
-	
+
 	if (!pEnemy)
 		return COND_NONE;
-	
+
 	Vector flEnemyLKP = GetEnemyLKP();
 	if ( !(pEnemy->GetFlags() & FL_ONGROUND) && pEnemy->GetWaterLevel() == 0 && flEnemyLKP.z > (GetAbsOrigin().z + WorldAlignMaxs().z)  )
 	{
-		//!!!BUGBUG - we should make this check movetype and make sure it isn't FLY? Players who jump a lot are unlikely to 
+		//!!!BUGBUG - we should make this check movetype and make sure it isn't FLY? Players who jump a lot are unlikely to
 		// be grenaded.
 		// don't throw grenades at anything that isn't on the ground!
 		return COND_NONE;
 	}
-	
+
 	Vector vecTarget;
 
 	if (FBitSet( m_iWeapons, HGRUNT_HANDGRENADE))
@@ -722,7 +722,7 @@ int CNPC_HGrunt::GetGrenadeConditions( float flDot, float flDist  )
 			return COND_NONE;
 		}
 	}
-	
+
 	if ( ( vecTarget - GetAbsOrigin() ).Length2D() <= 256 )
 	{
 		// crap, I don't want to blow myself up
@@ -730,7 +730,7 @@ int CNPC_HGrunt::GetGrenadeConditions( float flDot, float flDist  )
 		return COND_NONE;
 	}
 
-		
+
 	if (FBitSet( m_iWeapons, HGRUNT_HANDGRENADE))
 	{
 		Vector vGunPos;
@@ -762,7 +762,7 @@ int CNPC_HGrunt::GetGrenadeConditions( float flDot, float flDist  )
 		Vector vGunPos;
 		QAngle angGunAngles;
 		GetAttachment( "0", vGunPos, angGunAngles );
-		
+
 		Vector vecToss = VecCheckThrow( this, vGunPos, vecTarget, sk_hgrunt_gspeed.GetFloat(), 0.5 );
 
 		if ( vecToss != vec3_origin )
@@ -792,7 +792,7 @@ int CNPC_HGrunt::GetGrenadeConditions( float flDot, float flDist  )
 // cannot see its enemy.
 //
 // !!!BUGBUG - this gets called before a 3-round burst is fired
-// which means that a friendly can still be hit with up to 2 rounds. 
+// which means that a friendly can still be hit with up to 2 rounds.
 // ALSO, grenades will not be tossed if there is a friendly in front,
 // this is a bad bug. Friendly machine gun fire avoidance
 // will unecessarily prevent the throwing of a grenade as well.
@@ -823,7 +823,7 @@ int CNPC_HGrunt::GetSoundInterests( void )
 //=========================================================
 // TraceAttack - make sure we're not taking it in the helmet
 //=========================================================
-void CNPC_HGrunt::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr )
+void CNPC_HGrunt::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -841,7 +841,7 @@ void CNPC_HGrunt::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 		// it's head shot anyways
 		ptr->hitgroup = HITGROUP_HEAD;
 	}
-	BaseClass::TraceAttack( info, vecDir, ptr );
+	BaseClass::TraceAttack( info, vecDir, ptr, pAccumulator );
 }
 
 
@@ -868,29 +868,29 @@ float CNPC_HGrunt::MaxYawSpeed( void )
 
 	switch ( GetActivity() )
 	{
-	case ACT_IDLE:	
-		flYS = 150;		
+	case ACT_IDLE:
+		flYS = 150;
 		break;
-	case ACT_RUN:	
-		flYS = 150;	
+	case ACT_RUN:
+		flYS = 150;
 		break;
-	case ACT_WALK:	
-		flYS = 180;		
+	case ACT_WALK:
+		flYS = 180;
 		break;
-	case ACT_RANGE_ATTACK1:	
-		flYS = 120;	
+	case ACT_RANGE_ATTACK1:
+		flYS = 120;
 		break;
-	case ACT_RANGE_ATTACK2:	
-		flYS = 120;	
+	case ACT_RANGE_ATTACK2:
+		flYS = 120;
 		break;
-	case ACT_MELEE_ATTACK1:	
-		flYS = 120;	
+	case ACT_MELEE_ATTACK1:
+		flYS = 120;
 		break;
-	case ACT_MELEE_ATTACK2:	
-		flYS = 120;	
+	case ACT_MELEE_ATTACK2:
+		flYS = 120;
 		break;
 	case ACT_TURN_LEFT:
-	case ACT_TURN_RIGHT:	
+	case ACT_TURN_RIGHT:
 		flYS = 180;
 		break;
 	case ACT_GLIDE:
@@ -935,7 +935,7 @@ void CNPC_HGrunt::IdleSound( void )
 			case 1: // check in
 				SENTENCEG_PlayRndSz( edict(), "HG_CLEAR", HGRUNT_SENTENCE_VOLUME, SNDLVL_NORM, 0, m_voicePitch);
 				break;
-			case 2: // question 
+			case 2: // question
 				SENTENCEG_PlayRndSz( edict(), "HG_ANSWER", HGRUNT_SENTENCE_VOLUME, SNDLVL_NORM, 0, m_voicePitch);
 				break;
 			}
@@ -968,7 +968,7 @@ bool CNPC_HGrunt::HandleInteraction(int interactionType, void *data, CBaseCombat
 		{
 			SetGroundEntity( NULL );
 		}
-		
+
 		//Maybe this will break something else.
 		if ( GetState() == NPC_STATE_SCRIPT )
 		{
@@ -977,7 +977,7 @@ bool CNPC_HGrunt::HandleInteraction(int interactionType, void *data, CBaseCombat
 		}
 
 		SetState( NPC_STATE_PRONE );
-		
+
 		CTakeDamageInfo info;
 		PainSound( info );
 		return true;
@@ -1010,7 +1010,7 @@ CBaseEntity *CNPC_HGrunt::Kick( void )
 	Vector vecEnd = vecStart + (forward * 70);
 
 	UTIL_TraceHull( vecStart, vecEnd, Vector(-16,-16,-18), Vector(16,16,18), MASK_SHOT_HULL, this, COLLISION_GROUP_NONE, &tr );
-	
+
 	if ( tr.m_pEnt )
 	{
 		CBaseEntity *pEntity = tr.m_pEnt;
@@ -1068,9 +1068,6 @@ void CNPC_HGrunt::Event_Killed( const CTakeDamageInfo &info )
 //=========================================================
 void CNPC_HGrunt::HandleAnimEvent( animevent_t *pEvent )
 {
-	Vector	vecShootDir;
-	Vector	vecShootOrigin;
-
 	switch( pEvent->event )
 	{
 		case HGRUNT_AE_RELOAD:
@@ -1102,16 +1099,16 @@ void CNPC_HGrunt::HandleAnimEvent( animevent_t *pEvent )
 		{
 			CPASAttenuationFilter filter2( this );
 			EmitSound( filter2, entindex(), "HGrunt.GrenadeLaunch" );
-			
+
 			Vector vecSrc;
 			QAngle angAngles;
 
 			GetAttachment( "0", vecSrc, angAngles );
-		
+
 			CGrenadeMP5 * m_pMyGrenade = (CGrenadeMP5*)Create( "grenade_mp5", vecSrc, angAngles, this );
 			m_pMyGrenade->SetAbsVelocity( m_vecTossVelocity );
 			m_pMyGrenade->SetLocalAngularVelocity( QAngle( random->RandomFloat( -100, -500 ), 0, 0 ) );
-			m_pMyGrenade->SetMoveType( MOVETYPE_FLYGRAVITY ); 
+			m_pMyGrenade->SetMoveType( MOVETYPE_FLYGRAVITY );
 			m_pMyGrenade->SetThrower( this );
 			m_pMyGrenade->SetDamage( sk_plr_dmg_mp5_grenade.GetFloat() );
 
@@ -1156,7 +1153,7 @@ void CNPC_HGrunt::HandleAnimEvent( animevent_t *pEvent )
 				CPASAttenuationFilter filter4( this );
 				EmitSound( filter4, entindex(), "HGrunt.Shotgun" );
 			}
-		
+
 			CSoundEnt::InsertSound ( SOUND_COMBAT, GetAbsOrigin(), 384, 0.3 );
 		}
 		break;
@@ -1187,7 +1184,7 @@ void CNPC_HGrunt::HandleAnimEvent( animevent_t *pEvent )
 					CTakeDamageInfo info( this, this, sk_hgrunt_kick.GetFloat(), DMG_CLUB );
 					CalculateMeleeDamageForce( &info, forward, pHurt->GetAbsOrigin() );
 					pHurt->TakeDamage( info );
-				}			
+				}
 			}
 		}
 		break;
@@ -1226,7 +1223,7 @@ void CNPC_HGrunt::Shoot ( void )
 {
 	if ( GetEnemy() == NULL )
 		return;
-	
+
 	Vector vecShootOrigin = Weapon_ShootPosition();
 	Vector vecShootDir = GetShootEnemyDir( vecShootOrigin );
 
@@ -1236,9 +1233,9 @@ void CNPC_HGrunt::Shoot ( void )
 	Vector	vecShellVelocity = right * random->RandomFloat(40,90) + up * random->RandomFloat( 75,200 ) + forward * random->RandomFloat( -40, 40 );
 	EjectShell( vecShootOrigin - vecShootDir * 24, vecShellVelocity, GetAbsAngles().y, 0 );
 	FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_10DEGREES, 2048, m_iAmmoType ); // shoot +-5 degrees
-	
+
 	DoMuzzleFlash();
-	
+
 	m_cAmmoLoaded--;// take away a bullet!
 
 	SetAim( vecShootDir );
@@ -1263,7 +1260,7 @@ void CNPC_HGrunt::Shotgun ( void )
 	FireBullets( sk_hgrunt_pellets.GetFloat(), vecShootOrigin, vecShootDir, VECTOR_CONE_15DEGREES, 2048, m_iAmmoType, 0 ); // shoot +-7.5 degrees
 
 	DoMuzzleFlash();
-	
+
 	m_cAmmoLoaded--;// take away a bullet!
 
 	SetAim( vecShootDir );
@@ -1288,7 +1285,7 @@ void CNPC_HGrunt::StartTask ( const Task_t *pTask )
 		SpeakSentence();
 		TaskComplete();
 		break;
-	
+
 	case TASK_WALK_PATH:
 	case TASK_RUN_PATH:
 		// grunt no longer assumes he is covered if he moves
@@ -1312,7 +1309,7 @@ void CNPC_HGrunt::StartTask ( const Task_t *pTask )
 		}
 		break;
 
-	default: 
+	default:
 		BaseClass::StartTask( pTask );
 		break;
 	}
@@ -1359,16 +1356,16 @@ void CNPC_HGrunt::PainSound( const CTakeDamageInfo &info )
 }
 
 //=========================================================
-// DeathSound 
+// DeathSound
 //=========================================================
 void CNPC_HGrunt::DeathSound( const CTakeDamageInfo &info )
 {
 	CPASAttenuationFilter filter( this, ATTN_IDLE );
-	EmitSound( filter, entindex(), "HGrunt.Die" );	
+	EmitSound( filter, entindex(), "HGrunt.Die" );
 }
 
 //=========================================================
-// SetActivity 
+// SetActivity
 //=========================================================
 Activity CNPC_HGrunt::NPC_TranslateActivity( Activity eNewActivity )
 {
@@ -1404,7 +1401,7 @@ Activity CNPC_HGrunt::NPC_TranslateActivity( Activity eNewActivity )
 		}
 		break;
 	case ACT_RANGE_ATTACK2:
-		// grunt is going to a secondary long range attack. This may be a thrown 
+		// grunt is going to a secondary long range attack. This may be a thrown
 		// grenade or fired grenade, we must determine which and pick proper sequence
  		if ( m_iWeapons & HGRUNT_HANDGRENADE )
 		{
@@ -1444,7 +1441,7 @@ Activity CNPC_HGrunt::NPC_TranslateActivity( Activity eNewActivity )
 		{
 			eNewActivity = ACT_IDLE_ANGRY;
 		}
-		
+
 		break;
 	}
 
@@ -1471,7 +1468,7 @@ int CNPC_HGrunt::SelectSchedule( void )
 		// clear old sentence
 	m_iSentence = HGRUNT_SENT_NONE;
 
-	// flying? If PRONE, barnacle has me. IF not, it's assumed I am rapelling. 
+	// flying? If PRONE, barnacle has me. IF not, it's assumed I am rapelling.
 	if ( GetMoveType() == MOVETYPE_FLYGRAVITY && m_NPCState != NPC_STATE_PRONE )
 	{
 		if (GetFlags() & FL_ONGROUND)
@@ -1483,7 +1480,7 @@ int CNPC_HGrunt::SelectSchedule( void )
 		}
 		else
 		{
-			// repel down a rope, 
+			// repel down a rope,
 			if ( m_NPCState == NPC_STATE_COMBAT )
 				return SCHED_GRUNT_REPEL_ATTACK;
 			else
@@ -1495,13 +1492,13 @@ int CNPC_HGrunt::SelectSchedule( void )
 	if ( HasCondition ( COND_HEAR_DANGER ) )
 	{
 		// dangerous sound nearby!
-				
+
 		//!!!KELLY - currently, this is the grunt's signal that a grenade has landed nearby,
 		// and the grunt should find cover from the blast
 		// good place for "SHIT!" or some other colorful verbal indicator of dismay.
-		// It's not safe to play a verbal order here "Scatter", etc cause 
-		// this may only affect a single individual in a squad. 
-				
+		// It's not safe to play a verbal order here "Scatter", etc cause
+		// this may only affect a single individual in a squad.
+
 		if (FOkToSpeak())
 		{
 			SENTENCEG_PlayRndSz( edict(), "HG_GREN", HGRUNT_SENTENCE_VOLUME, GRUNT_SNDLVL, 0, m_voicePitch);
@@ -1544,13 +1541,13 @@ int CNPC_HGrunt::SelectSchedule( void )
 					{
 						return SCHED_TAKE_COVER_FROM_ENEMY;
 					}
-					else 
+					else
 					{
-						//!!!KELLY - the leader of a squad of grunts has just seen the player or a 
+						//!!!KELLY - the leader of a squad of grunts has just seen the player or a
 						// monster and has made it the squad's enemy. You
 						// can check pev->flags for FL_CLIENT to determine whether this is the player
 						// or a monster. He's going to immediately start
-						// firing, though. If you'd like, we can make an alternate "first sight" 
+						// firing, though. If you'd like, we can make an alternate "first sight"
 						// schedule where the leader plays a handsign anim
 						// that gives us enough time to hear a short sentence or spoken command
 						// before he starts pluggin away.
@@ -1560,15 +1557,15 @@ int CNPC_HGrunt::SelectSchedule( void )
 								// player
 								SENTENCEG_PlayRndSz( edict(), "HG_ALERT", HGRUNT_SENTENCE_VOLUME, GRUNT_SNDLVL, 0, m_voicePitch);
 							else if ((GetEnemy() != NULL) &&
-									(GetEnemy()->Classify() != CLASS_PLAYER_ALLY) && 
-									(GetEnemy()->Classify() != CLASS_HUMAN_PASSIVE) && 
+									(GetEnemy()->Classify() != CLASS_PLAYER_ALLY) &&
+									(GetEnemy()->Classify() != CLASS_HUMAN_PASSIVE) &&
 									(GetEnemy()->Classify() != CLASS_MACHINE) )
 								// monster
 								SENTENCEG_PlayRndSz( edict(), "HG_MONST", HGRUNT_SENTENCE_VOLUME, GRUNT_SNDLVL, 0, m_voicePitch);
 
 							JustSpoke();
 						}
-						
+
 						if ( HasCondition ( COND_CAN_RANGE_ATTACK1 ) )
 						{
 							return SCHED_GRUNT_SUPPRESS;
@@ -1583,12 +1580,12 @@ int CNPC_HGrunt::SelectSchedule( void )
 // no ammo
 			else if ( HasCondition ( COND_NO_PRIMARY_AMMO ) )
 			{
-				//!!!KELLY - this individual just realized he's out of bullet ammo. 
-				// He's going to try to find cover to run to and reload, but rarely, if 
-				// none is available, he'll drop and reload in the open here. 
+				//!!!KELLY - this individual just realized he's out of bullet ammo.
+				// He's going to try to find cover to run to and reload, but rarely, if
+				// none is available, he'll drop and reload in the open here.
 				return SCHED_GRUNT_HIDE_RELOAD;
 			}
-			
+
 // damaged just a little
 			else if ( HasCondition( COND_LIGHT_DAMAGE ) )
 			{
@@ -1634,11 +1631,11 @@ int CNPC_HGrunt::SelectSchedule( void )
 				{
 					if ( m_pSquad->GetLeader() != NULL )
 					{
-					
+
 						CAI_BaseNPC *pSquadLeader = m_pSquad->GetLeader()->MyNPCPointer();
-						
+
 						// if the enemy has eluded the squad and a squad member has just located the enemy
-						// and the enemy does not see the squad member, issue a call to the squad to waste a 
+						// and the enemy does not see the squad member, issue a call to the squad to waste a
 						// little time and give the player a chance to turn.
 						if ( pSquadLeader && pSquadLeader->EnemyHasEludedMe() && !HasCondition ( COND_ENEMY_FACING_ME ) )
 						{
@@ -1678,8 +1675,8 @@ int CNPC_HGrunt::SelectSchedule( void )
 				}
 				else if ( OccupyStrategySlotRange ( SQUAD_SLOT_ENGAGE1, SQUAD_SLOT_ENGAGE2 ) )
 				{
-					//!!!KELLY - grunt cannot see the enemy and has just decided to 
-					// charge the enemy's position. 
+					//!!!KELLY - grunt cannot see the enemy and has just decided to
+					// charge the enemy's position.
 					if (FOkToSpeak())// && RANDOM_LONG(0,1))
 					{
 						//SENTENCEG_PlayRndSz( ENT(pev), "HG_CHARGE", HGRUNT_SENTENCE_VOLUME, GRUNT_SNDLVL, 0, m_voicePitch);
@@ -1702,7 +1699,7 @@ int CNPC_HGrunt::SelectSchedule( void )
 					return SCHED_STANDOFF;
 				}
 			}
-			
+
 			if ( HasCondition( COND_SEE_ENEMY ) && !HasCondition ( COND_CAN_RANGE_ATTACK1 ) )
 			{
 				return SCHED_GRUNT_ESTABLISH_LINE_OF_FIRE;
@@ -1769,7 +1766,7 @@ int CNPC_HGrunt::TranslateSchedule( int scheduleType )
 			return SCHED_FAIL;
 		}
 		break;
-	
+
 	case SCHED_RANGE_ATTACK1:
 		{
 			// randomly stand or crouch
@@ -1777,7 +1774,7 @@ int CNPC_HGrunt::TranslateSchedule( int scheduleType )
 			{
 				m_fStanding = random->RandomInt( 0, 1 ) != 0;
 			}
-		 
+
 			if ( m_fStanding )
 				return SCHED_GRUNT_RANGE_ATTACK1B;
 			else
@@ -1898,7 +1895,7 @@ void CNPC_HGruntRepel::RepelUse ( CBaseEntity *pActivator, CBaseEntity *pCaller,
 {
 	trace_t tr;
 	UTIL_TraceLine( GetAbsOrigin(), GetAbsOrigin() + Vector( 0, 0, -4096.0), MASK_NPCSOLID, this,COLLISION_GROUP_NONE, &tr);
-	
+
 	CBaseEntity *pEntity = Create( "monster_human_grunt", GetAbsOrigin(), GetAbsAngles() );
 	CAI_BaseNPC *pGrunt = pEntity->MyNPCPointer( );
 	pGrunt->SetMoveType( MOVETYPE_FLYGRAVITY );
@@ -1934,11 +1931,11 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DECLARE_ACTIVITY( ACT_GRUNT_SHOTGUN_CROUCHING );
 
 	DECLARE_CONDITION( COND_GRUNT_NOFIRE )
-	
+
 	DECLARE_TASK( TASK_GRUNT_FACE_TOSS_DIR )
 	DECLARE_TASK( TASK_GRUNT_SPEAK_SENTENCE )
 	DECLARE_TASK( TASK_GRUNT_CHECK_FIRE )
-		
+
 	DECLARE_SQUADSLOT( SQUAD_SLOT_GRENADE1 )
 	DECLARE_SQUADSLOT( SQUAD_SLOT_GRENADE2 )
 	DECLARE_SQUADSLOT( SQUAD_SLOT_ENGAGE1 )
@@ -1950,7 +1947,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_FAIL,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING		0"
 		"		TASK_SET_ACTIVITY		ACTIVITY:ACT_IDLE"
@@ -1961,14 +1958,14 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_CAN_RANGE_ATTACK1"
 		"		COND_CAN_MELEE_ATTACK1"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_COMBAT_FAIL
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_COMBAT_FAIL,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING		0"
 		"		TASK_SET_ACTIVITY		ACTIVITY:ACT_IDLE"
@@ -1978,7 +1975,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"	Interrupts"
 		"		COND_CAN_RANGE_ATTACK1"
 		)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_VICTORY_DANCE
 	// Victory dance!
@@ -1986,7 +1983,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_VICTORY_DANCE,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING				0"
 		"		TASK_FACE_ENEMY					0"
@@ -2002,7 +1999,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_LIGHT_DAMAGE"
 		"		COND_HEAVY_DAMAGE"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_ESTABLISH_LINE_OF_FIRE
 	// Establish line of fire - move to a position that allows
@@ -2011,7 +2008,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_ESTABLISH_LINE_OF_FIRE,
-	
+
 		"	Tasks"
 		"		TASK_SET_FAIL_SCHEDULE		SCHEDULE:SCHED_GRUNT_ESTABLISH_LINE_OF_FIRE_RETRY"
 		"		TASK_GET_PATH_TO_ENEMY		0"
@@ -2039,7 +2036,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_ESTABLISH_LINE_OF_FIRE_RETRY,
-	
+
 		"	Tasks"
 		"		TASK_SET_FAIL_SCHEDULE			SCHEDULE:SCHED_GRUNT_TAKE_COVER_FROM_ENEMY"
 		"		TASK_GET_PATH_TO_ENEMY_LKP_LOS	0"
@@ -2058,7 +2055,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_CAN_MELEE_ATTACK2"
 		"		COND_HEAR_DANGER"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_FOUND_ENEMY
 	// Grunt established sight with an enemy
@@ -2067,7 +2064,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_FOUND_ENEMY,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING				0"
 		"		TASK_FACE_ENEMY					0"
@@ -2076,15 +2073,15 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"	Interrupts"
 		"		COND_HEAR_DANGER"
 	)
-	
-	
+
+
 	//=========================================================
 	// > SCHED_GRUNT_COMBAT_FACE
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_COMBAT_FACE,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING		0"
 		"		TASK_SET_ACTIVITY		ACTIVITY:ACT_IDLE"
@@ -2098,8 +2095,8 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_CAN_RANGE_ATTACK1"
 		"		COND_CAN_RANGE_ATTACK2"
 	)
-	
-	
+
+
 	//=========================================================
 	// > SCHED_GRUNT_SIGNAL_SUPPRESS
 	// Suppressing fire - don't stop shooting until the clip is
@@ -2108,7 +2105,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_SIGNAL_SUPPRESS,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING				0"
 		"		TASK_FACE_IDEAL					0"
@@ -2137,14 +2134,14 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_NO_PRIMARY_AMMO"
 		"		COND_HEAR_DANGER"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_SUPPRESS
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_SUPPRESS,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING			0"
 		"		TASK_FACE_ENEMY				0"
@@ -2171,7 +2168,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_NO_PRIMARY_AMMO"
 		"		COND_HEAR_DANGER"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_WAIT_IN_COVER
 	// grunt wait in cover - we don't allow danger or the ability
@@ -2181,7 +2178,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_WAIT_IN_COVER,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING		0"
 		"		TASK_SET_ACTIVITY		ACTIVITY:ACT_IDLE"
@@ -2195,8 +2192,8 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_CAN_MELEE_ATTACK1"
 		"		COND_CAN_MELEE_ATTACK2"
 	)
-	
-	
+
+
 	//=========================================================
 	// > SCHED_GRUNT_TAKE_COVER
 	// !!!BUGBUG - set a decent fail schedule here.
@@ -2204,7 +2201,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_TAKE_COVER,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING			0"
 		"		TASK_SET_FAIL_SCHEDULE		SCHEDULE:SCHED_GRUNT_TAKE_COVER_FAILED"
@@ -2218,8 +2215,8 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"	"
 		"	Interrupts"
 	)
-	
-	
+
+
 	//=========================================================
 	// > SCHED_GRUNT_GRENADE_COVER
 	// drop grenade then run to cover.
@@ -2227,7 +2224,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_GRENADE_COVER,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING						0"
 		"		TASK_FIND_COVER_FROM_ENEMY				99"
@@ -2240,7 +2237,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"	"
 		"	Interrupts"
 	)
-		
+
 	//=========================================================
 	// > SCHED_GRUNT_TOSS_GRENADE_COVER
 	// drop grenade then run to cover.
@@ -2248,7 +2245,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_TOSS_GRENADE_COVER,
-	
+
 		"	Tasks"
 		"		TASK_FACE_ENEMY				0"
 		"		TASK_RANGE_ATTACK2			0"
@@ -2256,7 +2253,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"	"
 		"	Interrupts"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_HIDE_RELOAD
 	// Grunt reload schedule
@@ -2264,7 +2261,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_HIDE_RELOAD,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING				0"
 		"		TASK_SET_FAIL_SCHEDULE			SCHEDULE:SCHED_GRUNT_RELOAD"
@@ -2279,7 +2276,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_HEAVY_DAMAGE"
 		"		COND_HEAR_DANGER"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_SWEEP
 	// Do a turning sweep of the area
@@ -2287,7 +2284,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_SWEEP,
-	
+
 		"	Tasks"
 		"		TASK_TURN_LEFT			179"
 		"		TASK_WAIT				1"
@@ -2304,7 +2301,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_HEAR_DANGER"
 		"		COND_HEAR_PLAYER"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_RANGE_ATTACK1A
 	// primary range attack. Overriden because base class stops attacking when the enemy is occluded.
@@ -2313,7 +2310,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_RANGE_ATTACK1A,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING					0"
 		"		TASK_PLAY_SEQUENCE_FACE_ENEMY		ACTIVITY:ACT_CROUCH"
@@ -2338,7 +2335,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_GRUNT_NOFIRE"
 		"		COND_NO_PRIMARY_AMMO"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_RANGE_ATTACK1B
 	// primary range attack. Overriden because base class stops attacking when the enemy is occluded.
@@ -2347,7 +2344,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_RANGE_ATTACK1B,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING					0"
 		"		TASK_PLAY_SEQUENCE_FACE_ENEMY		ACTIVITY:ACT_IDLE_ANGRY"
@@ -2372,7 +2369,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_GRUNT_NOFIRE"
 		"		COND_NO_PRIMARY_AMMO"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_RANGE_ATTACK2
 	// secondary range attack. Overriden because base class stops attacking when the enemy is occluded.
@@ -2381,7 +2378,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_RANGE_ATTACK2,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING			0"
 		"		TASK_GRUNT_FACE_TOSS_DIR	0"
@@ -2390,7 +2387,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"	"
 		"	Interrupts"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_REPEL
 	// secondary range attack. Overriden because base class stops attacking when the enemy is occluded.
@@ -2399,7 +2396,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_REPEL,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING			0"
 		"		TASK_FACE_IDEAL				0"
@@ -2414,14 +2411,14 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_HEAR_PLAYER"
 		"		COND_HEAR_COMBAT"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_REPEL_ATTACK
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_REPEL_ATTACK,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING			0"
 		"		TASK_FACE_ENEMY				0"
@@ -2430,14 +2427,14 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"	Interrupts"
 		"		COND_ENEMY_OCCLUDED"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_REPEL_LAND
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_REPEL_LAND,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING					0"
 		"		TASK_PLAY_SEQUENCE					ACTIVITY:ACT_LAND"
@@ -2455,14 +2452,14 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"		COND_HEAR_COMBAT"
 		"		COND_HEAR_PLAYER"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_RELOAD
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_RELOAD,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING			0"
 		"		TASK_PLAY_SEQUENCE			ACTIVITY:ACT_RELOAD"
@@ -2470,14 +2467,14 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"	Interrupts"
 		"		COND_HEAVY_DAMAGE"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_TAKE_COVER_FROM_ENEMY
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
 		SCHED_GRUNT_TAKE_COVER_FROM_ENEMY,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING				0"
 		"		TASK_WAIT						0.2"
@@ -2491,7 +2488,7 @@ AI_BEGIN_CUSTOM_NPC( monster_human_grunt, CNPC_HGrunt )
 		"	Interrupts"
 		"		COND_NEW_ENEMY"
 	)
-	
+
 	//=========================================================
 	// > SCHED_GRUNT_TAKE_COVER_FAILED
 	// special schedule type that forces analysis of conditions and picks
@@ -2583,7 +2580,7 @@ bool CNPC_DeadHGrunt::KeyValue( const char *szKeyName, const char *szValue )
 {
 	if ( FStrEq( szKeyName, "pose" ) )
 		m_iPose = atoi( szValue );
-	else 
+	else
 		CAI_BaseNPC::KeyValue( szKeyName, szValue );
 
 	return true;

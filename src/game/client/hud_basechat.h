@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -59,9 +59,9 @@ enum ChatFilters
     // HPE_BEGIN:
     // [tj]Added a filter for achievement announce
     //=============================================================================
-     
+
     CHAT_FILTER_ACHIEVEMENT	= 0x000020,
-     
+
     //=============================================================================
     // HPE_END
     //=============================================================================
@@ -100,6 +100,7 @@ wchar_t* ConvertCRtoNL( wchar_t *str );
 wchar_t* ReadLocalizedString( bf_read &msg, OUT_Z_BYTECAP(outSizeInBytes) wchar_t *pOut, int outSizeInBytes, bool bStripNewline, OUT_Z_CAP(originalSize) char *originalString = NULL, int originalSize = 0 );
 wchar_t* ReadChatTextString( bf_read &msg, OUT_Z_BYTECAP(outSizeInBytes) wchar_t *pOut, int outSizeInBytes );
 
+#include "tier0/memdbgon.h"
 //--------------------------------------------------------------------------------------------------------
 /**
  * Simple utility function to allocate memory and duplicate a wide string
@@ -112,6 +113,7 @@ inline wchar_t *CloneWString( const wchar_t *str )
 	V_wcsncpy( cloneStr, str, nSize );
 	return cloneStr;
 }
+#include "tier0/memdbgoff.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: An output/display line of the chat interface
@@ -141,7 +143,7 @@ public:
 	Color			GetTextColor( void ) { return m_clrText; }
 	void			SetNameLength( int iLength ) { m_iNameLength = iLength;	}
 	void			SetNameColor( Color cColor ){ m_clrNameColor = cColor; 	}
-		
+
 	virtual void	PerformFadeout( void );
 	virtual void	InsertAndColorizeText( wchar_t *buf, int clientIndex );
 	virtual			void Colorize( int alpha = 255 );								///< Re-inserts the text in the appropriate colors at the given alpha
@@ -162,7 +164,7 @@ protected:
 	wchar_t					*m_text;
 
 	int				m_iNameStart;
-	
+
 private:
 	float			m_flStartTime;
 	int				m_nCount;
@@ -213,7 +215,7 @@ private:
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class CBaseHudChat : public CHudElement, public vgui::EditablePanel
 {
@@ -231,17 +233,17 @@ public:
 
 	virtual void	CreateChatInputLine( void );
 	virtual void	CreateChatLines( void );
-	
+
 	virtual void	Init( void );
 
 	void			LevelInit( const char *newmap );
 	void			LevelShutdown( void );
 
 	void			MsgFunc_TextMsg(const char *pszName, int iSize, void *pbuf);
-	
+
 	FMTFUNCTION_WIN( 2, 3 ) virtual void	Printf( int iFilter, PRINTF_FORMAT_STRING const char *fmt, ... ) FMTFUNCTION( 3, 4 );
 	FMTFUNCTION_WIN( 3, 4 ) virtual void	ChatPrintf( int iPlayerIndex, int iFilter, PRINTF_FORMAT_STRING const char *fmt, ... ) FMTFUNCTION( 4, 5 );
-	
+
 	virtual void	StartMessageMode( int iMessageModeType );
 	virtual void	StopMessageMode( void );
 	void			Send( void );
@@ -276,7 +278,7 @@ public:
 	virtual void			MsgFunc_TextMsg( bf_read &msg );
 	virtual void			MsgFunc_VoiceSubtitle( bf_read &msg );
 
-	
+
 	CBaseHudChatInputLine	*GetChatInput( void ) { return m_pChatInput; }
 	CHudChatFilterPanel		*GetChatFilterPanel( void );
 
@@ -313,7 +315,7 @@ protected:
 
 	Color			m_ColorCustom;
 
-private:	
+private:
 	void			Clear( void );
 
 	int				ComputeBreakChar( int width, const char *text, int textlen );
@@ -360,7 +362,7 @@ public:
 					PostMessage( m_pHudChat, new KeyValues("ChatEntrySend") );
 				}
 			}
-		
+
 			// End message mode.
 			if ( m_pHudChat )
 			{
@@ -388,7 +390,7 @@ private:
 class CBaseHudChatInputLine : public vgui::Panel
 {
 	typedef vgui::Panel BaseClass;
-	
+
 public:
 	CBaseHudChatInputLine( vgui::Panel *parent, char const *panelName );
 
@@ -401,7 +403,7 @@ public:
 	virtual void	ApplySchemeSettings(vgui::IScheme *pScheme);
 
 	vgui::Panel		*GetInputPanel( void );
-	virtual vgui::VPANEL GetCurrentKeyFocus() { return m_pInput->GetVPanel(); } 
+	virtual vgui::VPANEL GetCurrentKeyFocus() { return m_pInput->GetVPanel(); }
 
 	virtual void Paint()
 	{

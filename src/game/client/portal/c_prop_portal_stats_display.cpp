@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -106,7 +106,7 @@ void C_PropPortalStatsDisplay::ClientThink( void )
 	BaseClass::ClientThink();
 
 	// Remembers if the player has cheated
-	// This doesn't persist across save/loads, 
+	// This doesn't persist across save/loads,
 	// this is only to prevent players from accidentally wiping their stats while no clipping through a map
 	if ( !sv_cheats )
 	{
@@ -192,7 +192,7 @@ void C_PropPortalStatsDisplay::ClientThink( void )
 		case PORTAL_LEVEL_STAT_NUM_STEPS:
 			if ( m_fEnabledCounter > 1.5f / static_cast<float>( m_iNumStepsTaken + 1 ) )
 			{
-				int iNumStepsThisFrame = m_fEnabledCounter * static_cast<float>( m_iNumStepsTaken + 1 );
+				const float iNumStepsThisFrame = m_fEnabledCounter * static_cast<float>( m_iNumStepsTaken + 1 );
 				m_fEnabledCounter = 0.0f;
 
 				if ( m_fNumPlayerDisplay < m_iNumStepsTaken )
@@ -277,7 +277,7 @@ void C_PropPortalStatsDisplay::ClientThink( void )
 				EmitSound( "Portal.button_up" );
 				++m_iCurrentDisplayStep;	// skip the next step
 			}
-			
+
 			++m_iCurrentDisplayStep;
 		}
 		break;

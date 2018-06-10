@@ -36,7 +36,7 @@ static void FX_Flecks( const Vector& origin, trace_t *trace, char materialType, 
 
 	// Handle increased scale
 	float flMaxSpeed = FLECK_MAX_SPEED * iScale;
-	float flAngularSpray = max( 0.2, FLECK_ANGULAR_SPRAY - ( (float)iScale * 0.2f) ); // More power makes the spray more controlled
+	float flAngularSpray = max( 0.2f, FLECK_ANGULAR_SPRAY - ( (float)iScale * 0.2f) ); // More power makes the spray more controlled
 
 	// Setup our collision information
 	fleckEmitter->m_ParticleCollision.Setup( spawnOffset, &trace->plane.normal, flAngularSpray, FLECK_MIN_SPEED, flMaxSpeed, FLECK_GRAVITY, FLECK_DAMPEN );
@@ -56,7 +56,7 @@ static void FX_Flecks( const Vector& origin, trace_t *trace, char materialType, 
 		break;
 	}
 
-	Vector	dir, end;
+	Vector	dir;
 
 	float	colorRamp;
 
@@ -166,7 +166,7 @@ void ImpactCallback( const CEffectData &data )
 			{
 				iScale = 2;
 			}
-		}		
+		}
 
 		// Check for custom effects based on the Decal index
 		DOD_PerformCustomEffects( vecOrigin, tr, vecShotDir, iMaterial, iScale );

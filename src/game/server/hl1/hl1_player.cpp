@@ -157,7 +157,7 @@ void CHL1_Player::PreThink(void)
 
 	// checks if new client data (for HUD and view control) needs to be sent to the client
 	UpdateClientData();
-	
+
 	CheckTimeBasedDamage();
 
 	CheckSuitUpdate();
@@ -172,7 +172,7 @@ void CHL1_Player::PreThink(void)
 	//
 	if ( m_afPhysicsFlags & PFLAG_DIROVERRIDE )
 		AddFlag( FL_ONTRAIN );
-	else 
+	else
 		RemoveFlag( FL_ONTRAIN );
 
 	// Train speed control
@@ -211,7 +211,7 @@ void CHL1_Player::PreThink(void)
 			{
 				trace_t trainTrace;
 				// Maybe this is on the other side of a level transition
-				UTIL_TraceLine( GetAbsOrigin(), GetAbsOrigin() + Vector(0,0,-38), 
+				UTIL_TraceLine( GetAbsOrigin(), GetAbsOrigin() + Vector(0,0,-38),
 					MASK_PLAYERSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trainTrace );
 
 				if ( trainTrace.fraction != 1.0 && trainTrace.m_pEnt )
@@ -258,7 +258,7 @@ void CHL1_Player::PreThink(void)
 			m_iTrain = TrainSpeed(pTrain->m_flSpeed, ((CFuncTrackTrain*)pTrain)->GetMaxSpeed());
 			m_iTrain |= TRAIN_ACTIVE|TRAIN_NEW;
 		}
-	} 
+	}
 	else if (m_iTrain & TRAIN_ACTIVE)
 	{
 		m_iTrain = TRAIN_NEW; // turn off train
@@ -334,7 +334,7 @@ bool CHL1_Player::HandleInteraction(int interactionType, void *data, CBaseCombat
 		TakeDamage ( CTakeDamageInfo( sourceEnt, sourceEnt, m_iHealth + ArmorValue(), DMG_SLASH | DMG_ALWAYSGIB ) );
 		return true;
 	}
-	
+
 	if (interactionType ==	g_interactionBarnacleVictimReleased)
 	{
 		m_afPhysicsFlags &= ~PFLAG_ONBARNACLE;
@@ -365,7 +365,7 @@ void CHL1_Player::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 	if ( ( ucmd->forwardmove != 0 ) || ( ucmd->sidemove != 0 ) || ( ucmd->upmove != 0 ) )
 	{
 		m_flIdleTime -= TICK_INTERVAL * 2.0f;
-		
+
 		if ( m_flIdleTime < 0.0f )
 		{
 			m_flIdleTime = 0.0f;
@@ -381,14 +381,14 @@ void CHL1_Player::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 	else
 	{
 		m_flIdleTime += TICK_INTERVAL;
-		
+
 		if ( m_flIdleTime > 4.0f )
 		{
 			m_flIdleTime = 4.0f;
 		}
 
 		m_flMoveTime -= TICK_INTERVAL * 2.0f;
-		
+
 		if ( m_flMoveTime < 0.0f )
 		{
 			m_flMoveTime = 0.0f;
@@ -434,7 +434,7 @@ CBaseEntity	*CHL1_Player::GiveNamedItem( const char *pszName, int iSubType )
 
 	DispatchSpawn( pent );
 
-	if ( pent != NULL && !(pent->IsMarkedForDeletion()) ) 
+	if ( pent != NULL && !(pent->IsMarkedForDeletion()) )
 	{
 		pent->Touch( this );
 	}
@@ -514,7 +514,7 @@ void CHL1_Player::UpdatePullingObject()
 
 
 	float flMaxDistSqr = Square(PLAYER_USE_RADIUS + 1.0f);
-	
+
 	Vector objectPos;
 	QAngle angle;
 
@@ -569,7 +569,7 @@ void CHL1_Player::Event_Killed( const CTakeDamageInfo &info )
 	BaseClass::Event_Killed(info);
 }
 
-void CHL1_Player::CheckTimeBasedDamage( void ) 
+void CHL1_Player::CheckTimeBasedDamage( void )
 {
 	int i;
 	byte bDuration = 0;
@@ -583,7 +583,7 @@ void CHL1_Player::CheckTimeBasedDamage( void )
 	// only check for time based damage approx. every 2 seconds
 	if (fabsf(gpGlobals->curtime - m_tbdPrev) < 2.0)
 		return;
-	
+
 	m_tbdPrev = gpGlobals->curtime;
 
 	for (i = 0; i < CDMG_TIMEBASED; i++)
@@ -604,7 +604,7 @@ void CHL1_Player::CheckTimeBasedDamage( void )
 				bDuration = PARALYZE_DURATION;
 				break;
 			case itbd_NerveGas:
-//				OnTakeDamage(pev, pev, NERVEGAS_DAMAGE, DMG_GENERIC);	
+//				OnTakeDamage(pev, pev, NERVEGAS_DAMAGE, DMG_GENERIC);
 				bDuration = NERVEGAS_DURATION;
 				break;
 			case itbd_PoisonRecover:
@@ -651,7 +651,7 @@ void CHL1_Player::CheckTimeBasedDamage( void )
 				{
 					m_rgbTimeBasedDamage[i] = 0;
 					// if we're done, clear damage bits
-					m_bitsDamageType &= ~(DMG_PARALYZE << i);	
+					m_bitsDamageType &= ~(DMG_PARALYZE << i);
 				}
 			}
 			else
@@ -682,7 +682,7 @@ public:
 static CPhysicsPlayerCallback playerCallback;
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHL1_Player::InitVCollision( const Vector &vecAbsOrigin, const Vector &vecAbsVelocity )
 {
@@ -709,7 +709,7 @@ void CHL1_Player::CheatImpulseCommands( int iImpulse )
 	{
 	case 101:
 		gEvilImpulse101 = true;
-		
+
 		GiveNamedItem( "item_suit" );
 		GiveNamedItem( "item_battery" );
 		GiveNamedItem( "weapon_crowbar" );
@@ -790,8 +790,8 @@ int	CHL1_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		return 0;
 	// go take the damage first
 
-	
-	if ( !g_pGameRules->FPlayerCanTakeDamage( this, info.GetAttacker() ) )
+
+	if ( !g_pGameRules->FPlayerCanTakeDamage( this, info.GetAttacker(), info ) )
 	{
 		// Refuse the damage
 		return 0;
@@ -800,8 +800,8 @@ int	CHL1_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	// keep track of amount of damage last sustained
 	m_lastDamageAmount = info.GetDamage();
 
-	// Armor. 
-	if ( ArmorValue() && 
+	// Armor.
+	if ( ArmorValue() &&
 		!(info.GetDamageType() & (DMG_FALL | DMG_DROWN | DMG_POISON)) &&	// armor doesn't protect against fall or drown damage!
 		!(GetFlags() & FL_GODMODE) )
 	{
@@ -821,7 +821,7 @@ int	CHL1_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		}
 		else
 			SetArmorValue( ArmorValue() - flArmor );
-		
+
 		info.SetDamage( flNew );
 	}
 
@@ -868,7 +868,7 @@ int	CHL1_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 
 	// UNDONE: still need to record damage and heal messages for the following types
 
-		// DMG_BURN	
+		// DMG_BURN
 		// DMG_FREEZE
 		// DMG_BLAST
 		// DMG_SHOCK
@@ -894,18 +894,18 @@ int	CHL1_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 				SetSuitUpdate("!HEV_DMG5", false, SUIT_NEXT_IN_30SEC);	// major fracture
 			else
 				SetSuitUpdate("!HEV_DMG4", false, SUIT_NEXT_IN_30SEC);	// minor fracture
-	
+
 			bitsDamage &= ~(DMG_FALL | DMG_CRUSH);
 			ffound = true;
 		}
-		
+
 		if (bitsDamage & DMG_BULLET)
 		{
 			if (m_lastDamageAmount > 5)
 				SetSuitUpdate("!HEV_DMG6", false, SUIT_NEXT_IN_30SEC);	// blood loss detected
 			//else
 			//	SetSuitUpdate("!HEV_DMG0", false, SUIT_NEXT_IN_30SEC);	// minor laceration
-			
+
 			bitsDamage &= ~DMG_BULLET;
 			ffound = true;
 		}
@@ -920,7 +920,7 @@ int	CHL1_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 			bitsDamage &= ~DMG_SLASH;
 			ffound = true;
 		}
-		
+
 		if (bitsDamage & DMG_SONIC)
 		{
 			if (fmajor)
@@ -972,7 +972,7 @@ int	CHL1_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 
 	m_Local.m_vecPunchAngle.SetX( -2 );
 
-	if (fTookDamage && !ftrivial && fmajor && flHealthPrev >= 75) 
+	if (fTookDamage && !ftrivial && fmajor && flHealthPrev >= 75)
 	{
 		// first time we take major damage...
 		// turn automedic on if not on
@@ -981,7 +981,7 @@ int	CHL1_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		// give morphine shot if not given recently
 		SetSuitUpdate("!HEV_HEAL7", false, SUIT_NEXT_IN_30MIN);	// morphine shot
 	}
-	
+
 	if (fTookDamage && !ftrivial && fcritical && flHealthPrev < 75)
 	{
 
@@ -990,7 +990,7 @@ int	CHL1_Player::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 			SetSuitUpdate("!HEV_HLTH3", false, SUIT_NEXT_IN_10MIN);	// near death
 		else if (m_iHealth < 20)
 			SetSuitUpdate("!HEV_HLTH2", false, SUIT_NEXT_IN_10MIN);	// health critical
-	
+
 		// give critical health warnings
 		if (!random->RandomInt(0,3) && flHealthPrev < 50)
 			SetSuitUpdate("!HEV_DMG7", false, SUIT_NEXT_IN_5MIN); //seek medical attention
@@ -1044,7 +1044,7 @@ int CHL1_Player::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHL1_Player::FindMissTargets( void )
 {
@@ -1068,9 +1068,9 @@ void CHL1_Player::FindMissTargets( void )
 			return;
 
 		//See if it's a good target candidate
-		if ( FClassnameIs( pEnts[i], "prop_dynamic" ) || 
-			 FClassnameIs( pEnts[i], "dynamic_prop" ) || 
-			 FClassnameIs( pEnts[i], "prop_physics" ) || 
+		if ( FClassnameIs( pEnts[i], "prop_dynamic" ) ||
+			 FClassnameIs( pEnts[i], "dynamic_prop" ) ||
+			 FClassnameIs( pEnts[i], "prop_physics" ) ||
 			 FClassnameIs( pEnts[i], "physics_prop" ) )
 		{
 			//NDebugOverlay::Cross3D( pEnts[i]->WorldSpaceCenter(), -Vector(4,4,4), Vector(4,4,4), 0, 255, 0, true, 1.0f );
@@ -1082,7 +1082,7 @@ void CHL1_Player::FindMissTargets( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Good position to shoot at
 //-----------------------------------------------------------------------------
 bool CHL1_Player::GetMissPosition( Vector *position )
@@ -1112,7 +1112,7 @@ void CHL1_Player::FlashlightTurnOn( void )
 	{
 		AddEffects( EF_DIMLIGHT );
 		CPASAttenuationFilter filter( this );
-		EmitSound( filter, entindex(), "Player.FlashlightOn" );	
+		EmitSound( filter, entindex(), "Player.FlashlightOn" );
 
 		m_flFlashLightTime = FLASH_DRAIN_TIME + gpGlobals->curtime;
 	}
@@ -1125,7 +1125,7 @@ void CHL1_Player::FlashlightTurnOff( void )
 {
 	RemoveEffects( EF_DIMLIGHT );
 	CPASAttenuationFilter filter( this );
-	EmitSound( filter, entindex(), "Player.FlashlightOff" );	
+	EmitSound( filter, entindex(), "Player.FlashlightOff" );
 	m_flFlashLightTime = FLASH_CHARGE_TIME + gpGlobals->curtime;
 }
 
@@ -1157,11 +1157,11 @@ void CHL1_Player::UpdateClientData( void )
 			WRITE_FLOAT( damageOrigin.y );	//BUG: However, the HUD does _not_ implement bitfield messages (yet)
 			WRITE_FLOAT( damageOrigin.z );	//BUG: We use WRITE_VEC3COORD for everything else
 		MessageEnd();
-	
+
 		m_DmgTake = 0;
 		m_DmgSave = 0;
 		m_bitsHUDDamage = m_bitsDamageType;
-		
+
 		// Clear off non-time-based damage indicators
 		int iDamage = g_pGameRules->Damage_GetTimeBased();
 		m_bitsDamageType &= iDamage;
@@ -1176,7 +1176,7 @@ void CHL1_Player::UpdateClientData( void )
 			{
 				m_flFlashLightTime = FLASH_DRAIN_TIME + gpGlobals->curtime;
 				m_nFlashBattery--;
-				
+
 				if ( !m_nFlashBattery )
 					FlashlightTurnOff();
 			}
@@ -1221,7 +1221,7 @@ void CHL1_Player::CreateViewModel( int index /*=0*/ )
 		vm->FollowEntity( this );
 		m_hViewModel.Set( index, vm );
 	}
-}	
+}
 
 void CHL1_Player::OnRestore( void )
 {
@@ -1320,7 +1320,7 @@ struct game_shadowcontrol_params_t : public hlshadowcontrol_params_t
 };
 
 BEGIN_SIMPLE_DATADESC( game_shadowcontrol_params_t )
-	
+
 	DEFINE_FIELD( targetPosition,		FIELD_POSITION_VECTOR ),
 	DEFINE_FIELD( targetRotation,		FIELD_VECTOR ),
 	DEFINE_FIELD( maxAngular, FIELD_FLOAT ),
@@ -1354,7 +1354,7 @@ static void ComputePlayerMatrix( CBasePlayer *pPlayer, matrix3x4_t &out )
 
 	QAngle angles = pPlayer->EyeAngles();
 	Vector origin = pPlayer->EyePosition();
-	
+
 	// 0-360 / -180-180
 	//angles.x = init ? 0 : AngleDistance( angles.x, 0 );
 	//angles.x = clamp( angles.x, -PLAYER_LOOK_PITCH_RANGE, PLAYER_LOOK_PITCH_RANGE );
@@ -1501,7 +1501,7 @@ void CGrabController::SetTargetPosition( const Vector &target, const QAngle &tar
 	if ( pAttached )
 	{
 		IPhysicsObject *pObj = pAttached->VPhysicsGetObject();
-		
+
 		if ( pObj != NULL )
 		{
 			pObj->Wake();
@@ -1548,7 +1548,7 @@ float CGrabController::ComputeError()
 			return 9999; // force detach
 		}
 	}
-	
+
 	if ( pAttached->IsEFlagSet( EFL_IS_BEING_LIFTED_BY_BARNACLE ) )
 	{
 		m_error *= 3.0f;
@@ -1666,7 +1666,7 @@ void CGrabController::AttachEntity( CBasePlayer *pPlayer, CBaseEntity *pEntity, 
 		pList[i]->SetMass( REDUCED_CARRY_MASS / flFactor );
 		pList[i]->SetDamping( NULL, &damping );
 	}
-	
+
 	// Give extra mass to the phys object we're actually picking up
 	pPhys->SetMass( REDUCED_CARRY_MASS );
 	pPhys->EnableDrag( false );
@@ -1778,7 +1778,7 @@ IMotionEvent::simresult_e CGrabController::Simulate( IPhysicsMotionController *p
 	}
 	shadowParams.maxAngular = m_shadow.maxAngular * m_contactAmount * m_contactAmount * m_contactAmount;
 	m_timeToArrive = pObject->ComputeShadowControl( shadowParams, m_timeToArrive, deltaTime );
-	
+
 	// Slide along the current contact points to fix bouncing problems
 	Vector velocity;
 	AngularImpulse angVel;
@@ -1832,7 +1832,7 @@ bool CGrabController::UpdateObject( CBasePlayer *pPlayer, float flError )
 	float pitch = AngleDistance(playerAngles.x,0);
 	playerAngles.x = clamp( pitch, -75, 75 );
 	AngleVectors( playerAngles, &forward, &right, &up );
-	
+
 	// Now clamp a sphere of object radius at end to the player's bbox
 	Vector radial = physcollision->CollideGetExtent( pPhys->GetCollide(), vec3_origin, pEntity->GetAbsAngles(), -forward );
 	Vector player2d = pPlayer->CollisionProp()->OBBMaxs();
@@ -1875,8 +1875,8 @@ bool CGrabController::UpdateObject( CBasePlayer *pPlayer, float flError )
 	{
 		NDebugOverlay::Box( end, -Vector( 2,2,2 ), Vector(2,2,2), 0, 255, 0, true, 0 );
 
-		NDebugOverlay::Box( GetAttached()->WorldSpaceCenter(), 
-							-Vector( radius, radius, radius), 
+		NDebugOverlay::Box( GetAttached()->WorldSpaceCenter(),
+							-Vector( radius, radius, radius),
 							Vector( radius, radius, radius ),
 							255, 0, 0,
 							true,
@@ -1885,7 +1885,7 @@ bool CGrabController::UpdateObject( CBasePlayer *pPlayer, float flError )
 */
 
 	QAngle angles = TransformAnglesFromPlayerSpace( m_attachedAnglesPlayerSpace, pPlayer );
-	
+
 	// If it has a preferred orientation, update to ensure we're still oriented correctly.
 	Pickup_GetPreferredCarryAngles( pEntity, pPlayer, pPlayer->EntityToWorldTransform(), angles );
 
@@ -1947,13 +1947,13 @@ BEGIN_DATADESC( CPlayerPickupController )
 	DEFINE_PHYSPTR( m_grabController.m_controller ),
 
 	DEFINE_FIELD( m_pPlayer,		FIELD_CLASSPTR ),
-	
+
 END_DATADESC()
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pPlayer - 
-//			*pObject - 
+// Purpose:
+// Input  : *pPlayer -
+//			*pObject -
 //-----------------------------------------------------------------------------
 void CPlayerPickupController::Init( CBasePlayer *pPlayer, CBaseEntity *pObject )
 {
@@ -1982,15 +1982,15 @@ void CPlayerPickupController::Init( CBasePlayer *pPlayer, CBaseEntity *pObject )
 	IPhysicsObject *pPhysics = pObject->VPhysicsGetObject();
 	Pickup_OnPhysGunPickup( pObject, m_pPlayer );
 	m_grabController.AttachEntity( pPlayer, pObject, pPhysics );
-	
+
 	m_pPlayer->m_Local.m_iHideHUD |= HIDEHUD_WEAPONSELECTION;
 	m_pPlayer->SetUseEntity( this );
 }
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : bool - 
+// Purpose:
+// Input  : bool -
 //-----------------------------------------------------------------------------
 void CPlayerPickupController::Shutdown( bool bThrown )
 {
@@ -2030,7 +2030,7 @@ void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller
 			Shutdown();
 			return;
 		}
-		
+
 		//Adrian: Oops, our object became motion disabled, let go!
 		IPhysicsObject *pPhys = pAttached->VPhysicsGetObject();
 		if ( pPhys && pPhys->IsMoveable() == false )
@@ -2074,8 +2074,8 @@ void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pEnt - 
+// Purpose:
+// Input  : *pEnt -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CPlayerPickupController::IsHoldingEntity( CBaseEntity *pEnt )

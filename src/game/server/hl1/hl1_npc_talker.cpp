@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -48,7 +48,7 @@ void CHL1NPCTalker::RunTask( const Task_t *pTask )
 				distance = (m_vecLastPosition - GetLocalOrigin()).Length2D();
 
 				// Walk path until far enough away
-				if ( distance > pTask->flTaskData || 
+				if ( distance > pTask->flTaskData ||
 					 GetNavigator()->GetGoalType() == GOALTYPE_NONE )
 				{
 					TaskComplete();
@@ -63,13 +63,13 @@ void CHL1NPCTalker::RunTask( const Task_t *pTask )
 		case TASK_TALKER_LOOK_AT_CLIENT:
 		{
 			CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
-			
+
 			// track head to the client for a while.
-			if ( m_NPCState == NPC_STATE_IDLE		&& 
+			if ( m_NPCState == NPC_STATE_IDLE		&&
 				 !IsMoving()								&&
 				 !GetExpresser()->IsSpeaking() )
 			{
-			
+
 				if ( pPlayer )
 				{
 					IdleHeadTurn( pPlayer );
@@ -128,7 +128,7 @@ void CHL1NPCTalker::RunTask( const Task_t *pTask )
 		case TASK_FACE_PLAYER:
 		{
 			CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
-			
+
 			if ( pPlayer )
 			{
 				//GetMotor()->SetIdealYaw( pPlayer->GetAbsOrigin() );
@@ -153,14 +153,14 @@ void CHL1NPCTalker::RunTask( const Task_t *pTask )
 				// ALERT( at_console, "waiting %f\n", m_flStopTalkTime - gpGlobals->time );
 				IdleHeadTurn( GetSpeechTarget(), GetExpresser()->GetTimeSpeechComplete() - gpGlobals->curtime );
 			}
-			
+
 			BaseClass::RunTask( pTask );
-			
+
 			break;
 
 		}
 
-				
+
 		default:
 		{
 			if ( GetExpresser()->IsSpeaking() && GetSpeechTarget() != NULL)
@@ -189,9 +189,9 @@ bool CHL1NPCTalker::ShouldGib( const CTakeDamageInfo &info )
 
 	if ( ( g_pGameRules->Damage_ShouldGibCorpse( info.GetDamageType() ) && m_iHealth < GIB_HEALTH_VALUE ) || ( info.GetDamageType() & DMG_ALWAYSGIB ) )
 		 return true;
-	
+
 	return false;
-	
+
 }
 
 void CHL1NPCTalker::StartTask( const Task_t *pTask )
@@ -272,7 +272,7 @@ bool CHL1NPCTalker::HandleInteraction(int interactionType, void *data, CBaseComb
 		{
 			SetGroundEntity( NULL );
 		}
-		
+
 		if ( GetState() == NPC_STATE_SCRIPT )
 		{
 			if ( m_hCine )
@@ -283,7 +283,7 @@ bool CHL1NPCTalker::HandleInteraction(int interactionType, void *data, CBaseComb
 
 		SetState( NPC_STATE_PRONE );
 		ClearSchedule( "NPC talker grabbed by a barnacle" );
-		
+
 		CTakeDamageInfo info;
 		PainSound( info );
 		return true;
@@ -371,14 +371,14 @@ void CHL1NPCTalker::StopFollowing( void )
 	BaseClass::StopFollowing();
 }
 
-void CHL1NPCTalker::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr )
+void CHL1NPCTalker::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( info.GetDamage() >= 1.0 && !(info.GetDamageType() & DMG_SHOCK ) )
 	{
 		UTIL_BloodImpact( ptr->endpos, vecDir, BloodColor(), 4 );
 	}
 
-	BaseClass::TraceAttack( info, vecDir, ptr );
+	BaseClass::TraceAttack( info, vecDir, ptr, pAccumulator );
 }
 
 void CHL1NPCTalker::FollowerUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
@@ -454,17 +454,17 @@ void CHL1NPCTalker::SetHeadDirection( const Vector &vTargetPos, float flInterval
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CHL1NPCTalker::CorpseGib( const CTakeDamageInfo &info )
 {
 	CEffectData	data;
-	
+
 	data.m_vOrigin = WorldSpaceCenter();
 	data.m_vNormal = data.m_vOrigin - info.GetDamagePosition();
 	VectorNormalize( data.m_vNormal );
-	
+
 	data.m_flScale = RemapVal( m_iHealth, 0, -500, 1, 3 );
 	data.m_flScale = clamp( data.m_flScale, 1, 3 );
 
@@ -472,7 +472,7 @@ bool CHL1NPCTalker::CorpseGib( const CTakeDamageInfo &info )
 	data.m_nHitBox = -m_iHealth;
 
 	data.m_nColor = BloodColor();
-	
+
 	DispatchEffect( "HL1Gib", data );
 
 	CSoundEnt::InsertSound( SOUND_MEAT, GetAbsOrigin(), 256, 0.5f, this );
@@ -481,7 +481,7 @@ bool CHL1NPCTalker::CorpseGib( const CTakeDamageInfo &info )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CHL1NPCTalker::OnObstructingDoor( AILocalMoveGoal_t *pMoveGoal, CBaseDoor *pDoor, float distClear, AIMoveResult_t *pResult )
 {
@@ -505,7 +505,7 @@ bool CHL1NPCTalker::OnObstructingDoor( AILocalMoveGoal_t *pMoveGoal, CBaseDoor *
 	return false;
 }
 
-// HL1 version - never return Ragdoll as the automatic schedule at the end of a 
+// HL1 version - never return Ragdoll as the automatic schedule at the end of a
 // scripted sequence
 int CHL1NPCTalker::SelectDeadSchedule()
 {
@@ -526,7 +526,7 @@ AI_BEGIN_CUSTOM_NPC( monster_hl1talker, CHL1NPCTalker )
 	//=========================================================
 	// > SCHED_HL1TALKER_MOVE_AWAY_FOLLOW
 	//=========================================================
-	DEFINE_SCHEDULE 
+	DEFINE_SCHEDULE
 	(
 		SCHED_HL1TALKER_FOLLOW_MOVE_AWAY,
 
@@ -545,7 +545,7 @@ AI_BEGIN_CUSTOM_NPC( monster_hl1talker, CHL1NPCTalker )
 	//=========================================================
 	// > SCHED_HL1TALKER_IDLE_SPEAK_WAIT
 	//=========================================================
-	DEFINE_SCHEDULE 
+	DEFINE_SCHEDULE
 	(
 		SCHED_HL1TALKER_IDLE_SPEAK_WAIT,
 

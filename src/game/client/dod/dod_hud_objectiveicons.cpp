@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -29,8 +29,8 @@ public:
 	DECLARE_CLASS_SIMPLE( CHudObjectiveIcons, vgui::Panel );
 
 	CHudObjectiveIcons( const char *pName );
-	
-	virtual void ApplySchemeSettings( IScheme *scheme );
+
+	virtual void ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void Paint();
 	virtual void Init();
 	virtual void VidInit();
@@ -90,7 +90,7 @@ private:
 DECLARE_HUDELEMENT( CHudObjectiveIcons );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CHudObjectiveIcons::CHudObjectiveIcons( const char *pName ) : vgui::Panel( NULL, "HudObjectiveIcons" ), CHudElement( pName )
 {
@@ -100,13 +100,13 @@ CHudObjectiveIcons::CHudObjectiveIcons( const char *pName ) : vgui::Panel( NULL,
 	m_pTimer = new vgui::Label( this, "HudObjectivesRoundTimer", " " );
 	if ( m_pTimer )
 	{
-		m_pTimer->SetContentAlignment( Label::a_center );
+		m_pTimer->SetContentAlignment( vgui::Label::a_center );
 	}
 
 	m_pTimeAdded = new vgui::Label( this, "HudObjectivesTimeAdded", " " );
 	if ( m_pTimeAdded )
 	{
-		m_pTimeAdded->SetContentAlignment( Label::a_center );
+		m_pTimeAdded->SetContentAlignment( vgui::Label::a_center );
 	}
 
 	m_iBackgroundTexture = vgui::surface()->DrawGetTextureId( "vgui/white" );
@@ -125,7 +125,7 @@ CHudObjectiveIcons::CHudObjectiveIcons( const char *pName ) : vgui::Panel( NULL,
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudObjectiveIcons::Init( void )
 {
@@ -149,7 +149,7 @@ void CHudObjectiveIcons::VidInit( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudObjectiveIcons::Reset( void )
 {
@@ -158,7 +158,7 @@ void CHudObjectiveIcons::Reset( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudObjectiveIcons::FireGameEvent( IGameEvent *event )
 {
@@ -169,9 +169,9 @@ void CHudObjectiveIcons::FireGameEvent( IGameEvent *event )
 		// show time added under the timer, flash
 		m_iSecondsAdded = event->GetInt( "seconds_added" );
 
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" ); 
+		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" );
 
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ShowTimeAdded" ); 
+		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ShowTimeAdded" );
 
 		if ( !m_pTimeAdded->IsVisible() )
 		{
@@ -192,14 +192,14 @@ void CHudObjectiveIcons::FireGameEvent( IGameEvent *event )
 	else if ( FStrEq( "dod_timer_flash", eventname ) )
 	{
 		// generic flash, used for 5, 2, 1 minute warnings
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" ); 
+		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "TimerFlash" );
 	}
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-void CHudObjectiveIcons::ApplySchemeSettings( IScheme *pScheme )
+void CHudObjectiveIcons::ApplySchemeSettings( vgui::IScheme *pScheme )
 {
 	BaseClass::ApplySchemeSettings( pScheme );
 
@@ -219,7 +219,7 @@ void CHudObjectiveIcons::ApplySchemeSettings( IScheme *pScheme )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudObjectiveIcons::DrawBackgroundBox( int xpos, int ypos, int nBoxWidth, int nBoxHeight, bool bCutCorner )
 {
@@ -249,7 +249,7 @@ void CHudObjectiveIcons::DrawBackgroundBox( int xpos, int ypos, int nBoxWidth, i
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudObjectiveIcons::Paint()
 {
@@ -265,14 +265,14 @@ void CHudObjectiveIcons::Paint()
 	// Hide the time added if it is time to do so
 	if ( m_flDrawTimeAddedUntil > 0 && m_flDrawTimeAddedUntil < gpGlobals->curtime )
 	{
-		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HideTimeAdded" ); 
+		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "HideTimeAdded" );
 
 		m_flDrawTimeAddedUntil = -1;
 	}
 
 	vgui::surface()->DrawSetTextFont( m_hTextFont );
 	vgui::surface()->DrawSetColor( clrIcon );
-	
+
 	if ( g_pSpectatorGUI && g_pSpectatorGUI->IsVisible() )
 	{
 		ypos += g_pSpectatorGUI->GetTopBarHeight();
@@ -423,7 +423,7 @@ void CHudObjectiveIcons::Paint()
 				int iBlankIcon = g_pObjectiveResource->GetCPTimerCapIcon( index );
 
 				if ( iBlankIcon == 0 )
-				{	
+				{
 					iBlankIcon = g_pObjectiveResource->GetIconForTeam( index, TEAM_UNASSIGNED );
 				}
 
@@ -436,15 +436,15 @@ void CHudObjectiveIcons::Paint()
 				Vector2D uv22( uv2, uv2 );
 				Vector2D uv12( uv1, uv2 );
 
-				vgui::Vertex_t vert[4];	
+				vgui::Vertex_t vert[4];
 				vert[0].Init( Vector2D( flXPos,					flYPos               ), uv11 );
 				vert[1].Init( Vector2D( flXPos + flIconSize,	flYPos               ), uv21 );
-				vert[2].Init( Vector2D( flXPos + flIconSize,	flYPos + flIconSize ), uv22 );				
+				vert[2].Init( Vector2D( flXPos + flIconSize,	flYPos + flIconSize ), uv22 );
 				vert[3].Init( Vector2D( flXPos,					flYPos + flIconSize ), uv12 );
 
-				vgui::surface()->DrawSetColor( Color(255,255,255,255) );	
+				vgui::surface()->DrawSetColor( Color(255,255,255,255) );
 				vgui::surface()->DrawTexturedPolygon( 4, vert );
-			
+
 				// draw the real version in a circular swipe
 				float flPercentRemaining = ( flBombTime / DOD_BOMB_TIMER_LENGTH );
 
@@ -457,7 +457,7 @@ void CHudObjectiveIcons::Paint()
 
 				float flEndAngle = flCompleteCircle * flPercentRemaining; // clockwise
 
-				typedef struct 
+				typedef struct
 				{
 					Vector2D vecTrailing;
 					Vector2D vecLeading;
@@ -476,7 +476,7 @@ void CHudObjectiveIcons::Paint()
 				-----------------
 				*/
 
-				// Encode the leading and trailing edge of each quadrant 
+				// Encode the leading and trailing edge of each quadrant
 				// in the range 0.0 -> 1.0
 
 				icon_quadrant_t quadrants[8];
@@ -507,7 +507,7 @@ void CHudObjectiveIcons::Paint()
 				szMatName = GetMaterialNameFromIndex( iOwnerIcon );
 
 				vgui::surface()->DrawSetTextureFile( m_iCPTextures[index], szMatName, true, false );
-				vgui::surface()->DrawSetColor( Color(255,255,255,255) );	
+				vgui::surface()->DrawSetColor( Color(255,255,255,255) );
 
 				Vector2D uvMid( 0.5, 0.5 );
 				Vector2D vecMid( flXPos + flHalfWide, flYPos + flHalfTall );
@@ -515,7 +515,7 @@ void CHudObjectiveIcons::Paint()
 				int j;
 				for ( j=0;j<=7;j++ )
 				{
-					float flMinAngle = j * fl45degrees;	
+					float flMinAngle = j * fl45degrees;
 
 					float flAngle = clamp( flEndAngle - flMinAngle, 0, fl45degrees );
 
@@ -527,7 +527,7 @@ void CHudObjectiveIcons::Paint()
 					else
 					{
 						// draw our segment
-						vgui::Vertex_t vert[3];	
+						vgui::Vertex_t vert[3];
 
 						// vert 0 is mid ( 0.5, 0.5 )
 						vert[0].Init( vecMid, uvMid );
@@ -536,14 +536,14 @@ void CHudObjectiveIcons::Paint()
 
 						switch( j )
 						{
-						case 0:  
+						case 0:
 						case 7:
 							//right
 							xdir = 1;
 							ydir = 0;
 							break;
 
-						case 1: 
+						case 1:
 						case 2:
 							//up
 							xdir = 0;
@@ -582,8 +582,8 @@ void CHudObjectiveIcons::Paint()
 							flYPos + quadrants[j].vecTrailing.y * flIconSize ),
 							quadrants[j].vecTrailing );
 
-						vgui::surface()->DrawTexturedPolygon( 3, vert );					
-					}	
+						vgui::surface()->DrawTexturedPolygon( 3, vert );
+					}
 				}
 
 				if ( g_pObjectiveResource->IsBombBeingDefused( index ) )
@@ -591,7 +591,7 @@ void CHudObjectiveIcons::Paint()
 					float flSize = 0.75;
 					int iconX = (int)( flXPos + flIconSize * ( ( 1.0 - flSize ) / 2 ) );
 					int iconY = (int)( flYPos + flIconSize * ( ( 1.0 - flSize ) / 2 ) );
-					int iconW = (int)( flIconSize * flSize );					
+					int iconW = (int)( flIconSize * flSize );
 
 					Color c(255,255,255,255);
 					m_pIconDefended->DrawSelf( iconX, iconY, iconW, iconW, c );
@@ -605,7 +605,7 @@ void CHudObjectiveIcons::Paint()
 					const char *szMatName = GetMaterialNameFromIndex( iOwnerIcon );
 
 					vgui::surface()->DrawSetTextureFile( m_iCPTextures[index], szMatName, true, false );
-					
+
 					/*
 					// re-enable if we want to have animating cp icons
 					// todo: framerate
@@ -635,17 +635,17 @@ void CHudObjectiveIcons::Paint()
 					Vector2D uv22( uv2, uv2 );
 					Vector2D uv12( uv1, uv2 );
 
-					vgui::Vertex_t vert[4];	
+					vgui::Vertex_t vert[4];
 					vert[0].Init( Vector2D( flXPos,					flYPos              ), uv11 );
 					vert[1].Init( Vector2D( flXPos + flIconSize,	flYPos              ), uv21 );
-					vert[2].Init( Vector2D( flXPos + flIconSize,	flYPos + flIconSize ), uv22 );				
+					vert[2].Init( Vector2D( flXPos + flIconSize,	flYPos + flIconSize ), uv22 );
 					vert[3].Init( Vector2D( flXPos,					flYPos + flIconSize ), uv12 );
 
-					vgui::surface()->DrawSetColor( Color(255,255,255,255) );	
+					vgui::surface()->DrawSetColor( Color(255,255,255,255) );
 					vgui::surface()->DrawTexturedPolygon( 4, vert );
-				}		
+				}
 			}
-			
+
 			// see if there are players in the area
 			int iNumAllies = g_pObjectiveResource->GetNumPlayersInArea( index, TEAM_ALLIES );
 			int iNumAxis = g_pObjectiveResource->GetNumPlayersInArea( index, TEAM_AXIS );
@@ -826,7 +826,7 @@ void CHudObjectiveIcons::Paint()
 
 					//swipe!
 					float flCapPercentage = g_pObjectiveResource->GetCPCapPercentage(index);
-					
+
 					// reversing the direction of the swipe effect
 					if ( bAxis )
 					{
@@ -835,10 +835,10 @@ void CHudObjectiveIcons::Paint()
 
 					float width = ( flIconSize * flCapPercentage );
 					const char *szCappingMatName = GetMaterialNameFromIndex( iCapperIcon );
-					
+
 					vgui::surface()->DrawSetTextureFile( m_iCPCappingTextures[index], szCappingMatName, true, false );
 
-					vgui::Vertex_t vert[4];	
+					vgui::Vertex_t vert[4];
 
 					Vector2D uv11( uv1, uv1 );
 					Vector2D uv21( flCapPercentage, uv1 );
@@ -867,17 +867,17 @@ void CHudObjectiveIcons::Paint()
 						lowerRight.x = flXPos + flIconSize;
 						lowerLeft.x  = flXPos + width;
 					}
-					
+
 					vert[0].Init( upperLeft, uv11 );
 					vert[1].Init( upperRight, uv21 );
-					vert[2].Init( lowerRight, uv22 );				
+					vert[2].Init( lowerRight, uv22 );
 					vert[3].Init( lowerLeft, uv12 );
-							
+
 					vgui::surface()->DrawSetColor( Color(255,255,255,255) );
 					vgui::surface()->DrawTexturedPolygon( 4, vert );
 				}
 			}
-			
+
 			xpos += ( m_nIconSize + m_nSeparatorWidth + m_nBackgroundOverlap * 2 );
 		}
 	}

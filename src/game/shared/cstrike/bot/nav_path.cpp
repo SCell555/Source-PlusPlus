@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -22,7 +22,7 @@
 #include "tier0/memdbgon.h"
 
 #ifdef _WIN32
-#pragma warning (disable:4701)				// disable warning that variable *may* not be initialized 
+#pragma warning (disable:4701)				// disable warning that variable *may* not be initialized
 #endif
 
 
@@ -239,7 +239,6 @@ int CNavPath::GetSegmentIndexAlongPath( float distAlong ) const
 	}
 
 	float lengthSoFar = 0.0f;
-	Vector dir;
 	for( int i=1; i<GetSegmentCount(); ++i )
 	{
 		lengthSoFar += (m_path[i].pos - m_path[i-1].pos).Length();
@@ -357,7 +356,7 @@ void CNavPath::Draw( const Vector &color )
 
 	for( int i=1; i<m_segmentCount; ++i )
 	{
-		DrawLine( m_path[i-1].pos + Vector( 0, 0, HalfHumanHeight ), 
+		DrawLine( m_path[i-1].pos + Vector( 0, 0, HalfHumanHeight ),
 				  m_path[i].pos + Vector( 0, 0, HalfHumanHeight ), 2, 255 * color.x, 255 * color.y, 255 * color.z );
 	}
 }
@@ -551,8 +550,8 @@ void CNavPathFollower::Update( float deltaT, bool avoidObstacles )
 	{
 		// because hostage crouching is not really supported by the engine,
 		// if we are standing in a crouch area, we must crouch to avoid collisions
-		if (m_improv->GetLastKnownArea() && 
-			m_improv->GetLastKnownArea()->GetAttributes() & NAV_MESH_CROUCH && 
+		if (m_improv->GetLastKnownArea() &&
+			m_improv->GetLastKnownArea()->GetAttributes() & NAV_MESH_CROUCH &&
 			!(m_improv->GetLastKnownArea()->GetAttributes() & NAV_MESH_JUMP))
 		{
 			m_improv->Crouch();
@@ -812,7 +811,7 @@ int CNavPathFollower::FindPathPoint( float aheadRange, Vector *point, int *prevI
 		return index;
 	}
 
-	// make sure we use a node a minimum distance ahead of us, to avoid wiggling 
+	// make sure we use a node a minimum distance ahead of us, to avoid wiggling
 	while (startIndex < m_path->GetSegmentCount()-1)
 	{
 		Vector pos = (*m_path)[ startIndex+1 ]->pos;
@@ -830,7 +829,7 @@ int CNavPathFollower::FindPathPoint( float aheadRange, Vector *point, int *prevI
 	}
 
 	// if we hit a ladder or jump area, must stop (dont use ladder behind us)
-	if (startIndex > m_segmentIndex && startIndex < m_path->GetSegmentCount() && 
+	if (startIndex > m_segmentIndex && startIndex < m_path->GetSegmentCount() &&
 			((*m_path)[ startIndex ]->ladder || (*m_path)[ startIndex ]->area->GetAttributes() & NAV_MESH_JUMP))
 	{
 		*point = (*m_path)[ startIndex ]->pos;
@@ -843,7 +842,7 @@ int CNavPathFollower::FindPathPoint( float aheadRange, Vector *point, int *prevI
 		startIndex = m_path->GetSegmentCount()-1;
 
 	// if we hit a ladder or jump area, must stop
-	if (startIndex < m_path->GetSegmentCount() && 
+	if (startIndex < m_path->GetSegmentCount() &&
 			((*m_path)[ startIndex ]->ladder || (*m_path)[ startIndex ]->area->GetAttributes() & NAV_MESH_JUMP))
 	{
 		*point = (*m_path)[ startIndex ]->pos;
@@ -899,7 +898,7 @@ int CNavPathFollower::FindPathPoint( float aheadRange, Vector *point, int *prevI
 		}
 
 		// if we encounter a ladder or jump area, we must stop
-		if (i < m_path->GetSegmentCount() && 
+		if (i < m_path->GetSegmentCount() &&
 				((*m_path)[ i ]->ladder || (*m_path)[ i ]->area->GetAttributes() & NAV_MESH_JUMP))
 			break;
 
@@ -974,7 +973,7 @@ int CNavPathFollower::FindPathPoint( float aheadRange, Vector *point, int *prevI
 		const float epsilon = 50.0f;
 		Vector2D toPoint;
 		Vector2D centroid( m_improv->GetCentroid().x, m_improv->GetCentroid().y );
-		
+
 		toPoint.x = point->x - centroid.x;
 		toPoint.y = point->y - centroid.y;
 

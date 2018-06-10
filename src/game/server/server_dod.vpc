@@ -168,6 +168,8 @@ $Project "Server (DoD)"
 			$File	"$SRCDIR\game\shared\dod\weapon_spring.cpp"
 			$File	"$SRCDIR\game\shared\dod\weapon_stickgrenade.cpp"
 			$File	"$SRCDIR\game\shared\dod\weapon_thompson.cpp"
+			$File	"team_train_watcher.cpp"
+			$File	"team_train_watcher.h"
 		}
 
 		$Folder	"IFM"

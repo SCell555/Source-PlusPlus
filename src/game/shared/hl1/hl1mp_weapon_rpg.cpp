@@ -38,7 +38,7 @@ extern ConVar sk_plr_dmg_rpg;
 
 
 void TE_BeamFollow( IRecipientFilter& filter, float delay,
-	int iEntIndex, int modelIndex, int haloIndex, float life, float width, float endWidth, 
+	int iEntIndex, int modelIndex, int haloIndex, float life, float width, float endWidth,
 	float fadeLength,float r, float g, float b, float a );
 
 #define	RPG_LASER_SPRITE	"sprites/redglow_mp1"
@@ -123,7 +123,7 @@ CRpgRocket::CRpgRocket()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //
 //
 //-----------------------------------------------------------------------------
@@ -138,7 +138,7 @@ void CRpgRocket::Precache( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //
 //
 //-----------------------------------------------------------------------------
@@ -154,7 +154,7 @@ void CRpgRocket::Spawn( void )
 
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE );
 	SetThink( &CRpgRocket::IgniteThink );
-	
+
 	SetNextThink( gpGlobals->curtime + 0.4f );
 
 	QAngle angAngs;
@@ -173,8 +173,8 @@ void CRpgRocket::Spawn( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pOther - 
+// Purpose:
+// Input  : *pOther -
 //-----------------------------------------------------------------------------
 void CRpgRocket::RocketTouch( CBaseEntity *pOther )
 {
@@ -191,7 +191,7 @@ void CRpgRocket::RocketTouch( CBaseEntity *pOther )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRpgRocket::IgniteThink( void )
 {
@@ -224,7 +224,7 @@ void CRpgRocket::IgniteThink( void )
 #define	RPG_HOMING_SPEED	0.125f
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRpgRocket::SeekThink( void )
 {
@@ -239,7 +239,7 @@ void CRpgRocket::SeekThink( void )
 
 	vecTarget = vecFwd;
 	flMax = 4096;
-	
+
 	// Examine all entities within a reasonable radius
 	while ( (pOther = gEntList.FindEntityByClassname( pOther, "laser_spot" ) ) != NULL)
 	{
@@ -284,8 +284,8 @@ void CRpgRocket::SeekThink( void )
 			}
 
 			UTIL_BubbleTrail( GetAbsOrigin() - GetAbsVelocity() * 0.1, GetAbsOrigin(), 4 );
-		} 
-		else 
+		}
+		else
 		{
 			if ( GetAbsVelocity().Length() > 2000 )
 			{
@@ -320,11 +320,11 @@ void CRpgRocket::Detonate( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //
-// Input  : &vecOrigin - 
-//			&vecAngles - 
-//			NULL - 
+// Input  : &vecOrigin -
+//			&vecAngles -
+//			NULL -
 //
 // Output : CRpgRocket
 //-----------------------------------------------------------------------------
@@ -424,8 +424,8 @@ CLaserDot::~CLaserDot( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &origin - 
+// Purpose:
+// Input  : &origin -
 // Output : CLaserDot
 //-----------------------------------------------------------------------------
 CLaserDot *CLaserDot::Create( const Vector &origin, CBaseEntity *pOwner, bool bVisibleDot )
@@ -469,7 +469,7 @@ Vector CLaserDot::GetChasePosition()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CLaserDot::TurnOn( void )
 {
@@ -484,7 +484,7 @@ void CLaserDot::TurnOn( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CLaserDot::TurnOff( void )
 {
@@ -498,7 +498,7 @@ void CLaserDot::TurnOff( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CLaserDot::MakeInvisible( void )
 {
@@ -513,7 +513,6 @@ int CLaserDot::DrawModel( int flags )
 {
 	color32 color={255,255,255,255};
 	Vector	vecAttachment, vecDir;
-	QAngle	angles;
 
 	float	scale;
 	Vector	endPos;
@@ -533,14 +532,14 @@ int CLaserDot::DrawModel( int flags )
 		{
 			// Take the eye position and direction
 			vecAttachment = pOwner->EyePosition();
-			
+
 			QAngle angles = pOwner->EyeAngles();
 			AngleVectors( angles, &vecDir );
 		}
-		
+
 		trace_t tr;
 		UTIL_TraceLine( vecAttachment, vecAttachment + ( vecDir * MAX_TRACE_LENGTH ), MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr );
-		
+
 		// Backup off the hit plane
 		endPos = tr.endpos + ( tr.plane.normal * 4.0f );
 	}
@@ -652,19 +651,19 @@ CWeaponRPG::~CWeaponRPG()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponRPG::ItemPostFrame( void )
 {
 	BaseClass::ItemPostFrame();
 
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-	
+
 	if ( pPlayer == NULL )
 		return;
 
 	//If we're pulling the weapon out for the first time, wait to draw the laser
-	if ( m_bIntialStateUpdate ) 
+	if ( m_bIntialStateUpdate )
 	{
 		if ( GetActivity() != ACT_VM_DRAW )
 		{
@@ -724,7 +723,7 @@ int CWeaponRPG::GetDefaultClip1( void ) const
 {
 	if ( g_pGameRules->IsMultiplayer() )
 	{
-		// more default ammo in multiplay. 
+		// more default ammo in multiplay.
 		return BaseClass::GetDefaultClip1() * 2;
 	}
 	else
@@ -735,7 +734,7 @@ int CWeaponRPG::GetDefaultClip1( void ) const
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponRPG::Precache( void )
 {
@@ -798,11 +797,8 @@ void CWeaponRPG::PrimaryAttack( void )
 		}
 	}
 
-	Vector vecOrigin;
-	Vector vecForward;
-
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-	
+
 	if ( pOwner == NULL )
 		return;
 
@@ -837,8 +833,8 @@ void CWeaponRPG::PrimaryAttack( void )
 
 	pOwner->ViewPunch( QAngle( -5, 0, 0 ) );
 
-	m_iClip1--; 
-				
+	m_iClip1--;
+
 	m_flNextPrimaryAttack = gpGlobals->curtime + 1.5;
 	SetWeaponIdleTime( 1.5 );
 
@@ -849,7 +845,7 @@ void CWeaponRPG::PrimaryAttack( void )
 void CWeaponRPG::WeaponIdle( void )
 {
 	CBaseCombatCharacter *pOwner = GetOwner();
-	
+
 	if ( pOwner == NULL )
 		return;
 
@@ -901,7 +897,7 @@ bool CWeaponRPG::Reload( void )
 		return false;
 
 	WeaponSound( RELOAD );
-	
+
 	SendWeaponAnim( ACT_VM_RELOAD );
 
 #ifndef CLIENT_DLL
@@ -933,7 +929,7 @@ bool CWeaponRPG::Reload( void )
 		return false;
 
 	// because the RPG waits to autoreload when no missiles are active while  the LTD is on, the
-	// weapons code is constantly calling into this function, but is often denied because 
+	// weapons code is constantly calling into this function, but is often denied because
 	// a) missiles are in flight, but the LTD is on
 	// or
 	// b) player is totally out of ammo and has nothing to switch to, and should be allowed to
@@ -941,11 +937,11 @@ bool CWeaponRPG::Reload( void )
 	//
 	// Set the next attack time into the future so that WeaponIdle will get called more often
 	// than reload, allowing the RPG LTD to be updated
-	
+
 	if ( ( m_hMissile != NULL ) && IsGuiding() )
 	{
 		// no reloading when there are active missiles tracking the designator.
-		// ward off future autoreload attempts by setting next attack time into the future for a bit. 
+		// ward off future autoreload attempts by setting next attack time into the future for a bit.
 		return false;
 	}
 
@@ -990,7 +986,7 @@ bool CWeaponRPG::Holster( CBaseCombatWeapon *pSwitchingTo )
 void CWeaponRPG::UpdateSpot( void )
 {
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-	
+
 	if ( pPlayer == NULL )
 		return;
 
@@ -1012,7 +1008,7 @@ void CWeaponRPG::UpdateSpot( void )
 	//Move the laser dot, if active
 	trace_t	tr;
 	Vector	muzzlePos = pPlayer->Weapon_ShootPosition();
-	
+
 	Vector	forward;
 	AngleVectors( pPlayer->EyeAngles() + pPlayer->m_Local.m_vecPunchAngle, &forward );
 

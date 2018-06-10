@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -13,7 +13,7 @@
 
 // Don't alias here
 #if defined( CHL1MP_Player )
-#undef CHL1MP_Player	
+#undef CHL1MP_Player
 #endif
 
 
@@ -33,7 +33,7 @@ public:
 		if ( pPlayer && !pPlayer->IsDormant() )
 		{
 			pPlayer->DoAnimationEvent( (PlayerAnimEvent_t)m_iEvent.Get(), m_nData );
-		}	
+		}
 	}
 
 public:
@@ -58,7 +58,7 @@ IMPLEMENT_CLIENTCLASS_DT( C_HL1MP_Player, DT_HL1MP_Player, CHL1MP_Player )
 	RecvPropFloat( RECVINFO( m_angEyeAngles[0] ) ),
 	RecvPropFloat( RECVINFO( m_angEyeAngles[1] ) ),
     RecvPropEHandle( RECVINFO( m_hRagdoll ) ),
-	RecvPropInt( RECVINFO( m_iSpawnInterpCounter ) ),    
+	RecvPropInt( RECVINFO( m_iSpawnInterpCounter ) ),
 	RecvPropInt( RECVINFO( m_iRealSequence ) ),
 //	RecvPropDataTable( RECVINFO_DT( m_Shared ), 0, &REFERENCE_RECV_TABLE( DT_TFCPlayerShared ) )
 END_RECV_TABLE()
@@ -69,7 +69,7 @@ END_PREDICTION_DATA()
 /////////////////////////////////////////////////////////////////////
 
 static ConVar cl_playermodel( "cl_playermodel", "none", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Default Player Model");
-    
+
 C_HL1MP_Player::C_HL1MP_Player( void ) :
 	m_iv_angEyeAngles( "C_HL1MP_Player::m_iv_angEyeAngles" )
 {
@@ -126,18 +126,18 @@ void C_HL1MP_Player::ProcessMuzzleFlashEvent()
 	{
 		Vector vAttachment;
 		QAngle dummyAngles;
-		
+
 		C_WeaponTFCBase *pWeapon = m_Shared.GetActiveTFCWeapon();
-				
+
 		if ( pWeapon )
 		{
 			int iAttachment = pWeapon->LookupAttachment( "muzzle_flash" );
-				
+
 			if ( iAttachment > 0 )
 			{
 				float flScale = 1;
 				pWeapon->GetAttachment( iAttachment, vAttachment, dummyAngles );
-				
+
 				// The way the models are setup, the up vector points along the barrel.
 				Vector vForward, vRight, vUp;
 				AngleVectors( dummyAngles, &vForward, &vRight, &vUp );
@@ -150,14 +150,14 @@ void C_HL1MP_Player::ProcessMuzzleFlashEvent()
 
 	Vector vAttachment;
 	QAngle dummyAngles;
-	
+
 	bool bFoundAttachment = GetAttachment( 1, vAttachment, dummyAngles );
 	// If we have an attachment, then stick a light on it.
 	if ( bFoundAttachment )
 	{
 		dlight_t *el = effects->CL_AllocDlight( LIGHT_INDEX_MUZZLEFLASH + index );
 		el->origin = vAttachment;
-		el->radius = 24; 
+		el->radius = 24;
 		el->decay = el->radius / 0.05f;
 		el->die = gpGlobals->curtime + 0.05f;
 		el->color.r = 255;
@@ -185,7 +185,7 @@ void C_HL1MP_Player::AddEntity( void )
     BaseClass::AddEntity();
 
     //m_PlayerAnimState.Update();
-    
+
 //    SetLocalAnglesDim( X_INDEX, 0 );
 }
 
@@ -249,7 +249,7 @@ void C_HL1MP_Player::PostDataUpdate( DataUpdateType_t updateType )
 	// C_BaseEntity assumes we're networking the entity's angles, so pretend that it
 	// networked the same value we already have.
 	SetNetworkAngles( GetLocalAngles() );
-	
+
 	BaseClass::PostDataUpdate( updateType );
 }
 
@@ -327,21 +327,21 @@ void C_HL1MPRagdoll::ImpactTrace( trace_t *pTrace, int iDamageType, char *pCusto
 	if ( iDamageType == DMG_BLAST )
 	{
 		dir *= 4000;  // adjust impact strenght
-				
+
 		// apply force at object mass center
 		pPhysicsObject->ApplyForceCenter( dir );
 	}
 	else
 	{
-		Vector hitpos;  
-	
+		Vector hitpos;
+
 		VectorMA( pTrace->startpos, pTrace->fraction, dir, hitpos );
 		VectorNormalize( dir );
 
 		dir *= 4000;  // adjust impact strenght
 
 		// apply force where we hit it
-		pPhysicsObject->ApplyForceOffset( dir, hitpos );	
+		pPhysicsObject->ApplyForceOffset( dir, hitpos );
 
 	}
 
@@ -353,7 +353,7 @@ void C_HL1MP_Player::CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNea
 {
 	if ( m_lifeState != LIFE_ALIVE )
 	{
-		Vector origin = EyePosition();			
+		Vector origin = EyePosition();
 
 		IRagdoll *pRagdoll = GetRepresentativeRagdoll();
 
@@ -367,11 +367,11 @@ void C_HL1MP_Player::CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNea
 
 		eyeOrigin = origin;
 
-		Vector vForward; 
+		Vector vForward;
 		AngleVectors( eyeAngles, &vForward );
 
 		VectorNormalize( vForward );
-		VectorMA( origin, -CHASE_CAM_DISTANCE, vForward, eyeOrigin );
+		VectorMA( origin, -CHASE_CAM_DISTANCE_MAX, vForward, eyeOrigin );
 
 		Vector WALL_MIN( -WALL_OFFSET, -WALL_OFFSET, -WALL_OFFSET );
 		Vector WALL_MAX( WALL_OFFSET, WALL_OFFSET, WALL_OFFSET );
@@ -411,7 +411,7 @@ void C_HL1MPRagdoll::CreateHL1MPRagdoll( void )
 	// First, initialize all our data. If we have the player's entity on our client,
 	// then we can make ourselves start out exactly where the player is.
 	C_HL1MP_Player *pPlayer = dynamic_cast< C_HL1MP_Player* >( m_hPlayer.Get() );
-	
+
 	if ( pPlayer && !pPlayer->IsDormant() )
 	{
 		// move my current model instance to the ragdoll's so decals are preserved.
@@ -421,7 +421,7 @@ void C_HL1MPRagdoll::CreateHL1MPRagdoll( void )
 
 		// Copy all the interpolated vars from the player entity.
 		// The entity uses the interpolated history to get bone velocity.
-		bool bRemotePlayer = (pPlayer != C_BasePlayer::GetLocalPlayer());			
+		bool bRemotePlayer = (pPlayer != C_BasePlayer::GetLocalPlayer());
 		if ( bRemotePlayer )
 		{
 			Interp_Copy( pPlayer );
@@ -438,7 +438,7 @@ void C_HL1MPRagdoll::CreateHL1MPRagdoll( void )
 			// This is the local player, so set them in a default
 			// pose and slam their velocity, angles and origin
 			SetAbsOrigin( m_vecRagdollOrigin );
-			
+
 			SetAbsAngles( pPlayer->GetRenderAngles() );
 
 			SetAbsVelocity( m_vecRagdollVelocity );
@@ -449,12 +449,12 @@ void C_HL1MPRagdoll::CreateHL1MPRagdoll( void )
 				Assert( false );	// missing walk_lower?
 				iSeq = 0;
 			}
-			
+
 			SetSequence( iSeq );	// walk_lower, basic pose
 			SetCycle( 0.0 );
 
 			Interp_Reset( varMap );
-		}		
+		}
 	}
 	else
 	{
@@ -466,7 +466,7 @@ void C_HL1MPRagdoll::CreateHL1MPRagdoll( void )
 		SetAbsVelocity( m_vecRagdollVelocity );
 
 		Interp_Reset( GetVarMapping() );
-		
+
 	}
 
 	SetModelIndex( m_nModelIndex );

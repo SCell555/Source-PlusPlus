@@ -67,12 +67,12 @@ void CNPC_Vortigaunt::Spawn()
 	Precache( );
 
 	SetModel( "models/islave.mdl" );
-	
+
 	SetRenderColor( 255, 255, 255, 255 );
 
 	SetHullType(HULL_HUMAN);
 	SetHullSizeNormal();
-	
+
 	SetSolid( SOLID_BBOX );
 	AddSolidFlags( FSOLID_NOT_STANDABLE );
 	SetMoveType( MOVETYPE_STEP );
@@ -90,7 +90,7 @@ void CNPC_Vortigaunt::Spawn()
 	CapabilitiesAdd( bits_CAP_SQUAD );
 
 	CapabilitiesAdd( bits_CAP_TURN_HEAD | bits_CAP_DOORS_GROUP );
-	
+
 	CapabilitiesAdd	( bits_CAP_INNATE_RANGE_ATTACK1 );
 	CapabilitiesAdd	( bits_CAP_INNATE_MELEE_ATTACK1 );
 
@@ -246,13 +246,13 @@ float CNPC_Vortigaunt::MaxYawSpeed ( void )
 
 	switch ( GetActivity() )
 	{
-	case ACT_WALK:		
-		flYS = 50;	
+	case ACT_WALK:
+		flYS = 50;
 		break;
-	case ACT_RUN:		
+	case ACT_RUN:
 		flYS = 70;
 		break;
-	case ACT_IDLE:		
+	case ACT_IDLE:
 		flYS = 50;
 		break;
 	default:
@@ -283,7 +283,7 @@ void CNPC_Vortigaunt::HandleAnimEvent( animevent_t *pEvent )
 			{
 				if ( pHurt->GetFlags() & ( FL_NPC | FL_CLIENT ) )
 					 pHurt->ViewPunch( QAngle( 5, 0, -18 ) );
-			
+
 				// Play a random attack hit sound
 				CSoundParameters params;
 				if ( GetParametersForSound( "Vortigaunt.AttackHit", params, NULL ) )
@@ -392,7 +392,7 @@ void CNPC_Vortigaunt::HandleAnimEvent( animevent_t *pEvent )
 				if ( !trace.startsolid )
 				{
 					CBaseEntity *pNew = Create( "monster_alien_slave", m_hDead->GetAbsOrigin(), m_hDead->GetAbsAngles() );
-					
+
 					pNew->AddSpawnFlags( 1 );
 					WackBeam( -1, pNew );
 					WackBeam( 1, pNew );
@@ -400,7 +400,7 @@ void CNPC_Vortigaunt::HandleAnimEvent( animevent_t *pEvent )
 					break;
 				}
 			}
-			
+
 			ClearMultiDamage();
 
 			ZapBeam( -1 );
@@ -435,13 +435,13 @@ int CNPC_Vortigaunt::RangeAttack1Conditions( float flDot, float flDist )
 {
 	if ( GetEnemy() == NULL )
 		 return( COND_LOST_ENEMY );
-	
+
 	if ( gpGlobals->curtime < m_flNextAttack )
 		 return COND_NONE;
 
 	if ( HasCondition( COND_CAN_MELEE_ATTACK1 ) )
 		 return COND_NONE;
-	
+
 	return COND_CAN_RANGE_ATTACK1;
 }
 
@@ -468,12 +468,12 @@ int CNPC_Vortigaunt::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 }
 
 
-void CNPC_Vortigaunt::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr )
+void CNPC_Vortigaunt::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	if ( info.GetDamageType() & DMG_SHOCK )
 		 return;
 
-	BaseClass::TraceAttack( info, vecDir, ptr );
+	BaseClass::TraceAttack( info, vecDir, ptr, pAccumulator );
 }
 
 //=========================================================
@@ -500,7 +500,7 @@ int CNPC_Vortigaunt::SelectSchedule( void )
 			if ( !HasCondition( COND_CAN_MELEE_ATTACK1 ) )
 			{
 				SetDefaultFailSchedule( SCHED_CHASE_ENEMY );
-				if ( HasCondition( COND_LIGHT_DAMAGE ) || HasCondition( COND_HEAVY_DAMAGE ) ) 
+				if ( HasCondition( COND_LIGHT_DAMAGE ) || HasCondition( COND_HEAVY_DAMAGE ) )
 					 return SCHED_TAKE_COVER_FROM_ENEMY;
 				if ( HasCondition ( COND_SEE_ENEMY ) && HasCondition ( COND_ENEMY_FACING_ME ) )
 					 return SCHED_TAKE_COVER_FROM_ENEMY;
@@ -537,7 +537,7 @@ int CNPC_Vortigaunt::TranslateSchedule( int scheduleType )
 			{
 	  			return ( SCHED_MELEE_ATTACK1 );
 			}
-		
+
 			return SCHED_VORTIGAUNT_ATTACK;
 		}
 
@@ -554,7 +554,7 @@ void CNPC_Vortigaunt::ArmBeam( int side )
 {
 	trace_t tr;
 	float flDist = 1.0;
-	
+
 	if ( m_iBeams >= VORTIGAUNT_MAX_BEAMS )
 		 return;
 
@@ -601,7 +601,7 @@ void CNPC_Vortigaunt::ArmBeam( int side )
 
 	m_pBeam[m_iBeams]->SetBrightness( 64 );
 	m_pBeam[m_iBeams]->SetNoise( 12.8 );
-	m_pBeam[m_iBeams]->AddSpawnFlags( SF_BEAM_TEMPORARY );	
+	m_pBeam[m_iBeams]->AddSpawnFlags( SF_BEAM_TEMPORARY );
 
 	m_iBeams++;
 }
@@ -612,7 +612,7 @@ void CNPC_Vortigaunt::ArmBeam( int side )
 void CNPC_Vortigaunt::BeamGlow( )
 {
 	int b = m_iBeams * 32;
-	
+
 	if ( b > 255 )
 		 b = 255;
 
@@ -620,7 +620,7 @@ void CNPC_Vortigaunt::BeamGlow( )
 	{
 		if ( m_pBeam[i] != NULL )
 		{
-			if ( m_pBeam[i]->GetBrightness() != 255 ) 
+			if ( m_pBeam[i]->GetBrightness() != 255 )
 				m_pBeam[i]->SetBrightness( b );
 		}
 	}
@@ -631,8 +631,6 @@ void CNPC_Vortigaunt::BeamGlow( )
 //=========================================================
 void CNPC_Vortigaunt::WackBeam( int side, CBaseEntity *pEntity )
 {
-	Vector vecDest;
-	
 	if ( m_iBeams >= VORTIGAUNT_MAX_BEAMS )
 		 return;
 
@@ -672,7 +670,7 @@ void CNPC_Vortigaunt::ZapBeam( int side )
 	float deflection = 0.01;
 	vecAim = vecAim + side * right * random->RandomFloat( 0, deflection ) + up * random->RandomFloat( -deflection, deflection );
 	UTIL_TraceLine ( vecSrc, vecSrc + vecAim * 1024, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
-	
+
 	m_pBeam[m_iBeams] = CBeam::BeamCreate( "sprites/lgtning.vmt", 5.0f );
 	if ( m_pBeam[m_iBeams] == NULL )
 		 return;

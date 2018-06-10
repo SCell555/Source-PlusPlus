@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -26,7 +26,7 @@
 #include "util_shared.h"
 
 #ifdef CLIENT_DLL
-	
+
 	#include "c_dod_player.h"
 	#include "prediction.h"
 	#include "clientmode_dod.h"
@@ -48,7 +48,7 @@ void DispatchEffect( const char *pName, const CEffectData &data );
 bool CDODPlayer::CanMove( void ) const
 {
 	bool bValidMoveState = (State_Get() == STATE_ACTIVE || State_Get() == STATE_OBSERVER_MODE);
-			
+
 	if ( !bValidMoveState )
 	{
 		return false;
@@ -59,7 +59,7 @@ bool CDODPlayer::CanMove( void ) const
 
 // BUG! This is not called on the client at respawn, only first spawn!
 void CDODPlayer::SharedSpawn()
-{	
+{
 	BaseClass::SharedSpawn();
 
 	// Reset the animation state or we will animate to standing
@@ -104,7 +104,7 @@ float GetDensityFromMaterial( surfacedata_t *pSurfaceData )
 	//hard
 //	case CHAR_TEX_SKY:
 //	case CHAR_TEX_ROCK:
-//	case CHAR_TEX_SAND:	
+//	case CHAR_TEX_SAND:
 	case CHAR_TEX_CONCRETE:
 	case CHAR_TEX_DIRT:		// "sand"
 		flMaterialMod = 6.6f;
@@ -160,9 +160,9 @@ static bool TraceToExit( const Vector &start,
 			flDistance = flMaxDistance;
 		}
 
-		end = start + flDistance * dir; 
+		end = start + flDistance * dir;
 
-		// point contents fails to return proper contents inside a func_detail brush, eg the dod_flash 
+		// point contents fails to return proper contents inside a func_detail brush, eg the dod_flash
 		// stairs
 
 		//int contents = UTIL_PointContents( end );
@@ -192,18 +192,18 @@ static bool TraceToExit( const Vector &start,
 #endif
 void CDODPlayer::FireBullets( const FireBulletsInfo_t &info )
 {
-	trace_t			tr;								
+	trace_t			tr;
 	trace_t			reverseTr;						//Used to find exit points
 	static int		iMaxPenetrations	= 6;
 	int				iPenetrations		= 0;
-	float			flDamage			= info.m_iDamage;		//Remaining damage in the bullet
+	float			flDamage			= info.m_flDamage;		//Remaining damage in the bullet
 	Vector			vecSrc				= info.m_vecSrc;
 	Vector			vecEnd				= vecSrc + info.m_vecDirShooting * info.m_flDistance;
 
 	static int		iTraceMask = ( ( MASK_SOLID | CONTENTS_DEBRIS | CONTENTS_HITBOX | CONTENTS_PRONE_HELPER ) & ~CONTENTS_GRATE );
-	 
+
 	CBaseEntity		*pLastHitEntity		= this;	// start with us so we don't trace ourselves
-		
+
 	int iDamageType = GetAmmoDef()->DamageType( info.m_iAmmoType );
 	int iCollisionGroup = COLLISION_GROUP_NONE;
 
@@ -277,9 +277,9 @@ void CDODPlayer::FireBullets( const FireBulletsInfo_t &info )
 
 			default:
 				break;
-			}			
+			}
 		}
-			
+
 		pLastHitEntity = tr.m_pEnt;
 
 		if ( sv_showimpacts.GetBool() )
@@ -308,10 +308,10 @@ void CDODPlayer::FireBullets( const FireBulletsInfo_t &info )
 #ifdef CLIENT_DLL
 		// See if the bullet ended up underwater + started out of the water
 		if ( enginetrace->GetPointContents( tr.endpos ) & (CONTENTS_WATER|CONTENTS_SLIME) )
-		{	
+		{
 			trace_t waterTrace;
 			UTIL_TraceLine( vecSrc, tr.endpos, (MASK_SHOT|CONTENTS_WATER|CONTENTS_SLIME), this, iCollisionGroup, &waterTrace );
-			
+
 			if( waterTrace.allsolid != 1 )
 			{
 				CEffectData	data;
@@ -346,7 +346,7 @@ void CDODPlayer::FireBullets( const FireBulletsInfo_t &info )
 		// Get surface where the bullet entered ( if it had different surfaces on enter and exit )
 		surfacedata_t *pSurfaceData = physprops->GetSurfaceData( tr.surface.surfaceProps );
 		Assert( pSurfaceData );
-		
+
 		float flMaterialMod = GetDensityFromMaterial(pSurfaceData);
 
 		if ( iDamageType & DMG_MACHINEGUN )
@@ -435,7 +435,7 @@ void CDODPlayer::FireBullets( const FireBulletsInfo_t &info )
 		// Reduce bullet damage by material and distanced travelled through that material
 		// if it is < 0 we won't go through the loop again
 		float flTraceDistance = VectorLength( reverseTr.endpos - tr.endpos );
-		
+
 		flDamage -= flMaterialMod * flTraceDistance;
 
 		if( flDamage > 0 )
@@ -469,7 +469,7 @@ bool CDODPlayer::IsSprinting( void )
 
 bool CDODPlayer::CanAttack( void )
 {
-	if ( IsSprinting() ) 
+	if ( IsSprinting() )
 		return false;
 
 	if ( GetMoveType() == MOVETYPE_LADDER )
@@ -501,7 +501,7 @@ bool CDODPlayer::CanAttack( void )
 	if ( dod_bonusround.GetBool() )
 	{
 		if ( GetTeamNumber() == TEAM_ALLIES )
-		{ 
+		{
 			return ( state == STATE_RND_RUNNING || state == STATE_ALLIES_WIN );
 		}
 		else
@@ -521,15 +521,15 @@ void CDODPlayer::SetAnimation( PLAYER_ANIM playerAnim )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : 
+// Purpose:
+// Input  :
 // Output : const Vector
 //-----------------------------------------------------------------------------
 const Vector CDODPlayer::GetPlayerMins( void ) const
 {
 	if ( IsObserver() )
 	{
-		return VEC_OBS_HULL_MIN;	
+		return VEC_OBS_HULL_MIN;
 	}
 	else
 	{
@@ -549,15 +549,15 @@ const Vector CDODPlayer::GetPlayerMins( void ) const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : 
+// Purpose:
+// Input  :
 // Output : const Vector
 //-----------------------------------------------------------------------------
 const Vector CDODPlayer::GetPlayerMaxs( void ) const
-{	
+{
 	if ( IsObserver() )
 	{
-		return VEC_OBS_HULL_MAX;	
+		return VEC_OBS_HULL_MAX;
 	}
 	else
 	{
@@ -577,8 +577,8 @@ const Vector CDODPlayer::GetPlayerMaxs( void ) const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : collisionGroup - 
+// Purpose:
+// Input  : collisionGroup -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CDODPlayer::ShouldCollide( int collisionGroup, int contentsMask ) const
@@ -618,7 +618,7 @@ CDODPlayerShared::CDODPlayerShared()
 
 	m_flDeployedHeight = STANDING_DEPLOY_HEIGHT;
 	m_flDeployChangeTime = gpGlobals->curtime;
-	
+
 	SetDesiredPlayerClass( PLAYERCLASS_UNDEFINED );
 
 	m_flLastViewAnimationTime = gpGlobals->curtime;
@@ -721,7 +721,7 @@ void CDODPlayerShared::SetProne( bool bProne, bool bNoAnimation /* = false */ )
 void CDODPlayerShared::SetJumping( bool bJumping )
 {
 	m_bJumping = bJumping;
-	
+
 	if ( IsSniperZoomed() )
 	{
 		ForceUnzoom();
@@ -938,7 +938,7 @@ void CDODPlayerShared::StartGoingProne( void )
 }
 
 void CDODPlayerShared::StandUpFromProne( void )
-{	
+{
 	// make the prone sound
 	CPASFilter filter( m_pOuter->GetAbsOrigin() );
 	filter.UsePredictionRules();
@@ -947,7 +947,7 @@ void CDODPlayerShared::StandUpFromProne( void )
 	// speed up to target speed
 	m_flUnProneTime = gpGlobals->curtime + TIME_TO_PRONE;
 
-	m_flGoProneTime = 0.0f;	//reset 
+	m_flGoProneTime = 0.0f;	//reset
 }
 
 bool CDODPlayerShared::CanChangePosition( void )
@@ -1017,7 +1017,7 @@ void CDODPlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOrig
 	bool movingalongground = ( groundspeed > 0.0f );
 	bool moving_fast_enough =  ( speed >= flMinSpeed );
 
-	// always play a step sound if we are moving faster than 
+	// always play a step sound if we are moving faster than
 
 	// To hear step sounds you must be either on a ladder or moving along the ground AND
 	// You must be moving fast enough
@@ -1069,7 +1069,7 @@ void CDODPlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOrig
 	{
 		psurface = physprops->GetSurfaceData( physprops->GetSurfaceIndex( "water" ) );
 		flVol = bWalking ? 0.2 : 0.5;
-		m_flStepSoundTime = bWalking ? 400 : 300;		
+		m_flStepSoundTime = bWalking ? 400 : 300;
 	}
 	else
 	{
@@ -1091,7 +1091,7 @@ void CDODPlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOrig
 
 				m_flStepSoundTime = 300.0f - 30.0f * percent;
 			}
-			else 
+			else
 			{
 				m_flStepSoundTime = 400;
 			}
@@ -1100,11 +1100,11 @@ void CDODPlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOrig
 		switch ( psurface->game.material )
 		{
 		default:
-		case CHAR_TEX_CONCRETE:						
+		case CHAR_TEX_CONCRETE:
 			flVol = bWalking ? 0.2 : 0.5;
 			break;
 
-		case CHAR_TEX_METAL:	
+		case CHAR_TEX_METAL:
 			flVol = bWalking ? 0.2 : 0.5;
 			break;
 
@@ -1112,7 +1112,7 @@ void CDODPlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOrig
 			flVol = bWalking ? 0.25 : 0.55;
 			break;
 
-		case CHAR_TEX_VENT:	
+		case CHAR_TEX_VENT:
 			flVol = bWalking ? 0.4 : 0.7;
 			break;
 
@@ -1120,7 +1120,7 @@ void CDODPlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOrig
 			flVol = bWalking ? 0.2 : 0.5;
 			break;
 
-		case CHAR_TEX_TILE:	
+		case CHAR_TEX_TILE:
 			flVol = bWalking ? 0.2 : 0.5;
 			break;
 
@@ -1143,7 +1143,7 @@ void CDODPlayer::UpdateStepSound( surfacedata_t *psurface, const Vector &vecOrig
 		return;
 	}
 
-	m_flMinNextStepSoundTime = gpGlobals->curtime + 0.1f;	
+	m_flMinNextStepSoundTime = gpGlobals->curtime + 0.1f;
 
 	PlayStepSound( feet, psurface, flVol, false );
 }
@@ -1170,12 +1170,12 @@ void CDODPlayer::CheckProneMoveSound( int groundspeed, bool onground )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : step - 
-//			fvol - 
+// Purpose:
+// Input  : step -
+//			fvol -
 //			force - force sound to play
 //-----------------------------------------------------------------------------
-void CDODPlayer::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force )
+void CDODPlayer::PlayStepSound( const Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force )
 {
 	if ( gpGlobals->maxClients > 1 && !sv_footsteps.GetFloat() )
 		return;
@@ -1206,13 +1206,13 @@ void CDODPlayer::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, floa
 		pModelNameForGender = DOD_PLAYERMODEL_US_RIFLEMAN;
 
 	if ( !CBaseEntity::GetParametersForSound( pSoundName, params, pModelNameForGender ) )
-		return;	
+		return;
 
 	CRecipientFilter filter;
 	filter.AddRecipientsByPAS( vecOrigin );
 
 #ifndef CLIENT_DLL
-	// im MP, server removed all players in origins PVS, these players 
+	// im MP, server removed all players in origins PVS, these players
 	// generate the footsteps clientside
 	if ( gpGlobals->maxClients > 1 )
 		filter.RemoveRecipientsByPVS( vecOrigin );
@@ -1255,11 +1255,11 @@ void CDODPlayerShared::SetCPIndex( int index )
 		if ( index == -1 )
 		{
 			// just left an area
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ObjectiveIconShrink" ); 
+			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ObjectiveIconShrink" );
 		}
 		else
 		{
-			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ObjectiveIconGrow" ); 
+			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence( "ObjectiveIconGrow" );
 		}
 	}
 

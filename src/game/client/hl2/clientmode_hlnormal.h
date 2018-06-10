@@ -37,11 +37,6 @@ public:
 
 	virtual void	Init();
 	virtual bool	ShouldDrawCrosshair( void );
-	virtual void OnColorCorrectionWeightsReset();
-	virtual float GetColorCorrectionScale() const { return 1.0f; }
-private:
-	CHandle<C_ColorCorrection> m_pCurrentColorCorrection;
-
 };
 
 extern IClientMode *GetClientModeNormal();

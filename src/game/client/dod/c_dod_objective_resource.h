@@ -55,7 +55,7 @@ public:
 			return TEAM_UNASSIGNED;
 
 		return m_iOwner[index];
-	}	
+	}
 
 	int GetCappingTeam( int index )
 	{
@@ -145,7 +145,7 @@ public:
 
 		return num;
 	}
-	
+
 	// get the required cappers for the passed team
 	int GetRequiredCappers( int index, int team )
 	{
@@ -188,7 +188,7 @@ public:
 
 	float GetBombTimeForPoint( int index )
 	{
-		return max( 0, m_flBombEndTimes[index] - gpGlobals->curtime );
+		return max( 0.f, m_flBombEndTimes[index] - gpGlobals->curtime );
 	}
 
 	int GetBombsRequired( int index )

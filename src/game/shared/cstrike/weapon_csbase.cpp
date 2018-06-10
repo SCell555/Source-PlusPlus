@@ -41,7 +41,7 @@
 // ----------------------------------------------------------------------------- //
 
 //--------------------------------------------------------------------------------------------------------
-static const char * s_WeaponAliasInfo[] = 
+static const char * s_WeaponAliasInfo[] =
 {
 	"none",		// WEAPON_NONE
 	"p228",		// WEAPON_P228
@@ -61,7 +61,7 @@ static const char * s_WeaponAliasInfo[] =
 	"famas",	// WEAPON_FAMAS				// CT cheap m4a1
 	"usp",		// WEAPON_USP
 	"awp",		// WEAPON_AWP
-	"mp5navy",	// WEAPON_MP5N 
+	"mp5navy",	// WEAPON_MP5N
 	"m249",		// WEAPON_M249				// big machinegun
 	"m3",		// WEAPON_M3 				// cheap shotgun
 	"m4a1",		// WEAPON_M4A1
@@ -73,7 +73,7 @@ static const char * s_WeaponAliasInfo[] =
 	"ak47",		// WEAPON_AK47
 	"knife",	// WEAPON_KNIFE
 	"p90",		// WEAPON_P90
-	"shield",	// WEAPON_SHIELDGUN 
+	"shield",	// WEAPON_SHIELDGUN
 	"kevlar",
 	"assaultsuit",
 	"nightvision",
@@ -86,7 +86,7 @@ struct WeaponAliasTranslationInfoStruct
 	char *m_translatedAlias;
 };
 
-static const WeaponAliasTranslationInfoStruct s_WeaponAliasTranslationInfo[] = 
+static const WeaponAliasTranslationInfoStruct s_WeaponAliasTranslationInfo[] =
 {
 	{ "cv47", "ak47" },
 	{ "defender", "galil" },
@@ -272,7 +272,7 @@ IMPLEMENT_NETWORKCLASS_ALIASED( WeaponCSBase, DT_WeaponCSBase )
 
 BEGIN_NETWORK_TABLE( CWeaponCSBase, DT_WeaponCSBase )
 #ifdef CLIENT_DLL
-  
+
 #else
 	// world weapon models have no aminations
   	SendPropExclude( "DT_AnimTimeMustBeFirst", "m_flAnimTime" ),
@@ -319,7 +319,7 @@ LINK_ENTITY_TO_CLASS( weapon_cs_base, CWeaponCSBase );
 
 
 // ----------------------------------------------------------------------------- //
-// CWeaponCSBase implementation. 
+// CWeaponCSBase implementation.
 // ----------------------------------------------------------------------------- //
 CWeaponCSBase::CWeaponCSBase()
 {
@@ -362,7 +362,7 @@ bool CWeaponCSBase::KeyValue( const char *szKeyName, const char *szValue )
 
 
 bool CWeaponCSBase::IsPredicted() const
-{ 
+{
 	return true;
 }
 
@@ -385,7 +385,7 @@ bool CWeaponCSBase::PlayEmptySound()
 	//	C4
 	//	Flashbang
 	//	HE Grenade
-	//	Smoke grenade				
+	//	Smoke grenade
 
 	CPASAttenuationFilter filter( this );
 	filter.UsePredictionRules();
@@ -423,7 +423,7 @@ void CWeaponCSBase::SecondaryAttack( void )
 
 		if ( pPlayer->IsShieldDrawn() )
 			 SendWeaponAnim( ACT_SHIELD_UP );
-		else 
+		else
 			 SendWeaponAnim( ACT_SHIELD_DOWN );
 
 		pPlayer->ResetMaxSpeed();
@@ -442,19 +442,19 @@ bool CWeaponCSBase::SendWeaponAnim( int iActivity )
 	if ( pPlayer && pPlayer->HasShield() )
 	{
 		CBaseViewModel *vm = pPlayer->GetViewModel( 1 );
-	
+
 		if ( vm == NULL )
 			return false;
-	
+
 		vm->SetWeaponModel( SHIELD_VIEW_MODEL, this );
 
 		int	idealSequence = vm->SelectWeightedSequence( (Activity)iActivity );
-		
+
 		if ( idealSequence >= 0 )
 		{
 			vm->SendViewModelMatchingSequence( idealSequence );
 		}
-	} 
+	}
 #endif
 
 	return BaseClass::SendWeaponAnim( iActivity );
@@ -472,8 +472,8 @@ void CWeaponCSBase::ItemPostFrame()
 
 	if ((m_bInReload) && (pPlayer->m_flNextAttack <= gpGlobals->curtime))
 	{
-		// complete the reload. 
-		int j = min( GetMaxClip1() - m_iClip1, pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) );	
+		// complete the reload.
+		int j = min( GetMaxClip1() - m_iClip1, pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) );
 
 		// Add them to the clip
 		m_iClip1 += j;
@@ -493,7 +493,7 @@ void CWeaponCSBase::ItemPostFrame()
 			CWeaponCSBase::SecondaryAttack();
 		else
 			SecondaryAttack();
-		
+
 		pPlayer->m_nButtons &= ~IN_ATTACK2;
 	}
 	else if ((pPlayer->m_nButtons & IN_ATTACK) && (m_flNextPrimaryAttack <= gpGlobals->curtime ))
@@ -506,7 +506,7 @@ void CWeaponCSBase::ItemPostFrame()
 		// Can't shoot during the freeze period
 		// Ken: Always allow firing in single player
 		//---
-		if ( !CSGameRules()->IsFreezePeriod() && 
+		if ( !CSGameRules()->IsFreezePeriod() &&
 			!pPlayer->m_bIsDefusing &&
 			pPlayer->State_Get() == STATE_ACTIVE && !pPlayer->IsShieldDrawn()
 			)
@@ -534,10 +534,10 @@ void CWeaponCSBase::ItemPostFrame()
 		}
 		//---
 	}
-	else if ( pPlayer->m_nButtons & IN_RELOAD && GetMaxClip1() != WEAPON_NOCLIP && !m_bInReload && m_flNextPrimaryAttack < gpGlobals->curtime) 
+	else if ( pPlayer->m_nButtons & IN_RELOAD && GetMaxClip1() != WEAPON_NOCLIP && !m_bInReload && m_flNextPrimaryAttack < gpGlobals->curtime)
 	{
 		// reload when reload is pressed, or if no buttons are down and weapon is empty.
-		
+
 		//MIKETODO: add code for shields...
 		//if ( !FBitSet( m_iWeaponState, WPNSTATE_SHIELD_DRAWN ) )
 
@@ -553,14 +553,14 @@ void CWeaponCSBase::ItemPostFrame()
 			}
 #endif
 
-			 Reload();	
+			 Reload();
 		}
 	}
 	else if ( !(pPlayer->m_nButtons & (IN_ATTACK|IN_ATTACK2) ) )
 	{
 		// no fire buttons down
 
-		// The following code prevents the player from tapping the firebutton repeatedly 
+		// The following code prevents the player from tapping the firebutton repeatedly
 		// to simulate full auto and retaining the single shot accuracy of single fire
 		if ( m_bDelayFire )
 		{
@@ -568,7 +568,7 @@ void CWeaponCSBase::ItemPostFrame()
 
 			if (pPlayer->m_iShotsFired > 15)
 				pPlayer->m_iShotsFired = 15;
-			
+
 			m_flDecreaseShotsFired = gpGlobals->curtime + 0.4;
 		}
 
@@ -638,7 +638,7 @@ const CCSWeaponInfo &CWeaponCSBase::GetCSWpnData() const
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 const char *CWeaponCSBase::GetViewModel( int /*viewmodelindex = 0 -- this is ignored in the base class here*/ ) const
 {
@@ -648,7 +648,7 @@ const char *CWeaponCSBase::GetViewModel( int /*viewmodelindex = 0 -- this is ign
 	{
 		 return BaseClass::GetViewModel();
 	}
-	
+
 	if ( pOwner->HasShield() && GetCSWpnData().m_bCanUseWithShield )
 		 return GetCSWpnData().m_szShieldViewModel;
 	else
@@ -720,7 +720,7 @@ void CWeaponCSBase::UpdateShieldState( void )
 	//Make the hitbox set switches here!!!
 	if ( pOwner->HasShield() == false )
 	{
-		
+
 		pOwner->SetShieldDrawnState( false );
 		//pOwner->SetHitBoxSet( 0 );
 		return;
@@ -778,7 +778,7 @@ bool CWeaponCSBase::Deploy()
 #ifdef CLIENT_DLL
 	m_iAlpha =  80;
 #else
-	
+
 	m_flDecreaseShotsFired = gpGlobals->curtime;
 
 	CCSPlayer *pPlayer = GetPlayerOwner();
@@ -833,7 +833,7 @@ void CWeaponCSBase::Drop(const Vector &vecVelocity)
 	FallInit();
 	SetGroundEntity( NULL );
 
-	m_bInReload = false; // stop reloading 
+	m_bInReload = false; // stop reloading
 
 	SetThink( NULL );
 	m_nextPrevOwnerTouchTime = gpGlobals->curtime + 0.8f;
@@ -890,7 +890,7 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 		pCrosshair->SetCrosshair( 0, Color( 255, 255, 255, 255 ) );
 
 		CCSPlayer* pPlayer = (CCSPlayer*)C_BasePlayer::GetLocalPlayer();
-		
+
 		if ( !pPlayer )
 			return;
 
@@ -900,7 +900,7 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 		// Draw the targeting zone around the pCrosshair
 		if ( pPlayer->IsInVGuiInputMode() )
 			return;
-		
+
 		if ( pPlayer->HasShield() && pPlayer->IsShieldDrawn() == true )
 			 return;
 
@@ -909,9 +909,9 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 			 return;
 
 		int iDistance = GetCSWpnData().m_iCrosshairMinDistance; // The minimum distance the crosshair can achieve...
-		
+
 		int iDeltaDistance = GetCSWpnData().m_iCrosshairDeltaDistance; // Distance at which the crosshair shrinks at each step
-		
+
 		if ( cl_dynamiccrosshair.GetBool() )
 		{
 			if ( !( pPlayer->GetFlags() & FL_ONGROUND ) )
@@ -921,10 +921,10 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 			else if ( pPlayer->GetAbsVelocity().Length() > 100 )
 				 iDistance *= 1.5f;
 		}
-	
+
 		if ( pPlayer->m_iShotsFired > m_iAmmoLastCheck )
 		{
-			m_flCrosshairDistance = min( 15, m_flCrosshairDistance + iDeltaDistance );
+			m_flCrosshairDistance = min( 15.f, m_flCrosshairDistance + iDeltaDistance );
 		}
 		else if( m_flCrosshairDistance > iDistance )
 		{
@@ -1072,7 +1072,7 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 	{
 		// This is handled from the player's animstate, so it can match up to the beginning of the fire animation
 	}
-		
+
 
 	bool CWeaponCSBase::OnFireEvent( C_BaseViewModel *pViewModel, const Vector& origin, const QAngle& angles, int event, const char *options )
 	{
@@ -1081,13 +1081,13 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 			C_CSPlayer *pPlayer = ToCSPlayer( GetOwner() );
 			if( pPlayer && pPlayer->GetFOV() < pPlayer->GetDefaultFOV() && HideViewModelWhenZoomed() )
 				return true;
-			
+
 			CEffectData data;
 			data.m_fFlags = 0;
 			data.m_hEntity = pViewModel->GetRefEHandle();
 			data.m_nAttachmentIndex = 1;
 			data.m_flScale = GetCSWpnData().m_flMuzzleScale;
-		
+
 			switch( GetMuzzleFlashStyle() )
 			{
 			case CS_MUZZLEFLASH_NONE:
@@ -1098,7 +1098,7 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 					DispatchEffect( "CS_MuzzleFlash_X", data );
 				}
 				break;
-				
+
 			case CS_MUZZLEFLASH_NORM:
 			default:
 				{
@@ -1122,8 +1122,8 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 	{
 		return LookupAttachment( "muzzle_flash" );
 	}
-	
-#else		
+
+#else
 
 	//-----------------------------------------------------------------------------
 	// Purpose: Get the accuracy derived from weapon and player, and return it
@@ -1197,7 +1197,7 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 	}
 
 	//=========================================================
-	// CheckRespawn - a player is taking this weapon, should 
+	// CheckRespawn - a player is taking this weapon, should
 	// it respawn?
 	//=========================================================
 	void CWeaponCSBase::CheckRespawn()
@@ -1206,7 +1206,7 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 		return;
 	}
 
-		
+
 	//=========================================================
 	// Respawn- this item is already in the world, but it is
 	// invisible and intangible. Make it visible and tangible.
@@ -1238,7 +1238,7 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 	}
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	//-----------------------------------------------------------------------------
 	void CWeaponCSBase::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 	{
@@ -1281,7 +1281,7 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 
 		// Set this here to allow players to shoot dropped weapons
 		SetCollisionGroup( COLLISION_GROUP_WEAPON );
-		
+
 		SetExtraAmmoCount( m_iDefaultExtraAmmo );	//Start with no additional ammo
 
 		m_nextPrevOwnerTouchTime = 0.0;
@@ -1291,7 +1291,7 @@ void CWeaponCSBase::DefaultTouch(CBaseEntity *pOther)
 		m_bInReloadAnimation = false;
 #endif
 	}
-	
+
 	bool CWeaponCSBase::DefaultReload( int iClipSize1, int iClipSize2, int iActivity )
 	{
 		if ( BaseClass::DefaultReload( iClipSize1, iClipSize2, iActivity ) )
@@ -1355,9 +1355,9 @@ bool CWeaponCSBase::IsUseable()
 
 	if ( Clip1() <= 0 )
 	{
-		if ( pPlayer->GetAmmoCount( GetPrimaryAmmoType() ) <= 0 && GetMaxClip1() != -1 )			
+		if ( pPlayer->GetAmmoCount( GetPrimaryAmmoType() ) <= 0 && GetMaxClip1() != -1 )
 		{
-			// clip is empty (or nonexistant) and the player has no more ammo of this type. 
+			// clip is empty (or nonexistant) and the player has no more ammo of this type.
 			return false;
 		}
 	}
@@ -1374,9 +1374,9 @@ bool CWeaponCSBase::IsUseable()
 	static ConVar	cl_bobcycle( "cl_bobcycle","0.8", FCVAR_CHEAT );
 	static ConVar	cl_bob( "cl_bob","0.002", FCVAR_CHEAT );
 	static ConVar	cl_bobup( "cl_bobup","0.5", FCVAR_CHEAT );
-	
+
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	// Output : float
 	//-----------------------------------------------------------------------------
 	float CWeaponCSBase::CalcViewmodelBob( void )
@@ -1385,13 +1385,13 @@ bool CWeaponCSBase::IsUseable()
 		static	float lastbobtime;
 		static  float lastspeed;
 		float	cycle;
-		
+
 		CBasePlayer *player = ToBasePlayer( GetOwner() );
 		//Assert( player );
 
 		//NOTENOTE: For now, let this cycle continue when in the air, because it snaps badly without it
 
-		if ( ( !gpGlobals->frametime ) || 
+		if ( ( !gpGlobals->frametime ) ||
 			 ( player == NULL ) ||
 			 ( cl_bobcycle.GetFloat() <= 0.0f ) ||
 			 ( cl_bobup.GetFloat() <= 0.0f ) ||
@@ -1403,7 +1403,7 @@ bool CWeaponCSBase::IsUseable()
 
 		//Find the speed of the player
 		float speed = player->GetLocalVelocity().Length2D();
-		float flmaxSpeedDelta = max( 0, (gpGlobals->curtime - lastbobtime) * 320.0f );
+		float flmaxSpeedDelta = max( 0.f, (gpGlobals->curtime - lastbobtime) * 320.0f );
 
 		// don't allow too big speed changes
 		speed = clamp( speed, lastspeed-flmaxSpeedDelta, lastspeed+flmaxSpeedDelta );
@@ -1414,10 +1414,10 @@ bool CWeaponCSBase::IsUseable()
 		//FIXME: This maximum speed value must come from the server.
 		//		 MaxSpeed() is not sufficient for dealing with sprinting - jdw
 
-		
+
 
 		float bob_offset = RemapVal( speed, 0, 320, 0.0f, 1.0f );
-		
+
 		bobtime += ( gpGlobals->curtime - lastbobtime ) * bob_offset;
 		lastbobtime = gpGlobals->curtime;
 
@@ -1433,7 +1433,7 @@ bool CWeaponCSBase::IsUseable()
 		{
 			cycle = M_PI + M_PI*(cycle-cl_bobup.GetFloat())/(1.0 - cl_bobup.GetFloat());
 		}
-		
+
 		g_verticalBob = speed*0.005f;
 		g_verticalBob = g_verticalBob*0.3 + g_verticalBob*0.7*sin(cycle);
 
@@ -1455,17 +1455,17 @@ bool CWeaponCSBase::IsUseable()
 		g_lateralBob = speed*0.005f;
 		g_lateralBob = g_lateralBob*0.3 + g_lateralBob*0.7*sin(cycle);
 		g_lateralBob = clamp( g_lateralBob, -7.0f, 4.0f );
-		
+
 		//NOTENOTE: We don't use this return value in our case (need to restructure the calculation function setup!)
 		return 0.0f;
 
 	}
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
-	// Input  : &origin - 
-	//			&angles - 
-	//			viewmodelindex - 
+	// Purpose:
+	// Input  : &origin -
+	//			&angles -
+	//			viewmodelindex -
 	//-----------------------------------------------------------------------------
 	void CWeaponCSBase::AddViewmodelBob( CBaseViewModel *viewmodel, Vector &origin, QAngle &angles )
 	{
@@ -1476,10 +1476,10 @@ bool CWeaponCSBase::IsUseable()
 
 		// Apply bob, but scaled down to 40%
 		VectorMA( origin, g_verticalBob * 0.4f, forward, origin );
-		
+
 		// Z bob a bit more
 		origin[2] += g_verticalBob * 0.1f;
-		
+
 		// bob the angles
 		angles[ ROLL ]	+= g_verticalBob * 0.5f;
 		angles[ PITCH ]	-= g_verticalBob * 0.4f;
@@ -1536,8 +1536,8 @@ bool CWeaponCSBase::PhysicsSplash( const Vector &centerPoint, const Vector &norm
 #endif // !CLIENT_DLL
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pPicker - 
+// Purpose:
+// Input  : *pPicker -
 //-----------------------------------------------------------------------------
 void CWeaponCSBase::OnPickedUp( CBaseCombatCharacter *pNewOwner )
 {
@@ -1561,8 +1561,8 @@ void CWeaponCSBase::OnPickedUp( CBaseCombatCharacter *pNewOwner )
 			CBaseEntity::EmitSound( filter, pNewOwner->entindex(), "Player.PickupWeapon" );
 		}
 
-		// Robin: We don't want to delete weapons the player has picked up, so 
-		// clear the name of the weapon. This prevents wildcards that are meant 
+		// Robin: We don't want to delete weapons the player has picked up, so
+		// clear the name of the weapon. This prevents wildcards that are meant
 		// to find NPCs finding weapons dropped by the NPCs as well.
 		SetName( NULL_STRING );
 	}

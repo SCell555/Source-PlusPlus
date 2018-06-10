@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -35,7 +35,7 @@ END_PREDICTION_DATA()
 
 LINK_ENTITY_TO_CLASS( weapon_basedodgrenade, CWeaponDODBaseGrenade );
 
-acttable_t CWeaponDODBaseGrenade::m_acttable[] = 
+acttable_t CWeaponDODBaseGrenade::m_acttable[] =
 {
 	// Move this out to the specific grenades???
 	{ ACT_DOD_STAND_AIM,					ACT_DOD_STAND_AIM_GREN_FRAG,				false },
@@ -73,7 +73,7 @@ CWeaponDODBaseGrenade::CWeaponDODBaseGrenade()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CWeaponDODBaseGrenade::CanHolster( void )
 {
@@ -96,13 +96,13 @@ bool CWeaponDODBaseGrenade::CanHolster( void )
 	END_DATADESC()
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	//-----------------------------------------------------------------------------
 	void CWeaponDODBaseGrenade::Precache()
 	{
 		PrecacheScriptSound( "Weapon_Grenade.Throw" );
 
-		// Precache all the grenade minimap icons. 
+		// Precache all the grenade minimap icons.
 		PrecacheMaterial( "sprites/minimap_icons/minimap_riflegren_ger" );
 		PrecacheMaterial( "sprites/minimap_icons/minimap_riflegren_us" );
 		PrecacheMaterial( "sprites/minimap_icons/grenade_hltv" );
@@ -112,9 +112,9 @@ bool CWeaponDODBaseGrenade::CanHolster( void )
 
 		BaseClass::Precache();
 	}
-	
+
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	//-----------------------------------------------------------------------------
 	bool CWeaponDODBaseGrenade::Deploy()
 	{
@@ -125,7 +125,7 @@ bool CWeaponDODBaseGrenade::CanHolster( void )
 	}
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	// Output : Returns true on success, false on failure.
 	//-----------------------------------------------------------------------------
 	bool CWeaponDODBaseGrenade::Holster( CBaseCombatWeapon *pSwitchingTo )
@@ -133,7 +133,7 @@ bool CWeaponDODBaseGrenade::CanHolster( void )
 		m_bRedraw = false;
 
 #ifndef CLIENT_DLL
-		// If they attempt to switch weapons before the throw animation is done, 
+		// If they attempt to switch weapons before the throw animation is done,
 		// allow it, but kill the weapon if we have to.
 
 		CDODPlayer *pPlayer = ToDODPlayer( GetPlayerOwner() );
@@ -149,7 +149,7 @@ bool CWeaponDODBaseGrenade::CanHolster( void )
 	}
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	// Output : Returns true on success, false on failure.
 	//-----------------------------------------------------------------------------
 	bool CWeaponDODBaseGrenade::Reload()
@@ -176,9 +176,9 @@ enum
 	THROW_THROW	= 0,
 	THROW_PRIME
 };
-	
+
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	//-----------------------------------------------------------------------------
 	void CWeaponDODBaseGrenade::PrimaryAttack()
 	{
@@ -203,7 +203,7 @@ enum
 
 		if ( !m_bPinPulled )
 		{
-			m_bPinPulled = true; 
+			m_bPinPulled = true;
 
 			SendWeaponAnim( GetPrimaryAttackActivity() );
 
@@ -224,7 +224,7 @@ enum
 	}
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	//-----------------------------------------------------------------------------
 	void CWeaponDODBaseGrenade::ItemPostFrame()
 	{
@@ -246,7 +246,7 @@ enum
 		}
 
 		if ( m_bPinPulled &&
-			 !(pPlayer->m_nButtons & IN_ATTACK) && 
+			 !(pPlayer->m_nButtons & IN_ATTACK) &&
 			 !(pPlayer->m_nButtons & IN_ATTACK2) // If they let go of the fire button, they want to throw the grenade.
 			 )
 		{
@@ -258,14 +258,14 @@ enum
 			m_bPinPulled = false;
 			SetArmed( false );
 
-			DecrementAmmo( pPlayer );		
+			DecrementAmmo( pPlayer );
 
 			SendWeaponAnim( ACT_VM_THROW );
 		}
 		else
 		{
 			BaseClass::ItemPostFrame();
-			
+
 			if ( m_bRedraw )
 			{
 				if (pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
@@ -281,8 +281,8 @@ enum
 
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
-	// Input  : *pOwner - 
+	// Purpose:
+	// Input  : *pOwner -
 	//-----------------------------------------------------------------------------
 	void CWeaponDODBaseGrenade::DecrementAmmo( CBaseCombatCharacter *pOwner )
 	{
@@ -314,7 +314,7 @@ enum
 		{
 			int team = pPlayer->GetTeamNumber();
 
-			if ( ( team == TEAM_ALLIES && state == STATE_AXIS_WIN ) || 
+			if ( ( team == TEAM_ALLIES && state == STATE_AXIS_WIN ) ||
 				( team == TEAM_AXIS && state == STATE_ALLIES_WIN ) )
 			{
 				bThrow = false;
@@ -328,7 +328,7 @@ enum
 		m_bPinPulled = false;
 		SetArmed( false );
 
-		DecrementAmmo( pPlayer );		
+		DecrementAmmo( pPlayer );
 
 		SendWeaponAnim( ACT_VM_THROW );
 	}
@@ -338,7 +338,7 @@ enum
 	ConVar dod_grenademinspeed( "dod_grenademinspeed", "500", FCVAR_CHEAT );
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	//-----------------------------------------------------------------------------
 	void CWeaponDODBaseGrenade::ThrowGrenade( bool bDrop )
 	{
@@ -362,9 +362,9 @@ enum
 			angThrow.x = -10 + angThrow.x * ((90 + 10) / 90.0);
 
 		AngleVectors( angThrow, &vForward, &vRight, &vUp );
-		
+
 		Vector eyes = pPlayer->GetAbsOrigin() + pPlayer->GetViewOffset();
-		Vector vecSrc = eyes + vForward * 16; 	
+		Vector vecSrc = eyes + vForward * 16;
 
 		// Start with the player's velocity as the grenade vel
 		Vector vecPlayerVel;
@@ -395,9 +395,9 @@ enum
 
 		trace_t tr;
 		UTIL_TraceLine( eyes, vecSrc, MASK_SOLID, NULL, COLLISION_GROUP_NONE, &tr );
-		
+
 		// don't go into the ground
-		if( tr.fraction < 1.0 ) 
+		if( tr.fraction < 1.0 )
 		{
 			vecSrc = tr.endpos;
 		}
@@ -405,7 +405,7 @@ enum
 		float flTimeLeft;
 
 		if ( IsArmed() )
-			flTimeLeft = max( 0, m_flDetonateTime - gpGlobals->curtime );
+			flTimeLeft = max( 0.f, m_flDetonateTime - gpGlobals->curtime );
 		else
 			flTimeLeft = GetDetonateTimerLength();
 
@@ -426,7 +426,7 @@ enum
 	}
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	//-----------------------------------------------------------------------------
 	void CWeaponDODBaseGrenade::EmitGrenade( Vector vecSrc, QAngle vecAngles, Vector vecVel, AngularImpulse angImpulse, CBasePlayer *pPlayer, float flLifeTime /* = GRENADE_FUSE_LENGTH */ )
 	{

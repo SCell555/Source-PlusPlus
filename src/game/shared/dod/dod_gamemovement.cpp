@@ -1,13 +1,13 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
 
 //========= Copyright © 1996-2001, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -64,13 +64,13 @@ public:
 	void FinishUnProne( void );
 	bool CanUnprone();
 
-	virtual const Vector&	GetPlayerMins( void ) const; // uses local player
-	virtual const Vector&	GetPlayerMaxs( void ) const; // uses local player
+	virtual Vector	GetPlayerMins( void ) const; // uses local player
+	virtual Vector	GetPlayerMaxs( void ) const; // uses local player
 
 	// IGameMovement interface
-	virtual const Vector&	GetPlayerMins( bool ducked ) const { return BaseClass::GetPlayerMins(ducked); }
-	virtual const Vector&	GetPlayerMaxs( bool ducked ) const { return BaseClass::GetPlayerMaxs(ducked); }
-	virtual const Vector&	GetPlayerViewOffset( bool ducked ) const { return BaseClass::GetPlayerViewOffset(ducked); }
+	virtual Vector	GetPlayerMins( bool ducked ) const { return BaseClass::GetPlayerMins(ducked); }
+	virtual Vector	GetPlayerMaxs( bool ducked ) const { return BaseClass::GetPlayerMaxs(ducked); }
+	virtual Vector	GetPlayerViewOffset( bool ducked ) const { return BaseClass::GetPlayerViewOffset(ducked); }
 
 	void ViewOffsetAnimation( Vector vecDest, float flTime, ViewAnimationType type );
 
@@ -105,7 +105,7 @@ EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CGameMovement, IGameMovement,INTERFACENAME_GAM
 CDODGameMovement::CDODGameMovement()
 {
 	// Don't set any member variables here, or you'll get an access
-	// violation exception on LoadLibrary, and will have to stay up til 
+	// violation exception on LoadLibrary, and will have to stay up til
 	// 3 in the morning figuring out where you did bad things.
 
 	m_bUnProneToDuck = false;
@@ -132,7 +132,7 @@ void CDODGameMovement::SetPlayerSpeed( void )
 
 	bool bZoomed = ( m_pDODPlayer->GetFOV() < m_pDODPlayer->GetDefaultFOV() );
 	bool bBazookaDeployed = false;
-	
+
 	CWeaponDODBase *pWpn = m_pDODPlayer->GetActiveDODWeapon();
 	if( pWpn )
 	{
@@ -143,11 +143,11 @@ void CDODGameMovement::SetPlayerSpeed( void )
 		}
 	}
 
-	if ( m_pDODPlayer->m_Shared.IsInMGDeploy() ) 
+	if ( m_pDODPlayer->m_Shared.IsInMGDeploy() )
 	{
 		mv->m_flClientMaxSpeed = PLAYER_SPEED_FROZEN;
 	}
-	else if ( m_pDODPlayer->m_Shared.IsProne() && 
+	else if ( m_pDODPlayer->m_Shared.IsProne() &&
 			 !m_pDODPlayer->m_Shared.IsGettingUpFromProne() &&
 			 m_pDODPlayer->GetGroundEntity() != NULL )
 	{
@@ -156,7 +156,7 @@ void CDODGameMovement::SetPlayerSpeed( void )
 		else if ( bBazookaDeployed )
 			mv->m_flClientMaxSpeed = PLAYER_SPEED_PRONE_BAZOOKA_DEPLOYED;
 		else
-			mv->m_flClientMaxSpeed = PLAYER_SPEED_PRONE;		//Base prone speed 
+			mv->m_flClientMaxSpeed = PLAYER_SPEED_PRONE;		//Base prone speed
 	}
 	else	//not prone, dead or deployed - standing or crouching and possibly moving
 	{
@@ -164,7 +164,7 @@ void CDODGameMovement::SetPlayerSpeed( void )
 
 		if ( bZoomed )
 		{
-			mv->m_flClientMaxSpeed = PLAYER_SPEED_ZOOMED;	
+			mv->m_flClientMaxSpeed = PLAYER_SPEED_ZOOMED;
 		}
 		else if ( bBazookaDeployed )
 		{
@@ -181,7 +181,7 @@ void CDODGameMovement::SetPlayerSpeed( void )
 		}
 		else
 		{
-			float flMaxSpeed;	
+			float flMaxSpeed;
 
 			if ( ( mv->m_nButtons & IN_SPEED ) && ( stamina > 0 ) && ( mv->m_nButtons & IN_FORWARD ) )
 			{
@@ -209,7 +209,7 @@ void CDODGameMovement::SetPlayerSpeed( void )
 
 			if ( m_bUnProneToDuck )
 				maxSpeed *= 0.33;
-			
+
 			mv->m_flClientMaxSpeed = ( ( 1 - flProneFraction ) * PLAYER_SPEED_PRONE ) + ( flProneFraction * maxSpeed );
 		}
 		else if( m_pDODPlayer->m_Shared.IsGettingUpFromProne() )
@@ -218,7 +218,7 @@ void CDODGameMovement::SetPlayerSpeed( void )
 
 			//interp to regular speed speed
 			float flProneFraction = SimpleSpline( pronetime / TIME_TO_PRONE );
-			
+
 			float maxSpeed = mv->m_flClientMaxSpeed;
 
 			if ( m_bUnProneToDuck )
@@ -226,13 +226,13 @@ void CDODGameMovement::SetPlayerSpeed( void )
 
 			mv->m_flClientMaxSpeed = ( flProneFraction * PLAYER_SPEED_PRONE ) + ( ( 1 - flProneFraction ) * maxSpeed );
 		}
-	}	
+	}
 }
 
 ConVar cl_show_speed( "cl_show_speed", "0", FCVAR_CHEAT | FCVAR_REPLICATED, "spam console with local player speed" );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CDODGameMovement::CheckParameters( void )
 {
@@ -297,7 +297,7 @@ void CDODGameMovement::CheckParameters( void )
 
 
 	if ( player->GetFlags() & FL_FROZEN ||
-		 player->GetFlags() & FL_ONTRAIN || 
+		 player->GetFlags() & FL_ONTRAIN ||
 		 IsDead() )
 	{
 		mv->m_flForwardMove = 0;
@@ -402,7 +402,7 @@ bool CDODGameMovement::CanAccelerate()
 		return true;
 	}
 	else
-	{	
+	{
 		return false;
 	}
 }
@@ -417,7 +417,7 @@ void CDODGameMovement::PlayerMove()
 	{
 
 		// Cap actual player speed, fix wall running
-		float spd = mv->m_vecVelocity[0] * mv->m_vecVelocity[0] + 
+		float spd = mv->m_vecVelocity[0] * mv->m_vecVelocity[0] +
 					mv->m_vecVelocity[1] * mv->m_vecVelocity[1];
 
 		if( spd > 0.0 && spd > ( mv->m_flMaxSpeed * mv->m_flMaxSpeed ) )
@@ -436,9 +436,9 @@ void CDODGameMovement::WalkMove( void )
 
 	bool bSprintButtonPressed = ( mv->m_nButtons & IN_SPEED ) > 0;
 
-	if( bSprintButtonPressed && 
+	if( bSprintButtonPressed &&
 		( mv->m_nButtons & IN_FORWARD ) &&
-		!m_pDODPlayer->m_Shared.IsProne() && 
+		!m_pDODPlayer->m_Shared.IsProne() &&
 		!m_pDODPlayer->m_Shared.IsDucking() &&
 		flSpeed > 80 )
 	{
@@ -527,7 +527,7 @@ void CDODGameMovement::CheckForLadders( bool wasOnGround )
 	}
 }
 
-inline void CDODGameMovement::TracePlayerBBoxWithStep( const Vector &vStart, const Vector &vEnd, 
+inline void CDODGameMovement::TracePlayerBBoxWithStep( const Vector &vStart, const Vector &vEnd,
 							unsigned int fMask, int collisionGroup, trace_t &trace )
 {
 	VPROF( "CDODGameMovement::TracePlayerBBoxWithStep" );
@@ -578,7 +578,7 @@ bool CDODGameMovement::ResolveStanding( void )
 	// Less than 0.5 mean we need to attempt to push up the difference.
 	vecStandPos.z = ( mv->GetAbsOrigin().z + ( ( 0.5f - trace.fraction ) * ( player->m_Local.m_flStepSize * 2.0f ) ) );
 	TracePlayerBBoxWithStep( mv->GetAbsOrigin(), vecStandPos, MASK_PLAYERSOLID, COLLISION_GROUP_PLAYER_MOVEMENT, trace );
-	
+
 	// A fraction of 1.0 means we stood up fine - done.
 	if ( trace.fraction == 1.0f )
 	{
@@ -596,9 +596,9 @@ void CDODGameMovement::ReduceTimers( void )
 {
 	Vector vecPlayerVelocity = m_pDODPlayer->GetAbsVelocity();
 	float flStamina = m_pDODPlayer->m_Shared.GetStamina();
-	float fl2DVelocitySquared = vecPlayerVelocity.x * vecPlayerVelocity.x + 
-								vecPlayerVelocity.y * vecPlayerVelocity.y;	
-	
+	float fl2DVelocitySquared = vecPlayerVelocity.x * vecPlayerVelocity.x +
+								vecPlayerVelocity.y * vecPlayerVelocity.y;
+
 	if ( !( mv->m_nButtons & IN_SPEED ) )
 	{
 		m_pDODPlayer->m_Shared.ResetSprintPenalty();
@@ -620,12 +620,12 @@ void CDODGameMovement::ReduceTimers( void )
 	}
 	else
 	{
-		//gain some back		
+		//gain some back
 		if ( fl2DVelocitySquared <= 0 )
 		{
 			flStamina += 60 * gpGlobals->frametime;
 		}
-		else if ( ( m_pDODPlayer->GetFlags() & FL_ONGROUND ) && 
+		else if ( ( m_pDODPlayer->GetFlags() & FL_ONGROUND ) &&
 					( mv->m_nButtons & IN_DUCK ) &&
 					( m_pDODPlayer->GetFlags() & FL_DUCKING ) )
 		{
@@ -636,7 +636,7 @@ void CDODGameMovement::ReduceTimers( void )
 			flStamina += 10 * gpGlobals->frametime;
 		}
 
-		m_pDODPlayer->m_Shared.SetStamina( flStamina );	
+		m_pDODPlayer->m_Shared.SetStamina( flStamina );
 	}
 
 #ifdef CLIENT_DLL
@@ -650,7 +650,7 @@ void CDODGameMovement::ReduceTimers( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CDODGameMovement::CheckJumpButton( void )
 {
@@ -659,9 +659,9 @@ bool CDODGameMovement::CheckJumpButton( void )
 		mv->m_nOldButtons |= IN_JUMP ;	// don't jump again until released
 		return false;
 	}
-	
+
 	if( m_pDODPlayer->m_Shared.IsProne() ||
-		m_pDODPlayer->m_Shared.IsGettingUpFromProne() || 
+		m_pDODPlayer->m_Shared.IsGettingUpFromProne() ||
 		m_pDODPlayer->m_Shared.IsGoingProne() )
 	{
 		mv->m_nOldButtons |= IN_JUMP;
@@ -678,13 +678,13 @@ bool CDODGameMovement::CheckJumpButton( void )
 			flWaterJumpTime = 0;
 
 		player->SetWaterJumpTime( flWaterJumpTime );
-		
+
 		return false;
 	}
 
 	// If we are in the water most of the way...
 	if ( m_pDODPlayer->GetWaterLevel() >= 2 )
-	{	
+	{
 		// swimming, not jumping
 		SetGroundEntity( NULL );
 
@@ -692,7 +692,7 @@ bool CDODGameMovement::CheckJumpButton( void )
 			mv->m_vecVelocity[2] = 100;
 		else if (m_pDODPlayer->GetWaterType() == CONTENTS_SLIME)
 			mv->m_vecVelocity[2] = 80;
-		
+
 		// play swiming sound
 		if ( player->GetSwimSoundTime() <= 0 )
 		{
@@ -721,9 +721,9 @@ bool CDODGameMovement::CheckJumpButton( void )
 
 	// In the air now.
 	SetGroundEntity( NULL );
-	
-	m_pDODPlayer->PlayStepSound( (Vector &)mv->GetAbsOrigin(), player->GetSurfaceData(), 1.0, true );
-	
+
+	m_pDODPlayer->PlayStepSound( mv->GetAbsOrigin(), player->GetSurfaceData(), 1.0, true );
+
 	m_pDODPlayer->DoAnimationEvent( PLAYERANIMEVENT_JUMP );
 
 	// make the jump sound
@@ -734,8 +734,8 @@ bool CDODGameMovement::CheckJumpButton( void )
 	float flGroundFactor = 1.0f;
 	if ( player->GetSurfaceData() )
 	{
-		flGroundFactor = player->GetSurfaceData()->game.jumpFactor; 
-	}	
+		flGroundFactor = player->GetSurfaceData()->game.jumpFactor;
+	}
 
 	/*
 	// old and busted
@@ -747,7 +747,7 @@ bool CDODGameMovement::CheckJumpButton( void )
 	//until he is below 60 stamina. Then the height will decrease proportionately
 
 	float flJumpSpeed = 15.0;	//base jump height
-	
+
 	if( flStamina >= 60.0f )
 	{
 		flJumpSpeed += 30.0;
@@ -778,7 +778,7 @@ bool CDODGameMovement::CheckJumpButton( void )
 		// v = g * sqrt(2.0 * 45 / g )
 		// v^2 = g * g * 2.0 * 45 / g
 		// v = sqrt( g * 2.0 * 45 )
-							
+
 		mv->m_vecVelocity[2] = flGroundFactor * 268.3281572999747f;		// flJumpSpeed of 45
 		//mv->m_vecVelocity[2] = flGroundFactor * sqrt(2 * 800 * flJumpSpeed);  // 2 * gravity * height
 	}
@@ -787,7 +787,7 @@ bool CDODGameMovement::CheckJumpButton( void )
 		mv->m_vecVelocity[2] += flGroundFactor * 268.3281572999747f;	// flJumpSpeed of 45
 		//mv->m_vecVelocity[2] += flGroundFactor * sqrt(2 * 800 * flJumpSpeed);  // 2 * gravity * height
 	}
-	
+
 	FinishGravity();
 
 	mv->m_outWishVel.z += mv->m_vecVelocity[2] - startz;
@@ -808,7 +808,7 @@ bool CDODGameMovement::CheckJumpButton( void )
 //-----------------------------------------------------------------------------
 void CDODGameMovement::HandleDuckingSpeedCrop()
 {
-	if ( !m_bSpeedCropped )
+	if ( !( m_iSpeedCropped & SPEED_CROPPED_DUCK ) )
 	{
 		if ( ( mv->m_nButtons & IN_DUCK ) || ( player->m_Local.m_bDucking ) || ( player->GetFlags() & FL_DUCKING ) )
 		{
@@ -816,7 +816,7 @@ void CDODGameMovement::HandleDuckingSpeedCrop()
 			mv->m_flForwardMove	*= frac;
 			mv->m_flSideMove	*= frac;
 			mv->m_flUpMove		*= frac;
-			m_bSpeedCropped		= true;
+			m_iSpeedCropped		|= SPEED_CROPPED_DUCK;
 		}
 	}
 }
@@ -877,7 +877,7 @@ bool CDODGameMovement::CanUnprone()
 	player->m_Local.m_bDucked = saveducked;
 
 	if ( trace.startsolid || ( trace.fraction != 1.0f ) )
-		return false;	
+		return false;
 
 	return true;
 }
@@ -908,7 +908,7 @@ bool CDODGameMovement::CanUnduck()
 	UTIL_TraceHull( mv->GetAbsOrigin(), newOrigin, VEC_HULL_MIN, VEC_HULL_MAX, MASK_PLAYERSOLID, player, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
 
 	if ( trace.startsolid || ( trace.fraction != 1.0f ) )
-		return false;	
+		return false;
 
 	return true;
 }
@@ -948,7 +948,7 @@ void CDODGameMovement::FinishUnDuck( void )
 	player->m_Local.m_bDucking  = false;
 	SetViewOffset( GetPlayerViewOffset( false ) );
 	player->m_Local.m_flDucktime = 0;
-	
+
 	mv->SetAbsOrigin( newOrigin );
 
 	// Recategorize position since ducking can change origin
@@ -1044,12 +1044,12 @@ void CDODGameMovement::SetDeployedEyeOffset( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : duckFraction - 
+// Purpose:
+// Input  : duckFraction -
 //-----------------------------------------------------------------------------
 void CDODGameMovement::SetDODDuckedEyeOffset( float duckFraction )
 {
-	// Different from CGameMovement in that 
+	// Different from CGameMovement in that
 	Vector vDuckHullMin = GetPlayerMins( true );
 	Vector vStandHullMin = GetPlayerMins( false );
 
@@ -1078,7 +1078,7 @@ void CDODGameMovement::SetProneEyeOffset( float proneFraction )
 void CDODGameMovement::FinishUnProne( void )
 {
 	m_pDODPlayer->m_Shared.m_flUnProneTime = 0.0f;
-	
+
 	SetProneEyeOffset( 0.0 );
 
 	Vector vHullMin = GetPlayerMins( player->m_Local.m_bDucked );
@@ -1102,7 +1102,7 @@ void CDODGameMovement::FinishUnProne( void )
 }
 
 void CDODGameMovement::FinishProne( void )
-{	
+{
 	m_pDODPlayer->m_Shared.SetProne( true );
 	m_pDODPlayer->m_Shared.m_flGoProneTime = 0.0f;
 
@@ -1218,7 +1218,7 @@ void CDODGameMovement::Duck( void )
 
 				m_bUnProneToDuck = ( mv->m_nButtons & IN_DUCK ) > 0;
 			}
-			
+
 			m_pDODPlayer->m_Shared.m_flNextProneCheck = gpGlobals->curtime + 1.0f;
 			return;
 		}
@@ -1227,9 +1227,9 @@ void CDODGameMovement::Duck( void )
 	SetDeployedEyeOffset();
 
 	if ( m_pDODPlayer->m_Shared.IsProne() &&
-		m_pDODPlayer->m_Shared.CanChangePosition() && 
+		m_pDODPlayer->m_Shared.CanChangePosition() &&
 		!m_pDODPlayer->m_Shared.IsGettingUpFromProne() &&
-		( buttonsPressed & IN_DUCK ) && 
+		( buttonsPressed & IN_DUCK ) &&
 		CanUnprone() )	// BUGBUG - even calling this will unzoom snipers.
 	{
 		// If the player presses duck while prone,
@@ -1272,7 +1272,7 @@ void CDODGameMovement::Duck( void )
 		( player->m_Local.m_bDucking ) ? "yes" : "no",
 		( player->m_Local.m_bDucked ) ? "yes" : "no",
 		( player->GetFlags() & FL_DUCKING ) ? "set" : "not set" );*/
-	
+
 	// Holding duck, in process of ducking or fully ducked?
 	if ( ( mv->m_nButtons & IN_DUCK ) || ( player->m_Local.m_bDucking ) || ( player->GetFlags() & FL_DUCKING ) )
 	{
@@ -1291,11 +1291,11 @@ void CDODGameMovement::Duck( void )
 			float duckseconds = duckmilliseconds / 1000.0f;
 
 			//time = max( 0.0, ( 1.0 - (float)player->m_Local.m_flDucktime / 1000.0 ) );
-			
+
 			if ( player->m_Local.m_bDucking )
 			{
 				// Finish ducking immediately if duck time is over or not on ground
-				if ( ( duckseconds > TIME_TO_DUCK ) || 
+				if ( ( duckseconds > TIME_TO_DUCK ) ||
 					( player->GetGroundEntity() == NULL ) ||
 					alreadyDucked)
 				{
@@ -1327,7 +1327,7 @@ void CDODGameMovement::Duck( void )
 
 				if ( CanUnduck() )
 				{
-					if ( player->m_Local.m_bDucking || 
+					if ( player->m_Local.m_bDucking ||
 						 player->m_Local.m_bDucked ) // or unducking
 					{
 						// Finish ducking immediately if duck time is over or not on ground
@@ -1356,11 +1356,11 @@ void CDODGameMovement::Duck( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : 
+// Purpose:
+// Input  :
 // Output : const Vector
 //-----------------------------------------------------------------------------
-const Vector& CDODGameMovement::GetPlayerMins( void ) const
+Vector CDODGameMovement::GetPlayerMins( void ) const
 {
 	if ( !player )
 	{
@@ -1369,7 +1369,7 @@ const Vector& CDODGameMovement::GetPlayerMins( void ) const
 
 	if ( player->IsObserver() )
 	{
-		return VEC_OBS_HULL_MIN;	
+		return VEC_OBS_HULL_MIN;
 	}
 	else
 	{
@@ -1383,19 +1383,19 @@ const Vector& CDODGameMovement::GetPlayerMins( void ) const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : 
+// Purpose:
+// Input  :
 // Output : const Vector
 //-----------------------------------------------------------------------------
-const Vector& CDODGameMovement::GetPlayerMaxs( void ) const
-{	
+Vector CDODGameMovement::GetPlayerMaxs( void ) const
+{
 	if ( !player )
 	{
 		return vec3_origin;
 	}
 	if ( player->IsObserver() )
 	{
-		return VEC_OBS_HULL_MAX;	
+		return VEC_OBS_HULL_MAX;
 	}
 	else
 	{

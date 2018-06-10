@@ -1,6 +1,6 @@
 //===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //===========================================================================//
@@ -60,7 +60,7 @@ public:
 		m_Materials.m_Portal_Refract[0].Init( "models/portals/portal_refract_1", TEXTURE_GROUP_CLIENT_EFFECTS );
 		m_Materials.m_Portal_Refract[1].Init( "models/portals/portal_refract_2", TEXTURE_GROUP_CLIENT_EFFECTS );
 		//m_Materials.m_PortalLightTransfer_ShadowTexture.Init( "effects/flashlight001", TEXTURE_GROUP_OTHER ); //light transfers disabled indefinitely
-	
+
 		m_Materials.m_pDepthDoubleViewMatrixVar = m_Materials.m_PortalDepthDoubler->FindVar( "$alternateviewmatrix", NULL, false );
 		Assert( m_Materials.m_pDepthDoubleViewMatrixVar != NULL );
 	}
@@ -73,7 +73,7 @@ const FlatBasicPortalRenderingMaterials_t& CPortalRenderable_FlatBasic::m_Materi
 LINK_ENTITY_TO_CLASS( prop_portal_flatbasic, CPortalRenderable_FlatBasic );
 
 
-CPortalRenderable_FlatBasic::CPortalRenderable_FlatBasic( void ) 
+CPortalRenderable_FlatBasic::CPortalRenderable_FlatBasic( void )
 : m_pLinkedPortal( NULL ),
 	m_ptOrigin( 0.0f, 0.0f, 0.0f ),
 	m_vForward( 1.0f, 0.0f, 0.0f ),
@@ -93,8 +93,8 @@ CPortalRenderable_FlatBasic::CPortalRenderable_FlatBasic( void )
 	m_InternallyMaintainedData.m_nSkyboxVisibleFromCorners = SKYBOX_NOT_VISIBLE;
 
 	m_InternallyMaintainedData.m_ptForwardOrigin.Init( 1.0f, 0.0f, 0.0f );
-	m_InternallyMaintainedData.m_ptCorners[0] = 
-		m_InternallyMaintainedData.m_ptCorners[1] = 
+	m_InternallyMaintainedData.m_ptCorners[0] =
+		m_InternallyMaintainedData.m_ptCorners[1] =
 		m_InternallyMaintainedData.m_ptCorners[2] =
 		m_InternallyMaintainedData.m_ptCorners[3] =
 		Vector( 0.0f, 0.0f, 0.0f );
@@ -139,7 +139,7 @@ void CPortalRenderable_FlatBasic::PortalMoved( void )
 
 
 		m_InternallyMaintainedData.m_VisData.m_vecVisOrigin = m_InternallyMaintainedData.m_ptForwardOrigin;
-		m_InternallyMaintainedData.m_VisData.m_fDistToAreaPortalTolerance = 64.0f;				
+		m_InternallyMaintainedData.m_VisData.m_fDistToAreaPortalTolerance = 64.0f;
 		m_InternallyMaintainedData.m_iViewLeaf = enginetrace->GetLeafContainingPoint( m_InternallyMaintainedData.m_ptForwardOrigin );
 	}
 
@@ -172,7 +172,7 @@ void CPortalRenderable_FlatBasic::PortalMoved( void )
 	}
 
 	//update depth doubler usability flag
-	m_InternallyMaintainedData.m_bUsableDepthDoublerConfiguration = 
+	m_InternallyMaintainedData.m_bUsableDepthDoublerConfiguration =
 		( m_pLinkedPortal && //linked to another portal
 		( m_vForward.Dot( m_pLinkedPortal->m_ptOrigin - m_ptOrigin ) > 0.0f ) && //this portal looking in the general direction of the other portal
 		( m_vForward.Dot( m_pLinkedPortal->m_vForward ) < -0.7071f ) ); //within 45 degrees of facing directly at each other
@@ -204,8 +204,8 @@ void CPortalRenderable_FlatBasic::PortalMoved( void )
 bool CPortalRenderable_FlatBasic::WillUseDepthDoublerThisDraw( void ) const
 {
 	return g_pPortalRender->ShouldUseStencilsToRenderPortals() &&
-		m_InternallyMaintainedData.m_bUsableDepthDoublerConfiguration && 
-		(g_pPortalRender->GetRemainingPortalViewDepth() == 0) && 
+		m_InternallyMaintainedData.m_bUsableDepthDoublerConfiguration &&
+		(g_pPortalRender->GetRemainingPortalViewDepth() == 0) &&
 		(g_pPortalRender->GetViewRecursionLevel() > 1) &&
 		(g_pPortalRender->GetCurrentViewExitPortal() != this);
 }
@@ -224,7 +224,7 @@ bool CPortalRenderable_FlatBasic::CalcFrustumThroughPortal( const Vector &ptCurr
 	int iViewRecursionLevel = g_pPortalRender->GetViewRecursionLevel();
 	int iNextViewRecursionLevel = iViewRecursionLevel + 1;
 
-	if( (iViewRecursionLevel == 0) && 
+	if( (iViewRecursionLevel == 0) &&
 		( (ptCurrentViewOrigin - m_ptOrigin).LengthSqr() < (PORTAL_HALF_HEIGHT * PORTAL_HALF_HEIGHT) ) )//FIXME: Player closeness check might need reimplementation
 	{
 		//calculations are most likely going to be completely useless, return nothing
@@ -243,7 +243,6 @@ bool CPortalRenderable_FlatBasic::CalcFrustumThroughPortal( const Vector &ptCurr
 	int iInputFrustumPlaneCount = g_pPortalRender->m_RecursiveViewComplexFrustums[iViewRecursionLevel].Count();
 	Assert( iInputFrustumPlaneCount > 0 );
 
-	Vector ptTempWork[2];
 	int iAllocSize = 4 + iInputFrustumPlaneCount;
 
 	Vector *pInVerts = (Vector *)stackalloc( sizeof( Vector ) * iAllocSize * 2 ); //possible to add 1 point per cut, 4 starting points, iInputFrustumPlaneCount cuts
@@ -363,7 +362,7 @@ bool CPortalRenderable_FlatBasic::CalcFrustumThroughPortal( const Vector &ptCurr
 					return false; //something went horribly wrong, bail and just suffer a slight framerate penalty for now
 				}
 
-				float fDist = vLine1Normal.Dot(*p1 - *p4); 
+				float fDist = vLine1Normal.Dot(*p1 - *p4);
 				*p2 = *p4 + (vLine2 * (fDist/fNormalDot));
 			}
 
@@ -439,7 +438,7 @@ void CPortalRenderable_FlatBasic::RenderPortalViewToBackBuffer( CViewRender *pVi
 	AngleVectors( cameraView.angles, &vCameraForward, NULL, NULL );
 
 	// Setup fog state for the camera.
-	Vector ptPOVOrigin = m_matrixThisToLinked * cameraView.origin;	
+	Vector ptPOVOrigin = m_matrixThisToLinked * cameraView.origin;
 	Vector vPOVForward = m_matrixThisToLinked.ApplyRotation( vCameraForward );
 
 	Vector ptRemotePortalPosition = m_pLinkedPortal->m_ptOrigin;
@@ -450,7 +449,7 @@ void CPortalRenderable_FlatBasic::RenderPortalViewToBackBuffer( CViewRender *pVi
 	if( portalView.zNear < 1.0f )
 		portalView.zNear = 1.0f;
 
-	QAngle qPOVAngles = TransformAnglesToWorldSpace( cameraView.angles, m_matrixThisToLinked.As3x4() );	
+	QAngle qPOVAngles = TransformAnglesToWorldSpace( cameraView.angles, m_matrixThisToLinked.As3x4() );
 
 	portalView.width = cameraView.width;
 	portalView.height = cameraView.height;
@@ -480,7 +479,7 @@ void CPortalRenderable_FlatBasic::RenderPortalViewToBackBuffer( CViewRender *pVi
 	{
 		ViewCustomVisibility_t customVisibility;
 		m_pLinkedPortal->AddToVisAsExitPortal( &customVisibility );
-		render->Push3DView( portalView, 0, NULL, pViewRender->GetFrustum() );		
+		render->Push3DView( portalView, 0, NULL, pViewRender->GetFrustum() );
 		{
 			if( bUseSeeThroughFrustum)
 				memcpy( pViewRender->GetFrustum(), seeThroughFrustum, sizeof( Frustum ) );
@@ -499,7 +498,7 @@ void CPortalRenderable_FlatBasic::RenderPortalViewToBackBuffer( CViewRender *pVi
 
 			if( m_InternallyMaintainedData.m_bUsableDepthDoublerConfiguration && (g_pPortalRender->GetRemainingPortalViewDepth() == 1) )
 			{
-				//save the view matrix for usage with the depth doubler. 
+				//save the view matrix for usage with the depth doubler.
 				//It's important that we do this AFTER using the depth doubler this frame to compensate for the fact that the front buffer is 1 frame behind the current view matrix
 				//otherwise we get a lag effect when the player changes their viewing angles
 				pRenderContext->GetMatrix( MATERIAL_VIEW, &m_InternallyMaintainedData.m_DepthDoublerTextureView );
@@ -555,7 +554,7 @@ void CPortalRenderable_FlatBasic::RenderPortalViewToTexture( CViewRender *pViewR
 	bool bUseSeeThroughFrustum = CalcFrustumThroughPortal( cameraView.origin, seeThroughFrustum );
 
 	// Setup fog state for the camera.
-	Vector ptPOVOrigin = m_matrixThisToLinked * cameraView.origin;	
+	Vector ptPOVOrigin = m_matrixThisToLinked * cameraView.origin;
 	Vector vPOVForward = m_matrixThisToLinked.ApplyRotation( vCameraForward );
 
 	Vector vCameraToPortal = m_ptOrigin - cameraView.origin;
@@ -564,7 +563,7 @@ void CPortalRenderable_FlatBasic::RenderPortalViewToTexture( CViewRender *pViewR
 	Frustum frustumBackup;
 	memcpy( frustumBackup, pViewRender->GetFrustum(), sizeof( Frustum ) );
 
-	QAngle qPOVAngles = TransformAnglesToWorldSpace( cameraView.angles, m_matrixThisToLinked.As3x4() );	
+	QAngle qPOVAngles = TransformAnglesToWorldSpace( cameraView.angles, m_matrixThisToLinked.As3x4() );
 
 	portalView.width = pRenderTarget->GetActualWidth();
 	portalView.height = pRenderTarget->GetActualHeight();
@@ -689,7 +688,7 @@ void CPortalRenderable_FlatBasic::DrawPostStencilFixes( void )
 
 bool CPortalRenderable_FlatBasic::ShouldUpdateDepthDoublerTexture( const CViewSetup &viewSetup )
 {
-	return	( (m_InternallyMaintainedData.m_bUsableDepthDoublerConfiguration) && 
+	return	( (m_InternallyMaintainedData.m_bUsableDepthDoublerConfiguration) &&
 		(m_pLinkedPortal != NULL) &&
 		(m_fStaticAmount < 1.0f) );
 }
@@ -732,7 +731,7 @@ static void DrawComplexPortalMesh_SubQuad( Vector &ptBottomLeft, Vector &vUp, Ve
 
 	Vertices[3].vWorldSpacePosition = ptBottomLeft + (vRight * fSubQuadRect[0]) + (vUp * fSubQuadRect[3]);
 	Vertices[3].texCoord.x = fSubQuadRect[0];
-	Vertices[3].texCoord.y = fSubQuadRect[3];	
+	Vertices[3].texCoord.y = fSubQuadRect[3];
 
 	Clip_And_Render_Convex_Polygon( Vertices, 4, pMaterial, pBindEnt );
 }
@@ -755,7 +754,7 @@ void CPortalRenderable_FlatBasic::DrawComplexPortalMesh( const IMaterial *pMater
 	const IMaterial *pMaterial;
 	if( pMaterialOverride )
 	{
-		pMaterial = pMaterialOverride;	
+		pMaterial = pMaterialOverride;
 	}
 	else
 	{
@@ -781,14 +780,14 @@ void CPortalRenderable_FlatBasic::DrawComplexPortalMesh( const IMaterial *pMater
 			fSubQuadRect[0] = fWidthBegin;
 			fSubQuadRect[2] = fWidthEnd;
 
-			DrawComplexPortalMesh_SubQuad( ptBottomLeft, vScaledUp, vScaledRight, fSubQuadRect, GetClientRenderable(), pMaterial );	
+			DrawComplexPortalMesh_SubQuad( ptBottomLeft, vScaledUp, vScaledRight, fSubQuadRect, GetClientRenderable(), pMaterial );
 
 			fWidthBegin = fWidthEnd;
 		}
-		fHeightBegin = fHeightEnd; 
+		fHeightBegin = fHeightEnd;
 	}
 
-	//pRenderContext->Flush( false );	
+	//pRenderContext->Flush( false );
 }
 
 void CPortalRenderable_FlatBasic::DrawDepthDoublerMesh( float fForwardOffsetModifier )
@@ -809,7 +808,7 @@ void CPortalRenderable_FlatBasic::DrawSimplePortalMesh( const IMaterial *pMateri
 
 	CMatRenderContextPtr pRenderContext( materials );
 	pRenderContext->Bind( (IMaterial *)pMaterial, GetClientRenderable() );
-	
+
 	// This can depend on the Bind command above, so keep this after!
 	UpdateFrontBufferTexturesForMaterial( (IMaterial *)pMaterial );
 
@@ -821,7 +820,7 @@ void CPortalRenderable_FlatBasic::DrawSimplePortalMesh( const IMaterial *pMateri
 
 	Vector verts[4];
 	verts[0] = ptCenter + (m_vRight * PORTAL_HALF_WIDTH) - (m_vUp * PORTAL_HALF_HEIGHT);
-	verts[1] = ptCenter + (m_vRight * PORTAL_HALF_WIDTH) + (m_vUp * PORTAL_HALF_HEIGHT);	
+	verts[1] = ptCenter + (m_vRight * PORTAL_HALF_WIDTH) + (m_vUp * PORTAL_HALF_HEIGHT);
 	verts[2] = ptCenter - (m_vRight * PORTAL_HALF_WIDTH) - (m_vUp * PORTAL_HALF_HEIGHT);
 	verts[3] = ptCenter - (m_vRight * PORTAL_HALF_WIDTH) + (m_vUp * PORTAL_HALF_HEIGHT);
 
@@ -861,7 +860,7 @@ void CPortalRenderable_FlatBasic::DrawSimplePortalMesh( const IMaterial *pMateri
 
 	meshBuilder.End();
 	pMesh->Draw();
-	
+
 	if( mat_wireframe.GetBool() )
 	{
 		pRenderContext->Bind( (IMaterial *)(const IMaterial *)g_pPortalRender->m_MaterialsAccess.m_Wireframe, (CPortalRenderable*)this );
@@ -943,7 +942,7 @@ void CPortalRenderable_FlatBasic::Internal_DrawRenderFixMesh( const IMaterial *p
 	PortalMeshPoint_t WorkVertices[4];
 
 	CMatRenderContextPtr pRenderContext( materials );
-	
+
 	pRenderContext->MatrixMode( MATERIAL_MODEL ); //just in case
 	pRenderContext->PushMatrix();
 	pRenderContext->LoadIdentity();
@@ -981,7 +980,7 @@ void CPortalRenderable_FlatBasic::ClipFixToBoundingAreaAndDraw( PortalMeshPoint_
 
 	memcpy( pInVerts, pVerts, sizeof( PortalMeshPoint_t ) * 4 );
 	int iVertCount = 4;
-	
+
 	//clip by bounding area planes
 	{
 		for( int i = 0; i != (PORTALRENDERFIXMESH_OUTERBOUNDPLANES + 1); ++i )
@@ -1032,7 +1031,7 @@ void CPortalRenderable_FlatBasic::ClipFixToBoundingAreaAndDraw( PortalMeshPoint_
 			W += matViewProj.m[3][1] * pInVerts[i].vWorldSpacePosition.y;
 			W += matViewProj.m[3][2] * pInVerts[i].vWorldSpacePosition.z;
 			W += matViewProj.m[3][3];
-			
+
 			inverseW = 1.0f / W;
 
 
@@ -1189,8 +1188,8 @@ void CPortalRenderable_FlatBasic::DrawPortal( void )
 				}
 			}
 
-			if( (m_InternallyMaintainedData.m_bUsableDepthDoublerConfiguration) 
-				&& (g_pPortalRender->GetRemainingPortalViewDepth() == 0) 
+			if( (m_InternallyMaintainedData.m_bUsableDepthDoublerConfiguration)
+				&& (g_pPortalRender->GetRemainingPortalViewDepth() == 0)
 				&& (g_pPortalRender->GetViewRecursionLevel() > 1) )
 			{
 				DrawDepthDoublerMesh();
@@ -1207,7 +1206,7 @@ void CPortalRenderable_FlatBasic::DrawPortal( void )
 
 		//texture-based rendering
 		if( g_pPortalRender->IsRenderingPortal() == false )
-		{			
+		{
 			if ( ( m_fOpenAmount > 0.0f ) && ( m_fOpenAmount < 1.0f ) )
 			{
 				DrawSimplePortalMesh( m_Materials.m_Portal_Refract[ ( ( m_bIsPortal2 ) ? ( 1 ) : ( 0 ) ) ] );

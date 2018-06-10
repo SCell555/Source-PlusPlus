@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -22,7 +22,7 @@
 #include "tier0/memdbgon.h"
 
 #ifdef _WIN32
-#pragma warning (disable:4701)				// disable warning that variable *may* not be initialized 
+#pragma warning (disable:4701)				// disable warning that variable *may* not be initialized
 #endif
 
 CBotManager *TheBots = NULL;
@@ -171,7 +171,7 @@ void UTIL_DrawBox( Extent *extent, int lifetime, int red, int green, int blue )
 	v[6].x = extent->hi.x; v[6].y = extent->hi.y; v[6].z = extent->hi.z;
 	v[7].x = extent->lo.x; v[7].y = extent->hi.y; v[7].z = extent->hi.z;
 
-	static int edge[] = 
+	static int edge[] =
 	{
 		1, 2, 3, 4, -1,
 		5, 6, 7, 8, -5,
@@ -192,7 +192,7 @@ void UTIL_DrawBox( Extent *extent, int lifetime, int red, int green, int blue )
 			restart = false;
 			continue;
 		}
-		
+
 		from = to;
 
 		int index = edge[i];
@@ -309,11 +309,11 @@ bool CCSBotManager::IsWeaponUseable( const CWeaponCSBase *weapon ) const
 		return true;
 
 	if ((!AllowShotguns() && weapon->IsKindOf( WEAPONTYPE_SHOTGUN )) ||
-		(!AllowMachineGuns() && weapon->IsKindOf( WEAPONTYPE_MACHINEGUN )) || 
-		(!AllowRifles() && weapon->IsKindOf( WEAPONTYPE_RIFLE )) || 
-		(!AllowShotguns() && weapon->IsKindOf( WEAPONTYPE_SHOTGUN )) || 
-		(!AllowSnipers() && weapon->IsKindOf( WEAPONTYPE_SNIPER_RIFLE )) || 
-		(!AllowSubMachineGuns() && weapon->IsKindOf( WEAPONTYPE_SUBMACHINEGUN )) || 
+		(!AllowMachineGuns() && weapon->IsKindOf( WEAPONTYPE_MACHINEGUN )) ||
+		(!AllowRifles() && weapon->IsKindOf( WEAPONTYPE_RIFLE )) ||
+		(!AllowShotguns() && weapon->IsKindOf( WEAPONTYPE_SHOTGUN )) ||
+		(!AllowSnipers() && weapon->IsKindOf( WEAPONTYPE_SNIPER_RIFLE )) ||
+		(!AllowSubMachineGuns() && weapon->IsKindOf( WEAPONTYPE_SUBMACHINEGUN )) ||
 		(!AllowPistols() && weapon->IsKindOf( WEAPONTYPE_PISTOL )) ||
 		(!AllowGrenades() && weapon->IsKindOf( WEAPONTYPE_GRENADE )))
 	{
@@ -838,7 +838,7 @@ CON_COMMAND_F( bot_goto_mark, "Sends a bot to the selected nav area (useful for 
 
 			if (player == NULL)
 				continue;
-	
+
 			if (player->IsBot())
 			{
 				CCSBot *bot = dynamic_cast<CCSBot *>( player );
@@ -866,12 +866,12 @@ CON_COMMAND_F( bot_memory_usage, "Reports on the bots' memory usage", FCVAR_GAME
 
 	Msg( "  %d bytes per bot\n", sizeof(CCSBot) );
 
-	Msg( "  %d Navigation Areas @ %d bytes each = %d bytes\n", 
+	Msg( "  %d Navigation Areas @ %d bytes each = %d bytes\n",
 					TheNavMesh->GetNavAreaCount(),
 					sizeof( CNavArea ),
 					TheNavMesh->GetNavAreaCount() * sizeof( CNavArea ) );
 
-	Msg( "  %d Hiding Spots @ %d bytes each = %d bytes\n", 
+	Msg( "  %d Hiding Spots @ %d bytes each = %d bytes\n",
 					TheHidingSpotList.Count(),
 					sizeof( HidingSpot ),
 					TheHidingSpotList.Count() * sizeof( HidingSpot ) );
@@ -1170,7 +1170,7 @@ void CCSBotManager::MaintainBotQuota( void )
 		// unless the round is already in progress, in which case we play with what we've been dealt
 		if ( !isRoundInProgress )
 		{
-			desiredBotCount = (int)max( 0, cv_bot_quota.GetFloat() * humanPlayersInGame );
+			desiredBotCount = max( 0, cv_bot_quota.GetInt() * humanPlayersInGame );
 		}
 		else
 		{
@@ -1239,7 +1239,7 @@ void CCSBotManager::MaintainBotQuota( void )
 	else if (desiredBotCount < botsInGame)
 	{
 		// kick a bot to maintain quota
-		
+
 		// first remove any unassigned bots
 		if (UTIL_CSSKickBotFromTeam( TEAM_UNASSIGNED ))
 			return;
@@ -1637,7 +1637,7 @@ void CCSBotManager::OnServerShutdown( IGameEvent *event )
 			"bot_allow_snipers",
 			"bot_allow_grenades"
 		};
-		
+
 		KeyValues *data = new KeyValues( "ServerConfig" );
 
 		// load the config data
@@ -1791,7 +1791,7 @@ static CBaseEntity * SelectSpawnSpot( const char *pEntClassName )
 		pSpot = gEntList.FindEntityByClassname( pSpot, pEntClassName );
 
 	CBaseEntity *pFirstSpot = pSpot;
-	do 
+	do
 	{
 		if ( pSpot )
 		{
@@ -2037,7 +2037,7 @@ void CCSBotManager::OnGrenadeBounce( IGameEvent *event )
  * Get the time remaining before the planted bomb explodes
  */
 float CCSBotManager::GetBombTimeLeft( void ) const
-{ 
+{
 	return (mp_c4timer.GetFloat() - (gpGlobals->curtime - m_bombPlantTimestamp));
 }
 
@@ -2165,7 +2165,7 @@ CBaseEntity *CCSBotManager::GetRandomSpawn( int team ) const
 			 spot;
 			 spot = gEntList.FindEntityByClassname( spot, "info_player_terrorist" ) )
 		{
-			spawnSet.AddToTail( spot );			
+			spawnSet.AddToTail( spot );
 		}
 	}
 
@@ -2176,7 +2176,7 @@ CBaseEntity *CCSBotManager::GetRandomSpawn( int team ) const
 			 spot;
 			 spot = gEntList.FindEntityByClassname( spot, "info_player_counterterrorist" ) )
 		{
-			spawnSet.AddToTail( spot );			
+			spawnSet.AddToTail( spot );
 		}
 	}
 
@@ -2258,7 +2258,7 @@ void DrawOccupyTime( void )
 		CNavArea *area = TheNavAreas[ it ];
 
 		int r, g, b;
-		
+
 		if (TheCSBots()->GetElapsedRoundTime() > area->GetEarliestOccupyTime( TEAM_TERRORIST ))
 		{
 			if (TheCSBots()->GetElapsedRoundTime() > area->GetEarliestOccupyTime( TEAM_CT ))
@@ -2284,10 +2284,10 @@ void DrawOccupyTime( void )
 		const Vector &sw = area->GetCorner( SOUTH_WEST );
 		const Vector &se = area->GetCorner( SOUTH_EAST );
 
-		NDebugOverlay::Line( nw, ne, r, g, b, true, 0.1f );		
-		NDebugOverlay::Line( nw, sw, r, g, b, true, 0.1f );		
-		NDebugOverlay::Line( se, sw, r, g, b, true, 0.1f );		
-		NDebugOverlay::Line( se, ne, r, g, b, true, 0.1f );		
+		NDebugOverlay::Line( nw, ne, r, g, b, true, 0.1f );
+		NDebugOverlay::Line( nw, sw, r, g, b, true, 0.1f );
+		NDebugOverlay::Line( se, sw, r, g, b, true, 0.1f );
+		NDebugOverlay::Line( se, ne, r, g, b, true, 0.1f );
 	}
 }
 
@@ -2300,7 +2300,7 @@ void DrawBattlefront( void )
 {
 	const float epsilon = 1.0f;
 	int r = 255, g = 50, b = 0;
-	
+
 	FOR_EACH_VEC( TheNavAreas, it )
 	{
 		CNavArea *area = TheNavAreas[ it ];
@@ -2316,10 +2316,10 @@ void DrawBattlefront( void )
 		const Vector &sw = area->GetCorner( SOUTH_WEST );
 		const Vector &se = area->GetCorner( SOUTH_EAST );
 
-		NDebugOverlay::Line( nw, ne, r, g, b, true, 0.1f );		
-		NDebugOverlay::Line( nw, sw, r, g, b, true, 0.1f );		
-		NDebugOverlay::Line( se, sw, r, g, b, true, 0.1f );		
-		NDebugOverlay::Line( se, ne, r, g, b, true, 0.1f );		
+		NDebugOverlay::Line( nw, ne, r, g, b, true, 0.1f );
+		NDebugOverlay::Line( nw, sw, r, g, b, true, 0.1f );
+		NDebugOverlay::Line( se, sw, r, g, b, true, 0.1f );
+		NDebugOverlay::Line( se, ne, r, g, b, true, 0.1f );
 	}
 }
 
@@ -2341,8 +2341,8 @@ static bool CheckAreaAgainstAllZoneAreas(CNavArea *queryArea)
 			ShortestPathCost cost;
 			if( NavAreaTravelDistance(queryArea, zoneArea, cost) == -1.0f )
 			{
-				Msg( "Area #%d is disconnected from goal area #%d.\n", 
-					queryArea->GetID(), 
+				Msg( "Area #%d is disconnected from goal area #%d.\n",
+					queryArea->GetID(),
 					zoneArea->GetID()
 					);
 				return false;

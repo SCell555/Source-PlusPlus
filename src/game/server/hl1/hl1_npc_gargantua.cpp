@@ -1,7 +1,7 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Bullseyes act as targets for other NPC's to attack and to trigger
-//			events 
+//			events
 //
 // $Workfile:     $
 // $Date:         $
@@ -123,7 +123,7 @@ class CStomp : public CBaseEntity
 
 public:
 	DECLARE_DATADESC();
-		
+
 	virtual void Precache();
 
 	void Spawn( void );
@@ -165,7 +165,7 @@ CStomp *CStomp::StompCreate( Vector &origin, Vector &end, float speed, CBaseEnti
 	pStomp->m_flSpeed = speed;
 	pStomp->m_pOwner = pOwner;
 	pStomp->Spawn();
-	
+
 	return pStomp;
 
 }
@@ -211,7 +211,7 @@ void CStomp::Think( void )
 
 	UTIL_TraceHull( vecStart, vecEnd, Vector(-32, -32, -32), Vector(32, 32, 32), MASK_SOLID, m_pOwner, COLLISION_GROUP_NONE, &tr );
 //	NDebugOverlay::Line( vecStart, vecEnd, 0, 255, 0, false, 10.0f );
-	
+
 	if ( tr.m_pEnt )
 	{
 		CBaseEntity *pEntity = tr.m_pEnt;
@@ -223,7 +223,7 @@ void CStomp::Think( void )
 	// Accelerate the effect
 	m_flSpeed += (gpGlobals->frametime) * m_uiFramerate;
 	m_uiFramerate += (gpGlobals->frametime) * 2000;
-	
+
 	// Move and spawn trails
 	if ( gpGlobals->curtime - m_flDmgTime > 0.2f )
 	{
@@ -302,7 +302,7 @@ void CNPC_Gargantua::Spawn()
 
 	m_seeTime = gpGlobals->curtime + 5;
 	m_flameTime = gpGlobals->curtime + 2;
-		
+
 	NPCInit();
 
 	BaseClass::Spawn();
@@ -352,11 +352,11 @@ void CNPC_Gargantua::PrescheduleThink( void )
 	{
 		EyeOn( 200 );
 	}
-	
+
 	EyeUpdate();
 }
 
-float CNPC_Gargantua::MaxYawSpeed ( void )	
+float CNPC_Gargantua::MaxYawSpeed ( void )
 {
 	float ys = 60;
 
@@ -410,7 +410,7 @@ int CNPC_Gargantua::MeleeAttack2Conditions( float flDot, float flDist )
 			}
 		}
 	}
-	
+
 	return COND_NONE;
 }
 
@@ -440,7 +440,7 @@ int CNPC_Gargantua::RangeAttack1Conditions( float flDot, float flDist )
 }
 
 //=========================================================
-// CheckTraceHullAttack - expects a length to trace, amount 
+// CheckTraceHullAttack - expects a length to trace, amount
 // of damage to do, and damage type. Returns a pointer to
 // the damaged entity in case the monster wishes to do
 // other stuff to the victim (punchangle, etc)
@@ -464,7 +464,7 @@ CBaseEntity* CNPC_Gargantua::GargantuaCheckTraceHullAttack(float flDist, int iDa
 	//UTIL_TraceHull( vecStart, vecEnd, dont_ignore_monsters, head_hull, ENT(pev), &tr );
 
 	UTIL_TraceEntity( this, GetAbsOrigin(), vecEnd, MASK_SOLID, &tr );
-	
+
 	if ( tr.m_pEnt )
 	{
 		CBaseEntity *pEntity = tr.m_pEnt;
@@ -550,13 +550,13 @@ int CNPC_Gargantua::TranslateSchedule( int scheduleType )
 
 		case SCHED_CHASE_ENEMY:
 			return SCHED_GARG_CHASE_ENEMY;
-			
+
 		case SCHED_CHASE_ENEMY_FAILED:
 			return SCHED_GARG_CHASE_ENEMY_FAILED;
 
 		case SCHED_ALERT_STAND:
 			return SCHED_CHASE_ENEMY;
-			 
+
 		break;
 	}
 
@@ -584,15 +584,15 @@ void CNPC_Gargantua::StartTask( const Task_t *pTask )
 			CPASAttenuationFilter filter( this );
 			EmitSound( filter, entindex(), "Garg.Attack" );
 		}
-			
+
 		TaskComplete();
 		break;
-	
+
 	case TASK_DIE:
 		m_flWaitFinished = gpGlobals->curtime + 1.6;
 		DeathEffect();
 		// FALL THROUGH
-	default: 
+	default:
 		BaseClass::StartTask( pTask );
 		break;
 	}
@@ -622,7 +622,7 @@ void CNPC_Gargantua::RunTask( const Task_t *pTask )
 			SetThink( &CBaseEntity::SUB_Remove );
 
 			int i;
-		
+
 			int parts = modelinfo->GetModelFrameCount( modelinfo->GetModel( gGargGibModel ) );
 
 			for ( i = 0; i < 10; i++ )
@@ -630,7 +630,7 @@ void CNPC_Gargantua::RunTask( const Task_t *pTask )
 				CGib *pGib = CREATE_ENTITY( CGib, "gib" );
 
 				pGib->Spawn( GARG_GIB_MODEL);
-				
+
 				int bodyPart = 0;
 
 				if ( parts > 1 )
@@ -641,16 +641,16 @@ void CNPC_Gargantua::RunTask( const Task_t *pTask )
 				pGib->m_material = matNone;
 				pGib->SetAbsOrigin( GetAbsOrigin() );
 				pGib->SetAbsVelocity( UTIL_RandomBloodVector() * random->RandomFloat( 300, 500 ) );
-	
+
 				pGib->SetNextThink( gpGlobals->curtime + 1.25 );
 				pGib->SetThink( &CBaseEntity::SUB_FadeOut );
 			}
-	
+
 			Vector vecSize = Vector( 200, 200, 128 );
 			CPVSFilter filter( GetAbsOrigin() );
-			te->BreakModel( filter, 0.0, GetAbsOrigin(), vec3_angle, vecSize, vec3_origin, 
+			te->BreakModel( filter, 0.0, GetAbsOrigin(), vec3_angle, vecSize, vec3_origin,
 				gGargGibModel, 200, 50, 3.0, BREAK_FLESH );
-	
+
 			return;
 		}
 		else
@@ -692,7 +692,7 @@ void CNPC_Gargantua::RunTask( const Task_t *pTask )
 			}
 			if ( fabsf(angles.y) > 60 )
 				cancel = true;
-			
+
 			if ( cancel )
 			{
 				m_flWaitFinished -= 0.5;
@@ -803,7 +803,7 @@ void CNPC_Gargantua::FlameUpdate( void )
 
 			GetAttachment( i + 2, vecStart, angleGun );
 			Vector vecEnd = vecStart + ( vForward * GARG_FLAME_LENGTH); //  - offset[i] * gpGlobals->v_right;
-			
+
 			UTIL_TraceLine ( vecStart, vecEnd, MASK_SOLID, this, COLLISION_GROUP_NONE, &trace);
 
 			m_pFlame[i]->SetStartPos( trace.endpos );
@@ -857,15 +857,15 @@ void CNPC_Gargantua::FlameDamage( Vector vecStart, Vector vecEnd, CBaseEntity *p
 			{// houndeyes don't hurt other houndeyes with their attack
 				continue;
 			}
-			
+
 			vecSpot = pEntity->BodyTarget( vecMid );
-		
+
 			float dist = DotProduct( vecAim, vecSpot - vecMid );
 			if (dist > searchRadius)
 				dist = searchRadius;
 			else if (dist < -searchRadius)
 				dist = searchRadius;
-			
+
 			Vector vecSrc = vecMid + dist * vecAim;
 
 			UTIL_TraceLine ( vecStart, vecSpot, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
@@ -916,7 +916,7 @@ void CNPC_Gargantua::FlameDestroy( void )
 
 	CPASAttenuationFilter filter4( this );
 	EmitSound( filter4, entindex(), "Garg.BeamAttackOff" );
-	
+
 	for ( i = 0; i < 4; i++ )
 	{
 		if ( m_pFlame[i] )
@@ -930,7 +930,7 @@ void CNPC_Gargantua::FlameDestroy( void )
 
 void CNPC_Gargantua::EyeOn( int level )
 {
-	m_eyeBrightness = level;	
+	m_eyeBrightness = level;
 }
 
 void CNPC_Gargantua::EyeOff( void )
@@ -1018,13 +1018,13 @@ void CNPC_Gargantua::Event_Killed( const CTakeDamageInfo &info )
 	m_takedamage = DAMAGE_NO;
 }
 
-void CNPC_Gargantua::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr )
+void CNPC_Gargantua::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo subInfo = info;
 
 	if ( !IsAlive() )
 	{
-		BaseClass::TraceAttack( subInfo, vecDir, ptr );
+		BaseClass::TraceAttack( subInfo, vecDir, ptr, pAccumulator );
 		return;
 	}
 
@@ -1057,7 +1057,7 @@ void CNPC_Gargantua::TraceAttack( const CTakeDamageInfo &info, const Vector &vec
 		subInfo.SetDamage( 0 );
 	}
 
-	BaseClass::TraceAttack( subInfo, vecDir, ptr );
+	BaseClass::TraceAttack( subInfo, vecDir, ptr, pAccumulator );
 }
 
 int CNPC_Gargantua::OnTakeDamage_Alive( const CTakeDamageInfo &info )

@@ -1,6 +1,6 @@
 //===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
-// Purpose: 
+// Purpose:
 //
 //===========================================================================//
 
@@ -67,7 +67,7 @@ ConVar cl_autorezoom( "cl_autorezoom", "1", FCVAR_USERINFO | FCVAR_ARCHIVE, "Whe
 class ColdBreathEmitter : public CSimpleEmitter
 {
 public:
-	
+
 	ColdBreathEmitter( const char *pDebugName ) : CSimpleEmitter( pDebugName ) {}
 
 	static ColdBreathEmitter *Create( const char *pDebugName )
@@ -88,7 +88,7 @@ public:
 	virtual	float UpdateRoll( SimpleParticle *pParticle, float timeDelta )
 	{
 		pParticle->m_flRoll += pParticle->m_flRollDelta * timeDelta;
-		
+
 		pParticle->m_flRollDelta += pParticle->m_flRollDelta * ( timeDelta * -2.0f );
 
 		//Cap the minimum roll
@@ -139,7 +139,7 @@ public:
 		if ( pPlayer && !pPlayer->IsDormant() )
 		{
 			pPlayer->DoAnimationEvent( (PlayerAnimEvent_t)m_iEvent.Get(), m_nData );
-		}	
+		}
 	}
 
 public:
@@ -266,7 +266,7 @@ class C_DODRagdoll : public C_BaseAnimatingOverlay
 public:
 	DECLARE_CLASS( C_DODRagdoll, C_BaseAnimatingOverlay );
 	DECLARE_CLIENTCLASS();
-	
+
 	C_DODRagdoll();
 	~C_DODRagdoll();
 
@@ -279,10 +279,10 @@ public:
 
 	void ClientThink( void );
 	void StartFadeOut( float fDelay );
-	
+
 	bool IsRagdollVisible();
 private:
-	
+
 	C_DODRagdoll( const C_DODRagdoll & ) {}
 
 	void Interp_Copy( C_BaseAnimatingOverlay *pSourceEntity );
@@ -325,10 +325,10 @@ void C_DODRagdoll::Interp_Copy( C_BaseAnimatingOverlay *pSourceEntity )
 {
 	if ( !pSourceEntity )
 		return;
-	
+
 	VarMapping_t *pSrc = pSourceEntity->GetVarMapping();
 	VarMapping_t *pDest = GetVarMapping();
-    	
+
 	// Find all the VarMapEntry_t's that represent the same variable.
 	for ( int i = 0; i < pDest->m_Entries.Count(); i++ )
 	{
@@ -358,21 +358,21 @@ void C_DODRagdoll::ImpactTrace( trace_t *pTrace, int iDamageType, char *pCustomI
 	if ( iDamageType == DMG_BLAST )
 	{
 		dir *= 4000;  // adjust impact strength
-				
+
 		// apply force at object mass center
 		pPhysicsObject->ApplyForceCenter( dir );
 	}
 	else
 	{
-		Vector hitpos;  
-	
+		Vector hitpos;
+
 		VectorMA( pTrace->startpos, pTrace->fraction, dir, hitpos );
 		VectorNormalize( dir );
 
 		dir *= 4000;  // adjust impact strength
 
 		// apply force where we hit it
-		pPhysicsObject->ApplyForceOffset( dir, hitpos );	
+		pPhysicsObject->ApplyForceOffset( dir, hitpos );
 
 		// Blood spray!
 		FX_DOD_BloodSpray( hitpos, dir, 10 );
@@ -393,7 +393,7 @@ void C_DODRagdoll::CreateLowViolenceRagdoll()
 		Q_snprintf( str, sizeof( str ), "death%d", iAnim );
 		if ( LookupSequence( str ) == -1 )
 			break;
-		
+
 		iMinDeathAnim = min( iMinDeathAnim, iAnim );
 		iMaxDeathAnim = max( iMaxDeathAnim, iAnim );
 	}
@@ -424,7 +424,7 @@ void C_DODRagdoll::CreateLowViolenceRagdoll()
 			SetAbsAngles( pPlayer->GetRenderAngles() );
 			SetNetworkAngles( pPlayer->GetRenderAngles() );
 		}
-	
+
 		Interp_Reset( GetVarMapping() );
 	}
 }
@@ -438,7 +438,7 @@ void C_DODRagdoll::CreateDODRagdoll()
 #ifdef _DEBUG
 	DevMsg( 2, "CreateDODRagdoll %d %d\n", gpGlobals->framecount, pPlayer ? pPlayer->entindex() : 0 );
 #endif
-	
+
 	if ( pPlayer && !pPlayer->IsDormant() )
 	{
 		// move my current model instance to the ragdoll's so decals are preserved.
@@ -447,7 +447,7 @@ void C_DODRagdoll::CreateDODRagdoll()
 		VarMapping_t *varMap = GetVarMapping();
 
 		// Copy all the interpolated vars from the player entity.
-		// The entity uses the interpolated history to get bone velocity.		
+		// The entity uses the interpolated history to get bone velocity.
 		if ( !pPlayer->IsLocalPlayer() && pPlayer->dod_IsInterpolationEnabled() )
 		{
 			Interp_Copy( pPlayer );
@@ -464,7 +464,7 @@ void C_DODRagdoll::CreateDODRagdoll()
 			// This is the local player, so set them in a default
 			// pose and slam their velocity, angles and origin
 			SetAbsOrigin( m_vecRagdollOrigin );
-			
+
 			SetAbsAngles( pPlayer->GetRenderAngles() );
 
 			SetAbsVelocity( m_vecRagdollVelocity );
@@ -475,12 +475,12 @@ void C_DODRagdoll::CreateDODRagdoll()
 				Assert( false );	// missing look_idle?
 				iSeq = 0;
 			}
-			
+
 			SetSequence( iSeq );	// look_idle, basic pose
 			SetCycle( 0.0 );
 
 			Interp_Reset( varMap );
-		}		
+		}
 
 		m_nBody = pPlayer->GetBody();
 	}
@@ -494,11 +494,11 @@ void C_DODRagdoll::CreateDODRagdoll()
 		SetAbsVelocity( m_vecRagdollVelocity );
 
 		Interp_Reset( GetVarMapping() );
-		
+
 	}
 
 	SetModelIndex( m_nModelIndex );
-	
+
 	// Turn it into a ragdoll.
 	if ( cl_ragdoll_physics_enable.GetInt() )
 	{
@@ -524,7 +524,7 @@ void C_DODRagdoll::CreateDODRagdoll()
 	else
 	{
 		ClientLeafSystem()->SetRenderGroup( GetRenderHandle(), RENDER_GROUP_TRANSLUCENT_ENTITY );
-	}		
+	}
 
 	// Fade out the ragdoll in a while
 	StartFadeOut( cl_ragdoll_fade_time.GetFloat() );
@@ -546,7 +546,7 @@ void C_DODRagdoll::OnDataChanged( DataUpdateType_t type )
 			CreateDODRagdoll();
 		}
 	}
-	else 
+	else
 	{
 		if ( !cl_ragdoll_physics_enable.GetInt() )
 		{
@@ -565,9 +565,9 @@ bool C_DODRagdoll::IsRagdollVisible()
 {
 	Vector vMins = Vector(-1,-1,-1);	//WorldAlignMins();
 	Vector vMaxs = Vector(1,1,1);	//WorldAlignMaxs();
-		
+
 	Vector origin = GetAbsOrigin();
-	
+
 	if( !engine->IsBoxInViewCluster( vMins + origin, vMaxs + origin) )
 	{
 		return false;
@@ -589,7 +589,7 @@ void C_DODRagdoll::ClientThink( void )
 		int iAlpha = GetRenderColor().a;
 		int iFadeSpeed = 600.0f;
 
-		iAlpha = max( iAlpha - ( iFadeSpeed * gpGlobals->frametime ), 0 );
+		iAlpha = max( iAlpha - ( iFadeSpeed * gpGlobals->frametime ), 0.f );
 
 		SetRenderMode( kRenderTransAlpha );
 		SetRenderColorA( iAlpha );
@@ -614,7 +614,7 @@ void C_DODRagdoll::ClientThink( void )
 
 		if ( pEnt->entindex() == m_hPlayer->entindex() )
 			continue;
-		
+
 		if ( pEnt->GetHealth() <= 0 )
 			continue;
 
@@ -626,7 +626,7 @@ void C_DODRagdoll::ClientThink( void )
 
 		Vector vDir = vTargetOrigin - vMyOrigin;
 
-		if ( vDir.Length() > cl_ragdoll_pronecheck_distance.GetInt() ) 
+		if ( vDir.Length() > cl_ragdoll_pronecheck_distance.GetInt() )
 			continue;
 
 		SetNextClientThink( CLIENT_THINK_ALWAYS );
@@ -656,11 +656,11 @@ void C_DODRagdoll::StartFadeOut( float fDelay )
 // ------------------------------------------------------------------------------------------ //
 // C_DODPlayer implementation.
 // ------------------------------------------------------------------------------------------ //
-C_DODPlayer::C_DODPlayer() : 
+C_DODPlayer::C_DODPlayer() :
 	m_iv_angEyeAngles( "C_DODPlayer::m_iv_angEyeAngles" )
 {
 	m_PlayerAnimState = CreatePlayerAnimState( this );
-	
+
 	m_Shared.Init( this );
 
 	m_flPitchRecoilAccumulator = 0.0;
@@ -784,15 +784,15 @@ void C_DODPlayer::DoRecoil( int iWpnID, float flWpnRecoil )
 	float flYawRecoil = flPitchRecoil / 4;
 
 	if( iWpnID == WEAPON_BAR )
-		flYawRecoil = min( flYawRecoil, 1.3 );
+		flYawRecoil = min( flYawRecoil, 1.3f );
 
 	if ( m_Shared.IsInMGDeploy() )
 	{
 		flPitchRecoil = 0.0;
 		flYawRecoil = 0.0;
 	}
-	else if ( m_Shared.IsProne() && 
-		iWpnID != WEAPON_30CAL && 
+	else if ( m_Shared.IsProne() &&
+		iWpnID != WEAPON_30CAL &&
 		iWpnID != WEAPON_MG42 ) //minor hackage
 	{
 		flPitchRecoil = flPitchRecoil / 4;
@@ -1027,16 +1027,16 @@ void C_DODPlayer::FireEvent( const Vector& origin, const QAngle& angles, int eve
 			{
 				data.m_vOrigin = origin;
 			}
-			
+
 			data.m_vNormal = Vector( 0,0,1 );
 			data.m_flScale = random->RandomFloat( 4.0f, 5.0f );
 			DispatchEffect( "watersplash", data );
-		}		
+		}
 	}
 	else if( event == 7002 )
 	{
 		bool bInWater = ( enginetrace->GetPointContents(origin) & CONTENTS_WATER );
-		
+
 		if( bInWater )
 		{
 			//walk ripple
@@ -1054,7 +1054,7 @@ void C_DODPlayer::FireEvent( const Vector& origin, const QAngle& angles, int eve
 			{
 				data.m_vOrigin = origin;
 			}
-	
+
 			data.m_vNormal = Vector( 0,0,1 );
 			data.m_flScale = random->RandomFloat( 4.0f, 7.0f );
 			DispatchEffect( "waterripple", data );
@@ -1074,7 +1074,7 @@ void C_DODPlayer::ClientThink()
 	}
 
 	if ( IsLocalPlayer() )
-	{	
+	{
 		UpdateIDTarget();
 
 		StaminaSoundThink();
@@ -1109,7 +1109,7 @@ void C_DODPlayer::ClientThink()
 			else if( m_Shared.IsProne() )
 				scale = ZOOM_SWAY_PRONE;
 			else									//standing
-				scale = ZOOM_SWAY_STANDING; 
+				scale = ZOOM_SWAY_STANDING;
 
 			if( GetAbsVelocity().Length() > 10 )
 				scale += ZOOM_SWAY_MOVING_PENALTY;
@@ -1231,7 +1231,7 @@ void C_DODPlayer::LocalPlayerRespawn( void )
 
 class C_FadingPhysPropClientside : public C_PhysPropClientside
 {
-public:	
+public:
 	DECLARE_CLASS( C_FadingPhysPropClientside, C_PhysPropClientside );
 
 	// if we wake, extend fade time
@@ -1246,7 +1246,7 @@ public:
 
 			// register the impact
 			BaseClass::ImpactTrace( pTrace, iDamageType, pCustomImpactName );
-		}		
+		}
 	}
 };
 
@@ -1299,7 +1299,7 @@ void C_DODPlayer::PopHelmet( Vector vecDir, Vector vecForceOrigin, int iModel )
 		}
 #endif
 
-		Vector vecForce = vecDir;		
+		Vector vecForce = vecDir;
 		Vector vecOffset = vecForceOrigin - pEntity->GetAbsOrigin();
 		pPhysicsObject->ApplyForceOffset( vecForce, vecOffset );
 	}
@@ -1357,7 +1357,7 @@ void C_DODPlayer::UpdateIDTarget()
  	m_iIDEntIndex = 0;
 
 	// don't show IDs in chase spec mode
-	if ( GetObserverMode() == OBS_MODE_CHASE || 
+	if ( GetObserverMode() == OBS_MODE_CHASE ||
 		 GetObserverMode() == OBS_MODE_DEATHCAM )
 		 return;
 
@@ -1496,7 +1496,7 @@ bool C_DODPlayer::IsWeaponLowered( void )
 // Shadows
 
 ConVar cl_blobbyshadows( "cl_blobbyshadows", "0", FCVAR_CLIENTDLL );
-ShadowType_t C_DODPlayer::ShadowCastType( void ) 
+ShadowType_t C_DODPlayer::ShadowCastType( void )
 {
 	if ( !IsVisible() )
 		return SHADOWS_NONE;
@@ -1504,11 +1504,11 @@ ShadowType_t C_DODPlayer::ShadowCastType( void )
 	C_DODPlayer *pLocalPlayer = C_DODPlayer::GetLocalDODPlayer();
 
 	// if we're first person spectating this player
-	if ( pLocalPlayer && 
+	if ( pLocalPlayer &&
 		pLocalPlayer->GetObserverTarget() == this &&
 		pLocalPlayer->GetObserverMode() == OBS_MODE_IN_EYE )
 	{
-		return SHADOWS_NONE;		
+		return SHADOWS_NONE;
 	}
 
 	if( cl_blobbyshadows.GetBool() )
@@ -1531,8 +1531,8 @@ void C_DODPlayer::GetShadowRenderBounds( Vector &mins, Vector &maxs, ShadowType_
 	{
 		GetRenderBounds( mins, maxs );
 
-		// We do this because the normal bbox calculations don't take pose params into account, and 
-		// the rotation of the guy's upper torso can place his gun a ways out of his bbox, and 
+		// We do this because the normal bbox calculations don't take pose params into account, and
+		// the rotation of the guy's upper torso can place his gun a ways out of his bbox, and
 		// the shadow will get cut off as he rotates.
 		//
 		// Thus, we give it some padding here.
@@ -1554,7 +1554,7 @@ void C_DODPlayer::GetRenderBounds( Vector& theMins, Vector& theMaxs )
 
 
 bool C_DODPlayer::GetShadowCastDirection( Vector *pDirection, ShadowType_t shadowType ) const
-{ 
+{
 	if ( shadowType == SHADOWS_SIMPLE )
 	{
 		// Blobby shadows should sit directly underneath us.
@@ -1610,7 +1610,7 @@ void C_DODPlayer::ProcessMuzzleFlashEvent()
 		// Muzzleflash light
 		dlight_t *el = effects->CL_AllocDlight( LIGHT_INDEX_MUZZLEFLASH );
 		el->origin = vecOrigin;
-		el->radius = 70; 
+		el->radius = 70;
 
 		if ( pWeapon->GetDODWpnData().m_WeaponType == WPN_TYPE_SNIPER )
 			el->radius = 150;
@@ -1750,7 +1750,7 @@ void C_DODPlayer::Simulate( void )
 
 				dlight_t *el = effects->CL_AllocDlight( 0 );
 				el->origin = tr.endpos;
-				el->radius = 50; 
+				el->radius = 50;
 				el->color.r = 200;
 				el->color.g = 200;
 				el->color.b = 200;
@@ -1830,10 +1830,10 @@ void C_DODPlayer::CalcDODDeathCamView(Vector& eyeOrigin, QAngle& eyeAngles, floa
 	interpolation = clamp( interpolation, 0.0f, 1.0f );
 
 	m_flObserverChaseDistance += gpGlobals->frametime*48.0f;
-	m_flObserverChaseDistance = clamp( m_flObserverChaseDistance, 16, CHASE_CAM_DISTANCE );
+	m_flObserverChaseDistance = clamp( m_flObserverChaseDistance, 16, CHASE_CAM_DISTANCE_MAX );
 
 	QAngle aForward = eyeAngles = EyeAngles();
-	Vector origin = EyePosition();			
+	Vector origin = EyePosition();
 
 	IRagdoll *pRagdoll = GetRepresentativeRagdoll();
 	if ( pRagdoll )
@@ -1842,10 +1842,10 @@ void C_DODPlayer::CalcDODDeathCamView(Vector& eyeOrigin, QAngle& eyeAngles, floa
 		origin.z += VEC_DEAD_VIEWHEIGHT.z; // look over ragdoll, not through
 	}
 
-	if ( killer && (killer != this) ) 
+	if ( killer && (killer != this) )
 	{
 		Vector vecKiller = killer->GetAbsOrigin();
-		
+
 		C_DODPlayer *player = ToDODPlayer( killer );
 		if ( player && player->IsAlive() )
 		{
@@ -1893,7 +1893,7 @@ void C_DODPlayer::CalcChaseCamView(Vector& eyeOrigin, QAngle& eyeAngles, float& 
 {
 	C_BaseEntity *target = GetObserverTarget();
 
-	if ( !target ) 
+	if ( !target )
 	{
 		// just copy a save in-map position
 		VectorCopy( EyePosition(), eyeOrigin );
@@ -1941,7 +1941,7 @@ void C_DODPlayer::CalcChaseCamView(Vector& eyeOrigin, QAngle& eyeAngles, float& 
 	}
 
 	m_flObserverChaseDistance += gpGlobals->frametime*48.0f;
-	m_flObserverChaseDistance = clamp( m_flObserverChaseDistance, 16, CHASE_CAM_DISTANCE );
+	m_flObserverChaseDistance = clamp( m_flObserverChaseDistance, 16, CHASE_CAM_DISTANCE_MAX );
 
 	AngleVectors( viewangles, &forward );
 
@@ -2031,7 +2031,7 @@ bool C_DODPlayer::CreateColdBreathEmitter( void )
 		Assert( m_hColdBreathMaterial != INVALID_MATERIAL_HANDLE );
 
 		// Cache off the head attachment for setting up cold breath.
-		m_iHeadAttach = LookupAttachment( "head" );		
+		m_iHeadAttach = LookupAttachment( "head" );
 	}
 
 	return true;
@@ -2104,11 +2104,11 @@ void C_DODPlayer::UpdateColdBreath( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_DODPlayer::CalculateIKLocks( float currentTime )
 {
-	if (!m_pIk) 
+	if (!m_pIk)
 		return;
 
 	int targetCount = m_pIk->m_target.Count();
@@ -2196,7 +2196,7 @@ void C_DODPlayer::EmitColdBreathParticles( void )
 {
 	// Get the position to emit from - look into caching this off we are doing redundant work in the case
 	// of allies (see dod_headiconmanager.cpp).
-	Vector vecOrigin; 
+	Vector vecOrigin;
 	QAngle vecAngle;
 	GetAttachment( m_iHeadAttach, vecOrigin, vecAngle );
 	Vector vecForward, vecRight, vecUp;
@@ -2225,11 +2225,11 @@ void C_DODPlayer::EmitColdBreathParticles( void )
 			pParticle->m_vecVelocity = ( vecForward * RandomFloat( 10.0f, 20.0f ) ) + ( vecRight * RandomFloat( -2.0f, 2.0f ) ) +
 				                       ( vecUp * RandomFloat( 0.0f, 1.5f ) );
 		}
-				
+
 		pParticle->m_uchColor[0] = 200;
 		pParticle->m_uchColor[1] = 200;
 		pParticle->m_uchColor[2] = 210;
-				
+
 		float flParticleSize = RandomFloat( COLDBREATH_PARTICLE_SIZE_MIN, COLDBREATH_PARTICLE_SIZE_MAX );
 		float flParticleScale = RandomFloat( COLDBREATH_ENDSCALE_MIN, COLDBREATH_ENDSCALE_MAX );
 		if ( m_Shared.m_flStamina < LOW_STAMINA_THRESHOLD || cl_coldbreath_forcestamina.GetBool() )
@@ -2242,11 +2242,11 @@ void C_DODPlayer::EmitColdBreathParticles( void )
 			pParticle->m_uchEndSize = flParticleSize;
 		}
 		pParticle->m_uchStartSize = ( flParticleSize * flParticleScale );
-				
+
 		float flAlpha = RandomFloat( COLDBREATH_ALPHA_MIN, COLDBREATH_ALPHA_MAX );
-		pParticle->m_uchStartAlpha = flAlpha * 255; 
+		pParticle->m_uchStartAlpha = flAlpha * 255;
 		pParticle->m_uchEndAlpha = 0;
-				
+
 		pParticle->m_flRoll	= RandomInt( 0, 360 );
 		pParticle->m_flRollDelta = RandomFloat( 0.0f, 1.25f );
 	}
@@ -2323,8 +2323,6 @@ void C_DODPlayer::AvoidPlayers( CUserCmd *pCmd )
 		// Is the avoid player solid?
 		if ( pAvoidPlayer->IsSolidFlagSet( FSOLID_NOT_SOLID ) )
 			continue;
-
-		Vector t1, t2;
 
 		vecAvoidCenter = pAvoidPlayer->GetAbsOrigin();
 		vecAvoidMin = pAvoidPlayer->GetPlayerMins();
@@ -2407,9 +2405,9 @@ void C_DODPlayer::AvoidPlayers( CUserCmd *pCmd )
 	float flCropFraction = 1.33333333f;
 
 	if ( ( GetFlags() & FL_DUCKING ) && ( GetGroundEntity() != NULL ) )
-	{	
+	{
 		flMaxPlayerSpeed *= flCropFraction;
-	}	
+	}
 
 	float flMaxPlayerSpeedSqr = flMaxPlayerSpeed * flMaxPlayerSpeed;
 

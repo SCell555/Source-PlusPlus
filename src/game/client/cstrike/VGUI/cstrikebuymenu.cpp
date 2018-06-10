@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -216,7 +216,7 @@ CCSBaseBuyMenu::CCSBaseBuyMenu(IViewPort *pViewPort, const char *subPanelName) :
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CCSBaseBuyMenu::SetVisible(bool state)
 {
@@ -302,7 +302,7 @@ void CCSBaseBuyMenu::UpdateBuyPresets( bool showDefaultPanel )
 
 	int i;
 	// show buy preset buttons
-	int numPresets = min( TheBuyPresets->GetNumPresets(), NUM_BUY_PRESET_BUTTONS );
+	int numPresets = min( TheBuyPresets->GetNumPresets(), (int)NUM_BUY_PRESET_BUTTONS );
 	for ( i=0; i<numPresets; ++i )
 	{
 		if ( !m_pBuyPresetButtons[i] )
@@ -446,7 +446,7 @@ int GetWeeklyBargain( void )
 			continue;
 
 		if ( info->m_iTeam == TEAM_UNASSIGNED || info->m_iTeam == pPlayer->m_iTeamNum )
-		{		
+		{
 			int iBargain = info->GetWeaponPrice() - info->GetPrevousPrice();
 
 			if ( iBargain < iBestBargain )
@@ -465,7 +465,7 @@ ConVar cs_testbargain( "cs_testbargain", "1" );
 #endif
 
 void CCSBaseBuyMenu::HandleBlackMarket( void )
-{	
+{
 	if ( CSGameRules() == NULL )
 		return;
 
@@ -503,10 +503,10 @@ void CCSBaseBuyMenu::HandleBlackMarket( void )
 			if ( pLabel )
 			{
 				const int BufLen = 2048;
-				
+
 				wchar_t wbuf[BufLen] = L"";
 				wchar_t *formatStr = g_pVGuiLocalize->Find("#Cstrike_MarketHeadline");
-	
+
 				if ( !formatStr )
 					formatStr = L"%s1";
 
@@ -521,7 +521,7 @@ void CCSBaseBuyMenu::HandleBlackMarket( void )
 				const int BufLen = 2048;
 				wchar_t wbuf[BufLen] = L"";
 				wchar_t *formatStr = g_pVGuiLocalize->Find("#Cstrike_MarketBargain");
-				
+
 				if ( !formatStr )
 					formatStr = L"%s1";
 
@@ -555,12 +555,12 @@ void CCSBaseBuyMenu::HandleBlackMarket( void )
 			}
 
 			pLabel = dynamic_cast< Label * >(m_pBlackMarket->FindChildByName( "MarketBargainIcon" ));
-			
+
 			if ( pLabel )
 			{
 				char wbuff[12];
 				Q_snprintf( wbuff, 12, "%c", info->iconActive->cCharacterInFont );
-				
+
 				pLabel->SetText( wbuff );
 			}
 
@@ -637,7 +637,7 @@ void CCSBaseBuyMenu::PerformLayout()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CCSBaseBuyMenu::ApplySchemeSettings( vgui::IScheme *pScheme )
 {
@@ -658,7 +658,7 @@ void CCSBaseBuyMenu::ApplySchemeSettings( vgui::IScheme *pScheme )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 static bool IsWeaponInvalid( CSWeaponID weaponID )
 {
@@ -669,7 +669,7 @@ static bool IsWeaponInvalid( CSWeaponID weaponID )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CCSBuySubMenu::OnCommand( const char *command )
 {
@@ -742,7 +742,7 @@ void CCSBuySubMenu::OnSizeChanged(int newWide, int newTall)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CCSBuySubMenu::PerformLayout()
 {
@@ -782,7 +782,7 @@ void CCSBuySubMenu::HandleBlackMarket( void )
 		BuyMouseOverPanelButton *pButton = dynamic_cast< BuyMouseOverPanelButton * > ( GetChild(i) );
 		if (!pButton)
 			continue;
-		
+
 		pButton->SetBargainButton( false );
 
 		char szClassname[32];

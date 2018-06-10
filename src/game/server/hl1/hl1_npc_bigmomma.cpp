@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -155,7 +155,7 @@ public:
 	// Reach target in pev->message
 	// Reach delay in pev->speed
 	// Reach sequence in pev->netname
-	
+
 	DECLARE_DATADESC();
 
 	float   m_flRadius;
@@ -186,7 +186,7 @@ void CInfoBM::Spawn( void )
 //	Msg( "Name %s\n", STRING( GetEntityName() ) );
 }
 
-bool CInfoBM::KeyValue( const char *szKeyName, const char *szValue ) 
+bool CInfoBM::KeyValue( const char *szKeyName, const char *szValue )
 {
 	if (FStrEq( szKeyName, "radius"))
 	{
@@ -207,7 +207,7 @@ bool CInfoBM::KeyValue( const char *szKeyName, const char *szValue )
 	return BaseClass::KeyValue(szKeyName, szValue );
 }
 
-// UNDONE:	
+// UNDONE:
 //
 #define BIG_CHILDCLASS		"monster_babycrab"
 
@@ -221,7 +221,7 @@ public:
 	void Precache( void );
 
 	Class_T	Classify( void ) { return CLASS_ALIEN_MONSTER; };
-	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
+	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	int	OnTakeDamage( const CTakeDamageInfo &info );
 	void HandleAnimEvent( animevent_t *pEvent );
 	void LayHeadcrab( void );
@@ -233,8 +233,8 @@ public:
 	int RangeAttack1Conditions( float flDot, float flDist );	// Mortar launch
 
 
-	BOOL CanLayCrab( void ) 
-	{ 
+	BOOL CanLayCrab( void )
+	{
 		if ( m_crabTime < gpGlobals->curtime && m_crabCount < BIG_MAXCHILDREN )
 		{
 			// Don't spawn crabs inside each other
@@ -259,7 +259,7 @@ public:
 	void NodeReach( void );
 	void NodeStart( string_t iszNextNode );
 	bool ShouldGoToNode( void );
-	
+
 	const char *GetNodeSequence( void )
 	{
 		CInfoBM *pTarget = (CInfoBM*)GetTarget();
@@ -268,7 +268,7 @@ public:
 		{
 			return STRING( pTarget->m_iszReachSequence );	// netname holds node sequence
 		}
-		
+
 		return NULL;
 	}
 
@@ -316,10 +316,10 @@ public:
 			if ( pTarget->GetAbsAngles().y != 0 )
 				 return pTarget->GetAbsAngles().y;
 		}
-		
+
 		return GetAbsAngles().y;
 	}
-	
+
 	// Restart the crab count on each new level
 	void OnRestore( void )
 	{
@@ -337,7 +337,7 @@ public:
 
 	DEFINE_CUSTOM_AI;
 
-	/*	
+	/*
 	void		RunTask( Task_t *pTask );
 	void		StartTask( Task_t *pTask );
 	Schedule_t	*GetSchedule( void );
@@ -363,7 +363,7 @@ private:
 
 	Vector m_vTossDir;
 
-	
+
 };
 
 
@@ -404,7 +404,7 @@ void CNPC_BigMomma::Spawn()
 	SetSolid( SOLID_BBOX );
 	AddSolidFlags( FSOLID_NOT_STANDABLE );
 	SetMoveType( MOVETYPE_STEP );
-	
+
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	m_iHealth = 150 * sk_bigmomma_health_factor.GetFloat();
 
@@ -475,7 +475,7 @@ float CNPC_BigMomma::MaxYawSpeed ( void )
 	default:
 		ys = 90.0f;
 	}
-	
+
 	return ys;
 }
 
@@ -532,7 +532,7 @@ void CNPC_BigMomma::NodeReach( void )
 	Forget( bits_MEMORY_FIRED_NODE );
 
 	m_iszTarget = pTarget->m_target;
-	
+
 	if ( pTarget->m_iHealth == 0 )
 		 Remember( bits_MEMORY_ADVANCE_NODE );	// Move on if no health at this node
 	else
@@ -542,7 +542,7 @@ void CNPC_BigMomma::NodeReach( void )
 }
 
 
-void CNPC_BigMomma::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr )
+void CNPC_BigMomma::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo dmgInfo = info;
 
@@ -558,7 +558,7 @@ void CNPC_BigMomma::TraceAttack( const CTakeDamageInfo &info, const Vector &vecD
 		// don't hurt the monster much, but allow bits_COND_LIGHT_DAMAGE to be generated
 		dmgInfo.SetDamage( 0.1 );
 	}
-	else 
+	else
 	{
 		SpawnBlood( ptr->endpos + ptr->plane.normal * 15, vecDir, m_bloodColor, 100 );
 
@@ -569,7 +569,7 @@ void CNPC_BigMomma::TraceAttack( const CTakeDamageInfo &info, const Vector &vecD
 		}
 	}
 
-	BaseClass::TraceAttack( dmgInfo, vecDir, ptr );
+	BaseClass::TraceAttack( dmgInfo, vecDir, ptr, pAccumulator );
 }
 
 
@@ -582,9 +582,9 @@ int CNPC_BigMomma::OnTakeDamage( const CTakeDamageInfo &info )
 	{
 		newInfo.SetDamage( 0 );
 	}
-	
+
 	// never die from damage, just advance to the next node
-	if ( ( GetHealth() - newInfo.GetDamage() ) < 1 ) 
+	if ( ( GetHealth() - newInfo.GetDamage() ) < 1 )
 	{
 		newInfo.SetDamage( 0 );
 		Remember( bits_MEMORY_ADVANCE_NODE );
@@ -742,10 +742,10 @@ void CNPC_BigMomma::StartTask( const Task_t *pTask )
 
 			BaseClass::StartTask( pTask );
 		}
-		
+
 		break;
 
-	default: 
+	default:
 		BaseClass::StartTask( pTask );
 		break;
 	}
@@ -810,7 +810,7 @@ void CNPC_BigMomma::RunTask( const Task_t *pTask )
 				 TaskComplete();
 			}
 		}
-		
+
 		break;
 
 	default:
@@ -858,7 +858,7 @@ void CNPC_BigMomma::HandleAnimEvent( animevent_t *pEvent )
 					}
 				}
 			}
-					
+
 			if ( pHurt )
 			{
 				CTakeDamageInfo info( this, this, 15, DMG_CLUB | DMG_SLASH );
@@ -891,15 +891,15 @@ void CNPC_BigMomma::HandleAnimEvent( animevent_t *pEvent )
 			}
 		}
 		break;
-		
+
 		case BIG_AE_SCREAM:
 			EmitSound( filter, entindex(), "BigMomma.Alert" );
 			break;
-		
+
 		case BIG_AE_PAIN_SOUND:
 			EmitSound( filter, entindex(), "BigMomma.Pain" );
 			break;
-		
+
 		case BIG_AE_ATTACK_SOUND:
 			EmitSound( filter, entindex(), "BigMomma.Attack" );
 			break;
@@ -939,7 +939,7 @@ void CNPC_BigMomma::HandleAnimEvent( animevent_t *pEvent )
 
 		case BIG_AE_JUMP_FORWARD:
 			SetGroundEntity( NULL );
-			SetAbsOrigin(GetAbsOrigin() + Vector ( 0 , 0 , 1) );// take him off ground so engine doesn't instantly reset onground 
+			SetAbsOrigin(GetAbsOrigin() + Vector ( 0 , 0 , 1) );// take him off ground so engine doesn't instantly reset onground
 			SetAbsVelocity(vecFwd * 200 + vecUp * 500 );
 			break;
 
@@ -951,7 +951,7 @@ void CNPC_BigMomma::HandleAnimEvent( animevent_t *pEvent )
 				{
 					pTarget->m_OnAnimationEvent.FireOutput( this, this );
 				}
-				
+
 				Remember( bits_MEMORY_FIRED_NODE );
 			}
 			break;
@@ -1011,7 +1011,7 @@ void CNPC_BigMomma::DeathNotice( CBaseEntity *pevChild )
 void CNPC_BigMomma::LaunchMortar( void )
 {
 	m_mortarTime = gpGlobals->curtime + RandomFloat( 2, 15 );
-	
+
 	Vector startPos = GetAbsOrigin();
 	startPos.z += 180;
 
@@ -1052,17 +1052,15 @@ Vector VecCheckSplatToss( CBaseEntity *pEnt, const Vector &vecSpot1, Vector vecS
 {
 	trace_t			tr;
 	Vector			vecMidPoint;// halfway point between Spot1 and Spot2
-	Vector			vecApex;// highest point 
-	Vector			vecScale;
+	Vector			vecApex;// highest point
 	Vector			vecGrenadeVel;
-	Vector			vecTemp;
 	float			flGravity = sv_gravity.GetFloat();
 
 	// calculate the midpoint and apex of the 'triangle'
 	vecMidPoint = vecSpot1 + (vecSpot2 - vecSpot1) * 0.5;
 	UTIL_TraceLine(vecMidPoint, vecMidPoint + Vector(0,0,maxHeight), MASK_SOLID_BRUSHONLY, pEnt, COLLISION_GROUP_NONE, &tr );
 	vecApex = tr.endpos;
-	
+
 	UTIL_TraceLine(vecSpot1, vecApex, MASK_SOLID, pEnt, COLLISION_GROUP_NONE, &tr );
 	if (tr.fraction != 1.0)
 	{
@@ -1086,7 +1084,7 @@ Vector VecCheckSplatToss( CBaseEntity *pEnt, const Vector &vecSpot1, Vector vecS
 	float time = speed / flGravity;
 	vecGrenadeVel = (vecSpot2 - vecSpot1);
 	vecGrenadeVel.z = 0;
-	
+
 	// Travel half the distance to the target in that time (apex is at the midpoint)
 	vecGrenadeVel = vecGrenadeVel * ( 0.5 / time );
 	// Speed to offset gravity at the desired height
@@ -1116,7 +1114,7 @@ int CNPC_BigMomma::RangeAttack1Conditions( float flDot, float flDist )
 				return COND_CAN_RANGE_ATTACK1;
 		}
 	}
-	
+
 	return COND_NONE;
 }
 
@@ -1128,7 +1126,7 @@ int CNPC_BigMomma::RangeAttack1Conditions( float flDot, float flDist )
 void MortarSpray( const Vector &position, const Vector &direction, int spriteModel, int count )
 {
 	CPVSFilter filter( position );
-	
+
 	te->SpriteSpray( filter, 0.0, &position, &direction, spriteModel, 200, 80, count );
 }
 
@@ -1138,10 +1136,10 @@ void CBMortar:: Spawn( void )
 {
 	SetMoveType( MOVETYPE_FLYGRAVITY );
 	SetClassname( "bmortar" );
-	
+
 	SetSolid( SOLID_BBOX );
 
-	pSprite = CSprite::SpriteCreate( "sprites/mommaspit.vmt", GetAbsOrigin(), true ); 
+	pSprite = CSprite::SpriteCreate( "sprites/mommaspit.vmt", GetAbsOrigin(), true );
 
 	if ( pSprite )
 	{
@@ -1186,9 +1184,9 @@ void CBMortar::Animate( void )
 
 CBMortar *CBMortar::Shoot( CBaseEntity *pOwner, Vector vecStart, Vector vecVelocity )
 {
-	CBMortar *pSpit = CREATE_ENTITY( CBMortar, "bmortar" ); 
+	CBMortar *pSpit = CREATE_ENTITY( CBMortar, "bmortar" );
 	pSpit->Spawn();
-	
+
 	UTIL_SetOrigin( pSpit, vecStart );
 	pSpit->SetAbsVelocity( vecVelocity );
 	pSpit->SetOwnerEntity( pOwner );
@@ -1248,7 +1246,7 @@ void CBMortar::Touch( CBaseEntity *pOther )
 	CBaseEntity *pOwner = GetOwnerEntity();
 
 	RadiusDamage( CTakeDamageInfo( this, pOwner, sk_bigmomma_dmg_blast.GetFloat(), DMG_ACID ), GetAbsOrigin(), sk_bigmomma_radius_blast.GetFloat(), CLASS_NONE, NULL );
-		
+
 	UTIL_Remove( pSprite );
 	UTIL_Remove( this );
 }
@@ -1266,7 +1264,7 @@ AI_BEGIN_CUSTOM_NPC( monster_bigmomma, CNPC_BigMomma )
 	DECLARE_TASK( TASK_NODE_YAW )
 	DECLARE_TASK( TASK_CHECK_NODE_PROXIMITY )
 
-	
+
 	//=========================================================
 	// > SCHED_BIG_NODE
 	//=========================================================
@@ -1301,11 +1299,10 @@ AI_BEGIN_CUSTOM_NPC( monster_bigmomma, CNPC_BigMomma )
 		"		TASK_WAIT_NODE						0"
 		"		TASK_PLAY_NODE_SEQUENCE				0"
 		"		TASK_PROCESS_NODE					0"
-			
+
 		"	"
 		"	Interrupts"
 	)
 
 AI_END_CUSTOM_NPC()
 
-	

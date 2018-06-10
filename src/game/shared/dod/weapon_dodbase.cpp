@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -70,7 +70,7 @@ BEGIN_NETWORK_TABLE( CWeaponDODBase, DT_WeaponDODBase )
 	RecvPropVector( RECVINFO( m_vInitialDropVelocity ) ),
 	RecvPropTime( RECVINFO( m_flSmackTime ) )
 #else
-	SendPropVector( SENDINFO( m_vInitialDropVelocity ), 
+	SendPropVector( SENDINFO( m_vInitialDropVelocity ),
 			20,		// nbits
 			0,		// flags
 			-3000,	// low value
@@ -96,7 +96,7 @@ LINK_ENTITY_TO_CLASS( weapon_dod_base, CWeaponDODBase );
 	END_DATADESC()
 
 #else
-	BEGIN_PREDICTION_DATA( CWeaponDODBase ) 
+	BEGIN_PREDICTION_DATA( CWeaponDODBase )
 		DEFINE_PRED_FIELD( m_flSmackTime, FIELD_FLOAT, FTYPEDESC_INSENDTABLE )	// for rifle melee attacks
 	END_PREDICTION_DATA()
 #endif
@@ -151,7 +151,7 @@ void FindHullIntersection( const Vector &vecSrc, trace_t &tr, const Vector &mins
 }
 
 // ----------------------------------------------------------------------------- //
-// CWeaponDODBase implementation. 
+// CWeaponDODBase implementation.
 // ----------------------------------------------------------------------------- //
 CWeaponDODBase::CWeaponDODBase()
 {
@@ -163,7 +163,7 @@ CWeaponDODBase::CWeaponDODBase()
 
 
 bool CWeaponDODBase::IsPredicted() const
-{ 
+{
 	return true;
 }
 
@@ -227,8 +227,8 @@ void CWeaponDODBase::ItemPostFrame()
 
 	if ((m_bInReload) && (pPlayer->m_flNextAttack <= gpGlobals->curtime))
 	{
-		// complete the reload. 
-		int j = min( GetMaxClip1() - m_iClip1, pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) );	
+		// complete the reload.
+		int j = min( GetMaxClip1() - m_iClip1, pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) );
 
 		// Add them to the clip
 		m_iClip1 += j;
@@ -260,10 +260,10 @@ void CWeaponDODBase::ItemPostFrame()
 		if( CanAttack() )
 			PrimaryAttack();
 	}
-	else if ( pPlayer->m_nButtons & IN_RELOAD && GetMaxClip1() != WEAPON_NOCLIP && !m_bInReload && m_flNextPrimaryAttack < gpGlobals->curtime) 
+	else if ( pPlayer->m_nButtons & IN_RELOAD && GetMaxClip1() != WEAPON_NOCLIP && !m_bInReload && m_flNextPrimaryAttack < gpGlobals->curtime)
 	{
-		// reload when reload is pressed, or if no buttons are down and weapon is empty.		
-		Reload();	
+		// reload when reload is pressed, or if no buttons are down and weapon is empty.
+		Reload();
 	}
 	else if ( !(pPlayer->m_nButtons & (IN_ATTACK|IN_ATTACK2) ) )
 	{
@@ -273,7 +273,7 @@ void CWeaponDODBase::ItemPostFrame()
 
 		m_bInAttack = false;	//reset semi-auto
 
-		if ( !IsUseable() && m_flNextPrimaryAttack < gpGlobals->curtime ) 
+		if ( !IsUseable() && m_flNextPrimaryAttack < gpGlobals->curtime )
 		{
 			// Intentionally blank -- used to switch weapons here
 		}
@@ -323,7 +323,7 @@ const CDODWeaponInfo &CWeaponDODBase::GetDODWpnData() const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 const char *CWeaponDODBase::GetViewModel( int /*viewmodelindex = 0 -- this is ignored in the base class here*/ ) const
 {
@@ -331,7 +331,7 @@ const char *CWeaponDODBase::GetViewModel( int /*viewmodelindex = 0 -- this is ig
 	{
 		 return BaseClass::GetViewModel();
 	}
-	
+
 	return GetWpnData().szViewModel;
 }
 
@@ -350,11 +350,11 @@ void CWeaponDODBase::Precache( void )
 	// Make sure that if we declare an alt weapon, that we have criteria to show it
 	// and vice-versa
 	Assert( ((info.m_iAltWpnCriteria & (ALTWPN_CRITERIA_RELOADING | ALTWPN_CRITERIA_FIRING)) > 0 ) ==
-			(iWpnNameLen > 0) );  	
+			(iWpnNameLen > 0) );
 #endif
 
 	if( iWpnNameLen > 0 )
-		m_iReloadModelIndex = CBaseEntity::PrecacheModel( info.m_szReloadModel );	
+		m_iReloadModelIndex = CBaseEntity::PrecacheModel( info.m_szReloadModel );
 }
 
 bool CWeaponDODBase::DefaultDeploy( char *szViewModel, char *szWeaponModel, int iActivity, char *szAnimExt )
@@ -396,7 +396,7 @@ bool CWeaponDODBase::DefaultDeploy( char *szViewModel, char *szWeaponModel, int 
 			Assert( !"TEAM_UNASSIGNED or spectator getting a view model assigned" );
 			break;
 		}
-	}	
+	}
 
 	return true;
 }
@@ -441,7 +441,7 @@ void CWeaponDODBase::Drop( const Vector &vecVelocity )
 	m_bInReload = false;
 
 	m_flSmackTime = -1;
-	
+
 	m_vInitialDropVelocity = vecVelocity;
 
 	BaseClass::Drop( m_vInitialDropVelocity );
@@ -490,17 +490,17 @@ bool CWeaponDODBase::Deploy()
 }
 
 #ifdef CLIENT_DLL
-	
+
 
 
 	void CWeaponDODBase::OnDataChanged( DataUpdateType_t type )
 	{
-		if ( m_iState == WEAPON_NOT_CARRIED && m_iOldState != WEAPON_NOT_CARRIED ) 
+		if ( m_iState == WEAPON_NOT_CARRIED && m_iOldState != WEAPON_NOT_CARRIED )
 		{
 			// we are being notified of the weapon being dropped
 			// add an interpolation history so the movement is smoother
 
-			// Now stick our initial velocity into the interpolation history 
+			// Now stick our initial velocity into the interpolation history
 			CInterpolatedVar< Vector > &interpolator = GetOriginInterpolator();
 
 			interpolator.ClearHistory();
@@ -559,7 +559,7 @@ bool CWeaponDODBase::Deploy()
 		BaseClass::ProcessMuzzleFlashEvent();
 	}
 #else
-		
+
 
 	//-----------------------------------------------------------------------------
 	// Purpose: Get the accuracy derived from weapon and player, and return it
@@ -571,7 +571,7 @@ bool CWeaponDODBase::Deploy()
 	}
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	//-----------------------------------------------------------------------------
 	void CWeaponDODBase::ItemBusyFrame()
 	{
@@ -639,7 +639,7 @@ bool CWeaponDODBase::Deploy()
 	}
 
 	//=========================================================
-	// CheckRespawn - a player is taking this weapon, should 
+	// CheckRespawn - a player is taking this weapon, should
 	// it respawn?
 	//=========================================================
 	void CWeaponDODBase::CheckRespawn()
@@ -648,7 +648,7 @@ bool CWeaponDODBase::Deploy()
 		return;
 	}
 
-		
+
 	//=========================================================
 	// Respawn- this item is already in the world, but it is
 	// invisible and intangible. Make it visible and tangible.
@@ -690,12 +690,12 @@ bool CWeaponDODBase::Deploy()
 
 		// Set this here to allow players to shoot dropped weapons
 		SetCollisionGroup( COLLISION_GROUP_WEAPON );
-		
+
 		SetExtraAmmoCount(0);	//Start with no additional ammo
 
 		CollisionProp()->UseTriggerBounds( true, 10.0f );
 	}
-	
+
 	void CWeaponDODBase::SetDieThink( bool bDie )
 	{
 		if( bDie )
@@ -801,7 +801,7 @@ bool CWeaponDODBase::DefaultReload( int iClipSize1, int iClipSize2, int iActivit
 		CPASAttenuationFilter filter( pPlayer, params.soundlevel );
 		filter.RemoveRecipient( pPlayer );	// no local player, that is done in the model
 
-		EmitSound( filter, pPlayer->entindex(), shootsound, NULL, 0.0 ); 
+		EmitSound( filter, pPlayer->entindex(), shootsound, NULL, 0.0 );
 	}
 #endif
 
@@ -811,9 +811,9 @@ bool CWeaponDODBase::IsUseable()
 
 	if ( Clip1() <= 0 )
 	{
-		if ( pPlayer->GetAmmoCount( GetPrimaryAmmoType() ) <= 0 && GetMaxClip1() != -1 )			
+		if ( pPlayer->GetAmmoCount( GetPrimaryAmmoType() ) <= 0 && GetMaxClip1() != -1 )
 		{
-			// clip is empty (or nonexistant) and the player has no more ammo of this type. 
+			// clip is empty (or nonexistant) and the player has no more ammo of this type.
 			return false;
 		}
 	}
@@ -842,9 +842,9 @@ void CWeaponDODBase::Punch( void )
 
 //--------------------------------------------
 // iDamageAmount - how much damage to give
-// iDamageType - DMG_ bits 
+// iDamageType - DMG_ bits
 // flDmgDelay - delay between attack and the giving of damage, usually timed to animation
-// flAttackDelay - time until we can next attack 
+// flAttackDelay - time until we can next attack
 //--------------------------------------------
 CBaseEntity *CWeaponDODBase::MeleeAttack( int iDamageAmount, int iDamageType, float flDmgDelay, float flAttackDelay )
 {
@@ -873,7 +873,7 @@ CBaseEntity *CWeaponDODBase::MeleeAttack( int iDamageAmount, int iDamageType, fl
 	const float rayExtension = 40.0f;
 	UTIL_ClipTraceToPlayers( vecSrc, vecEnd + vForward * rayExtension, iTraceMask, &filter, &tr );
 
-	// If the exact forward trace did not hit, try a larger swept box 
+	// If the exact forward trace did not hit, try a larger swept box
 	if ( tr.fraction >= 1.0 )
 	{
 		Vector head_hull_mins( -16, -16, -18 );
@@ -904,7 +904,7 @@ CBaseEntity *CWeaponDODBase::MeleeAttack( int iDamageAmount, int iDamageType, fl
 					// fake that we actually missed
 					tr.fraction = 1.0;
 				}
-			}			
+			}
 		}
 	}
 
@@ -912,13 +912,13 @@ CBaseEntity *CWeaponDODBase::MeleeAttack( int iDamageAmount, int iDamageType, fl
 
 	bool bDidHit = ( tr.fraction < 1.0f );
 
-	if ( bDidHit )	//if the swing hit 
-	{	
+	if ( bDidHit )	//if the swing hit
+	{
 		// delay the decal a bit
 		m_trHit = tr;
 
 		// Store the ent in an EHANDLE, just in case it goes away by the time we get into our think function.
-		m_pTraceHitEnt = tr.m_pEnt; 
+		m_pTraceHitEnt = tr.m_pEnt;
 
 		m_iSmackDamage = iDamageAmount;
 		m_iSmackDamageType = iDamageType;
@@ -1040,7 +1040,7 @@ void CWeaponDODBase::Smack()
 
 	Assert( m_trHit.m_pEnt != GetPlayerOwner() );
 
-	m_trHit.m_pEnt->DispatchTraceAttack( info, vForward, &m_trHit ); 
+	m_trHit.m_pEnt->DispatchTraceAttack( info, vForward, &m_trHit );
 	ApplyMultiDamage();
 #endif
 
@@ -1072,8 +1072,8 @@ void CWeaponDODBase::Smack()
 	bool bHitPlayer = m_trHit.m_pEnt && m_trHit.m_pEnt->IsPlayer();
 
 	// don't do any impacts if we hit a teammate and ff is off
-	if ( bHitPlayer && 
-		m_trHit.m_pEnt->GetTeamNumber() == GetPlayerOwner()->GetTeamNumber() && 
+	if ( bHitPlayer &&
+		m_trHit.m_pEnt->GetTeamNumber() == GetPlayerOwner()->GetTeamNumber() &&
 		!friendlyfire.GetBool() )
 		return;
 
@@ -1106,7 +1106,7 @@ void CWeaponDODBase::Smack()
 	static ConVar	v_ipitch_level( "v_ipitch_level", "0.3"/*, FCVAR_UNREGISTERED*/ );
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	// Output : float
 	//-----------------------------------------------------------------------------
 	float CWeaponDODBase::CalcViewmodelBob( void )
@@ -1115,7 +1115,7 @@ void CWeaponDODBase::Smack()
 		static	float lastbobtime;
 		static  float lastspeed;
 		float	cycle;
-		
+
 		CBasePlayer *player = ToBasePlayer( GetOwner() );
 		//Assert( player );
 
@@ -1129,7 +1129,7 @@ void CWeaponDODBase::Smack()
 
 		//Find the speed of the player
 		float speed = player->GetLocalVelocity().Length2D();
-		float flmaxSpeedDelta = max( 0, (gpGlobals->curtime - lastbobtime) * 320.0f );
+		float flmaxSpeedDelta = max( 0.f, (gpGlobals->curtime - lastbobtime) * 320.0f );
 
 		// don't allow too big speed changes
 		speed = clamp( speed, lastspeed-flmaxSpeedDelta, lastspeed+flmaxSpeedDelta );
@@ -1141,7 +1141,7 @@ void CWeaponDODBase::Smack()
 		//		 MaxSpeed() is not sufficient for dealing with sprinting - jdw
 
 		float bob_offset = RemapVal( speed, 0, 320, 0.0f, 1.0f );
-		
+
 		bobtime += ( gpGlobals->curtime - lastbobtime ) * bob_offset;
 		lastbobtime = gpGlobals->curtime;
 
@@ -1157,7 +1157,7 @@ void CWeaponDODBase::Smack()
 		{
 			cycle = M_PI + M_PI*(cycle-cl_bobup.GetFloat())/(1.0 - cl_bobup.GetFloat());
 		}
-		
+
 		g_verticalBob = speed*0.005f;
 		g_verticalBob = g_verticalBob*0.3 + g_verticalBob*0.7*sin(cycle);
 
@@ -1179,17 +1179,17 @@ void CWeaponDODBase::Smack()
 		g_lateralBob = speed*0.005f;
 		g_lateralBob = g_lateralBob*0.3 + g_lateralBob*0.7*sin(cycle);
 		g_lateralBob = clamp( g_lateralBob, -7.0f, 4.0f );
-		
+
 		//NOTENOTE: We don't use this return value in our case (need to restructure the calculation function setup!)
 		return 0.0f;
 
 	}
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
-	// Input  : &origin - 
-	//			&angles - 
-	//			viewmodelindex - 
+	// Purpose:
+	// Input  : &origin -
+	//			&angles -
+	//			viewmodelindex -
 	//-----------------------------------------------------------------------------
 	void CWeaponDODBase::AddViewmodelBob( CBaseViewModel *viewmodel, Vector &origin, QAngle &angles )
 	{
@@ -1200,10 +1200,10 @@ void CWeaponDODBase::Smack()
 
 		// Apply bob, but scaled down to 40%
 		VectorMA( origin, g_verticalBob * 0.4f, forward, origin );
-		
+
 		// Z bob a bit more
 		origin[2] += g_verticalBob * 0.1f;
-		
+
 		// bob the angles
 		angles[ ROLL ]	+= g_verticalBob * 0.5f;
 		angles[ PITCH ]	-= g_verticalBob * 0.4f;
@@ -1212,7 +1212,7 @@ void CWeaponDODBase::Smack()
 
 	//	VectorMA( origin, g_lateralBob * 0.2f, right, origin );
 	}
-	
+
 	#include "c_te_effect_dispatch.h"
 
 	#define NUM_MUZZLE_FLASH_TYPES 4
@@ -1221,9 +1221,9 @@ void CWeaponDODBase::Smack()
 	{
 		if( event == 5001 )
 		{
-			// Don't record these... we're get double info, since we are recording 3rd person effects too 
-			if ( clienttools->IsInRecordingMode() ) 
-				return true; 
+			// Don't record these... we're get double info, since we are recording 3rd person effects too
+			if ( clienttools->IsInRecordingMode() )
+				return true;
 			if ( ShouldDrawMuzzleFlash() )
 			{
 				CEffectData data;
@@ -1322,7 +1322,7 @@ void CWeaponDODBase::Smack()
 
 			return false;
 		}
-	
+
 		return BaseClass::ShouldDraw();
 	}
 
@@ -1348,7 +1348,7 @@ void CWeaponDODBase::Smack()
 		if ( pPlayer )
 		{
 			pPlayer->PickUpWeapon( this );
-		}         
+		}
 	}
 
 #endif

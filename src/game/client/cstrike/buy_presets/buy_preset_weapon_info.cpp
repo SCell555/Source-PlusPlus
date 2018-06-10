@@ -29,7 +29,7 @@ struct WeaponDisplayNameInfo
 
 //--------------------------------------------------------------------------------------------------------------
 // NOTE: Array must be NULL-terminated
-static WeaponDisplayNameInfo weaponDisplayNameInfo[] = 
+static WeaponDisplayNameInfo weaponDisplayNameInfo[] =
 {
 	{ WEAPON_P228,		"#Cstrike_TitlesTXT_P228" },
 	{ WEAPON_GLOCK,		"#Cstrike_TitlesTXT_Glock18" },
@@ -145,7 +145,7 @@ int CalcClipsNeeded( const BuyPresetWeapon *pWeapon, const CCSWeaponInfo *pInfo,
 			{
 				numClips = ceil(maxRounds/(float)buySize);
 			}
-			numClips = min( ceil(maxRounds/(float)buySize), numClips );
+			numClips = Min<float>( ceil(maxRounds/(float)buySize), numClips );
 
 			numClips -= ammo[pInfo->iAmmoType]/buySize;
 			if ( numClips < 0 || ammo[pInfo->iAmmoType] == maxRounds )
@@ -331,7 +331,7 @@ CWeaponCSBase *GetWeaponInSlot( int iSlot, int iSlotPos )
 	for ( int i = 0; i < MAX_WEAPONS; i++ )
 	{
 		CWeaponCSBase *pWeapon = dynamic_cast< CWeaponCSBase * >(player->GetWeapon(i));
-		
+
 		if ( pWeapon == NULL )
 			continue;
 

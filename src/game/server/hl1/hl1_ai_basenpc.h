@@ -28,14 +28,14 @@
 class CHL1BaseNPC : public CAI_BaseNPC
 {
 	DECLARE_CLASS( CHL1BaseNPC, CAI_BaseNPC );
-	
+
 public:
 	CHL1BaseNPC( void )
 	{
 
 	}
 
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
+	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	bool	ShouldGib( const CTakeDamageInfo &info );
 	bool	CorpseGib( const CTakeDamageInfo &info );
 

@@ -32,7 +32,7 @@ void FX_DoDTracerSound( const Vector &start, const Vector &end, int iTracerType 
 	// don't play on very short hits
 	if ( ( start - end ).Length() < 200 )
 		return;
-	
+
 	const char *pszSoundName = "Bullets.DefaultNearmiss";
 	float flWhizDist = 64;
 	Vector vecListenOrigin = MainViewOrigin();
@@ -81,8 +81,8 @@ void FX_DoDTracerSound( const Vector &start, const Vector &end, int iTracerType 
 		VectorNormalize( shotDir );
 
 		CLocalPlayerFilter filter;
-		enginesound->EmitSound(	filter, SOUND_FROM_WORLD, CHAN_STATIC, params.soundname, 
-			params.volume, SNDLVL_TO_ATTN(params.soundlevel), 0, params.pitch, &start, &shotDir, false);
+		enginesound->EmitSound(	filter, SOUND_FROM_WORLD, CHAN_STATIC, params.soundname,
+			params.volume, SNDLVL_TO_ATTN(params.soundlevel), 0, params.pitch, 0, &start, &shotDir, false);
 	}
 
 	// Don't play another bullet whiz for this client until this time has run out
@@ -124,11 +124,11 @@ void FX_BrightTracer( Vector& start, Vector& end )
 	// Don't make short tracers.
 	float length = random->RandomFloat( 64.0f, 128.0f );
 	float life = ( dist + length ) / velocity;	//NOTENOTE: We want the tail to finish its run as well
-		
+
 	//Add it
 	FX_AddDiscreetLine( start, dir, velocity, length, dist, random->RandomFloat( 0.75f, 0.9f ), life, "effects/spark" );
 
-	FX_DoDTracerSound( start, end, TRACER_TYPE_DEFAULT );	
+	FX_DoDTracerSound( start, end, TRACER_TYPE_DEFAULT );
 }
 
 //-----------------------------------------------------------------------------

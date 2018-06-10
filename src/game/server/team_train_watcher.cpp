@@ -8,7 +8,9 @@
 #include "team_train_watcher.h"
 #include "team_control_point.h"
 #include "trains.h"
+#ifndef DOD_DLL
 #include "team_objectiveresource.h"
+#endif
 #include "teamplayroundbased_gamerules.h"
 #include "team_control_point.h"
 #include "team_control_point_master.h"
@@ -442,8 +444,8 @@ void CTeamTrainWatcher::FireGameEvent( IGameEvent *event )
 
 			if ( bHandleEvent )
 			{
-				// If we're receding and we've hit a node but the next node (going backwards) is disabled 
-				// the train is going to stop (like at the base of a downhill section) when we start forward 
+				// If we're receding and we've hit a node but the next node (going backwards) is disabled
+				// the train is going to stop (like at the base of a downhill section) when we start forward
 				// again we won't pass this node again so don't change our hill state based on this node.
 				if ( m_bReceding )
 				{
@@ -673,7 +675,7 @@ void CTeamTrainWatcher::InternalSetNumTrainCappers( int iNumCappers, CBaseEntity
 
 			m_flRecedeStartTime = gpGlobals->curtime;
 			m_flRecedeTime = m_flRecedeStartTime + m_flRecedeTotalTime;
-		}		
+		}
 	}
 	else
 	{
@@ -778,7 +780,7 @@ void CTeamTrainWatcher::FindGlowEntity( void )
 				pGlowEnt = gEntList.FindEntityByName( NULL, STRING( iszName1 ) );
 				break;
 			}
-			
+
 			pPhysConstraint = dynamic_cast<CPhysFixed*>( gEntList.FindEntityByClassname( pPhysConstraint, "phys_constraint" ) );
 		}
 
@@ -818,7 +820,7 @@ void CTeamTrainWatcher::FindGlowEntity( void )
 // calculate the distance between each
 // ==========================================================
 void CTeamTrainWatcher::WatcherActivate( void )
-{		
+{
 	m_flRecedeTime = 0;
 	m_bWaitingToRecede = false;
 	m_bCapBlocked = false;
@@ -842,6 +844,7 @@ void CTeamTrainWatcher::WatcherActivate( void )
 	// find the trigger area that will give us movement updates and find the sparks (if we're going to handle the train movement)
 	if ( m_bHandleTrainMovement )
 	{
+#ifndef DOD_DLL
 		if ( m_hTrain )
 		{
 			for ( int i=0; i<ITriggerAreaCaptureAutoList::AutoList().Count(); ++i )
@@ -855,6 +858,7 @@ void CTeamTrainWatcher::WatcherActivate( void )
 				}
 			}
 		}
+#endif
 
 		// init the sprites (if any)
 		CEnvSpark *pSpark = dynamic_cast<CEnvSpark*>( gEntList.FindEntityByName( NULL, m_iszSparkName ) );
@@ -945,7 +949,7 @@ void CTeamTrainWatcher::WatcherActivate( void )
 						flDistance = m_flTotalPathDistance; // we had a single node marked as a hill, so we'll use the current distance as the next marker
 					}
 
-					hillData.AddToTail( flDistance ); 
+					hillData.AddToTail( flDistance );
 
 					// is our current node the start of another hill?
 					if ( pNode->GetHillType() != HILL_TYPE_NONE )
@@ -994,6 +998,8 @@ void CTeamTrainWatcher::WatcherActivate( void )
 		hillData.AddToTail( m_flTotalPathDistance );
 	}
 
+// This can be pulled once DoD includes team_objectiveresource.* and c_team_objectiveresource.*
+#ifndef DOD_DLL
 	if ( ObjectiveResource() )
 	{
 		ObjectiveResource()->ResetHillData( GetTeamNumber() );
@@ -1014,16 +1020,14 @@ void CTeamTrainWatcher::WatcherActivate( void )
 			}
 		}
 	}
- 
+
 	// We have total distance and increments in our links array
 	for ( i=0;i<m_iNumCPLinks;i++ )
 	{
 		int iCPIndex = m_CPLinks[i].hCP.Get()->GetPointIndex();
-// This can be pulled once DoD includes team_objectiveresource.* and c_team_objectiveresource.*
-#ifndef DOD_DLL 
 		ObjectiveResource()->SetTrainPathDistance( iCPIndex, m_CPLinks[i].flDistanceFromStart / m_flTotalPathDistance );
-#endif
 	}
+#endif
 
 #ifdef GLOWS_ENABLE
 	FindGlowEntity();
@@ -1153,7 +1157,7 @@ void CTeamTrainWatcher::WatcherThink( void )
 				}
 			}
 
-			// play any concepts that we might need to play		
+			// play any concepts that we might need to play
 			if ( TeamplayRoundBasedRules() )
 			{
 				if ( m_iTrainSpeedLevel == 0 && iOldTrainSpeedLevel != 0 )
@@ -1256,11 +1260,12 @@ void CTeamTrainWatcher::WatcherThink( void )
 						bool bFinalPointInMap = false;
 
 						CTeamControlPoint *pCurrentPoint = m_CPLinks[iCount].hCP.Get();
+					#ifndef DOD_DLL
 						CTeamControlPointMaster *pMaster = g_hControlPointMasters.Count() ? g_hControlPointMasters[0] : NULL;
 						if ( pMaster )
 						{
-							// if we're not playing mini-rounds 
-							if ( !pMaster->PlayingMiniRounds() )  
+							// if we're not playing mini-rounds
+							if ( !pMaster->PlayingMiniRounds() )
 							{
 								for ( int i = FIRST_GAME_TEAM ; i < MAX_CONTROL_POINT_TEAMS ; i++ )
 								{
@@ -1273,7 +1278,7 @@ void CTeamTrainWatcher::WatcherThink( void )
 									}
 								}
 							}
-							else 
+							else
 							{
 								// or this is the last round
 								if ( pMaster->NumPlayableControlPointRounds() == 1 )
@@ -1295,6 +1300,7 @@ void CTeamTrainWatcher::WatcherThink( void )
 								}
 							}
 						}
+					#endif
 
 						PlayCaptureAlert( pCurrentPoint, bFinalPointInMap );
 					}
@@ -1304,10 +1310,12 @@ void CTeamTrainWatcher::WatcherThink( void )
 			// check to see if we need to start or stop the alarm
 			if ( flDistanceToGoal <= TEAM_TRAIN_ALARM_DISTANCE )
 			{
+			#ifndef DOD_DLL
 				if ( ObjectiveResource() )
 				{
 					ObjectiveResource()->SetTrackAlarm( GetTeamNumber(), true );
 				}
+			#endif
 
 				if ( !bDisableAlarm )
 				{
@@ -1335,10 +1343,12 @@ void CTeamTrainWatcher::WatcherThink( void )
 			}
 			else
 			{
+			#ifndef DOD_DLL
 				if ( ObjectiveResource() )
 				{
 					ObjectiveResource()->SetTrackAlarm( GetTeamNumber(), false );
 				}
+			#endif
 
 				StopCaptureAlarm();
 				m_bAlarmPlayed = false;
@@ -1562,7 +1572,7 @@ void CTeamTrainWatcher::DumpStats( void )
 		flLastPosition = m_CPLinks[i].flDistanceFromStart;
 	}
 
-	V_sprintf_safe( szTemp, "\tTotal Distance: %0.2f\n\n", flTotalDistance ); 
+	V_sprintf_safe( szTemp, "\tTotal Distance: %0.2f\n\n", flTotalDistance );
 	V_strcat_safe( szOutput, szTemp );
 	Msg( "%s", szOutput );
 }

@@ -146,7 +146,7 @@ public:
 	// In case the client has the player entity, we transmit the player index.
 	// In case the client doesn't have it, we transmit the player's model index, origin, and angles
 	// so they can create a ragdoll in the right place.
-	CNetworkHandle( CBaseEntity, m_hPlayer );	// networked entity handle 
+	CNetworkHandle( CBaseEntity, m_hPlayer );	// networked entity handle
 	CNetworkVector( m_vecRagdollVelocity );
 	CNetworkVector( m_vecRagdollOrigin );
 	CNetworkVar(int, m_iDeathPose );
@@ -200,7 +200,7 @@ static CTEPlayerAnimEvent g_TEPlayerAnimEvent( "PlayerAnimEvent" );
 void TE_PlayerAnimEvent( CBasePlayer *pPlayer, PlayerAnimEvent_t event, int nData )
 {
 	CPVSFilter filter( (const Vector&)pPlayer->EyePosition() );
-	
+
 	g_TEPlayerAnimEvent.m_hPlayer = pPlayer;
 	g_TEPlayerAnimEvent.m_iEvent = event;
 	g_TEPlayerAnimEvent.m_nData = nData;
@@ -212,9 +212,9 @@ void TE_PlayerAnimEvent( CBasePlayer *pPlayer, PlayerAnimEvent_t event, int nDat
 // Purpose: Filters updates to a variable so that only non-local players see
 // the changes.  This is so we can send a low-res origin to non-local players
 // while sending a hi-res one to the local player.
-// Input  : *pVarData - 
-//			*pOut - 
-//			objectID - 
+// Input  : *pVarData -
+//			*pOut -
+//			objectID -
 //-----------------------------------------------------------------------------
 
 void* SendProxy_SendNonLocalDataTable( const SendProp *pProp, const void *pStruct, const void *pVarData, CSendProxyRecipients *pRecipients, int objectID )
@@ -252,16 +252,16 @@ END_SEND_TABLE()
 
 IMPLEMENT_SERVERCLASS_ST( CCSPlayer, DT_CSPlayer )
 	SendPropExclude( "DT_BaseAnimating", "m_flPoseParameter" ),
-	SendPropExclude( "DT_BaseAnimating", "m_flPlaybackRate" ),	
+	SendPropExclude( "DT_BaseAnimating", "m_flPlaybackRate" ),
 	SendPropExclude( "DT_BaseAnimating", "m_nSequence" ),
 	SendPropExclude( "DT_BaseAnimating", "m_nNewSequenceParity" ),
 	SendPropExclude( "DT_BaseAnimating", "m_nResetEventsParity" ),
 	SendPropExclude( "DT_BaseAnimating", "m_nMuzzleFlashParity" ),
 	SendPropExclude( "DT_BaseEntity", "m_angRotation" ),
 	SendPropExclude( "DT_BaseAnimatingOverlay", "overlay_vars" ),
-	
+
 	// cs_playeranimstate and clientside animation takes care of these on the client
-	SendPropExclude( "DT_ServerAnimationData" , "m_flCycle" ),	
+	SendPropExclude( "DT_ServerAnimationData" , "m_flCycle" ),
 	SendPropExclude( "DT_AnimTimeMustBeFirst" , "m_flAnimTime" ),
 
 	// We need to send a hi-res origin to the local player to avoid prediction errors sliding along walls
@@ -292,7 +292,7 @@ IMPLEMENT_SERVERCLASS_ST( CCSPlayer, DT_CSPlayer )
 	SendPropBool( SENDINFO( m_bHasShield ) ),
 	SendPropBool( SENDINFO( m_bShieldDrawn ) ),
 #endif
-	SendPropBool( SENDINFO( m_bHasHelmet ) ), 
+	SendPropBool( SENDINFO( m_bHasHelmet ) ),
 	SendPropFloat	(SENDINFO(m_flFlashDuration), 0, SPROP_NOSCALE ),
 	SendPropFloat( SENDINFO(m_flFlashMaxAlpha), 0, SPROP_NOSCALE ),
 	SendPropInt( SENDINFO( m_iProgressBarDuration ), 4, SPROP_UNSIGNED ),
@@ -357,10 +357,10 @@ CCSPlayer::CCSPlayer()
 	m_angEyeAngles.Init();
 
 	SetViewOffset( VEC_VIEW );
-	
+
 	m_pCurStateInfo = NULL;	// no state yet
 	m_iThrowGrenadeCounter = 0;
-	
+
 	m_lifeState = LIFE_DEAD; // Start "dead".
 	m_bInBombZone = false;
 	m_bInBuyZone = false;
@@ -381,8 +381,8 @@ CCSPlayer::CCSPlayer()
 	m_flLastMovement = gpGlobals->curtime;
 	m_iNextTimeCheck = 0;
 
-	m_szNewName[0] = 0; 
-	
+	m_szNewName[0] = 0;
+
 	for ( int i=0; i<NAME_CHANGE_HISTORY_SIZE; i++ )
 	{
 		m_flNameChangeHistory[i] = -NAME_CHANGE_HISTORY_INTERVAL;
@@ -501,7 +501,7 @@ void CCSPlayer::PlayerRunCommand( CUserCmd *ucmd, IMoveHelper *moveHelper )
 		return;
 
 	// don't run commands in the future
-	if ( !IsEngineThreaded() && 
+	if ( !IsEngineThreaded() &&
 		( ucmd->tick_count > (gpGlobals->tickcount + sv_max_usercmd_future_ticks.GetInt()) ) )
 	{
 		DevMsg( "Client cmd out of sync (delta %i).\n", ucmd->tick_count - gpGlobals->tickcount );
@@ -667,7 +667,7 @@ void CCSPlayer::Spawn()
 
 	// Set their player model.
 	SetModelFromClass();
-   
+
 	BaseClass::Spawn();
 
 	AddFlag(FL_ONGROUND); // set the player on the ground at the start of the round.
@@ -725,7 +725,7 @@ void CCSPlayer::Spawn()
 	}
 
 	m_hRagdoll = NULL;
-	
+
 	// did we change our name while we were dead?
 	if ( m_szNewName[0] != 0 )
 	{
@@ -778,7 +778,7 @@ void CCSPlayer::ClearFlashbangScreenFade( void )
 
 		m_flFlashDuration = 0.0f;
 		m_flFlashMaxAlpha = 255.0f;
-	}	
+	}
 
 	// clear blind time (after screen fades are canceled)
 	m_blindUntilTime = 0.0f;
@@ -814,7 +814,7 @@ void CCSPlayer::CreateRagdollEntity()
 {
 	// If we already have a ragdoll, don't make another one.
 	CCSRagdoll *pRagdoll = dynamic_cast< CCSRagdoll* >( m_hRagdoll.Get() );
-	
+
 	if ( !pRagdoll )
 	{
 		// create a new one
@@ -855,7 +855,7 @@ int CCSPlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	if ( event )
 	{
 		event->SetInt("userid", GetUserID() );
-		event->SetInt("health", max(0, m_iHealth) );
+		event->SetInt("health", max(0, m_iHealth.Get()) );
 		event->SetInt("armor", max(0, ArmorValue()) );
 
 		event->SetInt( "dmg_health", m_lastDamageHealth );
@@ -904,7 +904,7 @@ int CCSPlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 		{
 			weaponName += 7;
 		}
-		else if( strncmp( weaponName, "hegrenade", 9 ) == 0 )	//"hegrenade_projectile"	
+		else if( strncmp( weaponName, "hegrenade", 9 ) == 0 )	//"hegrenade_projectile"
 		{
 			weaponName = "hegrenade";
 		}
@@ -922,14 +922,14 @@ int CCSPlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 
 		gameeventmanager->FireEvent( event );
 	}
-	
+
 	return 1;
 }
 
 void CCSPlayer::Event_Killed( const CTakeDamageInfo &info )
 {
 	SetArmorValue( 0 );
-	
+
 	DropWeapons();
 
 	// Just in case the progress bar is on screen, kill it.
@@ -945,14 +945,14 @@ void CCSPlayer::Event_Killed( const CTakeDamageInfo &info )
 	m_flFlashDuration = 0.0f;
 
 	FlashlightTurnOff();
-	
+
 	// show killer in death cam mode
 	SetObserverTarget( info.GetAttacker() );
 
 	//update damage info with our accumulated physics force
 	CTakeDamageInfo subinfo = info;
 	subinfo.SetDamageForce( m_vecTotalBulletForce );
-	
+
 	//Adrian: Select a death pose to extrapolate the ragdoll's velocity.
 	SelectDeathPose( info );
 
@@ -991,7 +991,7 @@ void CCSPlayer::Event_Killed( const CTakeDamageInfo &info )
 
 void CCSPlayer::DeathSound( const CTakeDamageInfo &info )
 {
-	if( m_LastHitGroup == HITGROUP_HEAD )	
+	if( m_LastHitGroup == HITGROUP_HEAD )
 	{
 		EmitSound( "Player.DeathHeadShot" );
 	}
@@ -1002,7 +1002,7 @@ void CCSPlayer::DeathSound( const CTakeDamageInfo &info )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CCSPlayer::InitVCollision( const Vector &vecAbsOrigin, const Vector &vecAbsVelocity )
 {
@@ -1010,7 +1010,7 @@ void CCSPlayer::InitVCollision( const Vector &vecAbsOrigin, const Vector &vecAbs
 
     if ( sv_turbophysics.GetBool() )
 		return;
-	
+
 	// Setup the HL2 specific callback.
 	GetPhysicsController()->SetEventHandler( &playerCallback );
 }
@@ -1090,16 +1090,16 @@ void CCSPlayer::SetupVisibility( CBaseEntity *pViewEntity, unsigned char *pvs, i
 void CCSPlayer::UpdateAddonBits()
 {
 	int iNewBits = 0;
-	
+
 	int nFlashbang = GetAmmoCount( GetAmmoDef()->Index( AMMO_TYPE_FLASHBANG ) );
 	if ( dynamic_cast< CFlashbang* >( GetActiveWeapon() ) )
 	{
 		--nFlashbang;
 	}
-	
+
 	if ( nFlashbang >= 1 )
 		iNewBits |= ADDON_FLASHBANG_1;
-	
+
 	if ( nFlashbang >= 2 )
 		iNewBits |= ADDON_FLASHBANG_2;
 
@@ -1109,7 +1109,7 @@ void CCSPlayer::UpdateAddonBits()
 		iNewBits |= ADDON_HE_GRENADE;
 	}
 
-	if ( GetAmmoCount( GetAmmoDef()->Index( AMMO_TYPE_SMOKEGRENADE ) ) && 
+	if ( GetAmmoCount( GetAmmoDef()->Index( AMMO_TYPE_SMOKEGRENADE ) ) &&
 		!dynamic_cast< CSmokeGrenade* >( GetActiveWeapon() ) )
 	{
 		iNewBits |= ADDON_SMOKE_GRENADE;
@@ -1171,7 +1171,7 @@ void CCSPlayer::UpdateRadar()
 
 	CSingleUserRecipientFilter user( this );
 	UserMessageBegin( user, "UpdateRadar" );
-			
+
 	for ( int i=0; i < MAX_PLAYERS; i++ )
 	{
 		CCSPlayer *pPlayer = ToCSPlayer( UTIL_PlayerByIndex( i+1 ) );
@@ -1198,7 +1198,7 @@ void CCSPlayer::UpdateRadar()
 	}
 
 	WRITE_BYTE( 0 ); // end marker
-	
+
 	MessageEnd();
 }
 
@@ -1314,7 +1314,7 @@ void CCSPlayer::PostThink()
 	QAngle angles = GetLocalAngles();
 	angles[PITCH] = 0;
 	SetLocalAngles( angles );
-	
+
 	// Store the eye angles pitch so the client can compute its animation state correctly.
 	m_angEyeAngles = EyeAngles();
 
@@ -1352,13 +1352,13 @@ void CCSPlayer::PushawayThink()
 
 //-----------------------------------------------------------------------------
 // Purpose: Returns whether or not we can switch to the given weapon.
-// Input  : pWeapon - 
+// Input  : pWeapon -
 //-----------------------------------------------------------------------------
 bool CCSPlayer::Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon )
 {
 	if ( !pWeapon->CanDeploy() )
 		return false;
-	
+
 	if ( GetActiveWeapon() )
 	{
 		if ( !GetActiveWeapon()->CanHolster() )
@@ -1387,11 +1387,11 @@ bool CCSPlayer::ShouldDoLargeFlinch( int nHitGroup, CBaseEntity *pAttacker )
 	if ( pPlayer )
 	{
 		CWeaponCSBase *pWeapon = pPlayer->GetActiveCSWeapon();
-				
+
 		if ( pWeapon )
 		{
-			if ( pWeapon->GetCSWpnData().m_WeaponType == WEAPONTYPE_RIFLE || 
-				 pWeapon->GetCSWpnData().m_WeaponType == WEAPONTYPE_SHOTGUN || 
+			if ( pWeapon->GetCSWpnData().m_WeaponType == WEAPONTYPE_RIFLE ||
+				 pWeapon->GetCSWpnData().m_WeaponType == WEAPONTYPE_SHOTGUN ||
 				 pWeapon->GetCSWpnData().m_WeaponType == WEAPONTYPE_SNIPER_RIFLE )
 				 return true;
 		}
@@ -1539,7 +1539,7 @@ int CCSPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		if ( pPlayer )
 		{
 			CWeaponCSBase *pWeapon = pPlayer->GetActiveCSWeapon();
-				
+
 			if ( pWeapon )
 			{
 				 flArmorRatio *= pWeapon->GetCSWpnData().m_flArmorRatio;
@@ -1569,16 +1569,16 @@ int CCSPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 			else
 			{
 				int oldValue = (int)(ArmorValue());
-			
+
 				if ( flArmor < 0 )
 					 flArmor = 1;
 
 				SetArmorValue( oldValue - flArmor );
 				//armorHit = oldValue - (int)(pev->armorvalue);
 			}
-			
+
 			flDamage = flNew;
-			
+
 			info.SetDamage( flDamage );
 
 			if ( ArmorValue() <= 0.0)
@@ -1587,7 +1587,7 @@ int CCSPlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 			if( !(info.GetDamageType() & DMG_FALL) )
  				Pain( true /*has armor*/ );
 		}
-		else 
+		else
 		{
 			m_lastDamageArmor = 0;
 			if( !(info.GetDamageType() & DMG_FALL) )
@@ -1648,7 +1648,7 @@ bool CCSPlayer::IsHittingShield( const Vector &vecDirection, trace_t *ptr )
 
 	if ( IsShieldDrawn() == false )
 		 return false;
-	
+
 	float		flDot;
 	Vector		vForward;
 	Vector2D	vec2LOS = vecDirection.AsVector2D();
@@ -1656,12 +1656,12 @@ bool CCSPlayer::IsHittingShield( const Vector &vecDirection, trace_t *ptr )
 
 	Vector2DNormalize( vForward.AsVector2D() );
 	Vector2DNormalize( vec2LOS );
-	
+
 	flDot = DotProduct2D ( vec2LOS , vForward.AsVector2D() );
 
 	if ( flDot < -0.87f )
 		 return true;
-	
+
 	return false;
 }
 
@@ -1677,7 +1677,7 @@ void CCSPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 	// show blood for firendly fire only if FF is on
 	if ( pAttacker && ( GetTeamNumber() == pAttacker->GetTeamNumber() ) )
 	 	 bShouldBleed = CSGameRules()->IsFriendlyFireOn();
-		
+
 	if ( m_takedamage != DAMAGE_YES )
 		return;
 
@@ -1705,7 +1705,7 @@ void CCSPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 			// punch view if we have no armor
 			QAngle punchAngle = GetPunchAngle();
 			punchAngle.x = flDamage * -0.1;
-		
+
 			if ( punchAngle.x < -4 )
 				punchAngle.x = -4;
 
@@ -1718,7 +1718,7 @@ void CCSPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 		{
 		case HITGROUP_GENERIC:
 			break;
-		
+
 		case HITGROUP_HEAD:
 
 			if ( m_bHasHelmet )
@@ -1726,25 +1726,25 @@ void CCSPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 //				bShouldBleed = false;
 				bShouldSpark = true;
 			}
-			
+
 			flDamage *= 4;
 
 			if ( !m_bHasHelmet )
 			{
 				QAngle punchAngle = GetPunchAngle();
 				punchAngle.x = flDamage * -0.5;
-			
+
 				if ( punchAngle.x < -12 )
 					punchAngle.x = -12;
-			
+
 				punchAngle.z = flDamage * random->RandomFloat(-1,1);
-			
+
 				if ( punchAngle.z < -9 )
 					punchAngle.z = -9;
-			
+
 				else if ( punchAngle.z > 9 )
 					punchAngle.z = 9;
-			
+
 				SetPunchAngle( punchAngle );
 			}
 
@@ -1760,7 +1760,7 @@ void CCSPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 			{
 				QAngle punchAngle = GetPunchAngle();
 				punchAngle.x = flDamage * -0.1;
-			
+
 				if ( punchAngle.x < -4 )
 					punchAngle.x = -4;
 
@@ -1776,7 +1776,7 @@ void CCSPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 			{
 				QAngle punchAngle = GetPunchAngle();
 				punchAngle.x = flDamage * -0.1;
-			
+
 				if ( punchAngle.x < -4 )
 					punchAngle.x = -4;
 
@@ -1802,7 +1802,7 @@ void CCSPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 
 	// Since this code only runs on the server, make sure it shows the tempents it creates.
 	CDisablePredictionFiltering disabler;
-	
+
 	if ( bShouldBleed )
 	{
 		// This does smaller splotches on the guy and splats blood on the world.
@@ -1817,7 +1817,7 @@ void CCSPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 		// reduce blood effect if target has armor
 		if ( ArmorValue() > 0 )
 			data.m_flMagnitude *= 0.5f;
-	
+
 		// reduce blood effect if target is hit in the helmet
 		if ( ptr->hitgroup == HITGROUP_HEAD && bShouldSpark )
 			data.m_flMagnitude *= 0.5;
@@ -1829,7 +1829,7 @@ void CCSPlayer::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, 
 		// show metal spark effect
 		g_pEffects->Sparks( ptr->endpos, 1, 1, &ptr->plane.normal );
 	}
-	
+
 	if ( !bHitShield )
 	{
 		CTakeDamageInfo subInfo = info;
@@ -1861,9 +1861,9 @@ void CCSPlayer::Reset()
 
 //-----------------------------------------------------------------------------
 // Purpose: Displays a hint message to the player
-// Input  : *pMessage - 
-//			bDisplayIfDead - 
-//			bOverrideClientSettings - 
+// Input  : *pMessage -
+//			bDisplayIfDead -
+//			bOverrideClientSettings -
 //-----------------------------------------------------------------------------
 void CCSPlayer::HintMessage( const char *pMessage, bool bDisplayIfDead, bool bOverrideClientSettings )
 {
@@ -1973,7 +1973,7 @@ void CCSPlayer::Blind( float holdTime, float fadeTime, float startingAlpha )
 			float remainingDuration = oldBlindStartTime + m_flFlashDuration - gpGlobals->curtime;
 
 			m_flFlashDuration = max( remainingDuration, fadeTime );
-			m_flFlashMaxAlpha = max( m_flFlashMaxAlpha, startingAlpha );
+			m_flFlashMaxAlpha = max( m_flFlashMaxAlpha.Get(), startingAlpha );
 		}
 
 		// allow bots to react
@@ -2007,7 +2007,7 @@ void CCSPlayer::Deafen( float flDistance )
 		{
 			effect = 136;
 		}
-		else 
+		else
 		{
 			// too far for us to get an effect
 			return;
@@ -2121,7 +2121,7 @@ void CCSPlayer::RoundRespawn()
 
 void CCSPlayer::CheckTKPunishment( void )
 {
-	// teamkill punishment.. 
+	// teamkill punishment..
 	if ( (m_bJustKilledTeammate == true) && mp_tkpunish.GetInt() )
 	{
 		m_bJustKilledTeammate = false;
@@ -2169,7 +2169,7 @@ void CCSPlayer::ResetMaxSpeed()
 		speed = 240;
 	}
 
-	
+
 
 	SetMaxSpeed( speed );
 }
@@ -2244,7 +2244,7 @@ void CCSPlayer::MoveToNextIntroCamera()
 
 	// find the target
 	CBaseEntity *Target = NULL;
-	
+
 	if( m_pIntroCamera )
 	{
 		Target = gEntList.FindEntityByName( NULL, STRING(m_pIntroCamera->m_target) );
@@ -2263,17 +2263,17 @@ void CCSPlayer::MoveToNextIntroCamera()
 			SetAbsOrigin( m_pIntroCamera->GetAbsOrigin() + VEC_VIEW );
 
 		SetAbsAngles( QAngle( 0, 0, 0 ) );
-		
+
 		m_pIntroCamera = NULL;  // never update again
 		return;
 	}
-	
+
 
 	Vector vCamera = Target->GetAbsOrigin() - m_pIntroCamera->GetAbsOrigin();
 	Vector vIntroCamera = m_pIntroCamera->GetAbsOrigin();
-	
+
 	VectorNormalize( vCamera );
-		
+
 	QAngle CamAngles;
 	VectorAngles( vCamera, CamAngles );
 
@@ -2341,10 +2341,10 @@ void CCSPlayer::DropShield( void )
 	//Drop an item_defuser
 	Vector vForward, vRight;
 	AngleVectors( GetAbsAngles(), &vForward, &vRight, NULL );
-		
+
 	RemoveShield();
 
-	CBaseAnimating *pShield = (CBaseAnimating *)CBaseEntity::Create( "item_shield", WorldSpaceCenter(), GetLocalAngles() );	
+	CBaseAnimating *pShield = (CBaseAnimating *)CBaseEntity::Create( "item_shield", WorldSpaceCenter(), GetLocalAngles() );
 	pShield->ApplyAbsVelocityImpulse( vForward * 200 + vRight * random->RandomFloat( -50, 50 ) );
 
 	CBaseCombatWeapon *pActive = GetActiveWeapon();
@@ -2385,7 +2385,7 @@ bool CCSPlayer::CSWeaponDrop( CBaseCombatWeapon *pWeapon, bool bDropShield, bool
 			vTossPos = vTossPos + vForward * 64;
 
 		Weapon_Drop( pWeapon, &vTossPos, NULL );
-			
+
 		pWeapon->SetSolidFlags( FSOLID_NOT_STANDABLE | FSOLID_TRIGGER | FSOLID_USE_TRIGGER_BOUNDS );
 		pWeapon->SetMoveCollide( MOVECOLLIDE_FLY_BOUNCE );
 
@@ -2450,7 +2450,7 @@ bool CCSPlayer::CSWeaponDrop( CBaseCombatWeapon *pWeapon, bool bDropShield, bool
 					break;
 				}
 			}
-			
+
 			if ( iWeaponBoneIndex == hdr->numbones() )
 				 return true;
 
@@ -2464,7 +2464,7 @@ bool CCSPlayer::CSWeaponDrop( CBaseCombatWeapon *pWeapon, bool bDropShield, bool
 			iBIndex = LookupBone( "ValveBiped.Bip01_R_Hand" );
 		}
 
-		if ( iBIndex != -1)  
+		if ( iBIndex != -1)
 		{
 			Vector origin;
 			QAngle angles;
@@ -2489,9 +2489,9 @@ bool CCSPlayer::CSWeaponDrop( CBaseCombatWeapon *pWeapon, bool bDropShield, bool
 			matrix3x4_t weaponMatrix;
 			ConcatTransforms( transform, rootInvLocal, weaponMatrix );
 			MatrixAngles( weaponMatrix, angles, origin );
-			
+
 			pWeapon->Teleport( &origin, &angles, NULL );
-			
+
 			//Have to teleport the physics object as well
 
 			IPhysicsObject *pWeaponPhys = pWeapon->VPhysicsGetObject();
@@ -2508,7 +2508,7 @@ bool CCSPlayer::CSWeaponDrop( CBaseCombatWeapon *pWeapon, bool bDropShield, bool
 				pWeaponPhys->AddVelocity( &vecAdd, &angImp );
 			}
 		}
-		
+
 		bSuccess = true;
 	}
 
@@ -2658,7 +2658,7 @@ BuyResult_e CCSPlayer::AttemptToBuyVest( void )
 	}
 	else
 	{
-		if ( m_bHasHelmet ) 
+		if ( m_bHasHelmet )
 		{
 			if( !m_bIsInAutoBuy && !m_bIsInRebuy )
 				ClientPrint( this, HUD_PRINTCENTER, "#Already_Have_Helmet_Bought_Kevlar" );
@@ -2685,7 +2685,7 @@ BuyResult_e CCSPlayer::AttemptToBuyAssaultSuit( void )
 	int fullArmor = ArmorValue() >= 100 ? 1 : 0;
 
 	int price = 0, enoughMoney = 0;
-	
+
 	int iHelmetPrice = HELMET_PRICE;
 	int iKevlarPrice = KEVLAR_PRICE;
 	int iAssaultSuitPrice = ASSAULTSUIT_PRICE;
@@ -2719,14 +2719,14 @@ BuyResult_e CCSPlayer::AttemptToBuyAssaultSuit( void )
 			ClientPrint( this, HUD_PRINTCENTER, "#Already_Have_Helmet_Bought_Kevlar" );
 	}
 	else if ( m_iAccount >= iAssaultSuitPrice )
-	{			
+	{
 		enoughMoney = 1;
 		price = iAssaultSuitPrice;
 	}
 
 	// process the result
 	if ( !enoughMoney )
-	{			
+	{
 		if( !m_bIsInAutoBuy && !m_bIsInRebuy )
 			ClientPrint( this, HUD_PRINTCENTER, "#Not_Enough_Money" );
 		return BUY_CANT_AFFORD;
@@ -2757,7 +2757,7 @@ BuyResult_e CCSPlayer::AttemptToBuyShield( void )
 			ClientPrint( this, HUD_PRINTCENTER, "#Already_Have_One" );
 		return BUY_ALREADY_HAVE;
 	}
-	else if ( m_iAccount < SHIELD_PRICE ) 
+	else if ( m_iAccount < SHIELD_PRICE )
 	{
 		if( !m_bIsInAutoBuy && !m_bIsInRebuy )
 			ClientPrint( this, HUD_PRINTCENTER, "#Not_Enough_Money" );
@@ -2773,17 +2773,17 @@ BuyResult_e CCSPlayer::AttemptToBuyShield( void )
 			if ( pCSWeapon && pCSWeapon->GetCSWpnData().m_bCanUseWithShield == false )
 			 	 return;
 		}
-	
+
 		if ( HasPrimaryWeapon() )
 			 DropRifle();
-		
-		GiveShield(); 
+
+		GiveShield();
 
 		CPASAttenuationFilter filter( this, "Player.PickupWeapon" );
 		EmitSound( filter, entindex(), "Player.PickupWeapon" );
 
 		m_bAnythingBought = true;
-		AddAccount( -SHIELD_PRICE ); 
+		AddAccount( -SHIELD_PRICE );
 		return BUY_BOUGHT;
 	}
 #else
@@ -2804,7 +2804,7 @@ BuyResult_e CCSPlayer::AttemptToBuyDefuser( void )
 				ClientPrint( this, HUD_PRINTCENTER, "#Already_Have_One" );
 			return BUY_ALREADY_HAVE;
 		}
-		else if ( m_iAccount < DEFUSEKIT_PRICE ) 
+		else if ( m_iAccount < DEFUSEKIT_PRICE )
 		{
 			if( !m_bIsInAutoBuy && !m_bIsInRebuy )
 				ClientPrint( this, HUD_PRINTCENTER, "#Not_Enough_Money" );
@@ -2812,12 +2812,12 @@ BuyResult_e CCSPlayer::AttemptToBuyDefuser( void )
 		}
 		else
 		{
-			GiveDefuser(); 
+			GiveDefuser();
 
 			CPASAttenuationFilter filter( this, "Player.PickupWeapon" );
 			EmitSound( filter, entindex(), "Player.PickupWeapon" );
 
-			AddAccount( -DEFUSEKIT_PRICE ); 
+			AddAccount( -DEFUSEKIT_PRICE );
 			return BUY_BOUGHT;
 		}
 	}
@@ -2840,7 +2840,7 @@ BuyResult_e CCSPlayer::AttemptToBuyNightVision( void )
 			ClientPrint( this, HUD_PRINTCENTER, "#Already_Have_One" );
 		return BUY_ALREADY_HAVE;
 	}
-	else if ( m_iAccount < iNVGPrice ) 
+	else if ( m_iAccount < iNVGPrice )
 	{
 		if( !m_bIsInAutoBuy && !m_bIsInRebuy )
 			ClientPrint( this, HUD_PRINTCENTER, "#Not_Enough_Money" );
@@ -2853,7 +2853,7 @@ BuyResult_e CCSPlayer::AttemptToBuyNightVision( void )
 
 		m_bHasNightVision = true;
 
-		AddAccount( -iNVGPrice ); 
+		AddAccount( -iNVGPrice );
 		BlackMarketAddWeapon( "nightvision", this );
 
 		IGameEvent * event = gameeventmanager->CreateEvent( "item_pickup" );
@@ -2913,7 +2913,7 @@ BuyResult_e CCSPlayer::HandleCommand_Buy( const char *item )
 		{
 			BuildRebuyStruct();
 		}
-	
+
 		return result;
 	}
 	else
@@ -2922,7 +2922,7 @@ BuyResult_e CCSPlayer::HandleCommand_Buy( const char *item )
 		if ( !pWeaponInfo )
 		{
 			Assert( false );
-			return BUY_INVALID_ITEM; 
+			return BUY_INVALID_ITEM;
 		}
 
 		if( !CanPlayerBuy( true ) )
@@ -2943,7 +2943,7 @@ BuyResult_e CCSPlayer::HandleCommand_Buy( const char *item )
 		{
 			if( CanPlayerBuy( true ) )
 			{
-				return AttemptToBuyAssaultSuit();	
+				return AttemptToBuyAssaultSuit();
 			}
 		}
 		else if ( Q_stristr( wpnName, "shield" ) )
@@ -2977,7 +2977,7 @@ BuyResult_e CCSPlayer::HandleCommand_Buy( const char *item )
 		else if( pWeaponInfo->m_WeaponType == WEAPONTYPE_GRENADE )
 		{
 			// make sure the player can afford this item.
-			if ( m_iAccount >= pWeaponInfo->GetWeaponPrice() ) 
+			if ( m_iAccount >= pWeaponInfo->GetWeaponPrice() )
 			{
 				bPurchase = true;
 
@@ -2996,7 +2996,7 @@ BuyResult_e CCSPlayer::HandleCommand_Buy( const char *item )
 							numGrens = GetAmmoCount( nAmmo );
 						}
 					}
-					
+
 					if( numGrens >= 2 )
 					{
 						result = BUY_ALREADY_HAVE;
@@ -3017,7 +3017,7 @@ BuyResult_e CCSPlayer::HandleCommand_Buy( const char *item )
 		else if ( !Weapon_OwnsThisType( pWeaponInfo->szClassName ) )	//don't buy duplicate weapons
 		{
 			// do they have enough money?
-			if ( m_iAccount >= pWeaponInfo->GetWeaponPrice() ) 
+			if ( m_iAccount >= pWeaponInfo->GetWeaponPrice() )
 			{
 				if ( m_lifeState == LIFE_DEAD )
 				{
@@ -3066,13 +3066,13 @@ BuyResult_e CCSPlayer::HandleCommand_Buy( const char *item )
 
 			GiveNamedItem( pWeaponInfo->szClassName );
 
-			AddAccount( -pWeaponInfo->GetWeaponPrice() ); 
+			AddAccount( -pWeaponInfo->GetWeaponPrice() );
 
 			BlackMarketAddWeapon( wpnName, this );
 
 			BuildRebuyStruct();
 		}
-		
+
 		return result;
 	}
 
@@ -3135,11 +3135,11 @@ BuyResult_e CCSPlayer::BuyAmmo( int nSlot, bool bBlinkMoney )
 	//
 	//  nSlot == 1 : Primary weapons
 	//  nSlot == 2 : Secondary weapons
-	
+
 	CBaseCombatWeapon *pSlot = Weapon_GetSlot( nSlot );
 	if ( !pSlot )
 		return BUY_INVALID_ITEM;
-	
+
 	//MIKETODO: shield.
 	//if ( player->HasShield() && player->m_rgpPlayerItems[2] )
 	//	 pItem = player->m_rgpPlayerItems[2];
@@ -3343,8 +3343,8 @@ void CCSPlayer::HandleMenu_Radio3( int slot )
 		case 1 :
 			if ( random->RandomInt( 0,1 ) )
 				Radio( "Radio.Affirmitive",	"#Cstrike_TitlesTXT_Affirmative" );
-			else 
-				Radio( "Radio.Roger",		"#Cstrike_TitlesTXT_Roger_that" ); 
+			else
+				Radio( "Radio.Roger",		"#Cstrike_TitlesTXT_Roger_that" );
 
 			break;
 
@@ -3450,7 +3450,7 @@ void CCSPlayer::ConstructRadioFilter( CRecipientFilter& filter )
 		{
 			// add teammates
 			filter.AddRecipient( player );
-		}		
+		}
 	}
 }
 
@@ -3512,8 +3512,8 @@ void CCSPlayer::ListPlayers()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &info - 
+// Purpose:
+// Input  : &info -
 //-----------------------------------------------------------------------------
 void CCSPlayer::OnDamagedByExplosion( const CTakeDamageInfo &info )
 {
@@ -3675,22 +3675,22 @@ bool HandleRadioAliasCommands( CCSPlayer *pPlayer, const char *pszCommand )
 	else if ( FStrEq( pszCommand, "holdpos" ) )
 	{
 		bRetVal = true;
-		pPlayer->HandleMenu_Radio1( 3 );	
+		pPlayer->HandleMenu_Radio1( 3 );
 	}
 	else if ( FStrEq( pszCommand, "regroup" ) )
 	{
 		bRetVal = true;
-		pPlayer->HandleMenu_Radio1( 4 );	
+		pPlayer->HandleMenu_Radio1( 4 );
 	}
 	else if ( FStrEq( pszCommand, "followme" ) )
 	{
 		bRetVal = true;
-		pPlayer->HandleMenu_Radio1( 5 );	
+		pPlayer->HandleMenu_Radio1( 5 );
 	}
 	else if ( FStrEq( pszCommand, "takingfire" ) )
 	{
 		bRetVal = true;
-		pPlayer->HandleMenu_Radio1( 6 );	
+		pPlayer->HandleMenu_Radio1( 6 );
 	}
 	// Radio2 commands
 	else if ( FStrEq( pszCommand, "go" ) )
@@ -3891,10 +3891,10 @@ bool CCSPlayer::ClientCommand( const CCommand &args )
 
 		return true;
 	}
-	
+
 #endif //DEBUG
-		
-	if ( FStrEq( pcmd, "jointeam" ) ) 
+
+	if ( FStrEq( pcmd, "jointeam" ) )
 	{
 		if ( args.ArgC() < 2 )
 		{
@@ -3924,10 +3924,10 @@ bool CCSPlayer::ClientCommand( const CCommand &args )
 		{
 			State_Transition( STATE_PICKINGTEAM );
 		}
-		
+
 		return true;
 	}
-	else if ( FStrEq( pcmd, "joinclass" ) ) 
+	else if ( FStrEq( pcmd, "joinclass" ) )
 	{
 		if ( args.ArgC() < 2 )
 		{
@@ -4005,17 +4005,17 @@ bool CCSPlayer::ClientCommand( const CCommand &args )
 			ClientPrint( this, msg_dest, "  p90\n" );
 			ClientPrint( this, msg_dest, "  m249\n" );
 		}
-				
+
 		return true;
 	}
 	else if ( FStrEq( pcmd, "buyammo1" ) )
 	{
-		AttemptToBuyAmmoSingle(0);			
+		AttemptToBuyAmmoSingle(0);
 		return true;
 	}
 	else if ( FStrEq( pcmd, "buyammo2" ) )
 	{
-		AttemptToBuyAmmoSingle(1);			
+		AttemptToBuyAmmoSingle(1);
 		return true;
 	}
 	else if ( FStrEq( pcmd, "nightvision" ) )
@@ -4083,7 +4083,7 @@ bool CCSPlayer::ClientCommand( const CCommand &args )
 }
 
 
-// returns true if the selection has been handled and the player's menu 
+// returns true if the selection has been handled and the player's menu
 // can be closed...false if the menu should be displayed again
 bool CCSPlayer::HandleCommand_JoinTeam( int team )
 {
@@ -4105,8 +4105,8 @@ bool CCSPlayer::HandleCommand_JoinTeam( int team )
 	if ( m_bIsVIP == true )
 	{
 		if ( !IsDead() )
-		{	
-			ClientPrint( this, HUD_PRINTCENTER, "#Cannot_Switch_From_VIP" );	
+		{
+			ClientPrint( this, HUD_PRINTCENTER, "#Cannot_Switch_From_VIP" );
 			MenuReset();
 			return true;
 		}
@@ -4115,11 +4115,11 @@ bool CCSPlayer::HandleCommand_JoinTeam( int team )
 			ClientPrint( this, HUD_PRINTCENTER, "#Cannot_Switch_From_VIP" );
 			MenuReset();
 			return true;
-		}			
+		}
 	}
-	
+
 	//MIKETODO: VIP mode
-	
+
 	case 3:
 		if ( ( mp->m_iMapHasVIPSafetyZone == 1 ) && ( m_iTeam == TEAM_CT ) )
 		{
@@ -4171,7 +4171,7 @@ bool CCSPlayer::HandleCommand_JoinTeam( int team )
 					}
 				}
 			}
-			
+
 			if (team == TEAM_UNASSIGNED)
 			{
 				ClientPrint( this, HUD_PRINTCENTER, "#All_Teams_Full" );
@@ -4194,7 +4194,7 @@ bool CCSPlayer::HandleCommand_JoinTeam( int team )
 		}
 		return true;	// we wouldn't change the team
 	}
-	
+
 	if ( mp->TeamFull( team ) )
 	{
 		// attempt to kick a bot to make room for this player
@@ -4249,7 +4249,7 @@ bool CCSPlayer::HandleCommand_JoinTeam( int team )
 			ClientPrint( this, HUD_PRINTCENTER, "#Cannot_Be_Spectator" );
 			return false;
 		}
-		
+
 		if ( GetTeamNumber() != TEAM_UNASSIGNED && !IsDead() )
 		{
 			m_fNextSuicideTime = gpGlobals->curtime;	// allow the suicide to work
@@ -4278,7 +4278,7 @@ bool CCSPlayer::HandleCommand_JoinTeam( int team )
 
 		return true;
 	}
-	
+
 	// If the code gets this far, the team is not TEAM_UNASSIGNED
 
 
@@ -4295,7 +4295,7 @@ bool CCSPlayer::HandleCommand_JoinTeam( int team )
 		if (!madeRoom)
 		{
 			// The specified team is full
-			ClientPrint( 
+			ClientPrint(
 				this,
 				HUD_PRINTCENTER,
 				( team == TEAM_TERRORIST ) ?	"#Too_Many_Terrorists" : "#Too_Many_CTs" );
@@ -4327,7 +4327,7 @@ bool CCSPlayer::HandleCommand_JoinClass( int iClass )
 
 			case TEAM_CT :			iClass = RandomInt(FIRST_CT_CLASS, LAST_CT_CLASS);
 									break;
-			
+
 			default	:				iClass = CS_CLASS_NONE;
 									break;
 		}
@@ -4402,7 +4402,7 @@ void CCSPlayer::GetIntoGame()
 {
 	// Set their model and if they're allowed to spawn right now, put them into the world.
 	//SetPlayerModel( iClass );
-	
+
 	SetFOV( this, 0 );
 	ResetMaxSpeed();
 	m_flLastMovement = gpGlobals->curtime;
@@ -4419,7 +4419,7 @@ void CCSPlayer::GetIntoGame()
 	}
 	*/
 
-	
+
 	//****************New Code by SupraFiend************
 	if ( !MPRules->FPlayerCanRespawn( this ) )
 	{
@@ -4434,9 +4434,9 @@ void CCSPlayer::GetIntoGame()
 			m_iDisplayHistoryBits |= DHF_SPEC_DUCK;
 			HintMessage( "#Spec_Duck", true, true );
 		}
-		
+
 		State_Transition( STATE_OBSERVER_MODE );
-				
+
 		MPRules->CheckWinConditions();
 	}
 	else// else spawn them right in
@@ -4477,7 +4477,7 @@ bool CCSPlayer::SelectSpawnSpot( const char *pEntClassName, CBaseEntity* &pSpot 
 		pSpot = gEntList.FindEntityByClassname( pSpot, pEntClassName );
 
 	CBaseEntity *pFirstSpot = pSpot;
-	do 
+	do
 	{
 		if ( pSpot )
 		{
@@ -4521,12 +4521,12 @@ CBaseEntity* CCSPlayer::EntSelectSpawnPoint()
 			else
 				goto CTSpawn;
 		}
-		
+
 		//
 		// the counter-terrorist spawns at "info_player_start"
 		else
-	*/ 
-	
+	*/
+
 	pSpot = NULL;
 	if ( CSGameRules()->IsLogoMap() )
 	{
@@ -4536,7 +4536,7 @@ CBaseEntity* CCSPlayer::EntSelectSpawnPoint()
 		goto ReturnSpot;
 	}
 	else
-	{	
+	{
 		if ( GetTeamNumber() == TEAM_CT )
 		{
 			pSpot = g_pLastCTSpawn;
@@ -4553,7 +4553,7 @@ CBaseEntity* CCSPlayer::EntSelectSpawnPoint()
 		else if ( GetTeamNumber() == TEAM_TERRORIST )
 		{
 			pSpot = g_pLastTerroristSpawn;
-			
+
 			if ( SelectSpawnSpot( "info_player_terrorist", pSpot ) )
 			{
 				g_pLastTerroristSpawn = pSpot;
@@ -4589,7 +4589,7 @@ ReturnSpot:
 	}
 
 	return pSpot;
-} 
+}
 
 
 void CCSPlayer::SetProgressBarTime( int barTime )
@@ -4623,7 +4623,7 @@ void CCSPlayer::State_Enter( CSPlayerState newState )
 		else
 			Msg( "ShowStateTransitions: entering #%d\n", newState );
 	}
-	
+
 	// Initialize the new state.
 	if ( m_pCurStateInfo && m_pCurStateInfo->pfnEnterState )
 		(this->*m_pCurStateInfo->pfnEnterState)();
@@ -4650,7 +4650,7 @@ void CCSPlayer::State_PreThink()
 
 CCSPlayerStateInfo* CCSPlayer::State_LookupInfo( CSPlayerState state )
 {
-	// This table MUST match the 
+	// This table MUST match the
 	static CCSPlayerStateInfo playerStateInfos[] =
 	{
 		{ STATE_ACTIVE,			"STATE_ACTIVE",			&CCSPlayer::State_Enter_ACTIVE, NULL, &CCSPlayer::State_PreThink_ACTIVE },
@@ -4771,7 +4771,7 @@ void CCSPlayer::State_Enter_DEATH_ANIM()
 
 void CCSPlayer::State_PreThink_DEATH_ANIM()
 {
-	// If the anim is done playing, go to the next state (waiting for a keypress to 
+	// If the anim is done playing, go to the next state (waiting for a keypress to
 	// either respawn the guy or put him into observer mode).
 	if ( GetFlags() & FL_ONGROUND )
 	{
@@ -4790,7 +4790,7 @@ void CCSPlayer::State_PreThink_DEATH_ANIM()
 	}
 
 	// Finish the death animation.
-	
+
 	// MIKETODO: death anims
 	// How we wait for it to end depends on how we want guys to die.
 	// If they ragdoll, we can wait for the ragdoll to settle.
@@ -4811,7 +4811,7 @@ void CCSPlayer::State_Enter_DEATH_WAIT_FOR_KEY()
 	// if they don't hit a key soon enough.
 
 	m_lifeState = LIFE_DEAD;
-		
+
 	StopAnimation();
 
 	AddEffects( EF_NOINTERP );
@@ -4824,9 +4824,9 @@ void CCSPlayer::State_PreThink_DEATH_WAIT_FOR_KEY()
 	// this prevents a bug where the dead body would go to a player's head if he walked over it while the dead player was clicking their button to respawn
 	if ( GetMoveType() != MOVETYPE_NONE && (GetFlags() & FL_ONGROUND) )
 		SetMoveType( MOVETYPE_NONE );
-	
-	// if the player has been dead for one second longer than allowed by forcerespawn, 
-	// forcerespawn isn't on. Send the player off to an intermission camera until they 
+
+	// if the player has been dead for one second longer than allowed by forcerespawn,
+	// forcerespawn isn't on. Send the player off to an intermission camera until they
 	// choose to respawn.
 
 	bool fAnyButtonDown = (m_nButtons & ~IN_SCORE) != 0;
@@ -4873,14 +4873,14 @@ void CCSPlayer::State_Enter_OBSERVER_MODE()
 				{
 					nIdealMode = OBS_MODE_ROAMING;
 				}
-				
+
 				observerMode = nIdealMode;
 			}
 		}
 
 		StartObserverMode( observerMode );
 	}
-	
+
 	// Set the player's speed
 	ResetMaxSpeed();
 	PhysObjectSleep();
@@ -4893,7 +4893,7 @@ void CCSPlayer::State_PreThink_OBSERVER_MODE()
 	Assert( m_takedamage == DAMAGE_NO );
 	Assert( IsSolidFlagSet( FSOLID_NOT_SOLID ) );
 //	Assert( IsEffectActive( EF_NODRAW ) );
-	
+
 	// Must be dead.
 	Assert( m_lifeState == LIFE_DEAD );
 	Assert( pl.deadflag );
@@ -4919,7 +4919,7 @@ void CCSPlayer::State_Enter_PICKINGCLASS()
 	}
 
 	m_iClass = (int)CS_CLASS_NONE;
-	
+
 	// Set the player's speed
 	ResetMaxSpeed();
 	PhysObjectSleep();
@@ -4972,8 +4972,8 @@ void CCSPlayer::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 	if ( pCSWeapon )
 	{
 		// For rifles, pistols, or the knife, drop our old weapon in this slot.
-		if ( pCSWeapon->GetSlot() == WEAPON_SLOT_RIFLE || 
-			pCSWeapon->GetSlot() == WEAPON_SLOT_PISTOL || 
+		if ( pCSWeapon->GetSlot() == WEAPON_SLOT_RIFLE ||
+			pCSWeapon->GetSlot() == WEAPON_SLOT_PISTOL ||
 			pCSWeapon->GetSlot() == WEAPON_SLOT_KNIFE )
 		{
 			CBaseCombatWeapon *pDropWeapon = Weapon_GetSlot( pCSWeapon->GetSlot() );
@@ -5027,7 +5027,7 @@ bool CCSPlayer::BumpWeapon( CBaseCombatWeapon *pBaseWeapon )
 		Weapon_Equip( pBaseWeapon );
 		return true;
 	}
-	
+
 	CBaseCombatCharacter *pOwner = pWeapon->GetOwner();
 
 	// Can I have this weapon type?
@@ -5054,7 +5054,7 @@ bool CCSPlayer::BumpWeapon( CBaseCombatWeapon *pBaseWeapon )
 	{
 		Weapon_EquipAmmoOnly( pWeapon );
 		// Only remove me if I have no ammo left
-		// Can't just check HasAnyAmmo because if I don't use clips, I want to be removed, 
+		// Can't just check HasAnyAmmo because if I don't use clips, I want to be removed,
 		if ( pWeapon->UsesClipsForAmmo1() && pWeapon->HasPrimaryAmmo() )
 			return false;
 
@@ -5100,7 +5100,7 @@ bool CCSPlayer::BumpWeapon( CBaseCombatWeapon *pBaseWeapon )
 		Weapon_Equip( pWeapon );
 
 		int iExtraAmmo = pWeapon->GetExtraAmmoCount();
-		
+
 		if( iExtraAmmo && !bPickupGrenade )
 		{
 			//Find out the index of the ammo
@@ -5228,7 +5228,7 @@ void CCSPlayer::EmitPrivateSound( const char *soundName )
 
 
 //=====================
-//Autobuy 
+//Autobuy
 //=====================
 static void AutoBuy( void )
 {
@@ -5562,7 +5562,7 @@ void CCSPlayer::BuildRebuyStruct()
 		}
 		else
 		{
-			
+
 			m_rebuyStruct.m_szPrimaryWeapon[0] = 0;	// if we don't have a shield and we don't have a primary weapon, we got nuthin.
 			m_rebuyStruct.m_primaryAmmo = 0;		// can't have ammo if we don't have a gun right?
 		}
@@ -5573,12 +5573,12 @@ void CCSPlayer::BuildRebuyStruct()
 
 		const char *wpnName = primary->GetClassname();
 
-		Q_strncpy( m_rebuyStruct.m_szPrimaryWeapon, wpnName + 7, sizeof(m_rebuyStruct.m_szPrimaryWeapon) ); 
+		Q_strncpy( m_rebuyStruct.m_szPrimaryWeapon, wpnName + 7, sizeof(m_rebuyStruct.m_szPrimaryWeapon) );
 
 		if( primary->GetPrimaryAmmoType() != -1 )
 		{
 			m_rebuyStruct.m_primaryAmmo = GetAmmoCount( primary->GetPrimaryAmmoType() );
-		}		
+		}
 	}
 
 	// do the secondary weapon/ammo stuff.
@@ -5591,7 +5591,7 @@ void CCSPlayer::BuildRebuyStruct()
 	{
 		const char *wpnName = secondary->GetClassname();
 
-		Q_strncpy( m_rebuyStruct.m_szSecondaryWeapon, wpnName + 7, sizeof(m_rebuyStruct.m_szSecondaryWeapon) ); 
+		Q_strncpy( m_rebuyStruct.m_szSecondaryWeapon, wpnName + 7, sizeof(m_rebuyStruct.m_szSecondaryWeapon) );
 
 		if( secondary->GetPrimaryAmmoType() != -1 )
 		{
@@ -5955,7 +5955,7 @@ bool CCSPlayer::IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCaps
 
 	if( pCSWepaon )
 	{
-		// we can't USE dropped weapons 
+		// we can't USE dropped weapons
 		return true;
 	}
 
@@ -6024,7 +6024,7 @@ void CCSPlayer::StockPlayerAmmo( CBaseCombatWeapon *pNewWeapon )
 			GiveAmmo( 9999, GetAmmoDef()->GetAmmoOfIndex(nAmmo)->pName );
 			pWeapon->m_iClip1 = pWeapon->GetMaxClip1();
 		}
-		
+
 		return;
 	}
 
@@ -6089,7 +6089,7 @@ CBaseEntity	*CCSPlayer::GiveNamedItem( const char *pszName, int iSubType )
 	DispatchSpawn( pent );
 
 	m_bIsBeingGivenItem = true;
-	if ( pent != NULL && !(pent->IsMarkedForDeletion()) ) 
+	if ( pent != NULL && !(pent->IsMarkedForDeletion()) )
 	{
 		pent->Touch( this );
 	}
@@ -6143,7 +6143,7 @@ void CCSPlayer::FlashlightTurnOn( void )
 void CCSPlayer::FlashlightTurnOff( void )
 {
 	RemoveEffects( EF_DIMLIGHT );
-	
+
 	if( IsAlive() )
 	{
 		EmitSound( "Player.FlashlightOff" );
@@ -6171,7 +6171,7 @@ void CCSPlayer::DropWeapons( void )
 		Vector vForward, vRight;
 		AngleVectors( GetAbsAngles(), &vForward, &vRight, NULL );
 
-		CBaseAnimating *pDefuser = (CBaseAnimating *)CBaseEntity::Create( "item_defuser", WorldSpaceCenter(), GetLocalAngles(), this );	
+		CBaseAnimating *pDefuser = (CBaseAnimating *)CBaseEntity::Create( "item_defuser", WorldSpaceCenter(), GetLocalAngles(), this );
 		pDefuser->ApplyAbsVelocityImpulse( vForward * 200 + vRight * random->RandomFloat( -50, 50 ) );
 
 		RemoveDefuser();
@@ -6261,10 +6261,10 @@ void CCSPlayer::ChangeTeam( int iTeamNum )
 
 	// Always allow a change to spectator, and don't count it as one of our team changes.
 	// We now store the old team, so if a player changes once to one team, then to spectator,
-	// they won't be able to change back to their old old team, but will still be able to join 
+	// they won't be able to change back to their old old team, but will still be able to join
 	// the team they initially changed to.
 	if( iTeamNum != TEAM_SPECTATOR )
-	{	
+	{
 		m_bTeamChanged = true;
 	}
 	else
@@ -6278,7 +6278,7 @@ void CCSPlayer::ChangeTeam( int iTeamNum )
 	//reset class
 	m_iClass = (int)CS_CLASS_NONE;
 
-	// update client state 
+	// update client state
 
 	if ( iTeamNum == TEAM_UNASSIGNED )
 	{
@@ -6289,7 +6289,7 @@ void CCSPlayer::ChangeTeam( int iTeamNum )
 		// Reset money
 		m_iAccount = 0;
 		RemoveAllItems( true );
-		
+
 		State_Transition( STATE_OBSERVER_MODE );
 	}
 	else // active player
@@ -6299,7 +6299,7 @@ void CCSPlayer::ChangeTeam( int iTeamNum )
 			// If they're switching from being a spectator to ingame player
 			m_iAccount = CSGameRules()->GetStartMoney(); // all players start with "mp_startmoney" bucks
 		}
-		
+
 		// bots get to this state on TEAM_UNASSIGNED, yet they are marked alive.  Don't kill them.
 		else if ( iOldTeam != TEAM_UNASSIGNED  && !IsDead() )
 		{
@@ -6335,7 +6335,7 @@ void CCSPlayer::SwitchTeam( int iTeamNum )
 
 	// Always allow a change to spectator, and don't count it as one of our team changes.
 	// We now store the old team, so if a player changes once to one team, then to spectator,
-	// they won't be able to change back to their old old team, but will still be able to join 
+	// they won't be able to change back to their old old team, but will still be able to join
 	// the team they initially changed to.
 	m_bTeamChanged = true;
 
@@ -6393,7 +6393,7 @@ void CCSPlayer::ModifyOrAppendPlayerCriteria( AI_CriteriaSet& set )
 	// this is for giving player info to the hostage response system
 	// and is as yet unused.
 	// Eventually we could give the hostage a few tidbits about this player,
-	// eg their health, what weapons they have, and the hostage could 
+	// eg their health, what weapons they have, and the hostage could
 	// comment accordingly.
 
 	//do not append any player data to the Criteria!
@@ -6486,7 +6486,7 @@ void CCSPlayer::OutputDamageTaken( void )
 				Q_snprintf( buf, sizeof(buf), "%d in %d hits", pRecord->GetDamage(), pRecord->GetNumHits() );
 			}
 			ClientPrint( this, msg_dest, "Damage Taken from \"%s1\" - %s2\n", pRecord->GetPlayerName(), buf );
-		}		
+		}
 	}
 }
 
@@ -6512,7 +6512,7 @@ void CCSPlayer::OutputDamageGiven( void )
 		pRecord = m_DamageGivenList[i];
 
 		if( pRecord )
-		{	
+		{
 			if (pRecord->GetNumHits() == 1)
 			{
 				Q_snprintf( buf, sizeof(buf), "%d in %d hit", pRecord->GetDamage(), pRecord->GetNumHits() );
@@ -6522,7 +6522,7 @@ void CCSPlayer::OutputDamageGiven( void )
 				Q_snprintf( buf, sizeof(buf), "%d in %d hits", pRecord->GetDamage(), pRecord->GetNumHits() );
 			}
 			ClientPrint( this, msg_dest, "Damage Given to \"%s1\" - %s2\n", pRecord->GetPlayerName(), buf );
-		}		
+		}
 	}
 }
 
@@ -6566,7 +6566,7 @@ int CCSPlayer::GetNextObserverSearchStartPoint( bool bReverse )
 	return BaseClass::GetNextObserverSearchStartPoint( bReverse );
 }
 
-void CCSPlayer::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force )
+void CCSPlayer::PlayStepSound( const Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force )
 {
 	BaseClass::PlayStepSound( vecOrigin, psurface, fvol, force );
 
@@ -6632,7 +6632,7 @@ bool CCSPlayer::CanChangeName( void )
 		return false;
 	}
 
-	// enforce that we dont do more than NAME_CHANGE_HISTORY_SIZE 
+	// enforce that we dont do more than NAME_CHANGE_HISTORY_SIZE
 	// changes within NAME_CHANGE_HISTORY_INTERVAL
 	if ( (m_flNameChangeHistory[NAME_CHANGE_HISTORY_SIZE-1] + NAME_CHANGE_HISTORY_INTERVAL) >= gpGlobals->curtime )
 	{
@@ -6669,7 +6669,7 @@ void CCSPlayer::ChangeName( const char *pszNewName )
 
 	// tell engine to use new name
 	engine->ClientCommand( edict(), "name \"%s\"", trimmedName );
-	
+
 	// remember time of name change
 	for ( int i=NAME_CHANGE_HISTORY_SIZE-1; i>0; i-- )
 	{
@@ -6720,7 +6720,7 @@ void CCSPlayer::StopReplayMode()
 		WRITE_BYTE( 0 );
 	MessageEnd();
 }
-	
+
 void CCSPlayer::PlayUseDenySound()
 {
 	// Don't do a sound here because it can mute your footsteps giving you an advantage.

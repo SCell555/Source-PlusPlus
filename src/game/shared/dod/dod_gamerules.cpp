@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: The TF Game rules 
+// Purpose: The TF Game rules
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -19,7 +19,7 @@
 	#include "c_dod_player.h"
 
 #else
-	
+
 	#include "coordsize.h"
 	#include "dod_player.h"
 	#include "voice_gamemgr.h"
@@ -172,20 +172,20 @@ IMPLEMENT_NETWORKCLASS_ALIASED( DODGameRulesProxy, DT_DODGameRulesProxy )
 
 static CDODViewVectors g_DODViewVectors(
 
-	Vector( 0, 0, 58 ),			//VEC_VIEW (m_vView) 
-								
+	Vector( 0, 0, 58 ),			//VEC_VIEW (m_vView)
+
 	Vector(-16, -16, 0 ),		//VEC_HULL_MIN (m_vHullMin)
 	Vector( 16,  16,  72 ),		//VEC_HULL_MAX (m_vHullMax)
-													
+
 	Vector(-16, -16, 0 ),		//VEC_DUCK_HULL_MIN (m_vDuckHullMin)
 	Vector( 16,  16, 45 ),		//VEC_DUCK_HULL_MAX	(m_vDuckHullMax)
 	Vector( 0, 0, 34 ),			//VEC_DUCK_VIEW		(m_vDuckView)
-													
+
 	Vector(-10, -10, -10 ),		//VEC_OBS_HULL_MIN	(m_vObsHullMin)
 	Vector( 10,  10,  10 ),		//VEC_OBS_HULL_MAX	(m_vObsHullMax)
-													
+
 	Vector( 0, 0, 14 ),			//VEC_DEAD_VIEWHEIGHT (m_vDeadViewHeight)
-								
+
 	Vector(-16, -16, 0 ),		//VEC_PRONE_HULL_MIN (m_vProneHullMin)
 	Vector( 16,  16, 24 )		//VEC_PRONE_HULL_MAX (m_vProneHullMax)
 );
@@ -279,7 +279,7 @@ static CDODViewVectors g_DODViewVectors(
 					{
 						Warning("Load_EntText: Failed to spawn entity, type: '%s'\n", pNodeName );
 					}
-				}				
+				}
 
 				// Move to next entity
 				pkvNode = pkvNode->GetNextKey();
@@ -383,7 +383,7 @@ static CDODViewVectors g_DODViewVectors(
 	// --------------------------------------------------------------------------------------------------- //
 	// Global helper functions.
 	// --------------------------------------------------------------------------------------------------- //
-	
+
 	// World.cpp calls this but we don't use it in DoD.
 	void InitBodyQue()
 	{
@@ -398,7 +398,7 @@ static CDODViewVectors g_DODViewVectors(
 		// The bot command uses switches like command-line switches.
 		// -count <count> tells how many bots to spawn.
 		// -team <index> selects the bot's team. Default is -1 which chooses randomly.
-		//	Note: if you do -team !, then it 
+		//	Note: if you do -team !, then it
 		// -class <index> selects the bot's class. Default is -1 which chooses randomly.
 		// -frozen prevents the bots from running around when they spawn in.
 
@@ -424,7 +424,7 @@ static CDODViewVectors g_DODViewVectors(
 
 		// Look at -frozen.
 		bool bFrozen = !!args.FindArg( "-frozen" );
-			
+
 		// Ok, spawn all the bots.
 		while ( --count >= 0 )
 		{
@@ -518,11 +518,11 @@ static CDODViewVectors g_DODViewVectors(
 	}
 
 	//-----------------------------------------------------------------------------
-	// Purpose: 
+	// Purpose:
 	//-----------------------------------------------------------------------------
 	CDODGameRules::~CDODGameRules()
 	{
-		// Note, don't delete each team since they are in the gEntList and will 
+		// Note, don't delete each team since they are in the gEntList and will
 		// automatically be deleted from there, instead.
 		g_Teams.Purge();
 	}
@@ -561,24 +561,24 @@ static CDODViewVectors g_DODViewVectors(
 				stats.header.ipAddr[1] = ( ip >> 16 ) & 0xff;
 				stats.header.ipAddr[2] = ( ip >> 8 ) & 0xff;
 				stats.header.ipAddr[3] = ( ip ) & 0xff;
-			}			
+			}
 
 			ConVar *hostport = cvar->FindVar( "hostip" );
 			if ( hostport )
 			{
 				stats.header.port = hostport->GetInt();
-			}			
+			}
 
 			stats.header.serverid = 0;
 
-			stats.iMinutesPlayed = clamp( (short)( gpGlobals->curtime / 60 ), 0, MY_USHRT_MAX ); 
+			stats.iMinutesPlayed = clamp( (short)( gpGlobals->curtime / 60 ), 0, MY_USHRT_MAX );
 
 			// Team Scores
 			stats.iNumAlliesWins = clamp( pAllies->GetRoundsWon(), 0, MY_UCHAR_MAX );
 			stats.iNumAxisWins = clamp( pAxis->GetRoundsWon(), 0, MY_UCHAR_MAX );
 
 			stats.iAlliesTickPoints = clamp( pAllies->GetScore(), 0, MY_USHRT_MAX );
-			stats.iAxisTickPoints = clamp( pAxis->GetScore(), 0, MY_USHRT_MAX );		
+			stats.iAxisTickPoints = clamp( pAxis->GetScore(), 0, MY_USHRT_MAX );
 
 			// Player Data
 			for ( i=1;i<=MAX_PLAYERS;i++ )
@@ -666,7 +666,7 @@ static CDODViewVectors g_DODViewVectors(
 
 			if ( gamestatsuploader )
 			{
-				gamestatsuploader->UploadGameStats( 
+				gamestatsuploader->UploadGameStats(
 					STRING( gpGlobals->mapname ),
 					DOD_STATS_BLOB_VERSION,
 					uBlobSize,
@@ -722,7 +722,7 @@ static CDODViewVectors g_DODViewVectors(
 	void CDODGameRules::Stats_WeaponHit( int weaponID, float flDist )
 	{
 		m_iWeaponShotsHit[weaponID]++;
-		
+
 		int bucket = Stats_WeaponDistanceToBucket( weaponID, flDist );
 		m_iWeaponDistanceBuckets[weaponID][bucket]++;
 	}
@@ -759,12 +759,12 @@ static CDODViewVectors g_DODViewVectors(
 		{
 			if ( args.ArgC() < 2 )
 				return true;
-	
-			SetWinningTeam( atoi( args[1] ) );			
+
+			SetWinningTeam( atoi( args[1] ) );
 
 			return true;
 		}
-		else 
+		else
 #endif
 		// Handle some player commands here as they relate more directly to gamerules state
 		if ( FStrEq( pcmd, "nextmap" ) )
@@ -785,16 +785,16 @@ static CDODViewVectors g_DODViewVectors(
 				}
 
 				ClientPrint( pPlayer, HUD_PRINTTALK, "#game_nextmap", szNextMap);
-				
+
 				pDODPlayer->m_flNextTimeCheck = gpGlobals->curtime + 1;
 			}
 
 			return true;
 		}
 		else if ( FStrEq( pcmd, "timeleft" ) )
-		{	
+		{
 			CDODPlayer *pDODPlayer = ToDODPlayer(pPlayer);
-			
+
 			if ( pDODPlayer->m_flNextTimeCheck < gpGlobals->curtime )
 			{
 				if ( mp_timelimit.GetInt() > 0 )
@@ -813,7 +813,7 @@ static CDODViewVectors g_DODViewVectors(
 					{
 						Q_snprintf( szMinutes, sizeof(szMinutes), "%d", iTimeLeft / 60 );
 						Q_snprintf( szSeconds, sizeof(szSeconds), "%02d", iTimeLeft % 60 );
-					}				
+					}
 
 					ClientPrint( pPlayer, HUD_PRINTTALK, "#game_time_left1", szMinutes, szSeconds );
 				}
@@ -907,7 +907,7 @@ static CDODViewVectors g_DODViewVectors(
 		else
 		{
 			// Teams and scores are equal, pick a random team
-			team = ( random->RandomInt(0,1) == 0 ) ? TEAM_ALLIES : TEAM_AXIS;		
+			team = ( random->RandomInt(0,1) == 0 ) ? TEAM_ALLIES : TEAM_AXIS;
 		}
 
 		if ( TeamFull( team ) )
@@ -1043,13 +1043,13 @@ static CDODViewVectors g_DODViewVectors(
 
 		CDODPlayer *player = ToDODPlayer(entity);
 
-		/* 
+		/*
 		new, sane method
 		*/
 
 		static int iRHandIndex = 0;
 		static int iLHandIndex = 0;
-		static int iHeadIndex = 0; 
+		static int iHeadIndex = 0;
 		static int iChestIndex = 0;
 		static int iRFootIndex = 0;
 		static int iLFootIndex = 0;
@@ -1060,7 +1060,7 @@ static CDODViewVectors g_DODViewVectors(
 		{
 			iRHandIndex = player->LookupBone( "ValveBiped.Bip01_R_Hand" );
 			iLHandIndex = player->LookupBone( "ValveBiped.Bip01_L_Hand" );
-			iHeadIndex = player->LookupBone( "ValveBiped.Bip01_Head1" ); 
+			iHeadIndex = player->LookupBone( "ValveBiped.Bip01_Head1" );
 			iChestIndex = player->LookupBone( "ValveBiped.Bip01_Spine2" );
 			iRFootIndex = player->LookupBone( "ValveBiped.Bip01_R_Foot" );
 			iLFootIndex = player->LookupBone( "ValveBiped.Bip01_L_Foot" );
@@ -1080,7 +1080,7 @@ static CDODViewVectors g_DODViewVectors(
 		int checkBoneIndex = player->LookupBone( "ValveBiped.Bip01_R_Hand" );
 		Assert( checkBoneIndex == iRHandIndex );
 #endif
-		
+
 
 		QAngle dummyAngle;
 
@@ -1214,7 +1214,7 @@ static CDODViewVectors g_DODViewVectors(
 			falloff = info.GetDamage() / flRadius;
 		else
 			falloff = 1.0;
-		
+
 		vecSrc.z += 1;// in case grenade is lying on the ground
 
 		if ( r_visualizeExplosion.GetBool() )
@@ -1278,7 +1278,7 @@ static CDODViewVectors g_DODViewVectors(
 					flAdjustedDamage = info.GetDamage() - flAdjustedDamage;
 
 					flAdjustedDamage *= flDamagePercentage;
-				
+
 					if ( flAdjustedDamage > 0 )
 					{
 						CTakeDamageInfo adjustedInfo = info;
@@ -1301,8 +1301,8 @@ static CDODViewVectors g_DODViewVectors(
 						}
 
 						pEntity->TakeDamage( adjustedInfo );
-			
-						// Now hit all triggers along the way that respond to damage... 
+
+						// Now hit all triggers along the way that respond to damage...
 						pEntity->TraceAttackToTriggers( adjustedInfo, vecSrc, vecSpot, dir );
 					}
 				}
@@ -1379,13 +1379,13 @@ static CDODViewVectors g_DODViewVectors(
 			if ( m_flIntermissionEndTime < gpGlobals->curtime )
 			{
 				ChangeLevel(); // intermission is over
-			}	
-			
+			}
+
 			return;
 		}
 
 		State_Think();
-		
+
 		if ( gpGlobals->curtime > m_flNextPeriodicThink )
 		{
 			if ( CheckTimeLimit() )
@@ -1431,7 +1431,7 @@ static CDODViewVectors g_DODViewVectors(
 			return;
 
 		m_bInWarmup = bWarmup;
-		
+
 		if( m_bInWarmup )
 		{
 			m_flWarmupTimeEnds = gpGlobals->curtime + mp_warmup_time.GetFloat();
@@ -1625,7 +1625,7 @@ static CDODViewVectors g_DODViewVectors(
 		for ( i=1; i<=gpGlobals->maxClients; i++ )
 		{
 			CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
-			
+
 			if ( !pPlayer )
 				continue;
 
@@ -1637,7 +1637,7 @@ static CDODViewVectors g_DODViewVectors(
 			UserMessageBegin( filter, "UpdateRadar" );
 
 			playerbits.ClearAll();
-				
+
 			// see what other players are in it's PVS, don't update them
 			engine->Message_DetermineMulticastRecipients( false, pPlayer->EyePosition(), playerbits );
 
@@ -1667,7 +1667,7 @@ static CDODViewVectors g_DODViewVectors(
 						continue;
 				}
 
-				WRITE_BYTE( i+1 ); // player entity index 
+				WRITE_BYTE( i+1 ); // player entity index
 				WRITE_SBITLONG( m_vecPlayerPositions[i].x, COORD_INTEGER_BITS-1 );
 				WRITE_SBITLONG( m_vecPlayerPositions[i].y, COORD_INTEGER_BITS-1 );
 				WRITE_SBITLONG( AngleNormalize( pOtherPlayer->GetAbsAngles().y ), 9 );
@@ -1679,10 +1679,10 @@ static CDODViewVectors g_DODViewVectors(
 		}
 	}
 
-	Vector DropToGround( 
-		CBaseEntity *pMainEnt, 
-		const Vector &vPos, 
-		const Vector &vMins, 
+	Vector DropToGround(
+		CBaseEntity *pMainEnt,
+		const Vector &vPos,
+		const Vector &vMins,
 		const Vector &vMaxs )
 	{
 		trace_t trace;
@@ -1778,7 +1778,7 @@ static CDODViewVectors g_DODViewVectors(
 	}
 
 	void CDODGameRules::PlayerSpawn( CBasePlayer *p )
-	{	
+	{
 		CDODPlayer *pPlayer = ToDODPlayer( p );
 
 		int team = pPlayer->GetTeamNumber();
@@ -1807,7 +1807,7 @@ static CDODViewVectors g_DODViewVectors(
 				const CDODPlayerClassInfo &pClassInfo = pTeam->GetPlayerClassInfo( playerclass );
 
 				Assert( pClassInfo.m_iTeam == team );
-								
+
 				pPlayer->SetModel( pClassInfo.m_szPlayerModel );
 				pPlayer->SetHitboxSet( 0 );
 
@@ -1828,7 +1828,7 @@ static CDODViewVectors g_DODViewVectors(
 					Q_snprintf( buf, bufsize, "weapon_%s", WeaponIDToAlias(pClassInfo.m_iSecondaryWeapon) );
 					pSecondaryWpn = pPlayer->GiveNamedItem( buf );
 				}
-				
+
 				// Melee weapon
 				if ( pClassInfo.m_iMeleeWeapon )
 				{
@@ -1859,7 +1859,7 @@ static CDODViewVectors g_DODViewVectors(
 						int iClipSize = pWpn->GetDODWpnData().iMaxClip1;
 						pPlayer->GiveAmmo( iNumClip * iClipSize, pWpn->GetDODWpnData().szAmmo1 );
 					}
-				}				
+				}
 
 				// Grenade Type 1
 				if ( pClassInfo.m_iGrenType1 != WEAPON_NONE )
@@ -1949,7 +1949,7 @@ static CDODViewVectors g_DODViewVectors(
 				continue;
 
 			if( CanPlayerJoinClass( pPlayer, i ) )
-			{	
+			{
 				choices[numChoices] = i;
 				numChoices++;
 			}
@@ -1990,13 +1990,13 @@ static CDODViewVectors g_DODViewVectors(
 	{
 		// This function moves the box out in each dimension in each step trying to find empty space like this:
 		//
-		//											  X  
-		//							   X			  X  
+		//											  X
+		//							   X			  X
 		// Step 1:   X     Step 2:    XXX   Step 3: XXXXX
-		//							   X 			  X  
-		//											  X  
+		//							   X 			  X
+		//											  X
 		//
-			 
+
 		Vector mins, maxs;
 		pMainEnt->CollisionProp()->WorldSpaceAABB( &mins, &maxs );
 		mins -= pMainEnt->GetAbsOrigin();
@@ -2026,7 +2026,7 @@ static CDODViewVectors g_DODViewVectors(
 		// Keep branching out until we get too far.
 		int iCurIteration = 0;
 		int nMaxIterations = 15;
-		
+
 		int offset = 0;
 		do
 		{
@@ -2038,7 +2038,7 @@ static CDODViewVectors g_DODViewVectors(
 				{
 					Vector vBase = vOrigin;
 					vBase[iDim] += (iSign*2-1) * flCurOffset;
-				
+
 					if ( UTIL_IsSpaceEmpty( pMainEnt, vBase + vTestMins, vBase + vTestMaxs ) )
 					{
 						// Ensure that there is a clear line of sight from the spawnpoint entity to the actual spawn point.
@@ -2050,7 +2050,7 @@ static CDODViewVectors g_DODViewVectors(
 						{
 							continue;
 						}
-						
+
 						if ( bDropToGround )
 							outPos = DropToGround( pMainEnt, vBase, vTestMins, vTestMaxs );
 						else
@@ -2156,9 +2156,9 @@ bool CDODGameRules::ShouldCollide( int collisionGroup0, int collisionGroup1 )
 	if ( collisionGroup0 > collisionGroup1 )
 	{
 		// swap so that lowest is always first
-		swap(collisionGroup0,collisionGroup1);
+		V_swap(collisionGroup0, collisionGroup1);
 	}
-	
+
 	//Don't stand on COLLISION_GROUP_WEAPONs
 	if( collisionGroup0 == COLLISION_GROUP_PLAYER_MOVEMENT &&
 		collisionGroup1 == COLLISION_GROUP_WEAPON )
@@ -2172,8 +2172,8 @@ bool CDODGameRules::ShouldCollide( int collisionGroup0, int collisionGroup1 )
 	{
 		return false;
 	}
-	
-	return BaseClass::ShouldCollide( collisionGroup0, collisionGroup1 ); 
+
+	return BaseClass::ShouldCollide( collisionGroup0, collisionGroup1 );
 }
 
 int CDODGameRules::GetSubTeam( int team )
@@ -2293,7 +2293,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		{
 			return false;
 		}
-		
+
 		return friendlyfire.GetBool();
 	}
 
@@ -2308,7 +2308,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 	{
 		State_Leave();
 		State_Enter( newState );
-	}	
+	}
 
 	void CDODGameRules::State_Enter( DODRoundState newState )
 	{
@@ -2322,7 +2322,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 			else
 				Msg( "DODRoundState: entering #%d\n", newState );
 		}
-		
+
 		// Initialize the new state.
 		if ( m_pCurStateInfo && m_pCurStateInfo->pfnEnterState )
 			(this->*m_pCurStateInfo->pfnEnterState)();
@@ -2427,7 +2427,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 
 			float flTimerSeconds = m_pRoundTimer->GetTimeRemaining();
 
-			m_bPlayTimerWarning_1Minute = ( flTimerSeconds > 60 );					
+			m_bPlayTimerWarning_1Minute = ( flTimerSeconds > 60 );
 			m_bPlayTimerWarning_2Minute = ( flTimerSeconds > 120 );
 
 			IGameEvent *event = gameeventmanager->CreateEvent( "dod_timer_time_added" );
@@ -2450,7 +2450,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 			return 0;
 		}
 	}
-	
+
 	// PREGAME - the server is idle and waiting for enough
 	// players to start up again. When we find an active player
 	// go to STATE_STARTGAME
@@ -2466,10 +2466,10 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		CheckLevelInitialized();
 
 		if( CountActivePlayers() > 0 )
-			State_Transition( STATE_STARTGAME );			
+			State_Transition( STATE_STARTGAME );
 	}
 
-	// STARTGAME - wait a bit and then spawn everyone into the 
+	// STARTGAME - wait a bit and then spawn everyone into the
 	// preround
 	void CDODGameRules::State_Enter_STARTGAME( void )
 	{
@@ -2512,7 +2512,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		RoundRespawn();
 
 		// reset this now! If its reset at round restart, we lose all the players that died
-		// during the preround 
+		// during the preround
 		m_iAlliesRespawnHead = 0;
 		m_iAlliesRespawnTail = 0;
 		m_iAxisRespawnHead = 0;
@@ -2562,7 +2562,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 					{
 						m_pRoundTimer = ( CDODRoundTimer *) CreateEntityByName( "dod_round_timer" );
 					}
-					
+
 					Assert( m_pRoundTimer );
 
 					if ( m_pRoundTimer )
@@ -2570,7 +2570,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 						m_pRoundTimer->SetTimeRemaining( iTimerSeconds );
 						m_pRoundTimer->PauseTimer();
 
-						m_bPlayTimerWarning_1Minute = ( iTimerSeconds > 60 );					
+						m_bPlayTimerWarning_1Minute = ( iTimerSeconds > 60 );
 						m_bPlayTimerWarning_2Minute = ( iTimerSeconds > 120 );
 					}
 				}
@@ -2621,7 +2621,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 					break;
 				default:
 					break;
-				}			
+				}
 			}
 
 			pEnt = gEntList.FindEntityByClassname( pEnt, "dod_bomb_target" );
@@ -2674,7 +2674,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 
 			if ( flSecondsRemaining <= 0 )
 			{
-				// if there is a bomb still on a timer, and that bomb has 
+				// if there is a bomb still on a timer, and that bomb has
 				// the potential to add time, then we don't end the game
 
 				bool bBombBlocksWin = false;
@@ -2701,7 +2701,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 
 						if ( pPoint && pPoint->GetBombsRemaining() <= 1 )
 						{
-							// find active dod_control_point_masters, ask them if this flag capping 
+							// find active dod_control_point_masters, ask them if this flag capping
 							// would end the game
 							CBaseEntity *pEnt =	gEntList.FindEntityByClassname( NULL, "dod_control_point_master" );
 
@@ -2721,7 +2721,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 								}
 
 								pEnt = gEntList.FindEntityByClassname( pEnt, "dod_control_point_master" );
-							}							
+							}
 						}
 					}
 
@@ -2749,7 +2749,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 
 						pEnt = gEntList.FindEntityByClassname( pEnt, "dod_control_point_master" );
 					}
-				}                
+				}
 			}
 			else if ( flSecondsRemaining < 60.0 && m_bPlayTimerWarning_1Minute == true )
 			{
@@ -2814,7 +2814,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		{
 			DevMsg( "Wave: Respawning Allies\n" );
 
-			RespawnTeam( TEAM_ALLIES ); 
+			RespawnTeam( TEAM_ALLIES );
 
 			PopWaveTime( TEAM_ALLIES );
 		}
@@ -2823,7 +2823,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		{
 			DevMsg( "Wave: Respawning Axis\n" );
 
-			RespawnTeam( TEAM_AXIS ); 
+			RespawnTeam( TEAM_AXIS );
 
 			PopWaveTime( TEAM_AXIS );
 		}
@@ -2832,7 +2832,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 	//ALLIES WIN
 	void CDODGameRules::State_Enter_ALLIES_WIN( void )
 	{
-		float flTime = max( 5, dod_bonusroundtime.GetFloat() );
+		float flTime = max( 5.f, dod_bonusroundtime.GetFloat() );
 
 		m_flStateTransitionTime = gpGlobals->curtime + flTime * dod_enableroundwaittime.GetFloat();
 
@@ -2853,7 +2853,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 	//AXIS WIN
 	void CDODGameRules::State_Enter_AXIS_WIN( void )
 	{
-		float flTime = max( 5, dod_bonusroundtime.GetFloat() );
+		float flTime = max( 5.f, dod_bonusroundtime.GetFloat() );
 
 		m_flStateTransitionTime = gpGlobals->curtime + flTime * dod_enableroundwaittime.GetFloat();
 
@@ -2965,13 +2965,13 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 				}
 				UTIL_Remove( pCur );
 			}
-			
+
 			pCur = gEntList.NextEnt( pCur );
 		}
-		
+
 		// Really remove the entities so we can have access to their slots below.
 		gEntList.CleanupDeleteList();
-		
+
 		// Now reload the map entities.
 		class CDODMapEntityFilter : public IMapEntityFilter
 		{
@@ -2988,7 +2988,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 					// Increment our iterator since it's not going to call CreateNextEntity for this ent.
 					if ( m_iIterator != g_MapEntityRefs.InvalidIndex() )
 						m_iIterator = g_MapEntityRefs.Next( m_iIterator );
-				
+
 					return false;
 				}
 			}
@@ -2998,7 +2998,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 			{
 				if ( m_iIterator == g_MapEntityRefs.InvalidIndex() )
 				{
-					// This shouldn't be possible. When we loaded the map, it should have used 
+					// This shouldn't be possible. When we loaded the map, it should have used
 					// CDODMapLoadEntityFilter, which should have built the g_MapEntityRefs list
 					// with the same list of entities we're referring to here.
 					Assert( false );
@@ -3017,7 +3017,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 					}
 					else
 					{
-						// Cool, the slot where this entity was is free again (most likely, the entity was 
+						// Cool, the slot where this entity was is free again (most likely, the entity was
 						// freed above). Now create an entity with this specific index.
 						return CreateEntityByName( pClassname, ref.m_iEdict );
 					}
@@ -3120,7 +3120,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 			break;
 		}
 
-		static const char *pCategoryNames[2][6] = 
+		static const char *pCategoryNames[2][6] =
 		{
 			{
 				"left_1",
@@ -3196,7 +3196,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 			break;
 		default:
 			break;
-		}		
+		}
 
 		IGameEvent *event = gameeventmanager->CreateEvent( "dod_round_win" );
 		if ( event )
@@ -3234,10 +3234,10 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 
 					// 0 bombs remaining means we blew it up and now own it.
 					// 1 bomb remaining means we own it, but the other team blew it up a bit.
-					else if ( pPoint->GetBombsRequired() > 0 && pPoint->GetBombsRemaining() == 1 )	
-					{																
-						bFlawlessVictory = false;				
-					}		
+					else if ( pPoint->GetBombsRequired() > 0 && pPoint->GetBombsRemaining() == 1 )
+					{
+						bFlawlessVictory = false;
+					}
 				}
 
 				if ( bFlawlessVictory )
@@ -3251,7 +3251,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		SendTeamScoresEvent();
 
 		IGameEvent *winEvent = gameeventmanager->CreateEvent( "dod_win_panel" );
-		
+
 		if ( winEvent )
 		{
 			// determine what categories to send
@@ -3345,7 +3345,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 			m_TopKills.Sort( PlayerScoreInfoSort );
 
 			// Decide what two categories to show in the winpanel
-			// based on the gametype and which event have good information 
+			// based on the gametype and which event have good information
 			// to show
 
 			int iCategoryPriority[8];
@@ -3395,7 +3395,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 					break;
 				case WINPANEL_TOP3_NONE:
 				default:
-					break;				
+					break;
 			}
 
 			switch( iRightCategory )
@@ -3414,7 +3414,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 				break;
 			case WINPANEL_TOP3_NONE:
 			default:
-				break;				
+				break;
 			}
 
 			gameeventmanager->FireEvent( winEvent );
@@ -3423,7 +3423,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 
 	void TestWinpanel( void )
 	{
-		
+
 		IGameEvent *event = gameeventmanager->CreateEvent( "dod_round_win" );
 		event->SetInt( "team", TEAM_ALLIES );
 
@@ -3509,11 +3509,11 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 				index = m_TopBombers.AddToTail();
 				m_TopBombers[index].iPlayerIndex = pPlayer->entindex();
 				m_TopBombers[index].iScore = pPlayer->GetPerRoundBombsDetonated() + 1;
-						
+
 				index = m_TopKillers.AddToTail();
 				m_TopKillers[index].iPlayerIndex = pPlayer->entindex();
 				m_TopKillers[index].iScore = pPlayer->GetPerRoundKills() + 1;
-			}		
+			}
 
 			m_TopCappers.Sort( PlayerScoreInfoSort );
 			m_TopDefenders.Sort( PlayerScoreInfoSort );
@@ -3541,7 +3541,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 				DevMsg( 2, "Respawning Axis\n" );
 			else
 				Assert(!"Trying to respawn a strange team");
-		}	
+		}
 
 		CDODPlayer *pPlayer;
 		for ( int i = 1; i <= gpGlobals->maxClients; i++ )
@@ -3584,7 +3584,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 			pPlayer->DODRespawn();
 		}
 	}
-	
+
 	bool CDODGameRules::IsPlayerClassOnTeam( int cls, int team )
 	{
 		if( cls == PLAYERCLASS_RANDOM )
@@ -3638,7 +3638,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 						iClassExisting += CountPlayerClass( team, i );
 					}
 				}
-			}			
+			}
 		}
 
 		if( iClassLimit > -1 && iClassExisting >= iClassLimit )
@@ -3704,7 +3704,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 			// This determines the maximum number of players allowed on each
 
 			CBaseEntity* ent = NULL;
-			
+
 			m_iSpawnPointCount_Allies	= 0;
 			m_iSpawnPointCount_Axis		= 0;
 
@@ -3723,7 +3723,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 
 			while ( ( ent = gEntList.FindEntityByClassname( ent, "info_player_axis" ) ) != NULL )
 			{
-				if ( IsSpawnPointValid( ent, NULL ) ) 
+				if ( IsSpawnPointValid( ent, NULL ) )
 				{
 					m_iSpawnPointCount_Axis++;
 				}
@@ -3750,19 +3750,19 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 
 		// Create the objective resource
 		g_pObjectiveResource = (CDODObjectiveResource *)CBaseEntity::Create( "dod_objective_resource", vec3_origin, vec3_angle );
-	
+
 		Assert( g_pObjectiveResource );
 
 		// Create the entity that will send our data to the client.
 #ifdef _DEBUG
-		CBaseEntity *pEnt = 
+		CBaseEntity *pEnt =
 #endif
 			CBaseEntity::Create( "dod_gamerules", vec3_origin, vec3_angle );
 		Assert( pEnt );
 	}
 
 	ConVar dod_waverespawnfactor( "dod_waverespawnfactor", "1.0", FCVAR_REPLICATED | FCVAR_CHEAT, "Factor for respawn wave timers" );
-	
+
 	float CDODGameRules::GetWaveTime( int iTeam )
 	{
 		float flRespawnTime = 0.0f;
@@ -3811,8 +3811,8 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 			fTime = 14.f;
 
 		//adjust wave time based on mapper settings
-		//they can adjust the factor ( default 1.0 ) 
-		// to give longer or shorter wait times for 
+		//they can adjust the factor ( default 1.0 )
+		// to give longer or shorter wait times for
 		// either team
 		if( nTeam == TEAM_ALLIES )
 			fTime *= m_GamePlayRules.m_fAlliesRespawnFactor;
@@ -3821,7 +3821,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 
 		// Finally, adjust the respawn time based on how well the team is doing
 		// a team with more flags should respawn faster.
-		// Give a bonus to respawn time for each flag that we own that we 
+		// Give a bonus to respawn time for each flag that we own that we
 		// don't own by default.
 
 		CControlPointMaster *pMaster =	dynamic_cast<CControlPointMaster*>( gEntList.FindEntityByClassname( NULL, "dod_control_point_master" ) );
@@ -3833,7 +3833,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 			// this can be negative if we are losing, this will add time!
 
 			fTime -= (float)(advantageFlags) * dod_flagrespawnbonus.GetFloat();
-		}		
+		}
 
 		fTime *= dod_waverespawnfactor.GetFloat();
 
@@ -3974,9 +3974,9 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		{
 			pVictim->IncrementDeathCount( 1 );
 		}
-	
+
 		// Did the player kill himself?
-		if ( pVictim == pScorer )  
+		if ( pVictim == pScorer )
 		{
 			// Players lose a frag for killing themselves
 			if( bScoring )
@@ -4028,7 +4028,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 			}
 		}
 		else
-		{  
+		{
 			// Players lose a frag for letting the world kill them
 			if( bScoring )
 				pVictim->IncrementFragCount( -1 );
@@ -4040,7 +4040,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		bool bFound = false;
 
 		CBaseEntity *pEnt = NULL;
-		
+
 		pEnt = gEntList.FindEntityByClassname( pEnt, "info_doddetect" );
 
 		while( pEnt )
@@ -4069,7 +4069,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 	{
 		switch(team)
 		{
-		case TEAM_ALLIES:	
+		case TEAM_ALLIES:
 			BroadcastSound( "Game.USWin" );
 			break;
 		case TEAM_AXIS:
@@ -4097,23 +4097,23 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		// One for the Allies..
 		switch( m_GamePlayRules.m_iAlliesStartRoundVoice )
 		{
-		case STARTROUND_ATTACK:			
+		case STARTROUND_ATTACK:
 			PlaySpawnSoundToTeam( "Voice.US_ObjectivesAttack", TEAM_ALLIES );
 			break;
 
-		case STARTROUND_DEFEND:			
+		case STARTROUND_DEFEND:
 			PlaySpawnSoundToTeam( "Voice.US_ObjectivesDefend", TEAM_ALLIES );
 			break;
 
-		case STARTROUND_BEACH:			
+		case STARTROUND_BEACH:
 			PlaySpawnSoundToTeam( "Voice.US_Beach", TEAM_ALLIES );
 			break;
 
-		case STARTROUND_ATTACK_TIMED:			
+		case STARTROUND_ATTACK_TIMED:
 			PlaySpawnSoundToTeam( "Voice.US_ObjectivesAttackTimed", TEAM_ALLIES );
 			break;
 
-		case STARTROUND_DEFEND_TIMED:			
+		case STARTROUND_DEFEND_TIMED:
 			PlaySpawnSoundToTeam( "Voice.US_ObjectivesDefendTimed", TEAM_ALLIES );
 			break;
 
@@ -4126,23 +4126,23 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		// and one for the Axis
 		switch( m_GamePlayRules.m_iAxisStartRoundVoice )
 		{
-		case STARTROUND_ATTACK:			
+		case STARTROUND_ATTACK:
 			PlaySpawnSoundToTeam( "Voice.German_ObjectivesAttack", TEAM_AXIS );
 			break;
 
-		case STARTROUND_DEFEND:			
+		case STARTROUND_DEFEND:
 			PlaySpawnSoundToTeam( "Voice.German_ObjectivesDefend", TEAM_AXIS );
 			break;
 
-		case STARTROUND_BEACH:			
+		case STARTROUND_BEACH:
 			PlaySpawnSoundToTeam( "Voice.German_Beach", TEAM_AXIS );
 			break;
 
-		case STARTROUND_ATTACK_TIMED:			
+		case STARTROUND_ATTACK_TIMED:
 			PlaySpawnSoundToTeam( "Voice.German_ObjectivesAttackTimed", TEAM_AXIS );
 			break;
 
-		case STARTROUND_DEFEND_TIMED:			
+		case STARTROUND_DEFEND_TIMED:
 			PlaySpawnSoundToTeam( "Voice.German_ObjectivesDefendTimed", TEAM_AXIS );
 			break;
 
@@ -4196,7 +4196,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 				break;
 			}
 		}
-	}	
+	}
 
 	void CDODGameRules::ClientDisconnected( edict_t *pClient )
 	{
@@ -4233,7 +4233,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		if ( pScorer )	// Is the killer a client?
 		{
 			killer_ID = pScorer->GetUserID();
-		
+
 			if ( pInflictor )
 			{
 				if ( pInflictor == pScorer )
@@ -4276,7 +4276,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 						// If the inflictor is the killer,  then it must be their current weapon doing the damage
 						else
 						{
-							killer_weapon_name = pWeapon->GetClassname(); 
+							killer_weapon_name = pWeapon->GetClassname();
 						}
 					}
 				}
@@ -4341,7 +4341,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 	{
 		SetSolid( SOLID_NONE );
 
-		BaseClass::Spawn();	
+		BaseClass::Spawn();
 	}
 
 	bool CDODDetect::IsMasteredOn( void )
@@ -4370,7 +4370,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 		}
 		else
 			return CBaseEntity::KeyValue( szKeyName, szValue );
-		
+
 		return true;
 	}
 
@@ -4439,7 +4439,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 	{
 		pPlayer->m_Local.m_flFallVelocity -= DOD_PLAYER_MAX_SAFE_FALL_SPEED;
 		return pPlayer->m_Local.m_flFallVelocity * DOD_DAMAGE_FOR_FALL_SPEED;
-	} 
+	}
 
 #endif
 
@@ -4453,7 +4453,7 @@ const CDODViewVectors *CDODGameRules::GetDODViewVectors() const
 #define BULLET_MASS_GRAINS_TO_KG(grains)	lbs2kg(BULLET_MASS_GRAINS_TO_LB(grains))
 
 // exaggerate all of the forces, but use real numbers to keep them consistent
-#define BULLET_IMPULSE_EXAGGERATION			1	
+#define BULLET_IMPULSE_EXAGGERATION			1
 
 // convert a velocity in ft/sec and a mass in grains to an impulse in kg in/s
 #define BULLET_IMPULSE(grains, ftpersec)	((ftpersec)*12*BULLET_MASS_GRAINS_TO_KG(grains)*BULLET_IMPULSE_EXAGGERATION)
@@ -4471,7 +4471,7 @@ CAmmoDef* GetAmmoDef()
 		def.AddAmmoType( DOD_AMMO_COLT,		DMG_BULLET, TRACER_NONE,	0, 0, 21,	5000, 10, 14 );
 		def.AddAmmoType( DOD_AMMO_P38,		DMG_BULLET, TRACER_NONE,	0, 0, 24,	5000, 10, 14 );
 		def.AddAmmoType( DOD_AMMO_C96,		DMG_BULLET, TRACER_NONE,	0, 0, 60,	5000, 10, 14 );
-		
+
 		//rifles
 		def.AddAmmoType( DOD_AMMO_GARAND,		DMG_BULLET, TRACER_NONE,	0, 0, 88,		9000, 10, 14 );
 		def.AddAmmoType( DOD_AMMO_K98,			DMG_BULLET, TRACER_NONE,	0, 0, 65,		9000, 10, 14 );
@@ -4491,7 +4491,7 @@ CAmmoDef* GetAmmoDef()
 
 		//grenades
 		def.AddAmmoType( DOD_AMMO_HANDGRENADE,		DMG_BLAST,	TRACER_NONE,		0, 0, 2, 1, 4, 8 );
-		def.AddAmmoType( DOD_AMMO_STICKGRENADE,		DMG_BLAST,	TRACER_NONE,		0, 0, 2, 1, 4, 8 );	
+		def.AddAmmoType( DOD_AMMO_STICKGRENADE,		DMG_BLAST,	TRACER_NONE,		0, 0, 2, 1, 4, 8 );
 		def.AddAmmoType( DOD_AMMO_HANDGRENADE_EX,	DMG_BLAST,	TRACER_NONE,		0, 0, 1, 1, 4, 8 );
 		def.AddAmmoType( DOD_AMMO_STICKGRENADE_EX,	DMG_BLAST,	TRACER_NONE,		0, 0, 1, 1, 4, 8 );
 
@@ -4636,7 +4636,7 @@ const char *CDODGameRules::GetChatPrefix( bool bTeamOnly, CBasePlayer *pPlayer )
 			else
 			{
 				//MATTTODO: localize chat prefixes
-				pszPrefix = "(Team)";	//"#chatprefix_team"; 
+				pszPrefix = "(Team)";	//"#chatprefix_team";
 			}
 		}
 		// everyone
@@ -4683,7 +4683,7 @@ int CDODGameRules::DODPointsForKill( CBasePlayer *pVictim, const CTakeDamageInfo
 	}
 
 	return BaseClass::IPointsForKill( pScorer, pVictim );
-	
+
 }
 
 //-----------------------------------------------------------------------------
@@ -4735,7 +4735,7 @@ CBaseCombatWeapon *CDODGameRules::GetNextBestWeapon( CBaseCombatCharacter *pPlay
 
 		if ( iWeight > -1 && iWeight == iCurrentWeight && pCheck != pCurrentWeapon )
 		{
-			// this weapon is from the same category. 
+			// this weapon is from the same category.
 			if ( pPlayer->Weapon_CanSwitchTo( pCheck ) )
 			{
 				return pCheck;
@@ -4745,8 +4745,8 @@ CBaseCombatWeapon *CDODGameRules::GetNextBestWeapon( CBaseCombatCharacter *pPlay
 		{
 			//Msg( "Considering %s\n", STRING( pCheck->GetClassname() );
 			// we keep updating the 'best' weapon just in case we can't find a weapon of the same weight
-			// that the player was using. This will end up leaving the player with his heaviest-weighted 
-			// weapon. 
+			// that the player was using. This will end up leaving the player with his heaviest-weighted
+			// weapon.
 
 			// if this weapon is useable, flag it as the best
 			iBestWeight = pCheck->GetWeight();
@@ -4754,15 +4754,15 @@ CBaseCombatWeapon *CDODGameRules::GetNextBestWeapon( CBaseCombatCharacter *pPlay
 		}
 	}
 
-	// if we make it here, we've checked all the weapons and found no useable 
-	// weapon in the same catagory as the current weapon. 
+	// if we make it here, we've checked all the weapons and found no useable
+	// weapon in the same catagory as the current weapon.
 
-	// if pBest is null, we didn't find ANYTHING. Shouldn't be possible- should always 
+	// if pBest is null, we didn't find ANYTHING. Shouldn't be possible- should always
 	// at least get the crowbar, but ya never know.
 	return pBest;
 }
 
-char *szHitgroupNames[] = 
+char *szHitgroupNames[] =
 {
 	"generic",
 	"head",
@@ -4808,16 +4808,16 @@ void CDODGameRules::WriteStatsFile( const char *pszLogName )
 
 			/*
 			pPlayer->TallyLatestTimePlayedPerClass( pPlayer->GetTeamNumber(), pPlayer->m_Shared.DesiredPlayerClass() );
-			
+
 			filesystem->FPrintf( hFile, "\t\t<time_played_per_class>\n" );
 			for( j=0;j<7;j++ )
 			{
 				// TODO : add real class names
 				filesystem->FPrintf( hFile, "\t\t\t<class%i>%.1f</class%i>\n",
-					j, 
+					j,
 					pPlayer->m_flTimePlayedPerClass[j],
 					j );
-			}					
+			}
 			filesystem->FPrintf( hFile, "\t\t</time_played_per_class>\n" );
 			*/
 
@@ -4847,13 +4847,13 @@ void CDODGameRules::WriteStatsFile( const char *pszLogName )
 					{
 						if ( pPlayer->m_WeaponStats[j].m_iBodygroupsHit[k] > 0 )
 						{
-							filesystem->FPrintf( hFile, "\t\t\t\t<%s>%i</%s>\n", 
+							filesystem->FPrintf( hFile, "\t\t\t\t<%s>%i</%s>\n",
 								szHitgroupNames[k],
 								pPlayer->m_WeaponStats[j].m_iBodygroupsHit[k],
 								szHitgroupNames[k] );
 						}
 					}
-					filesystem->FPrintf( hFile, "\t\t\t</hitgroups_hit>\n" );	
+					filesystem->FPrintf( hFile, "\t\t\t</hitgroups_hit>\n" );
 
 					filesystem->FPrintf( hFile, "\t\t\t<times_hit>%i</times_hit>\n", pPlayer->m_WeaponStats[j].m_iNumHitsTaken );
 					filesystem->FPrintf( hFile, "\t\t\t<damage_taken>%i</damage_taken>\n", pPlayer->m_WeaponStats[j].m_iTotalDamageTaken );
@@ -4864,7 +4864,7 @@ void CDODGameRules::WriteStatsFile( const char *pszLogName )
 					{
 						if ( pPlayer->m_WeaponStats[j].m_iHitInBodygroups[k] > 0 )
 						{
-							filesystem->FPrintf( hFile, "\t\t\t\t<%s>%i</%s>\n", 
+							filesystem->FPrintf( hFile, "\t\t\t\t<%s>%i</%s>\n",
 								szHitgroupNames[k],
 								pPlayer->m_WeaponStats[j].m_iHitInBodygroups[k],
 								szHitgroupNames[k] );
@@ -4896,7 +4896,7 @@ void CDODGameRules::WriteStatsFile( const char *pszLogName )
 				filesystem->FPrintf( hFile, "\t<userid>%i</userid>\n", pPlayer->m_KilledByPlayers[j].m_iUserID );
 				filesystem->FPrintf( hFile, "\t<kills>%i</kills>\n", pPlayer->m_KilledByPlayers[j].m_iKills );
 				filesystem->FPrintf( hFile, "\t<damage>%i</damage>\n", pPlayer->m_KilledByPlayers[j].m_iTotalDamage );
-				filesystem->FPrintf( hFile, "</attacker>" );	
+				filesystem->FPrintf( hFile, "</attacker>" );
 			}
 
 			filesystem->FPrintf( hFile, "\t</player>\n" );
@@ -5018,7 +5018,7 @@ void CFuncTeamWall::Spawn( void )
 		{
 			SetSolid( SOLID_OBB );
 		}
-	}	
+	}
 
 	SetThink( &CFuncTeamWall::DrawThink );
 	SetNextThink( gpGlobals->curtime + 0.1 );
@@ -5030,7 +5030,7 @@ void CFuncTeamWall::Spawn( void )
 //-----------------------------------------------------------------------------
 // Parse data from a map file
 //-----------------------------------------------------------------------------
-bool CFuncTeamWall::KeyValue( const char *szKeyName, const char *szValue ) 
+bool CFuncTeamWall::KeyValue( const char *szKeyName, const char *szValue )
 {
 	if ( FStrEq( szKeyName, "mins" ))
 	{

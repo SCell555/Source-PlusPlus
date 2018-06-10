@@ -1,7 +1,7 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Bullseyes act as targets for other NPC's to attack and to trigger
-//			events 
+//			events
 //
 // $Workfile:     $
 // $Date:         $
@@ -55,7 +55,7 @@ public:
 
 	// Sounds are shared by the flock
 	static  void PrecacheFlockSounds( void );
-	
+
 	DECLARE_DATADESC();
 
 	int		m_cFlockSize;
@@ -87,7 +87,7 @@ public:
 	void FallHack( void );
 	//void Poop ( void ); Adrian - wtf?!
 
-	
+
 
 	int IsLeader( void ) { return m_pSquadLeader == this; }
 	int	InSquad( void ) { return m_pSquadLeader != NULL; }
@@ -176,8 +176,8 @@ void CNPC_FlockingFlyerFlock::Spawn( void )
 //=========================================================
 void CNPC_FlockingFlyerFlock::Precache( void )
 {
-	//PRECACHE_MODEL("models/aflock.mdl");		
-	PrecacheModel("models/boid.mdl");		
+	//PRECACHE_MODEL("models/aflock.mdl");
+	PrecacheModel("models/boid.mdl");
 
 	PrecacheFlockSounds();
 }
@@ -194,12 +194,12 @@ void CNPC_FlockingFlyerFlock::SpawnFlock( void )
 	for ( iCount = 0 ; iCount < m_cFlockSize ; iCount++ )
 	{
 		pBoid = CREATE_ENTITY( CNPC_FlockingFlyer, "monster_flyer" );
-		
-		if ( !pLeader ) 
+
+		if ( !pLeader )
 		{
 			// make this guy the leader.
 			pLeader = pBoid;
-			
+
 			pLeader->m_pSquadLeader = pLeader;
 			pLeader->m_pSquadNext = NULL;
 		}
@@ -215,12 +215,12 @@ void CNPC_FlockingFlyerFlock::SpawnFlock( void )
 		pBoid->SetGroundEntity( NULL );
 		pBoid->SetAbsVelocity( Vector ( 0, 0, 0 ) );
 		pBoid->SetAbsAngles( GetAbsAngles() );
-		
+
 		pBoid->SetCycle( 0 );
 		pBoid->SetThink( &CNPC_FlockingFlyer::IdleThink );
 		pBoid->SetNextThink( gpGlobals->curtime + 0.2 );
 
-		if ( pBoid != pLeader ) 
+		if ( pBoid != pLeader )
 		{
 			pLeader->SquadAdd( pBoid );
 		}
@@ -238,7 +238,7 @@ void CNPC_FlockingFlyer::Spawn( )
 {
 	Precache( );
 	SpawnCommonCode();
-	
+
 	SetCycle( 0 );
 	SetNextThink( gpGlobals->curtime + 0.1f );
 	SetThink( &CNPC_FlockingFlyer::IdleThink );
@@ -337,7 +337,7 @@ void CNPC_FlockingFlyer::SquadRemove( CNPC_FlockingFlyer *pRemove )
 		if ( pRemove == this )
 		{
 			CNPC_FlockingFlyer *pLeader = m_pSquadNext;
-			
+
 			// copy the enemy LKP to the new leader
 
 		//	if ( GetEnemy() )
@@ -474,14 +474,12 @@ void CNPC_FlockingFlyer::FlockLeaderThink( void )
 {
 	trace_t			tr;
 	Vector			vecDist;// used for general measurements
-	Vector			vecDir;// used for general measurements
 	float			flLeftSide;
 	float			flRightSide;
 	Vector			vForward, vRight, vUp;
-	
 
 	SetNextThink( gpGlobals->curtime + 0.1f );
-	
+
 	AngleVectors ( GetAbsAngles(), &vForward, &vRight, &vUp );
 
 	// is the way ahead clear?
@@ -508,7 +506,7 @@ void CNPC_FlockingFlyer::FlockLeaderThink( void )
 
 		return;
 	}
-	
+
 	// IF we get this far in the function, the leader's path is blocked!
 	m_fPathBlocked = TRUE;
 
@@ -564,7 +562,7 @@ void CNPC_FlockingFlyer::FlockLeaderThink( void )
 	SpreadFlock( );
 
 	SetAbsVelocity( vForward * m_flSpeed );
-	
+
 	// check and make sure we aren't about to plow into the ground, don't let it happen
 	UTIL_TraceLine(GetAbsOrigin(), GetAbsOrigin() - vUp * 16, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
 	if (tr.fraction != 1.0 && GetAbsVelocity().z < 0 )
@@ -590,7 +588,7 @@ void CNPC_FlockingFlyer::FlockLeaderThink( void )
 	}
 
 	BoidAdvanceFrame( );
-	
+
 	return;
 }
 
@@ -600,8 +598,6 @@ void CNPC_FlockingFlyer::FlockLeaderThink( void )
 bool CNPC_FlockingFlyer::FPathBlocked( void )
 {
 	trace_t			tr;
-	Vector			vecDist;// used for general measurements
-	Vector			vecDir;// used for general measurements
 	bool			fBlocked;
 	Vector			vForward, vRight, vUp;
 
@@ -619,7 +615,7 @@ bool CNPC_FlockingFlyer::FPathBlocked( void )
 
 	// check for obstacle ahead
 	UTIL_TraceLine(GetAbsOrigin(), GetAbsOrigin() + vForward * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
-	
+
 	if (tr.fraction != 1.0)
 	{
 		m_flLastBlockedTime = gpGlobals->curtime;
@@ -628,7 +624,7 @@ bool CNPC_FlockingFlyer::FPathBlocked( void )
 
 	// extra wide checks
 	UTIL_TraceLine(GetAbsOrigin() + vRight * 12, GetAbsOrigin() + vRight * 12 + vForward * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
-	
+
 	if (tr.fraction != 1.0)
 	{
 		m_flLastBlockedTime = gpGlobals->curtime;
@@ -636,7 +632,7 @@ bool CNPC_FlockingFlyer::FPathBlocked( void )
 	}
 
 	UTIL_TraceLine(GetAbsOrigin() - vRight * 12, GetAbsOrigin() - vRight * 12 + vForward * AFLOCK_CHECK_DIST, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
-	
+
 	if (tr.fraction != 1.0)
 	{
 		m_flLastBlockedTime = gpGlobals->curtime;
@@ -646,7 +642,7 @@ bool CNPC_FlockingFlyer::FPathBlocked( void )
 	if ( !fBlocked && gpGlobals->curtime - m_flLastBlockedTime > 6 )
 	{
 		// not blocked, and it's been a few seconds since we've actually been blocked.
-		m_flFakeBlockedTime = gpGlobals->curtime + random->RandomInt(1, 3); 
+		m_flFakeBlockedTime = gpGlobals->curtime + random->RandomInt(1, 3);
 	}
 
 	return	fBlocked;
@@ -659,7 +655,7 @@ void CNPC_FlockingFlyer::SpreadFlock( )
 {
 	Vector		vecDir;
 	float		flSpeed;// holds vector magnitude while we fiddle with the direction
-	
+
 	CNPC_FlockingFlyer *pList = m_pSquadLeader;
 	while ( pList )
 	{
@@ -683,14 +679,14 @@ void CNPC_FlockingFlyer::SpreadFlock( )
 }
 
 //=========================================================
-// Alters the caller's course if he's too close to others 
+// Alters the caller's course if he's too close to others
 //
 // This function should **ONLY** be called when Caller's velocity is normalized!!
 //=========================================================
 void CNPC_FlockingFlyer::SpreadFlock2 ( )
 {
 	Vector		vecDir;
-	
+
 	CNPC_FlockingFlyer *pList = m_pSquadLeader;
 
 	while ( pList )
@@ -729,10 +725,8 @@ void CNPC_FlockingFlyer::MakeSound( void )
 //=========================================================
 // follower boids execute this code when flocking
 //=========================================================
-void CNPC_FlockingFlyer::FlockFollowerThink( void )	
+void CNPC_FlockingFlyer::FlockFollowerThink( void )
 {
-	Vector			vecDist;
-	Vector			vecDir;
 	Vector			vecDirToLeader;
 	float			flDistToLeader;
 
@@ -740,14 +734,14 @@ void CNPC_FlockingFlyer::FlockFollowerThink( void )
 
 	if ( IsLeader() || !InSquad() )
 	{
-		// the leader has been killed and this flyer suddenly finds himself the leader. 
+		// the leader has been killed and this flyer suddenly finds himself the leader.
 		SetThink ( &CNPC_FlockingFlyer::FlockLeaderThink );
 		return;
 	}
 
 	vecDirToLeader = ( m_pSquadLeader->GetAbsOrigin() - GetAbsOrigin() );
 	flDistToLeader = vecDirToLeader.Length();
-	
+
 	// match heading with leader
 	SetAbsAngles( m_pSquadLeader->GetAbsAngles() );
 
@@ -784,7 +778,7 @@ void CNPC_FlockingFlyer::FlockFollowerThink( void )
 	if ( flDistToLeader > AFLOCK_TOO_FAR )
 	{
 		VectorNormalize( vecDirToLeader );
-		vecVel = (vecVel + vecDirToLeader) * 0.5; 	
+		vecVel = (vecVel + vecDirToLeader) * 0.5;
 	}
 
 	// clamp speeds and handle acceleration
@@ -812,7 +806,7 @@ void CNPC_FlockingFlyer::FlockFollowerThink( void )
 void CNPC_FlockingFlyer::Event_Killed( const CTakeDamageInfo &info )
 {
 	CNPC_FlockingFlyer *pSquad;
-	
+
 	pSquad = (CNPC_FlockingFlyer *)m_pSquadLeader;
 
 	while ( pSquad )

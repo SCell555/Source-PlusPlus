@@ -1,13 +1,13 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
 
 //========= Copyright © 1996-2001, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -36,7 +36,7 @@ EXPOSE_SINGLE_INTERFACE_GLOBALVAR( CGameMovement, IGameMovement, INTERFACENAME_G
 #endif
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CHL1GameMovement::CheckJumpButton( void )
 {
@@ -56,13 +56,13 @@ bool CHL1GameMovement::CheckJumpButton( void )
 		m_pHL1Player->m_flWaterJumpTime -= gpGlobals->frametime;
 		if (m_pHL1Player->m_flWaterJumpTime < 0)
 			m_pHL1Player->m_flWaterJumpTime = 0;
-		
+
 		return false;
 	}
 
 	// If we are in the water most of the way...
 	if ( m_pHL1Player->GetWaterLevel() >= 2 )
-	{	
+	{
 		// swimming, not jumping
 		SetGroundEntity( NULL );
 
@@ -70,7 +70,7 @@ bool CHL1GameMovement::CheckJumpButton( void )
 			mv->m_vecVelocity[2] = 100;
 		else if (m_pHL1Player->GetWaterType() == CONTENTS_SLIME)
 			mv->m_vecVelocity[2] = 80;
-		
+
 		// play swiming sound
 		if ( m_pHL1Player->m_flSwimSoundTime <= 0 )
 		{
@@ -94,15 +94,15 @@ bool CHL1GameMovement::CheckJumpButton( void )
 
 	// In the air now.
 	SetGroundEntity( NULL );
-	
-	m_pHL1Player->PlayStepSound( mv->m_vecAbsOrigin, player->GetSurfaceData(), 1.0, true );
-	
+
+	m_pHL1Player->PlayStepSound( mv->GetAbsOrigin(), player->GetSurfaceData(), 1.0, true );
+
 	MoveHelper()->PlayerSetAnimation( PLAYER_JUMP );
 
 	float flGroundFactor = 1.0f;
 	if ( player->GetSurfaceData() )
 	{
-		flGroundFactor = 1.0;//player->GetSurfaceData()->game.jumpFactor; 
+		flGroundFactor = 1.0;//player->GetSurfaceData()->game.jumpFactor;
 	}
 
 	// Acclerate upward
@@ -116,7 +116,7 @@ bool CHL1GameMovement::CheckJumpButton( void )
 		// v = g * sqrt(2.0 * 45 / g )
 		// v^2 = g * g * 2.0 * 45 / g
 		// v = sqrt( g * 2.0 * 45 )
-		
+
 		// Adjust for super long jump module
 		// UNDONE -- note this should be based on forward angles, not current velocity.
 		if ( m_pHL1Player->m_bHasLongJump &&
@@ -142,7 +142,7 @@ bool CHL1GameMovement::CheckJumpButton( void )
 
 	mv->m_outWishVel.z += mv->m_vecVelocity[2] - startz;
 	mv->m_outStepHeight += 0.1f;
-	
+
 	if ( gpGlobals->maxClients > 1 )
 #ifdef CLIENT_DLL
 		(dynamic_cast<C_HL1MP_Player*>(m_pHL1Player))->DoAnimationEvent( PLAYERANIMEVENT_JUMP );
@@ -161,7 +161,7 @@ bool CHL1GameMovement::CanUnduck()
 	trace_t trace;
 	Vector newOrigin;
 
-	VectorCopy( mv->m_vecAbsOrigin, newOrigin );
+	VectorCopy( mv->GetAbsOrigin(), newOrigin );
 
 	if ( player->GetGroundEntity() != NULL )
 	{
@@ -184,10 +184,10 @@ bool CHL1GameMovement::CanUnduck()
 
 	bool saveducked = player->m_Local.m_bDucked;
 	player->m_Local.m_bDucked = false;
-	TracePlayerBBox( mv->m_vecAbsOrigin, newOrigin, MASK_PLAYERSOLID, COLLISION_GROUP_PLAYER_MOVEMENT, trace );
+	TracePlayerBBox( mv->GetAbsOrigin(), newOrigin, MASK_PLAYERSOLID, COLLISION_GROUP_PLAYER_MOVEMENT, trace );
 	player->m_Local.m_bDucked = saveducked;
 	if ( trace.startsolid || ( trace.fraction != 1.0f ) )
-		return false;	
+		return false;
 
 	return true;
 }
@@ -201,7 +201,7 @@ void CHL1GameMovement::FinishUnDuck( void )
 	trace_t trace;
 	Vector newOrigin;
 
-	VectorCopy( mv->m_vecAbsOrigin, newOrigin );
+	VectorCopy( mv->GetAbsOrigin(), newOrigin );
 
 	if ( player->GetGroundEntity() != NULL )
 	{
@@ -227,8 +227,8 @@ void CHL1GameMovement::FinishUnDuck( void )
 	player->m_Local.m_bDucking  = false;
 	player->SetViewOffset( GetPlayerViewOffset( false ) );
 	player->m_Local.m_flDucktime = 0;
-	
-	VectorCopy( newOrigin, mv->m_vecAbsOrigin );
+
+	mv->SetAbsOrigin( newOrigin );
 
 	// Recategorize position since ducking can change origin
 	CategorizePosition();
@@ -251,18 +251,20 @@ void CHL1GameMovement::FinishDuck( void )
 	player->AddFlag( FL_DUCKING );
 	player->m_Local.m_bDucking = false;
 
+	Vector tmp = mv->GetAbsOrigin();
 	// HACKHACK - Fudge for collision bug - no time to fix this properly
 	if ( player->GetGroundEntity() != NULL )
 	{
 		for ( i = 0; i < 3; i++ )
 		{
-			mv->m_vecAbsOrigin[i] -= ( VEC_DUCK_HULL_MIN[i] - VEC_HULL_MIN[i] );
+			tmp[i] -= ( VEC_DUCK_HULL_MIN[i] - VEC_HULL_MIN[i] );
 		}
 	}
 	else
 	{
-		VectorAdd( mv->m_vecAbsOrigin, viewDelta, mv->m_vecAbsOrigin );
+		VectorAdd( tmp, viewDelta, tmp );
 	}
+	mv->SetAbsOrigin( tmp );
 
 	// See if we are stuck?
 	FixPlayerCrouchStuck( true );
@@ -324,7 +326,7 @@ void CHL1GameMovement::Duck( void )
 			{
 				float flDuckMilliseconds = max( 0.0f, GAMEMOVEMENT_DUCK_TIME - ( float )player->m_Local.m_flDucktime );
 				float flDuckSeconds = flDuckMilliseconds / GAMEMOVEMENT_DUCK_TIME;
-				
+
 				// Finish in duck transition when transition time is over, in "duck", in air.
 				if ( ( flDuckSeconds > TIME_TO_DUCK ) || bInDuck || bInAir )
 				{
@@ -358,7 +360,7 @@ void CHL1GameMovement::Duck( void )
 					{
 						float flDuckMilliseconds = max( 0.0f, GAMEMOVEMENT_DUCK_TIME - (float)player->m_Local.m_flDucktime );
 						float flDuckSeconds = flDuckMilliseconds / GAMEMOVEMENT_DUCK_TIME;
-						
+
 						// Finish ducking immediately if duck time is over or not on ground
 						if ( flDuckSeconds > TIME_TO_UNDUCK || ( bInAir ) )
 						{
@@ -387,13 +389,13 @@ void CHL1GameMovement::Duck( void )
 
 void CHL1GameMovement::HandleDuckingSpeedCrop()
 {
-	if ( !m_bSpeedCropped && ( player->GetFlags() & FL_DUCKING ) )
+	if ( !( m_iSpeedCropped & SPEED_CROPPED_DUCK ) && ( player->GetFlags() & FL_DUCKING ) )
 	{
 		float frac = 0.33333333f;
 		mv->m_flForwardMove	*= frac;
 		mv->m_flSideMove	*= frac;
 		mv->m_flUpMove		*= frac;
-		m_bSpeedCropped		= true;
+		m_iSpeedCropped		|= SPEED_CROPPED_DUCK;
 	}
 }
 

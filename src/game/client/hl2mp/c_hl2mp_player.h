@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -33,7 +33,7 @@ public:
 	void ClientThink( void );
 
 	static C_HL2MP_Player* GetLocalHL2MPPlayer();
-	
+
 	virtual int DrawModel( int flags );
 	virtual void AddEntity( void );
 
@@ -58,14 +58,14 @@ public:
 	virtual void CreateLightEffects( void ) {}
 	virtual bool ShouldReceiveProjectedTextures( int flags );
 	virtual void PostDataUpdate( DataUpdateType_t updateType );
-	virtual void PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force );
+	virtual void PlayStepSound( const Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force );
 	virtual void PreThink( void );
 	virtual void DoImpactEffect( trace_t &tr, int nDamageType );
 	IRagdoll* GetRepresentativeRagdoll() const;
 	virtual void CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov );
 	virtual const QAngle& EyeAngles( void );
 
-	
+
 	bool	CanSprint( void );
 	void	StartSprinting( void );
 	void	StopSprinting( void );
@@ -87,7 +87,7 @@ public:
 	virtual void PostThink( void );
 
 private:
-	
+
 	C_HL2MP_Player( const C_HL2MP_Player & );
 
 	CPlayerAnimState m_PlayerAnimState;
@@ -124,7 +124,7 @@ private:
 	void ReleaseFlashlight( void );
 	Beam_t	*m_pFlashlightBeam;
 
-	CNetworkVar( HL2MPPlayerState, m_iPlayerState );	
+	CNetworkVar( HL2MPPlayerState, m_iPlayerState );
 
 	bool m_fIsWalking;
 };
@@ -143,7 +143,7 @@ class C_HL2MPRagdoll : public C_BaseAnimatingOverlay
 public:
 	DECLARE_CLASS( C_HL2MPRagdoll, C_BaseAnimatingOverlay );
 	DECLARE_CLIENTCLASS();
-	
+
 	C_HL2MPRagdoll();
 	~C_HL2MPRagdoll();
 
@@ -155,9 +155,9 @@ public:
 	void ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName );
 	void UpdateOnRemove( void );
 	virtual void SetupWeights( const matrix3x4_t *pBoneToWorld, int nFlexWeightCount, float *pFlexWeights, float *pFlexDelayedWeights );
-	
+
 private:
-	
+
 	C_HL2MPRagdoll( const C_HL2MPRagdoll & ) {}
 
 	void Interp_Copy( C_BaseAnimatingOverlay *pDestinationEntity );

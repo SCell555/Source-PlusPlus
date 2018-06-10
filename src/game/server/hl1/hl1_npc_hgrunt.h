@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -24,7 +24,7 @@ public:
 	void	PrescheduleThink ( void );
 
 	bool	FOkToSpeak( void );
-	
+
 	Class_T	Classify ( void );
 	int     RangeAttack1Conditions ( float flDot, float flDist );
 	int		MeleeAttack1Conditions ( float flDot, float flDist );
@@ -42,7 +42,7 @@ public:
 
 	int     GetSoundInterests ( void );
 
-	void    TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
+	void    TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	int		OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo );
 
 	float	MaxYawSpeed( void );
@@ -58,7 +58,7 @@ public:
 
 	void	Shoot ( void );
 	void	Shotgun( void );
-	
+
 	void	StartTask ( const Task_t *pTask );
 	void	RunTask ( const Task_t *pTask );
 
@@ -75,12 +75,12 @@ public:
 	void	StartNPC ( void );
 
 	int		SquadRecruit( int searchRadius, int maxMembers );
-	
+
 	void	Event_Killed( const CTakeDamageInfo &info );
 
-	
+
 	static const char *pGruntSentences[];
-	
+
 	bool	m_bInBarnacleMouth;
 
 public:
@@ -110,7 +110,7 @@ private:
 	float	m_flCheckAttackTime;
 
 	int		m_iAmmoType;
-	
+
 	int		m_iWeapons;
 };
 

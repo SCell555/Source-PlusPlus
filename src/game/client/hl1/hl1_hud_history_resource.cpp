@@ -28,19 +28,19 @@ DECLARE_HUDELEMENT( CHudHistoryResource );
 DECLARE_HUD_MESSAGE( CHudHistoryResource, ItemPickup );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CHudHistoryResource::CHudHistoryResource( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudHistoryResource" )
-{	
+{
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
 	SetHiddenBits( HIDEHUD_MISCSTATUS );
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pScheme - 
+// Purpose:
+// Input  : *pScheme -
 //-----------------------------------------------------------------------------
 void CHudHistoryResource::ApplySchemeSettings( IScheme *pScheme )
 {
@@ -50,7 +50,7 @@ void CHudHistoryResource::ApplySchemeSettings( IScheme *pScheme )
 	m_hNumberFont = pScheme->GetFont( "HudNumbersSmall" );
 }
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudHistoryResource::Init( void )
 {
@@ -61,7 +61,7 @@ void CHudHistoryResource::Init( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudHistoryResource::Reset( void )
 {
@@ -84,13 +84,13 @@ void CHudHistoryResource::AddToHistory( C_BaseCombatWeapon *weapon )
 {
 	// Check to see if the pic would have to be drawn too high. If so, start again from the bottom
 	if ( ((HISTORY_PICKUP_GAP * m_iCurrentHistorySlot) + HISTORY_PICKUP_PICK_HEIGHT) > HISTORY_PICKUP_HEIGHT_MAX )
-	{	
+	{
 		m_iCurrentHistorySlot = 0;
 	}
 
-	// ensure the size 
+	// ensure the size
 	m_PickupHistory.EnsureCount(m_iCurrentHistorySlot + 1);
-	
+
 	// default to just writing to the first slot
 	HIST_ITEM *freeslot = &m_PickupHistory[m_iCurrentHistorySlot++];
 	freeslot->type = HISTSLOT_WEAP;
@@ -107,17 +107,17 @@ void CHudHistoryResource::AddToHistory( int iType, int iId, int iCount )
 {
 	// Ignore adds with no count
 	if ( iType == HISTSLOT_AMMO && !iCount )
-		return;  
+		return;
 
 	// Check to see if the pic would have to be drawn too high. If so, start again from the bottom
 	if ( ((HISTORY_PICKUP_GAP * m_iCurrentHistorySlot) + HISTORY_PICKUP_PICK_HEIGHT) > HISTORY_PICKUP_HEIGHT_MAX )
-	{	
+	{
 		m_iCurrentHistorySlot = 0;
 	}
-	
-	// ensure the size 
+
+	// ensure the size
 	m_PickupHistory.EnsureCount(m_iCurrentHistorySlot + 1);
-	
+
 	// default to just writing to the first slot
 	HIST_ITEM *freeslot = &m_PickupHistory[m_iCurrentHistorySlot++];
 	freeslot->type = iType;
@@ -141,16 +141,16 @@ void CHudHistoryResource::AddToHistory( int iType, const char *szName, int iCoun
 		m_iCurrentHistorySlot = 0;
 	}
 
-	// ensure the size 
+	// ensure the size
 	m_PickupHistory.EnsureCount(m_iCurrentHistorySlot + 1);
-	
+
 	// default to just writing to the first slot
 	HIST_ITEM *freeslot = &m_PickupHistory[m_iCurrentHistorySlot++];
 
 	// Get the item's icon
 	CHudTexture *i = gHUD.GetIcon( szName );
 	if ( i == NULL )
-		return;  
+		return;
 
 	freeslot->iId = 1;
 	freeslot->icon = i;
@@ -166,9 +166,9 @@ void CHudHistoryResource::AddToHistory( int iType, const char *szName, int iCoun
 void CHudHistoryResource::MsgFunc_ItemPickup(bf_read &msg)
 {
 	char szString[2048];
-	
+
 	msg.ReadString( szString, sizeof(szString) );
-	
+
 	// Add the item to the history
 	AddToHistory( HISTSLOT_ITEM, szString );
 }
@@ -188,7 +188,7 @@ void CHudHistoryResource::CheckClearHistory( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CHudHistoryResource::ShouldDraw( void )
 {
@@ -218,7 +218,7 @@ void CHudHistoryResource::Paint( void )
 			int r, g, b, nUnused;
 			(gHUD.m_clrYellowish).GetColor( r, g, b, nUnused );
 
-			Color clrAmmo( r, g, b, min( scale, 255 ) );
+			Color clrAmmo( r, g, b, min( scale, 255.f ) );
 
 			int nHudElemWidth, nHudElemHeight;
 			GetSize( nHudElemWidth, nHudElemHeight );
@@ -228,8 +228,8 @@ void CHudHistoryResource::Paint( void )
 				case HISTSLOT_AMMO:
 				{
 					CHudTexture *icon = gWR.GetAmmoIconFromWeapon( m_PickupHistory[i].iId );
-					if ( icon  )   
-					{ 
+					if ( icon  )
+					{
 						// Draw the pic
 						int ypos = nHudElemHeight - ( HISTORY_PICKUP_PICK_HEIGHT + ( HISTORY_PICKUP_GAP * i ) );
 						int xpos = nHudElemWidth - 24;
@@ -248,13 +248,13 @@ void CHudHistoryResource::Paint( void )
 						{
 							char sz[ 32 ];
 							int len = Q_snprintf( sz, sizeof( sz ), "%i", m_PickupHistory[i].iCount );
-						
+
 							for ( int ch = 0; ch < len; ch++ )
 							{
 								char c = sz[ ch ];
 								vgui::surface()->DrawUnicodeChar( c );
 							}
-						} 
+						}
 					}
 				}
 				break;
@@ -269,7 +269,7 @@ void CHudHistoryResource::Paint( void )
 						// if the weapon doesn't have ammo, display it as red
 						Color clrReddish( 255, 16, 16, 255 );
 						clrReddish.GetColor( r, g, b, nUnused );
-						clrAmmo.SetColor( r, g, b, min( scale, 255 ) );
+						clrAmmo.SetColor( r, g, b, min( scale, 255.f ) );
 					}
 
 					int ypos = nHudElemHeight - (HISTORY_PICKUP_PICK_HEIGHT + (HISTORY_PICKUP_GAP * i));

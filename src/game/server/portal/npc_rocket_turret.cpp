@@ -1,19 +1,19 @@
 //===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //===========================================================================//
 
-#include "cbase.h"		
+#include "cbase.h"
 #include "ai_basenpc.h"
 #include "ai_senses.h"
 #include "ai_memory.h"
 #include "engine/IEngineSound.h"
 #include "Sprite.h"
-#include "IEffects.h"						
-#include "prop_portal_shared.h"	
-#include "te.h"	
+#include "IEffects.h"
+#include "prop_portal_shared.h"
+#include "te.h"
 #include "te_effect_dispatch.h"
 #include "soundenvelope.h"			// for looping sound effects
 #include "portal_gamerules.h"		// for difficulty settings
@@ -23,7 +23,7 @@
 #include "physics_bone_follower.h"	// For bone follower manager
 #include "physicsshadowclone.h"		// For translating hit entities shadow clones to real ent
 
-//#include "ndebugoverlay.h" 
+//#include "ndebugoverlay.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -103,7 +103,7 @@ public:
 	void	DyingThink( void );				// Overloading, blowing up
 	void	DeathThink( void );				// Destroyed, sparking
 	void	OpeningThink ( void );			// Finish open/close animation before using pose params
-	void	ClosingThink ( void );	
+	void	ClosingThink ( void );
 
 	// Inputs
 	void	InputToggle( inputdata_t &inputdata );
@@ -113,9 +113,9 @@ public:
 	void	InputDestroy( inputdata_t &inputdata );
 
 	void	RocketDied( void );				// After rocket hits something and self-destructs (or times out)
-	Class_T	Classify( void ) 
+	Class_T	Classify( void )
 	{
-		if( m_bEnabled ) 
+		if( m_bEnabled )
 			return CLASS_COMBINE;
 
 		return CLASS_NONE;
@@ -123,7 +123,7 @@ public:
 
 	bool	FVisible( CBaseEntity *pEntity, int traceMask = MASK_BLOCKLOS, CBaseEntity **ppBlocker = NULL );
 
-	Vector	EyeOffset( Activity nActivity ) 
+	Vector	EyeOffset( Activity nActivity )
 	{
 		return vec3_origin;
 	}
@@ -181,7 +181,7 @@ protected:
 	float	m_flTimeLastFired;			// Cooldown time between attacks
 
 	float	m_flTimeSpentPaused;		// for search think's movements
-	float	m_flPauseLength;			
+	float	m_flPauseLength;
 	float	m_flTotalDivergenceX;
 	float	m_flTotalDivergenceY;
 
@@ -266,7 +266,7 @@ IMPLEMENT_SERVERCLASS_ST(CNPC_RocketTurret, DT_NPC_RocketTurret)
 
 	SendPropInt( SENDINFO( m_iLaserState ), 2 ),
 	SendPropInt( SENDINFO( m_nSiteHalo ) ),
-	SendPropVector( SENDINFO( m_vecCurrentAngles ) ), 
+	SendPropVector( SENDINFO( m_vecCurrentAngles ) ),
 
 END_SEND_TABLE()
 
@@ -325,7 +325,7 @@ CNPC_RocketTurret::CNPC_RocketTurret( void )
 	m_vecDirToEnemy.Init();
 
 	m_flTimeLastFired = m_flTimeLocking = m_flDistToEnemy = m_flTimeSpentDying	= 0.0f;
-	
+
 	m_iLightAttachment = m_iMuzzleAttachment = m_nSiteHalo = 0;
 
 	m_flTimeSpentPaused = m_flPauseLength = m_flTotalDivergenceX = m_flTotalDivergenceY = 0.0f;
@@ -335,7 +335,7 @@ CNPC_RocketTurret::CNPC_RocketTurret( void )
 
 CNPC_RocketTurret::~CNPC_RocketTurret( void )
 {
-	
+
 }
 
 
@@ -346,7 +346,7 @@ void CNPC_RocketTurret::Precache( void )
 {
 	PrecacheModel("effects/bluelaser1.vmt");
 	m_nSiteHalo = PrecacheModel("sprites/light_glow03.vmt");
-	
+
 	PrecacheScriptSound ( ROCKET_TURRET_SOUND_LOCKING );
 	PrecacheScriptSound ( ROCKET_TURRET_SOUND_LOCKED );
 	PrecacheScriptSound ( ROCKET_PROJECTILE_FIRE_SOUND );
@@ -364,7 +364,7 @@ void CNPC_RocketTurret::Precache( void )
 // Purpose: the entity
 //-----------------------------------------------------------------------------
 void CNPC_RocketTurret::Spawn( void )
-{ 
+{
 	Precache();
 
 	BaseClass::Spawn();
@@ -410,7 +410,7 @@ void CNPC_RocketTurret::Spawn( void )
 	{
 		SetThink( &CNPC_RocketTurret::FollowThink );
 	}
-	
+
 	SetNextThink( gpGlobals->curtime + ROCKET_TURRET_THINK_RATE );
 }
 
@@ -440,8 +440,8 @@ void CNPC_RocketTurret::UpdateOnRemove( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pEntity - 
+// Purpose:
+// Input  : *pEntity -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CNPC_RocketTurret::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **ppBlocker )
@@ -459,7 +459,7 @@ bool CNPC_RocketTurret::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEnti
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : void CNPC_RocketTurret::UpdateAimPoint
 //-----------------------------------------------------------------------------
 void CNPC_RocketTurret::UpdateAimPoint ( void )
@@ -478,7 +478,7 @@ void CNPC_RocketTurret::UpdateAimPoint ( void )
 	Vector vecMidEnemy = GetEnemy()->GetAbsOrigin() + (GetEnemy()->WorldAlignMins() + GetEnemy()->WorldAlignMaxs()) * 0.5f;
 
 	//Calculate dir and dist to enemy
-	m_vecDirToEnemy = vecMidEnemy - vecMid;	
+	m_vecDirToEnemy = vecMidEnemy - vecMid;
 	m_flDistToEnemy = VectorNormalize( m_vecDirToEnemy );
 	VectorAngles( m_vecDirToEnemy, m_vecAnglesToEnemy );
 
@@ -532,7 +532,7 @@ bool SignDiffers ( float f1, float f2 )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_RocketTurret::SearchThink()
 {
@@ -553,7 +553,7 @@ void CNPC_RocketTurret::SearchThink()
 			float flOffsetX = RandomFloat( -5.0f, 5.0f );
 			float flOffsetY = RandomFloat( -5.0f, 5.0f );
 
-			if ( fabsf(m_flTotalDivergenceX) <= MAX_DIVERGENCE_X || 
+			if ( fabsf(m_flTotalDivergenceX) <= MAX_DIVERGENCE_X ||
 				 SignDiffers( m_flTotalDivergenceX, flOffsetX ) )
 			{
 				m_flTotalDivergenceX += flOffsetX;
@@ -694,7 +694,7 @@ void CNPC_RocketTurret::LockingThink( void )
 // Purpose: Charge up, deal damage along our facing direction.
 //-----------------------------------------------------------------------------
 void CNPC_RocketTurret::FiringThink( void )
-{	
+{
 	//Allow descended classes a chance to do something before the think function
 	if ( PreThink() )
 		return;
@@ -829,7 +829,7 @@ void CNPC_RocketTurret::UpdateMuzzleMatrix()
 
 //-----------------------------------------------------------------------------
 // Purpose: Avoid aiming/drawing beams while opening and closing
-// Input  :  - 
+// Input  :  -
 //-----------------------------------------------------------------------------
 void CNPC_RocketTurret::OpeningThink()
 {
@@ -844,7 +844,7 @@ void CNPC_RocketTurret::OpeningThink()
 	float flCurProgress = GetCycle();
 	if ( flCurProgress >= 0.99f )
 	{
-		
+
 		LaserOn();
 		SetThink( &CNPC_RocketTurret::FollowThink );
 	}
@@ -854,7 +854,7 @@ void CNPC_RocketTurret::OpeningThink()
 
 //-----------------------------------------------------------------------------
 // Purpose: Avoid aiming/drawing beams while opening and closing
-// Input  :  - 
+// Input  :  -
 //-----------------------------------------------------------------------------
 void CNPC_RocketTurret::ClosingThink()
 {
@@ -882,7 +882,7 @@ void CNPC_RocketTurret::ClosingThink()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : void SyncPoseToAimAngles
 //-----------------------------------------------------------------------------
 void CNPC_RocketTurret::SyncPoseToAimAngles ( void )
@@ -1003,11 +1003,10 @@ bool CNPC_RocketTurret::TestPortalsForLOS( Vector* pOutVec, bool bConsiderNonPor
 			continue;
 		}
 
-		
+
 		bUsable[i] = FindAimPointThroughPortal( pPortals[ i ], &portalAimPoints[ i ] );
 		if ( 1 )
 		{
-			QAngle goalAngles;
 			Vector vecToEnemy = portalAimPoints[ i ] - EyePosition();
 			vecToEnemy.NormalizeInPlace();
 
@@ -1016,17 +1015,16 @@ bool CNPC_RocketTurret::TestPortalsForLOS( Vector* pOutVec, bool bConsiderNonPor
 			fPortalDot[i] = DotProduct( vecToEnemy, vCurAim );
 		}
 	}
-	
+
 
 	int iCountPortalsThatSeeTarget = 0;
-	
+
 	float fHighestDot = -1.0;
 	if ( bConsiderNonPortalAimPoint )
 	{
-		QAngle enemyRotToFace;
 		Vector vecToEnemy = vAimPoint - EyePosition();
 		vecToEnemy.NormalizeInPlace();
-	
+
 		fHighestDot			= DotProduct( vecToEnemy, vCurAim );
 	}
 
@@ -1055,10 +1053,10 @@ bool CNPC_RocketTurret::TestPortalsForLOS( Vector* pOutVec, bool bConsiderNonPor
 // Output : Vector& output point in world space where the target *appears* to be as seen through the portal
 //-----------------------------------------------------------------------------
 bool CNPC_RocketTurret::FindAimPointThroughPortal( const CProp_Portal* pPortal, Vector* pVecOut )
-{ 
+{
 	if ( pPortal && pPortal->m_bActivated )
 	{
-		CProp_Portal* pLinked = pPortal->m_hLinkedPortal.Get(); 
+		CProp_Portal* pLinked = pPortal->m_hLinkedPortal.Get();
 		CBaseEntity*  pTarget = GetEnemy();
 
 		// Require that the portal is facing towards the beam to test through it
@@ -1072,7 +1070,7 @@ bool CNPC_RocketTurret::FindAimPointThroughPortal( const CProp_Portal* pPortal, 
 		{
 			VMatrix matToPortalView = pLinked->m_matrixThisToLinked;
 			Vector vTargetAimPoint = pTarget->GetAbsOrigin() + (pTarget->WorldAlignMins() + pTarget->WorldAlignMaxs()) * 0.5f;
-			*pVecOut =  matToPortalView * vTargetAimPoint;   
+			*pVecOut =  matToPortalView * vTargetAimPoint;
 			return true;
 		}
 	}
@@ -1117,7 +1115,7 @@ void CNPC_RocketTurret::Toggle( void )
 	{
 		Disable();
 	}
-	else 
+	else
 	{
 		Enable();
 	}
@@ -1184,7 +1182,7 @@ void CNPC_RocketTurret::InputToggle( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_RocketTurret::InputEnable( inputdata_t &inputdata )
 {
@@ -1192,7 +1190,7 @@ void CNPC_RocketTurret::InputEnable( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_RocketTurret::InputDisable( inputdata_t &inputdata )
 {
@@ -1207,7 +1205,7 @@ void CNPC_RocketTurret::InputSetTarget( inputdata_t &inputdata )
 
 //-----------------------------------------------------------------------------
 // Purpose: Plays some 'death' effects and sets the destroy think
-// Input  : &inputdata - 
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CNPC_RocketTurret::InputDestroy( inputdata_t &inputdata )
 {
@@ -1227,8 +1225,8 @@ void CRocket_Turret_Projectile::Spawn( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pOther - 
+// Purpose:
+// Input  : *pOther -
 //-----------------------------------------------------------------------------
 void CRocket_Turret_Projectile::MissileTouch( CBaseEntity *pOther )
 {
@@ -1277,7 +1275,7 @@ void CRocket_Turret_Projectile::NotifyLauncherOnDeath( void )
 {
 	CNPC_RocketTurret* pLauncher = (CNPC_RocketTurret*)m_hLauncher.Get();
 
-	if ( pLauncher ) 
+	if ( pLauncher )
 	{
 		pLauncher->RocketDied();
 	}
@@ -1313,7 +1311,7 @@ void CRocket_Turret_Projectile::DoExplosion( void )
 	StopLoopingSounds();
 
 	// Explode
-	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), GetOwnerEntity(), 200, 25, 
+	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), GetOwnerEntity(), 200, 25,
 		SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 100.0f, this);
 
 	// Hackish: Knock turrets in the area
@@ -1326,7 +1324,7 @@ void CRocket_Turret_Projectile::DoExplosion( void )
 		CalculateExplosiveDamageForce( &info, (pTurretIter->GetAbsOrigin() - GetAbsOrigin()), GetAbsOrigin() );
 
 		pTurretIter->VPhysicsTakeDamage( info );
-	}	
+	}
 }
 
 void CRocket_Turret_Projectile::CreateSounds()
@@ -1372,7 +1370,7 @@ void CRocket_Turret_Projectile::CreateSmokeTrail( void )
 		m_hRocketTrail->m_SpawnRadius = 4;
 		m_hRocketTrail->m_MinSpeed = 2;
 		m_hRocketTrail->m_MaxSpeed = 16;
-		
+
 		m_hRocketTrail->SetLifetime( 999 );
 		m_hRocketTrail->FollowEntity( this, "0" );
 	}

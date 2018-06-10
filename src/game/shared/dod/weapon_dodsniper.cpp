@@ -1,10 +1,10 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
-#include "cbase.h" 
+#include "cbase.h"
 #include "fx_dod_shared.h"
 #include "weapon_dodsniper.h"
 
@@ -79,7 +79,7 @@ void CDODSniperWeapon::ResetTimers( void )
 bool CDODSniperWeapon::Holster( CBaseCombatWeapon *pSwitchingTo )
 {
 #ifndef CLIENT_DLL
-	ZoomOut();	
+	ZoomOut();
 
 	ResetTimers();
 #endif
@@ -277,7 +277,7 @@ void CDODSniperWeapon::ToggleZoom( void )
 		{
 			ZoomOut();
 		}
-	}	
+	}
 }
 
 void CDODSniperWeapon::ZoomIn( void )
@@ -290,8 +290,8 @@ void CDODSniperWeapon::ZoomIn( void )
 	m_bDoViewAnim = !m_bDoViewAnim;
 #endif
 
-	m_flNextPrimaryAttack = max( gpGlobals->curtime + 0.5, m_flNextPrimaryAttack );
-	m_flNextSecondaryAttack = max( gpGlobals->curtime + 0.5, m_flNextSecondaryAttack );
+	m_flNextPrimaryAttack = max( gpGlobals->curtime + 0.5f, m_flNextPrimaryAttack.Get() );
+	m_flNextSecondaryAttack = max( gpGlobals->curtime + 0.5f, m_flNextSecondaryAttack.Get() );
 	m_flTimeWeaponIdle = gpGlobals->curtime + m_pWeaponInfo->m_flTimeToIdleAfterFire;
 
 	m_flZoomChangeTime = gpGlobals->curtime;
@@ -307,10 +307,10 @@ void CDODSniperWeapon::ZoomOut( void )
 	SetZoomed( false );
 
 	m_bDoViewAnim = !m_bDoViewAnim;
-#endif	
+#endif
 
-	m_flNextPrimaryAttack = max( gpGlobals->curtime + 0.5, m_flNextPrimaryAttack );
-	m_flNextSecondaryAttack = max( gpGlobals->curtime + 0.5, m_flNextSecondaryAttack );
+	m_flNextPrimaryAttack = max( gpGlobals->curtime + 0.5f, m_flNextPrimaryAttack.Get() );
+	m_flNextSecondaryAttack = max( gpGlobals->curtime + 0.5f, m_flNextSecondaryAttack.Get() );
 	m_flTimeWeaponIdle = gpGlobals->curtime + m_pWeaponInfo->m_flTimeToIdleAfterFire;
 
 	m_flZoomChangeTime = gpGlobals->curtime;
@@ -350,7 +350,7 @@ bool CDODSniperWeapon::IsFullyZoomed( void )
 	{
 		if ( m_bDoViewAnim != m_bDoViewAnimCache )
 		{
-			// start the anim timer 
+			// start the anim timer
 			m_flViewAnimTimer = 0;
 			m_bDoViewAnimCache = m_bDoViewAnim.m_Value;
 		}
@@ -382,7 +382,7 @@ bool CDODSniperWeapon::IsFullyZoomed( void )
 		flLastPercent = flPercent;
 
 		// use that percent to interp to iron sight position
-		return ( flZoomPercent * GetDODWpnData().m_vecIronSightOffset + 
+		return ( flZoomPercent * GetDODWpnData().m_vecIronSightOffset +
 			( 1.0 - flZoomPercent ) * offset );
 	}
 

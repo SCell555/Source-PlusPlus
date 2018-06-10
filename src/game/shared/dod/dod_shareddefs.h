@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -60,7 +60,7 @@ enum
 
 //--------------
 // DoD Specific damage flags
-//--------------	
+//--------------
 
 // careful when reusing HL2 DMG_ flags, some of them cancel out the damage, eg if they are in DMG_TIMEBASED
 
@@ -123,18 +123,18 @@ enum DODPlayerState
 	// Happily running around in the game.
 	// This state can jump to a bunch of other states like STATE_PICKINGCLASS or STATE_DEATH_ANIM.
 	STATE_ACTIVE=0,
-	
+
 	// This is the state you're in when you first enter the server.
-	// It's switching between intro cameras every few seconds, and there's a level info 
+	// It's switching between intro cameras every few seconds, and there's a level info
 	// screen up.
 	STATE_WELCOME,			// Show the level intro screen.
-	
+
 	// During these states, you can either be a new player waiting to join, or
 	// you can be a live player in the game who wants to change teams.
 	// Either way, you can't move while choosing team or class (or while any menu is up).
 	STATE_PICKINGTEAM,			// Choosing team.
 	STATE_PICKINGCLASS,			// Choosing class.
-	
+
 	STATE_DEATH_ANIM,			// Playing death anim, waiting for that to finish.
 	STATE_DEATH_OBSERVING,		// Done playing death anim. Waiting for keypress to go into observer mode.
 	STATE_OBSERVER_MODE,		// Noclipping around, watching players, etc.
@@ -176,17 +176,17 @@ enum DODRoundState
 #define PLAYERCLASS_RANDOM		-2
 #define PLAYERCLASS_UNDEFINED	-1
 
-#define DOD_PLAYERMODEL_AXIS_RIFLEMAN	"models/player/german_rifleman.mdl"	
-#define DOD_PLAYERMODEL_AXIS_ASSAULT	"models/player/german_assault.mdl"	
+#define DOD_PLAYERMODEL_AXIS_RIFLEMAN	"models/player/german_rifleman.mdl"
+#define DOD_PLAYERMODEL_AXIS_ASSAULT	"models/player/german_assault.mdl"
 #define DOD_PLAYERMODEL_AXIS_SUPPORT	"models/player/german_support.mdl"
 #define DOD_PLAYERMODEL_AXIS_SNIPER		"models/player/german_sniper.mdl"
-#define DOD_PLAYERMODEL_AXIS_MG			"models/player/german_mg.mdl"	
-#define DOD_PLAYERMODEL_AXIS_ROCKET		"models/player/german_rocket.mdl"	
+#define DOD_PLAYERMODEL_AXIS_MG			"models/player/german_mg.mdl"
+#define DOD_PLAYERMODEL_AXIS_ROCKET		"models/player/german_rocket.mdl"
 
 #define DOD_PLAYERMODEL_US_RIFLEMAN		"models/player/american_rifleman.mdl"
 #define DOD_PLAYERMODEL_US_ASSAULT		"models/player/american_assault.mdl"
 #define DOD_PLAYERMODEL_US_SUPPORT		"models/player/american_support.mdl"
-#define DOD_PLAYERMODEL_US_SNIPER		"models/player/american_sniper.mdl"	
+#define DOD_PLAYERMODEL_US_SNIPER		"models/player/american_sniper.mdl"
 #define DOD_PLAYERMODEL_US_MG			"models/player/american_mg.mdl"
 #define DOD_PLAYERMODEL_US_ROCKET		"models/player/american_rocket.mdl"
 
@@ -210,7 +210,7 @@ typedef struct DodClassInfo_s
 	int geargroup;
 	int bodygroup;
 	int hairgroup;	//what helmet group to switch to when the helmet comes off
-	
+
 } DodClassInfo_t;
 
 extern DodClassInfo_t g_ClassInfo[];	//a structure to hold all of the classes
@@ -228,7 +228,7 @@ typedef struct DodVoiceCommand_s
 	char *pszAlliedSubtitle;	// subtitles for each nationality
 	char *pszAxisSubtitle;
 	char *pszBritishSubtitle;
-	
+
 } DodVoiceCommand_t;
 
 extern DodVoiceCommand_t g_VoiceCommands[];
@@ -417,7 +417,7 @@ extern const char * s_WeaponAliasInfo[];
 
 enum
 {
-	//Dod hint messages					
+	//Dod hint messages
 	HINT_FRIEND_SEEN = 0,				// #Hint_spotted_a_friend
 	HINT_ENEMY_SEEN,					// #Hint_spotted_an_enemy
 	HINT_FRIEND_INJURED,				// #Hint_try_not_to_injure_teammates
@@ -432,8 +432,8 @@ enum
 	HINT_AMMO_EXHAUSTED,				// #Hint_out_of_ammo
 	HINT_PRONE,							// #Hint_prone
 	HINT_LOW_STAMINA,					// #Hint_low_stamina
-	HINT_OBJECT_REQUIRED,				// #Hint_area_requires_object	
-	HINT_PLAYER_KILLED_WAVETIME,		// #Hint_player_killed_wavetime 
+	HINT_OBJECT_REQUIRED,				// #Hint_area_requires_object
+	HINT_PLAYER_KILLED_WAVETIME,		// #Hint_player_killed_wavetime
 	HINT_WEAPON_OVERHEAT,				// #Hint_mg_overheat
 	HINT_SHOULDER_WEAPON,				// #game_shoulder_rpg
 
@@ -499,7 +499,7 @@ enum
 	DOD_COLLISIONGROUP_SHELLS = LAST_SHARED_COLLISION_GROUP
 };
 
-typedef enum
+enum
 {
 	PROGRESS_BAR_BANDAGER = 0,
 	PROGRESS_BAR_BANDAGEE,

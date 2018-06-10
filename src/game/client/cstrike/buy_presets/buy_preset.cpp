@@ -1,6 +1,6 @@
 //====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
 
@@ -563,7 +563,7 @@ void WeaponSet::GetFromScratch( int& cost, WeaponSet& ws ) const
 	{
 		iHelmetPrice = CSGameRules()->GetBlackMarketPriceForWeapon( WEAPON_ASSAULTSUIT ) - CSGameRules()->GetBlackMarketPriceForWeapon( WEAPON_KEVLAR );
 		iKevlarPrice = CSGameRules()->GetBlackMarketPriceForWeapon( WEAPON_KEVLAR );
-		iNVGPrice = CSGameRules()->GetBlackMarketPriceForWeapon( WEAPON_NVG ); 
+		iNVGPrice = CSGameRules()->GetBlackMarketPriceForWeapon( WEAPON_NVG );
 	}
 
 	//-------------------------------------------------------------------------
@@ -902,18 +902,18 @@ static void ParseWeaponString( const char *str, BuyPresetWeaponList& weapons, bo
 			{
 				int maxRounds = GetCSAmmoDef()->MaxCarry( info->iAmmoType );
 				int buySize = GetCSAmmoDef()->GetBuySize( info->iAmmoType );
-				numClips = min(ceil(maxRounds/(float)buySize), max(0, numClips));
+				numClips = Min<float>(ceil(maxRounds/(float)buySize), max(0, numClips));
 				if ( ((!isPrimary) ^ IsPrimaryWeapon( weaponID )) == 0 )
 					return;
 			}
 			else
 			{
-				numClips = min(NUM_CLIPS_FOR_CURRENT, max(0, numClips));
+				numClips = Min<float>(NUM_CLIPS_FOR_CURRENT, max(0, numClips));
 			}
 		}
 		else
 		{
-			numClips = min(NUM_CLIPS_FOR_CURRENT, max(0, numClips));
+			numClips = Min<float>(NUM_CLIPS_FOR_CURRENT, max(0, numClips));
 		}
 
 		BuyPresetWeapon weapon( weaponID );

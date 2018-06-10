@@ -110,7 +110,7 @@ public:
 	// In case the client has the player entity, we transmit the player index.
 	// In case the client doesn't have it, we transmit the player's model index, origin, and angles
 	// so they can create a ragdoll in the right place.
-	CNetworkHandle( CBaseEntity, m_hPlayer );	// networked entity handle 
+	CNetworkHandle( CBaseEntity, m_hPlayer );	// networked entity handle
 	CNetworkVector( m_vecRagdollVelocity );
 	CNetworkVector( m_vecRagdollOrigin );
 };
@@ -142,7 +142,7 @@ END_DATADESC()
 LINK_ENTITY_TO_CLASS( player, CPortal_Player );
 
 IMPLEMENT_SERVERCLASS_ST(CPortal_Player, DT_Portal_Player)
-SendPropExclude( "DT_BaseAnimating", "m_flPlaybackRate" ),	
+SendPropExclude( "DT_BaseAnimating", "m_flPlaybackRate" ),
 SendPropExclude( "DT_BaseAnimating", "m_nSequence" ),
 SendPropExclude( "DT_BaseAnimating", "m_nNewSequenceParity" ),
 SendPropExclude( "DT_BaseAnimating", "m_nResetEventsParity" ),
@@ -153,7 +153,7 @@ SendPropExclude( "DT_BaseFlex", "m_flexWeight" ),
 SendPropExclude( "DT_BaseFlex", "m_blinktoggle" ),
 
 // portal_playeranimstate and clientside animation takes care of these on the client
-SendPropExclude( "DT_ServerAnimationData" , "m_flCycle" ),	
+SendPropExclude( "DT_ServerAnimationData" , "m_flCycle" ),
 SendPropExclude( "DT_AnimTimeMustBeFirst" , "m_flAnimTime" ),
 
 
@@ -274,7 +274,7 @@ CPortal_Player::~CPortal_Player( void )
 	if ( m_PlayerAnimState )
 		m_PlayerAnimState->Release();
 
-	CPortalRagdoll *pRagdoll = dynamic_cast<CPortalRagdoll*>( m_hRagdoll.Get() );	
+	CPortalRagdoll *pRagdoll = dynamic_cast<CPortalRagdoll*>( m_hRagdoll.Get() );
 	if( pRagdoll )
 	{
 		UTIL_Remove( pRagdoll );
@@ -531,7 +531,7 @@ bool CPortal_Player::Weapon_Switch( CBaseCombatWeapon *pWeapon, int viewmodelind
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPortal_Player::UpdateExpression( void )
 {
@@ -572,12 +572,12 @@ void CPortal_Player::UpdateExpression( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPortal_Player::ClearExpression( void )
 {
 	if ( m_hExpressionSceneEnt != NULL )
-	{ 
+	{
 		StopScriptedScene( this, m_hExpressionSceneEnt );
 	}
 	m_flExpressionLoopTime = gpGlobals->curtime;
@@ -602,7 +602,7 @@ void CPortal_Player::PreThink( void )
 
 	if( (m_afButtonPressed & IN_JUMP) )
 	{
-		Jump();	
+		Jump();
 	}
 
 	//Reset bullet force accumulator, only lasts one frame
@@ -741,17 +741,17 @@ void CPortal_Player::PlayerDeathThink(void)
 		return;
 	}
 
-	// if the player has been dead for one second longer than allowed by forcerespawn, 
-	// forcerespawn isn't on. Send the player off to an intermission camera until they 
+	// if the player has been dead for one second longer than allowed by forcerespawn,
+	// forcerespawn isn't on. Send the player off to an intermission camera until they
 	// choose to respawn.
 	if ( g_pGameRules->IsMultiplayer() && ( gpGlobals->curtime > (m_flDeathTime + DEATH_ANIMATION_TIME) ) && !IsObserver() )
 	{
-		// go to dead camera. 
+		// go to dead camera.
 		StartObserverMode( m_iObserverLastMode );
 	}
 
 	// wait for any button down,  or mp_forcerespawn is set and the respawn time is up
-	if (!fAnyButtonDown 
+	if (!fAnyButtonDown
 		&& !( g_pGameRules->IsMultiplayer() && forcerespawn.GetInt() > 0 && (gpGlobals->curtime > (m_flDeathTime + 5))) )
 		return;
 
@@ -896,7 +896,7 @@ bool CPortal_Player::WantsLagCompensationOnEntity( const CBasePlayer *pPlayer, c
 	const Vector &vMyOrigin = GetAbsOrigin();
 	const Vector &vHisOrigin = pPlayer->GetAbsOrigin();
 
-	// get max distance player could have moved within max lag compensation time, 
+	// get max distance player could have moved within max lag compensation time,
 	// multiply by 1.5 to to avoid "dead zones"  (sqrt(2) would be the exact value)
 	float maxDistance = 1.5 * pPlayer->MaxSpeed() * sv_maxunlag.GetFloat();
 
@@ -970,14 +970,14 @@ void CPortal_Player::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 		CBoneCache *pParentCache = pParent->GetBoneCache();
 		if ( pParentCache )
 		{
-			BuildMatricesWithBoneMerge( 
-				pStudioHdr, 
+			BuildMatricesWithBoneMerge(
+				pStudioHdr,
 				m_PlayerAnimState->GetRenderAngles(),
-				adjOrigin, 
-				pos, 
-				q, 
-				pBoneToWorld, 
-				pParent, 
+				adjOrigin,
+				pos,
+				q,
+				pBoneToWorld,
+				pParent,
 				pParentCache );
 
 			return;
@@ -985,11 +985,11 @@ void CPortal_Player::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 	}
 
 	Studio_BuildMatrices(
-		pStudioHdr, 
+		pStudioHdr,
 		m_PlayerAnimState->GetRenderAngles(),
-		adjOrigin, 
-		pos, 
-		q, 
+		adjOrigin,
+		pos,
+		q,
 		-1,
 		GetModelScale(),
 		pBoneToWorld,
@@ -1024,19 +1024,19 @@ CAI_Expresser *CPortal_Player::CreateExpresser()
 
 //-----------------------------------------------------------------------------
 
-CAI_Expresser *CPortal_Player::GetExpresser() 
-{ 
+CAI_Expresser *CPortal_Player::GetExpresser()
+{
 	if ( m_pExpresser )
 	{
 		m_pExpresser->Connect(this);
 	}
-	return m_pExpresser; 
+	return m_pExpresser;
 }
 
 
 extern int	gEvilImpulse101;
 //-----------------------------------------------------------------------------
-// Purpose: Player reacts to bumping a weapon. 
+// Purpose: Player reacts to bumping a weapon.
 // Input  : pWeapon - the weapon that the player bumped into.
 // Output : Returns true if player picked up the weapon
 //-----------------------------------------------------------------------------
@@ -1067,7 +1067,7 @@ bool CPortal_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 
 	bool bOwnsWeaponAlready = !!Weapon_OwnsThisType( pWeapon->GetClassname(), pWeapon->GetSubType());
 
-	if ( bOwnsWeaponAlready == true ) 
+	if ( bOwnsWeaponAlready == true )
 	{
 		// If we picked up a second portal gun set the bool to alow secondary fire
 		if ( pPickupPortalgun )
@@ -1157,7 +1157,7 @@ void CPortal_Player::VPhysicsShadowUpdate( IPhysicsObject *pPhysics )
 			// UNDONE: Filter out motion disabled objects?
 			if ( list[i]->GetMoveType() == MOVETYPE_VPHYSICS )
 			{
-				// I'm currently stuck inside a moving object, so allow vphysics to 
+				// I'm currently stuck inside a moving object, so allow vphysics to
 				// apply velocity to the player in order to separate these objects
 				m_touchedPhysObject = true;
 			}
@@ -1331,7 +1331,7 @@ bool CPortal_Player::UseFoundEntity( CBaseEntity *pUseEntity )
 {
 	bool usedSomething = false;
 
-	//!!!UNDONE: traceline here to prevent +USEing buttons through walls			
+	//!!!UNDONE: traceline here to prevent +USEing buttons through walls
 	int caps = pUseEntity->ObjectCaps();
 	variant_t emptyVariant;
 
@@ -1502,7 +1502,7 @@ void CPortal_Player::PlayerUse( void )
 		//}
 		usedSomething = UseFoundEntity( pUseEntity );
 	}
-	else 
+	else
 	{
 		Vector forward;
 		EyeVectors( &forward, NULL, NULL );
@@ -1653,7 +1653,7 @@ void CPortal_Player::CreateRagdollEntity( const CTakeDamageInfo &info )
 	pRagdoll = dynamic_cast<CPortalRagdoll*>( CreateEntityByName( "portal_ragdoll" ) );
 	if ( pRagdoll )
 	{
-		
+
 
 		pRagdoll->m_hPlayer = this;
 		pRagdoll->m_vecRagdollOrigin = GetAbsOrigin();
@@ -1718,7 +1718,7 @@ void CPortal_Player::Event_Killed( const CTakeDamageInfo &info )
 	//if( info.GetAttacker() )
 	//{
 	//	// set new target
-	//	m_hObserverTarget.Set( info.GetAttacker() ); 
+	//	m_hObserverTarget.Set( info.GetAttacker() );
 	//}
 	//else
 	//	m_hObserverTarget.Set( NULL );
@@ -1850,7 +1850,7 @@ int CPortal_Player::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 		VectorNormalize( vecDir );
 	}
 
-	if ( info.GetInflictor() && (GetMoveType() == MOVETYPE_WALK) && 
+	if ( info.GetInflictor() && (GetMoveType() == MOVETYPE_WALK) &&
 		( !attacker->IsSolidFlagSet(FSOLID_TRIGGER)) )
 	{
 		Vector force = vecDir;// * -DamageForce( WorldAlignSize(), info.GetBaseDamage() );
@@ -1867,7 +1867,7 @@ int CPortal_Player::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	if ( event )
 	{
 		event->SetInt("userid", GetUserID() );
-		event->SetInt("health", max(0, m_iHealth) );
+		event->SetInt("health", max(0, m_iHealth.Get()) );
 		event->SetInt("priority", 5 );	// HLTV event priority, not transmitted
 
 		if ( attacker->IsPlayer() )
@@ -2030,7 +2030,7 @@ void CPortal_Player::UpdatePortalViewAreaBits( unsigned char *pvs, int pvssize )
 			CProp_Portal* pRemotePortal = pLocalPortal->m_hLinkedPortal.Get();
 
 			// Make sure this portal's linked portal is in the PVS before we add what it can see
-			if ( pRemotePortal && pRemotePortal->m_bActivated && pRemotePortal->NetworkProp() && 
+			if ( pRemotePortal && pRemotePortal->m_bActivated && pRemotePortal->NetworkProp() &&
 				pRemotePortal->NetworkProp()->IsInPVS( edict(), pvs, pvssize ) )
 			{
 				portalArea[ i ] = engine->GetArea( pPortals[ i ]->GetAbsOrigin() );
@@ -2139,7 +2139,7 @@ void CPortal_Player::SetupVisibility( CBaseEntity *pViewEntity, unsigned char *p
 		pRemotePortal = pPortal->m_hLinkedPortal;
 
 		if ( pPortal && pRemotePortal && pPortal->m_bActivated && pRemotePortal->m_bActivated )
-		{		
+		{
 			Vector ptPortalCenter = pPortal->GetAbsOrigin();
 			Vector vPortalForward;
 			pPortal->GetVectors( &vPortalForward, NULL, NULL );
@@ -2158,7 +2158,7 @@ void CPortal_Player::SetupVisibility( CBaseEntity *pViewEntity, unsigned char *p
 				if ( !pViewEntity || pViewEntity->IsPlayer() )
 				{
 					area = engine->GetArea( eyeOrigin );
-				}	
+				}
 			}
 		}
 	}
@@ -2205,7 +2205,7 @@ CBaseEntity* CPortal_Player::EntSelectSpawnPoint( void )
 
 	CBaseEntity *pFirstSpot = pSpot;
 
-	do 
+	do
 	{
 		if ( pSpot )
 		{
@@ -2255,7 +2255,7 @@ ReturnSpot:
 	{
 	g_pLastCombineSpawn = pSpot;
 	}
-	else if ( GetTeamNumber() == TEAM_REBELS ) 
+	else if ( GetTeamNumber() == TEAM_REBELS )
 	{
 	g_pLastRebelSpawn = pSpot;
 	}

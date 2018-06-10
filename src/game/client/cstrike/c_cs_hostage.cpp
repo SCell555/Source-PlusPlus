@@ -43,7 +43,7 @@ class C_LowViolenceHostageDeathModel : public C_BaseAnimating
 {
 public:
 	DECLARE_CLASS( C_LowViolenceHostageDeathModel, C_BaseAnimating );
-	
+
 	C_LowViolenceHostageDeathModel();
 	~C_LowViolenceHostageDeathModel();
 
@@ -150,7 +150,7 @@ void C_LowViolenceHostageDeathModel::ClientThink( void )
 
 	int iAlpha = GetRenderColor().a;
 
-	iAlpha = max( iAlpha - ( g_ragdoll_fadespeed.GetInt() * gpGlobals->frametime ), 0 );
+	iAlpha = max( iAlpha - ( g_ragdoll_fadespeed.GetInt() * gpGlobals->frametime ), 0.f );
 
 	SetRenderMode( kRenderTransAlpha );
 	SetRenderColorA( iAlpha );
@@ -166,7 +166,7 @@ void C_LowViolenceHostageDeathModel::ClientThink( void )
 void C_CHostage::RecvProxy_Rescued( const CRecvProxyData *pData, void *pStruct, void *pOut )
 {
 	C_CHostage *pHostage= (C_CHostage *) pStruct;
-	
+
 	bool isRescued = pData->m_Value.m_Int != 0;
 
 	if ( isRescued && !pHostage->m_isRescued )
@@ -182,18 +182,18 @@ void C_CHostage::RecvProxy_Rescued( const CRecvProxyData *pData, void *pStruct, 
 
 //-----------------------------------------------------------------------------
 IMPLEMENT_CLIENTCLASS_DT(C_CHostage, DT_CHostage, CHostage)
-	
+
 	RecvPropInt( RECVINFO( m_isRescued ), 0, C_CHostage::RecvProxy_Rescued ),
 	RecvPropInt( RECVINFO( m_iHealth ) ),
 	RecvPropInt( RECVINFO( m_iMaxHealth ) ),
 	RecvPropInt( RECVINFO( m_lifeState ) ),
-	
+
 	RecvPropEHandle( RECVINFO( m_leader ) ),
 
 END_RECV_TABLE()
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_CHostage::C_CHostage()
 {
@@ -202,7 +202,7 @@ C_CHostage::C_CHostage()
 	m_flDeadOrRescuedTime = 0.0;
 	m_flLastBodyYaw = 0;
 	m_createdLowViolenceRagdoll = false;
-	
+
 	// TODO: Get IK working on the steep slopes CS has, then enable it on characters.
 	m_EntClientFlags |= ENTCLIENTFLAG_DONTUSEIK;
 
@@ -210,7 +210,7 @@ C_CHostage::C_CHostage()
 	SetModelName( "models/Characters/Hostage_01.mdl" );
 
 	m_PlayerAnimState = CreateHostageAnimState( this, this, LEGANIM_8WAY, false );
-	
+
 	m_leader = NULL;
 	m_blinkTimer.Invalidate();
 	m_seq = -1;
@@ -228,7 +228,7 @@ C_CHostage::C_CHostage()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_CHostage::~C_CHostage()
 {
@@ -283,9 +283,9 @@ C_BaseAnimating * C_CHostage::BecomeRagdollOnClient()
 }
 
 //-----------------------------------------------------------------------------
-/** 
+/**
  * Set up attachment and pose param indices.
- * We can't do this in the constructor or Spawn() because the data isn't 
+ * We can't do this in the constructor or Spawn() because the data isn't
  * there yet.
  */
 void C_CHostage::Initialize( )
@@ -360,7 +360,7 @@ void C_CHostage::UpdateLookAt( CStudioHdr *pStudioHdr )
 	{
 		m_lookAt = GetLeader()->EyePosition();
 	}
-	
+
 	// orient eyes
 	m_viewtarget = m_lookAt;
 
@@ -385,7 +385,7 @@ void C_CHostage::UpdateLookAt( CStudioHdr *pStudioHdr )
 
 	float flBodyYawDiff = bodyAngles[YAW] - m_flLastBodyYaw;
 	m_flLastBodyYaw = bodyAngles[YAW];
-	
+
 
 	// Set the head's yaw.
 	float desired = AngleNormalize( desiredAngles[YAW] - bodyAngles[YAW] );
@@ -395,14 +395,14 @@ void C_CHostage::UpdateLookAt( CStudioHdr *pStudioHdr )
 	// Counterrotate the head from the body rotation so it doesn't rotate past its target.
 	m_flCurrentHeadYaw = AngleNormalize( m_flCurrentHeadYaw - flBodyYawDiff );
 	desired = clamp( desired, m_headYawMin, m_headYawMax );
-	
+
 	SetPoseParameter( pStudioHdr, m_headYawPoseParam, m_flCurrentHeadYaw );
 
-	
+
 	// Set the head's yaw.
 	desired = AngleNormalize( desiredAngles[PITCH] );
 	desired = clamp( desired, m_headPitchMin, m_headPitchMax );
-	
+
 	m_flCurrentHeadPitch = ApproachAngle( desired, m_flCurrentHeadPitch, HOSTAGE_HEAD_TURN_RATE * gpGlobals->frametime );
 	m_flCurrentHeadPitch = AngleNormalize( m_flCurrentHeadPitch );
 	SetPoseParameter( pStudioHdr, m_headPitchPoseParam, m_flCurrentHeadPitch );

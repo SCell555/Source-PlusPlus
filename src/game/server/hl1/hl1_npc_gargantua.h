@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -18,7 +18,7 @@ public:
 	void Spawn( void );
 	void Precache( void );
 	Class_T  Classify ( void );
-	
+
 	float MaxYawSpeed ( void );
 
 	int MeleeAttack1Conditions( float flDot, float flDist );
@@ -33,12 +33,12 @@ public:
 
 	bool CanBecomeRagdoll() { return false; }
 
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
+	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	int		OnTakeDamage_Alive( const CTakeDamageInfo &info );
-		
+
 /*	int TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType );
 	void TraceAttack( entvars_t *pevAttacker, float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType );
-	
+
 	Schedule_t *GetScheduleOfType( int Type );
 	void StartTask( Task_t *pTask );
 	void RunTask( Task_t *pTask );
@@ -79,7 +79,7 @@ private:
 	float		m_streakTime;		// streak timer (don't send too many)
 	float		m_flameX;			// Flame thrower aim
 	float		m_flameY;
-	
+
 	float		m_flDmgTime;
 };
 

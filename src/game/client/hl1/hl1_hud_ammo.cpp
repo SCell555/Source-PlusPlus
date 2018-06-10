@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -15,7 +15,7 @@
 #include <vgui_controls/Panel.h>
 #include "ihudlcd.h"
 
-#define MIN_ALPHA	100	
+#define MIN_ALPHA	100
 
 
 //-----------------------------------------------------------------------------
@@ -51,7 +51,7 @@ CHudAmmo::CHudAmmo( const char *pElementName ) : CHudElement( pElementName ), Ba
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudAmmo::Init( void )
 {
@@ -60,7 +60,7 @@ void CHudAmmo::Init( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudAmmo::VidInit( void )
 {
@@ -119,7 +119,7 @@ void CHudAmmo::Paint( void )
 	int nFontWidth	= GetNumberFontWidth();
 	int nFontHeight	= GetNumberFontHeight();
 
-	a = (int)max( MIN_ALPHA, m_flFade );
+	a = (int)max( (float)MIN_ALPHA, m_flFade );
 
 	if ( m_flFade > 0 )
 		m_flFade -= ( gpGlobals->frametime * 20 );
@@ -144,11 +144,11 @@ void CHudAmmo::Paint( void )
 		}
 
 		int nIconWidth	= icon_ammo->Width();
-		
+
 		if ( pActiveWeapon->UsesClipsForAmmo1() )
 		{
 			// room for the number and the '|' and the current ammo
-			
+
 			x = nHudElemWidth - (8 * nFontWidth) - nIconWidth;
 			x = DrawHudNumber( x, y, pActiveWeapon->Clip1(), clrAmmo );
 
@@ -166,7 +166,7 @@ void CHudAmmo::Paint( void )
 
 			x += nBarWidth + nFontWidth / 2;
 
-			x = DrawHudNumber( x, y, pPlayer->GetAmmoCount( pActiveWeapon->GetPrimaryAmmoType() ), clrAmmo );		
+			x = DrawHudNumber( x, y, pPlayer->GetAmmoCount( pActiveWeapon->GetPrimaryAmmoType() ), clrAmmo );
 		}
 		else
 		{

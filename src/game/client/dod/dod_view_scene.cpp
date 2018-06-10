@@ -102,7 +102,7 @@ void CDODViewRender::PerformStunEffect( const CViewSetup &view )
 
 		pPlayer->m_flStunAlpha += 45;
 
-		pPlayer->m_flStunAlpha = min( pPlayer->m_flStunAlpha, pPlayer->m_flStunMaxAlpha );
+		pPlayer->m_flStunAlpha = min( pPlayer->m_flStunAlpha, pPlayer->m_flStunMaxAlpha.Get() );
 
 		overlaycolor[3] = pPlayer->m_flStunAlpha;
 
@@ -237,7 +237,7 @@ void CDODViewRender::SetupColorCorrection( )
 
 				// fade in from round start time
 				flEffectAlpha = 1.0 - ( gpGlobals->curtime - flFadeOutStartTime ) / ( 2.0f );
-				flEffectAlpha = max( 0.0f, flEffectAlpha );				
+				flEffectAlpha = max( 0.0f, flEffectAlpha );
 			}
 		}
 

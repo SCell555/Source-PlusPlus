@@ -1,7 +1,7 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Bullseyes act as targets for other NPC's to attack and to trigger
-//			events 
+//			events
 //
 // $Workfile:     $
 // $Date:         $
@@ -67,7 +67,7 @@ int ACT_THREAT_DISPLAY;
 //	> Squad slots
 // -----------------------------------------------
 enum AGruntSquadSlot_T
-{	
+{
 	AGRUNT_SQUAD_SLOT_HORNET1 = LAST_SHARED_SQUADSLOT,
 	AGRUNT_SQUAD_SLOT_HORNET2,
 	AGRUNT_SQUAD_SLOT_CHASE,
@@ -89,7 +89,7 @@ enum
 //=========================================================
 // monster-specific tasks
 //=========================================================
-enum 
+enum
 {
 	TASK_AGRUNT_SETUP_HIDE_ATTACK = LAST_SHARED_TASK,
 	TASK_AGRUNT_GET_PATH_TO_ENEMY_CORPSE,
@@ -117,12 +117,12 @@ public:
 
 	bool ShouldSpeak( void );
 	void PrescheduleThink ( void );
-	
+
 	bool FCanCheckAttacks ( void );
 
 	int MeleeAttack1Conditions ( float flDot, float flDist );
 	int RangeAttack1Conditions ( float flDot, float flDist );
-	
+
 	void StopTalking ( void );
 
 	void StartTask( const Task_t *pTask );
@@ -131,7 +131,7 @@ public:
 	int TranslateSchedule( int scheduleType ); //GetScheduleOfType
 	int SelectSchedule( void ); // GetSchedule
 
-	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
+	void	TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	int		IRelationPriority( CBaseEntity *pTarget );
 /*
 	int IRelationship( CBaseEntity *pTarget );
@@ -139,7 +139,7 @@ public:
 public:
 	DECLARE_DATADESC();
 	DEFINE_CUSTOM_AI;
-	
+
 	bool	m_fCanHornetAttack;
 	float	m_flNextHornetAttackCheck;
 
@@ -210,12 +210,12 @@ void CNPC_AlienGrunt::Spawn()
 	m_flNextSpeakTime	= m_flNextWordTime = gpGlobals->curtime + 10 + random->RandomInt( 0, 10 );
 
 	SetHullType(HULL_WIDE_HUMAN);
-	SetHullSizeNormal();	
+	SetHullSizeNormal();
 
 	SetRenderColor( 255, 255, 255, 255 );
-	
+
 	NPCInit();
-	
+
 	BaseClass::Spawn();
 }
 
@@ -240,7 +240,7 @@ void CNPC_AlienGrunt::Precache()
 	PrecacheScriptSound( "AlienGrunt.Attack" );
 	PrecacheScriptSound( "AlienGrunt.Pain" );
 	PrecacheScriptSound( "AlienGrunt.Idle" );
-}	
+}
 
 float CNPC_AlienGrunt::MaxYawSpeed( void )
 {
@@ -319,7 +319,7 @@ void CNPC_AlienGrunt::HandleAnimEvent( animevent_t *pEvent )
 			GetAttachment( "0", vecArmPos, angArmDir );
 
 			vecArmPos = vecArmPos + vecDirToEnemy * 32;
-		
+
 			CPVSFilter filter( GetAbsOrigin() );
 			te->Sprite( filter, 0.0,
 				&vecArmPos, iAgruntMuzzleFlash, random->RandomFloat( 0.4, 0.8 ), 128 );
@@ -328,10 +328,10 @@ void CNPC_AlienGrunt::HandleAnimEvent( animevent_t *pEvent )
 
 			Vector vForward;
 			AngleVectors( angDir, &vForward );
-	
+
 			pHornet->SetAbsVelocity( vForward * 300 );
 			pHornet->SetOwnerEntity( this );
-			
+
 			EmitSound( "Weapon_Hornetgun.Single" );
 
 			CHL1BaseNPC *pHornetMonster = (CHL1BaseNPC *)pHornet->MyNPCPointer();
@@ -367,7 +367,7 @@ void CNPC_AlienGrunt::HandleAnimEvent( animevent_t *pEvent )
 
 			CBaseEntity *pHurt = CheckTraceHullAttack( AGRUNT_MELEE_DIST, vecMins, vecMaxs, sk_agrunt_dmg_punch.GetFloat(), DMG_CLUB );
 			CPASAttenuationFilter filter4( this );
-			
+
 			if ( pHurt )
 			{
 				if ( pHurt->GetFlags() & ( FL_NPC | FL_CLIENT ) )
@@ -407,7 +407,7 @@ void CNPC_AlienGrunt::HandleAnimEvent( animevent_t *pEvent )
 
 			CBaseEntity *pHurt = CheckTraceHullAttack( AGRUNT_MELEE_DIST, vecMins, vecMaxs, sk_agrunt_dmg_punch.GetFloat(), DMG_CLUB );
 			CPASAttenuationFilter filter5( this );
-				
+
 			if ( pHurt )
 			{
 				if ( pHurt->GetFlags() & ( FL_NPC | FL_CLIENT ) )
@@ -511,8 +511,8 @@ bool CNPC_AlienGrunt::ShouldSpeak( void )
 		if ( m_NPCState != NPC_STATE_COMBAT )
 		{
 			// if gagged, don't talk outside of combat.
-			// if not going to talk because of this, put the talk time 
-			// into the future a bit, so we don't talk immediately after 
+			// if not going to talk because of this, put the talk time
+			// into the future a bit, so we don't talk immediately after
 			// going into combat
 			m_flNextSpeakTime = gpGlobals->curtime + 3;
 			return FALSE;
@@ -523,12 +523,12 @@ bool CNPC_AlienGrunt::ShouldSpeak( void )
 }
 
 //=========================================================
-// PrescheduleThink 
+// PrescheduleThink
 //=========================================================
 void CNPC_AlienGrunt::PrescheduleThink ( void )
 {
 	BaseClass::PrescheduleThink();
-	
+
 	if ( ShouldSpeak() )
 	{
 		if ( m_flNextWordTime < gpGlobals->curtime )
@@ -565,8 +565,8 @@ bool CNPC_AlienGrunt::FCanCheckAttacks ( void )
 }
 
 //=========================================================
-// CheckMeleeAttack1 - alien grunts zap the crap out of 
-// any enemy that gets too close. 
+// CheckMeleeAttack1 - alien grunts zap the crap out of
+// any enemy that gets too close.
 //=========================================================
 int CNPC_AlienGrunt::MeleeAttack1Conditions ( float flDot, float flDist )
 {
@@ -583,11 +583,11 @@ int CNPC_AlienGrunt::MeleeAttack1Conditions ( float flDot, float flDist )
 }
 
 //=========================================================
-// CheckRangeAttack1 
+// CheckRangeAttack1
 //
 // !!!LATER - we may want to load balance this. Several
 // tracelines are done, so we may not want to do this every
-// server frame. Definitely not while firing. 
+// server frame. Definitely not while firing.
 //=========================================================
 int CNPC_AlienGrunt::RangeAttack1Conditions ( float flDot, float flDist )
 {
@@ -616,27 +616,27 @@ int CNPC_AlienGrunt::RangeAttack1Conditions ( float flDot, float flDist )
 
 	if ( flDot < 0.5 )
 		 return COND_NONE;
-	
+
 	if ( HasCondition( COND_SEE_ENEMY ) )
 	{
 		trace_t tr;
 		Vector	vecArmPos;
 		QAngle	angArmDir;
-		
+
 		// verify that a shot fired from the gun will hit the enemy before the world.
 		// !!!LATER - we may wish to do something different for projectile weapons as opposed to instant-hit
 		GetAttachment( "0", vecArmPos, angArmDir );
 		UTIL_TraceLine( vecArmPos, GetEnemy()->BodyTarget( vecArmPos ), MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
-		
+
 		if ( tr.fraction == 1.0 || tr.m_pEnt == GetEnemy() )
 		{
 			m_flNextHornetAttackCheck = gpGlobals->curtime + random->RandomFloat( 2, 5 );
 			m_fCanHornetAttack = true;
-			
+
 			return COND_CAN_RANGE_ATTACK1;
 		}
 	}
-	
+
 	m_flNextHornetAttackCheck = gpGlobals->curtime + 0.2;// don't check for half second if this check wasn't successful
 	m_fCanHornetAttack = false;
 	return COND_NONE;
@@ -683,7 +683,7 @@ void CNPC_AlienGrunt::StartTask ( const Task_t *pTask )
 		break;
 
 	case TASK_AGRUNT_SETUP_HIDE_ATTACK:
-		// alien grunt shoots hornets back out into the open from a concealed location. 
+		// alien grunt shoots hornets back out into the open from a concealed location.
 		// try to find a spot to throw that gives the smart weapon a good chance of finding the enemy.
 		// ideally, this spot is along a line that is perpendicular to a line drawn from the agrunt to the enemy.
 
@@ -713,7 +713,7 @@ void CNPC_AlienGrunt::StartTask ( const Task_t *pTask )
 				fSkip = TRUE;
 				TaskComplete();
 			}
-			
+
 			if ( !fSkip )
 			{
 				UTIL_TraceLine( WorldSpaceCenter() - vForward * 128, vecEnemyLKP, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
@@ -724,7 +724,7 @@ void CNPC_AlienGrunt::StartTask ( const Task_t *pTask )
 					TaskComplete();
 				}
 			}
-			
+
 			if ( !fSkip )
 			{
 				UTIL_TraceLine( WorldSpaceCenter() + vForward * 256, vecEnemyLKP, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
@@ -735,7 +735,7 @@ void CNPC_AlienGrunt::StartTask ( const Task_t *pTask )
 					TaskComplete();
 				}
 			}
-			
+
 			if ( !fSkip )
 			{
 				UTIL_TraceLine( WorldSpaceCenter() - vForward * 256, vecEnemyLKP, MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr);
@@ -746,7 +746,7 @@ void CNPC_AlienGrunt::StartTask ( const Task_t *pTask )
 					TaskComplete();
 				}
 			}
-			
+
 			if ( !fSkip )
 			{
 				TaskFail( FAIL_NO_COVER );
@@ -795,7 +795,7 @@ void CNPC_AlienGrunt::RunTask( const Task_t *pTask )
 // monster's member function to get a pointer to a schedule
 // of the proper type.
 //=========================================================
-int CNPC_AlienGrunt::SelectSchedule( void )		
+int CNPC_AlienGrunt::SelectSchedule( void )
 {
 	if ( HasCondition( COND_HEAR_DANGER ) )
 	{
@@ -855,11 +855,11 @@ int CNPC_AlienGrunt::TranslateSchedule( int scheduleType )
 	case SCHED_TAKE_COVER_FROM_ENEMY:
 			return SCHED_AGRUNT_TAKE_COVER_FROM_ENEMY;
 		break;
-	
+
 	/*case SCHED_RANGE_ATTACK1:
 			if ( HasCondition( COND_SEE_ENEMY ) )
 				return SCHED_AGRUNT_RANGE_ATTACK;
-		//	else 
+		//	else
 		//		return SCHED_AGRUNT_HIDDEN_RANGE_ATTACK;
 		break;*/
 
@@ -877,7 +877,7 @@ int CNPC_AlienGrunt::TranslateSchedule( int scheduleType )
 			{
 				// I have an enemy
 				// !!!LATER - what if this enemy is really far away and i'm chasing him?
-				// this schedule will make me stop, face his last known position for 2 
+				// this schedule will make me stop, face his last known position for 2
 				// seconds, and then try to move again
 				return SCHED_AGRUNT_COMBAT_FAIL;
 			}
@@ -886,16 +886,16 @@ int CNPC_AlienGrunt::TranslateSchedule( int scheduleType )
 		}
 		break;
 	}
-	
+
 	return BaseClass::TranslateSchedule( scheduleType );
 }
 
-void CNPC_AlienGrunt::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr )
+void CNPC_AlienGrunt::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo ainfo = info;
-	
+
 	float flDamage = ainfo.GetDamage();
-	
+
 	if ( ptr->hitgroup == 10 && (ainfo.GetDamageType() & (DMG_BULLET | DMG_SLASH | DMG_CLUB)))
 	{
 		// hit armor
@@ -987,14 +987,14 @@ AI_BEGIN_CUSTOM_NPC( monster_alien_grunt, CNPC_AlienGrunt )
 	)
 
 	//=========================================================
-	// Standoff schedule. Used in combat when a monster is 
-	// hiding in cover or the enemy has moved out of sight. 
+	// Standoff schedule. Used in combat when a monster is
+	// hiding in cover or the enemy has moved out of sight.
 	// Should we look around in this schedule?
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
 		SCHED_AGRUNT_STANDOFF,
-		
+
 			"	Tasks"
 			"		TASK_STOP_MOVING			0"
 			"		TASK_SET_ACTIVITY			ACTIVITY:ACT_IDLE"
@@ -1053,8 +1053,8 @@ AI_BEGIN_CUSTOM_NPC( monster_alien_grunt, CNPC_AlienGrunt )
 	)
 
 	//=========================================================
-	// Take cover from enemy! Tries lateral cover before node 
-	// cover! 
+	// Take cover from enemy! Tries lateral cover before node
+	// cover!
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
@@ -1066,7 +1066,7 @@ AI_BEGIN_CUSTOM_NPC( monster_alien_grunt, CNPC_AlienGrunt )
 			"	TASK_RUN_PATH					0"
 			"	TASK_WAIT_FOR_MOVEMENT			0"
 			"	TASK_REMEMBER					MEMORY:INCOVER"
-			"	TASK_FACE_ENEMY					0"	
+			"	TASK_FACE_ENEMY					0"
 			"	"
 			"	Interrupts"
 			"	COND_NEW_ENEMY"

@@ -1,7 +1,7 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Bullseyes act as targets for other NPC's to attack and to trigger
-//			events 
+//			events
 //
 // $Workfile:     $
 // $Date:         $
@@ -49,7 +49,7 @@ enum { HEAD_GLASSES = 0, HEAD_EINSTEIN = 1, HEAD_LUTHER = 2, HEAD_SLICK = 3 };
 int ACT_EXCITED;
 
 //=========================================================
-// Makes it fast to check barnacle classnames in 
+// Makes it fast to check barnacle classnames in
 // IsValidEnemy()
 //=========================================================
 string_t	s_iszBarnacleClassname;
@@ -84,7 +84,7 @@ BEGIN_DATADESC( CNPC_Scientist )
 END_DATADESC()
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //
 //
 //-----------------------------------------------------------------------------
@@ -95,7 +95,7 @@ void CNPC_Scientist::Precache( void )
 	PrecacheScriptSound( "Scientist.Pain" );
 
 	TalkInit();
-	
+
 	BaseClass::Precache();
 }
 
@@ -111,7 +111,7 @@ void CNPC_Scientist::ModifyOrAppendCriteria( AI_CriteriaSet& criteriaSet )
 // Init talk data
 void CNPC_Scientist::TalkInit()
 {
-	
+
 	BaseClass::TalkInit();
 
 	// scientist will try to talk to friends in this order:
@@ -132,7 +132,7 @@ void CNPC_Scientist::TalkInit()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //
 //
 //-----------------------------------------------------------------------------
@@ -142,10 +142,10 @@ void CNPC_Scientist::Spawn( void )
 	//Select the body first if it's going to be random cause we set his voice pitch in Precache.
 	if ( m_nBody == -1 )
 		 m_nBody = random->RandomInt( 0, NUM_SCIENTIST_HEADS-1 );// pick a head, any head
-	
+
 
 	SetRenderColor( 255, 255, 255, 255 );
-	
+
 	Precache();
 
 	SetModel( "models/scientist.mdl" );
@@ -169,11 +169,11 @@ void CNPC_Scientist::Spawn( void )
 	// White hands
 	m_nSkin = 0;
 
-	
+
 	// Luther is black, make his hands black
 	if ( m_nBody == HEAD_LUTHER )
 		 m_nSkin = 1;
-	
+
 	NPCInit();
 
 	SetUse( &CNPC_Scientist::FollowerUse );
@@ -190,10 +190,10 @@ void CNPC_Scientist::Activate()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //
 //
-// Output : 
+// Output :
 //-----------------------------------------------------------------------------
 Class_T	CNPC_Scientist::Classify( void )
 {
@@ -215,7 +215,7 @@ int CNPC_Scientist::GetSoundInterests ( void )
 void CNPC_Scientist::HandleAnimEvent( animevent_t *pEvent )
 {
 	switch( pEvent->event )
-	{		
+	{
 	case SCIENTIST_AE_HEAL:		// Heal my target (if within range)
 		Heal();
 		break;
@@ -299,7 +299,7 @@ void CNPC_Scientist::SUB_LVFadeOut( void  )
 		dt = 0.1f;
 	}
 	m_nRenderMode = kRenderTransTexture;
-	int speed = max(3,256*dt); // fade out over 3 seconds
+	int speed = max(3.f,256*dt); // fade out over 3 seconds
 	SetRenderColorA( UTIL_Approach( 0, m_clrRender->a, speed ) );
 	NetworkStateChanged();
 
@@ -324,10 +324,10 @@ void CNPC_Scientist::Scream( void )
 }
 
 Activity CNPC_Scientist::GetStoppedActivity( void )
-{ 
-	if ( GetEnemy() != NULL ) 
+{
+	if ( GetEnemy() != NULL )
 		return (Activity)ACT_EXCITED;
-	
+
 	return BaseClass::GetStoppedActivity();
 }
 
@@ -360,7 +360,7 @@ void CNPC_Scientist::StartTask( const Task_t *pTask )
 
 		TaskComplete();
 		break;
-	 
+
 	case TASK_SCREAM:
 		Scream();
 		TaskComplete();
@@ -499,7 +499,7 @@ int CNPC_Scientist::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 
 void CNPC_Scientist::Event_Killed( const CTakeDamageInfo &info )
 {
-	SetUse( NULL );	
+	SetUse( NULL );
 	BaseClass::Event_Killed( info );
 
 	if ( UTIL_IsLowViolence() )
@@ -509,7 +509,7 @@ void CNPC_Scientist::Event_Killed( const CTakeDamageInfo &info )
 }
 
 bool CNPC_Scientist::CanHeal( void )
-{ 
+{
 	CBaseEntity *pTarget = GetFollowTarget();
 
 	if ( pTarget == NULL )
@@ -531,7 +531,7 @@ void CNPC_Scientist::PainSound ( const CTakeDamageInfo &info )
 {
 	if (gpGlobals->curtime < m_flPainTime )
 		return;
-	
+
 	m_flPainTime = gpGlobals->curtime + random->RandomFloat( 0.5, 0.75 );
 
 	CPASAttenuationFilter filter( this );
@@ -547,7 +547,7 @@ void CNPC_Scientist::PainSound ( const CTakeDamageInfo &info )
 }
 
 //=========================================================
-// DeathSound 
+// DeathSound
 //=========================================================
 void CNPC_Scientist::DeathSound( const CTakeDamageInfo &info )
 {
@@ -579,7 +579,7 @@ int CNPC_Scientist::TranslateSchedule( int scheduleType )
 			int baseType;
 
 			// call base class default so that scientist will talk
-			// when 'used' 
+			// when 'used'
 			baseType = BaseClass::TranslateSchedule( scheduleType );
 
 			if (baseType == SCHED_IDLE_STAND)
@@ -596,7 +596,7 @@ int CNPC_Scientist::TranslateSchedule( int scheduleType )
 	case SCHED_IDLE_STAND:
 		{
 			int baseType;
-				
+
 			baseType = BaseClass::TranslateSchedule( scheduleType );
 
 			if (baseType == SCHED_IDLE_STAND)
@@ -679,8 +679,8 @@ int CNPC_Scientist::SelectSchedule( void )
 		return BaseClass::SelectSchedule();
 	}
 
-	
-	
+
+
 	if ( HasCondition( COND_HEAR_DANGER ) && m_NPCState != NPC_STATE_PRONE )
 	{
 		CSound *pSound;
@@ -693,7 +693,7 @@ int CNPC_Scientist::SelectSchedule( void )
 	switch( m_NPCState )
 	{
 
-	case NPC_STATE_ALERT:	
+	case NPC_STATE_ALERT:
 	case NPC_STATE_IDLE:
 
 		if ( pEnemy )
@@ -712,13 +712,13 @@ int CNPC_Scientist::SelectSchedule( void )
 			// flinch if hurt
 			return SCHED_SMALL_FLINCH;
 		}
-	
+
 		// Cower when you hear something scary
-		if ( HasCondition( COND_HEAR_DANGER ) || HasCondition( COND_HEAR_COMBAT ) ) 
+		if ( HasCondition( COND_HEAR_DANGER ) || HasCondition( COND_HEAR_COMBAT ) )
 		{
 			CSound *pSound;
 			pSound = GetBestSound();
-		
+
 			if ( pSound )
 			{
 				if ( pSound->IsSoundType(SOUND_DANGER | SOUND_COMBAT) )
@@ -731,7 +731,7 @@ int CNPC_Scientist::SelectSchedule( void )
 				}
 			}
 		}
-		
+
 		if ( GetFollowTarget() )
 		{
 			if ( !GetFollowTarget()->IsAlive() )
@@ -740,13 +740,13 @@ int CNPC_Scientist::SelectSchedule( void )
 				StopFollowing();
 				break;
 			}
-			
+
 			int relationship = D_NU;
 
 			// Nothing scary, just me and the player
 			if ( pEnemy != NULL )
 				 relationship = IRelationType( pEnemy );
-			
+
 			if ( relationship != D_HT )
 			{
 				return SCHED_TARGET_FACE;	// Just face and follow.
@@ -770,10 +770,10 @@ int CNPC_Scientist::SelectSchedule( void )
 			return SCHED_SCI_FEAR;					// Point and scream!
 		if ( HasCondition( COND_SEE_ENEMY ) )
 			return SCHED_SCI_COVER;		// Take Cover
-		
+
 		if ( HasCondition( COND_HEAR_COMBAT ) || HasCondition( COND_HEAR_DANGER ) )
 			 return SCHED_TAKE_COVER_FROM_BEST_SOUND;	// Cower and panic from the scary sound!
-	
+
 		return SCHED_SCI_COVER;			// Run & Cower
 		break;
 	}
@@ -800,7 +800,7 @@ NPC_STATE CNPC_Scientist::SelectIdealState ( void )
 				StopFollowing();
 			}
 		}
-		else if ( HasCondition( COND_LIGHT_DAMAGE  ) || HasCondition( COND_HEAVY_DAMAGE ) ) 
+		else if ( HasCondition( COND_LIGHT_DAMAGE  ) || HasCondition( COND_HEAVY_DAMAGE ) )
 		{
 			// Stop following if you take damage
 			if ( GetFollowTarget() )
@@ -896,7 +896,7 @@ bool CNPC_DeadScientist::KeyValue( const char *szKeyName, const char *szValue )
 {
 	if ( FStrEq( szKeyName, "pose" ) )
 		m_iPose = atoi( szValue );
-	else 
+	else
 		BaseClass::KeyValue( szKeyName, szValue );
 
 	return true;
@@ -911,7 +911,7 @@ void CNPC_DeadScientist::Spawn( void )
 {
 	PrecacheModel("models/scientist.mdl");
 	SetModel( "models/scientist.mdl" );
-	
+
 	ClearEffects();
 	SetSequence( 0 );
 	m_bloodColor		= BLOOD_COLOR_RED;
@@ -967,7 +967,7 @@ BEGIN_DATADESC( CNPC_SittingScientist )
 END_DATADESC()
 
 
-// animation sequence aliases 
+// animation sequence aliases
 typedef enum
 {
 SITTING_ANIM_sitlookleft,
@@ -996,7 +996,7 @@ void CNPC_SittingScientist::Spawn( )
 	AddSolidFlags( FSOLID_NOT_STANDABLE );
 	SetMoveType( MOVETYPE_STEP );
 	m_iHealth			= 50;
-	
+
 	m_bloodColor		= BLOOD_COLOR_RED;
 	m_flFieldOfView		= VIEW_FIELD_WIDE; // indicates the width of this monster's forward view cone ( as a dotproduct result )
 
@@ -1014,7 +1014,7 @@ void CNPC_SittingScientist::Spawn( )
 	// Luther is black, make his hands black
 	if ( m_nBody == HEAD_LUTHER )
 		 m_nBody = 1;
-	
+
 	UTIL_DropToFloor( this,MASK_SOLID );
 
 	NPCInit();
@@ -1046,7 +1046,7 @@ int CNPC_SittingScientist::FriendNumber( int arrayNumber )
 //=========================================================
 void CNPC_SittingScientist::SittingThink( void )
 {
-	CBaseEntity *pent;	
+	CBaseEntity *pent;
 
 	StudioFrameAdvance( );
 
@@ -1063,12 +1063,12 @@ void CNPC_SittingScientist::SittingThink( void )
 
 			if (yaw > 180) yaw -= 360;
 			if (yaw < -180) yaw += 360;
-				
+
 			if (yaw > 0)
 				SetSequence( m_baseSequence + SITTING_ANIM_sitlookleft );
 			else
 				SetSequence ( m_baseSequence + SITTING_ANIM_sitlookright );
-		
+
 			ResetSequenceInfo( );
 			SetCycle( 0 );
 			SetBoneController( 0, 0 );
@@ -1080,7 +1080,7 @@ void CNPC_SittingScientist::SittingThink( void )
 	{
 		int i = random->RandomInt(0,99);
 		m_iHeadTurn = 0;
-		
+
 		if (m_flResponseDelay && gpGlobals->curtime > m_flResponseDelay)
 		{
 			// respond to question
@@ -1101,7 +1101,7 @@ void CNPC_SittingScientist::SittingThink( void )
 				pent = FindNamedEntity( "!nearestfriend" );
 
 			if (!FIdleSpeak() || !pent)
-			{	
+			{
 				m_iHeadTurn = random->RandomInt(0,8) * 10 - 40;
 				SetSequence( m_baseSequence + SITTING_ANIM_sitting3 );
 			}
@@ -1112,7 +1112,7 @@ void CNPC_SittingScientist::SittingThink( void )
 
 				if (yaw > 180) yaw -= 360;
 				if (yaw < -180) yaw += 360;
-				
+
 				if (yaw > 0)
 					SetSequence( m_baseSequence + SITTING_ANIM_sitlookleft );
 				else
@@ -1161,10 +1161,10 @@ void CNPC_SittingScientist::SetAnswerQuestion( CNPCSimpleTalker *pSpeaker )
 // ask question of nearby friend, or make statement
 //=========================================================
 int CNPC_SittingScientist::FIdleSpeak ( void )
-{ 
+{
 	// try to start a conversation, or make statement
 	int pitch;
-	
+
 	if (!IsOkToSpeak())
 		return FALSE;
 
@@ -1172,7 +1172,7 @@ int CNPC_SittingScientist::FIdleSpeak ( void )
 	GetExpresser()->BlockSpeechUntil( gpGlobals->curtime + random->RandomFloat(4.8, 5.2) );
 
 	pitch = GetExpresser()->GetVoicePitch();
-		
+
 	// if there is a friend nearby to speak to, play sentence, set friend's response time, return
 
 	// try to talk to any standing or sitting scientists nearby
@@ -1185,9 +1185,9 @@ int CNPC_SittingScientist::FIdleSpeak ( void )
 
 		SetSchedule( SCHED_TALKER_IDLE_RESPONSE );
 		SetSpeechTarget( this );
-		
+
 		Msg( "Asking some question!\n" );
-		
+
 		IdleHeadTurn( pentFriend );
 		SENTENCEG_PlayRndSz( edict(), TLK_PQUESTION, 1.0, SNDLVL_TALKING, 0, pitch );
 		// set global min delay for next conversation
@@ -1226,7 +1226,7 @@ AI_BEGIN_CUSTOM_NPC( monster_scientist, CNPC_Scientist )
 	DECLARE_TASK( TASK_SCREAM )
 	DECLARE_TASK( TASK_RANDOM_SCREAM )
 	DECLARE_TASK( TASK_MOVE_TO_TARGET_RANGE_SCARED )
-	
+
 	DECLARE_ACTIVITY( ACT_EXCITED )
 
 	//=========================================================
@@ -1260,7 +1260,7 @@ AI_BEGIN_CUSTOM_NPC( monster_scientist, CNPC_Scientist )
 //		"		TASK_SET_FAIL_SCHEDULE			SCHEDULE:SCHED_SCI_STOPFOLLOWING"
 		"		TASK_GET_PATH_TO_TARGET			0"
 		"		TASK_MOVE_TO_TARGET_RANGE		128"
-		"		TASK_SET_SCHEDULE				SCHEDULE:SCHED_TARGET_FACE"	
+		"		TASK_SET_SCHEDULE				SCHEDULE:SCHED_TARGET_FACE"
 		"	"
 		"	Interrupts"
 		"		COND_NEW_ENEMY"
@@ -1394,7 +1394,7 @@ AI_BEGIN_CUSTOM_NPC( monster_scientist, CNPC_Scientist )
 
 		"	Tasks"
 		"		TASK_GET_PATH_TO_TARGET				0"
-		"		TASK_SET_FAIL_SCHEDULE				SCHEDULE:SCHED_SCI_FOLLOWTARGET"	
+		"		TASK_SET_FAIL_SCHEDULE				SCHEDULE:SCHED_SCI_FOLLOWTARGET"
 		"		TASK_MOVE_TO_TARGET_RANGE_SCARED	128"
 		"	"
 		"	Interrupts"

@@ -44,7 +44,7 @@ class CCSPlayerStateInfo
 public:
 	CSPlayerState m_iPlayerState;
 	const char *m_pStateName;
-	
+
 	void (CCSPlayer::*pfnEnterState)();	// Init and deinit the state.
 	void (CCSPlayer::*pfnLeaveState)();
 
@@ -219,7 +219,7 @@ public:
 	virtual void		Precache();
 	virtual void		Spawn();
 	virtual void		InitialSpawn( void );
-		
+
 	virtual void		CheatImpulseCommands( int iImpulse );
 	virtual void		PlayerRunCommand( CUserCmd *ucmd, IMoveHelper *moveHelper );
 	virtual void		PostThink();
@@ -232,10 +232,10 @@ public:
 
 	virtual CBaseEntity	*GiveNamedItem( const char *pszName, int iSubType = 0 );
 	virtual bool		IsBeingGivenItem() const { return m_bIsBeingGivenItem; }
-	
+
 	virtual CBaseEntity *FindUseEntity( void );
 	virtual bool		IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCaps );
-	
+
 	virtual void		CreateViewModel( int viewmodelindex = 0 );
 	virtual void		ShowViewPortPanel( const char * name, bool bShow = true, KeyValues *data = NULL );
 
@@ -255,15 +255,15 @@ public:
 	virtual bool CSAnim_CanMove();
 
 
-	void FireBullet( 
-		Vector vecSrc, 
-		const QAngle &shootAngles, 
-		float vecSpread, 
-		float flDistance, 
-		int iPenetration, 
-		int iBulletType, 
-		int iDamage, 
-		float flRangeModifier, 
+	void FireBullet(
+		Vector vecSrc,
+		const QAngle &shootAngles,
+		float vecSpread,
+		float flDistance,
+		int iPenetration,
+		int iBulletType,
+		int iDamage,
+		float flRangeModifier,
 		CBaseEntity *pevAttacker,
 		bool bDoEffects,
 		float x,
@@ -278,9 +278,9 @@ public:
 		float lateral_max,
 		int direction_change );
 
-	void GetBulletTypeParameters( 
-		int iBulletType, 
-		float &fPenetrationPower, 
+	void GetBulletTypeParameters(
+		int iBulletType,
+		float &fPenetrationPower,
 		float &flPenetrationDistance );
 
 	// Returns true if the player is allowed to move.
@@ -308,12 +308,12 @@ public:
 	virtual void HandleAnimEvent( animevent_t *pEvent );
 
 	virtual void UpdateStepSound( surfacedata_t *psurface, const Vector &vecOrigin, const Vector &vecVelocity  );
-	virtual void PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force );
-	
+	virtual void PlayStepSound( const Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force );
+
 	// from cbasecombatcharacter
 	void InitVCollision( const Vector &vecAbsOrigin, const Vector &vecAbsVelocity );
 	void VPhysicsShadowUpdate( IPhysicsObject *pPhysics );
-	
+
 	bool HasShield() const;
 	bool IsShieldDrawn() const;
 	void GiveShield( void );
@@ -351,7 +351,7 @@ public:
 	bool DoesPlayerGetRoundStartMoney(); // self-explanitory :)
 
 	void DropC4();	// Get rid of the C4 bomb.
-	
+
 	bool HasDefuser();		// Is this player carrying a bomb defuser?
 	void GiveDefuser();		// give the player a defuser
 	void RemoveDefuser();	// remove defuser from the player and remove the model attachment
@@ -391,12 +391,12 @@ public:
 	bool HandleCommand_JoinTeam( int iTeam );
 
 	BuyResult_e HandleCommand_Buy( const char *item );
-	
+
 	void HandleMenu_Radio1( int slot );
 	void HandleMenu_Radio2( int slot );
 	void HandleMenu_Radio3( int slot );
 
-	float m_flRadioTime;	
+	float m_flRadioTime;
 	int m_iRadioMessages;
 	int iRadioMenu;
 
@@ -415,7 +415,7 @@ public:
 	void GetIntoGame();
 
 	CBaseEntity* EntSelectSpawnPoint();
-	
+
 	void SetProgressBarTime( int barTime );
 	virtual void PlayerDeathThink();
 
@@ -429,9 +429,9 @@ public:
 	void ResetStamina( void );
 	bool IsArmored( int nHitGroup );
 	void Pain( bool HasArmour );
-	
+
 	void DeathSound( const CTakeDamageInfo &info );
-	
+
 	bool Weapon_CanSwitchTo( CBaseCombatWeapon *pWeapon );
 
 	void ChangeTeam( int iTeamNum );
@@ -458,7 +458,7 @@ private:
 	void State_Enter( CSPlayerState newState );		// Initialize the new state.
 	void State_Leave();								// Cleanup the previous state.
 	void State_PreThink();							// Update the current state.
-	
+
 	// Find the state info for the specified state.
 	static CCSPlayerStateInfo* State_LookupInfo( CSPlayerState state );
 
@@ -503,7 +503,7 @@ public:
 
 	void				SetDeathPose( const int &iDeathPose ) { m_iDeathPose = iDeathPose; }
 	void				SetDeathPoseFrame( const int &iDeathPoseFrame ) { m_iDeathFrame = iDeathPoseFrame; }
-	
+
 	void				SelectDeathPose( const CTakeDamageInfo &info );
 
 private:
@@ -519,8 +519,8 @@ public:
 	int m_LastHitGroup;			// the last body region that took damage
 	CNetworkVar( bool, m_bHasHelmet );				// Does the player have helmet armor
 	bool m_bEscaped;			// Has this terrorist escaped yet?
-	
-	
+
+
 	// Other variables.
 	bool m_bIsVIP;				// Are we the VIP?
 	int m_iNumSpawns;			// Number of times player has spawned this round
@@ -528,7 +528,7 @@ public:
 	bool m_bTeamChanged;		// Just allow one team change per round
 	CNetworkVar( int, m_iAccount );	// How much cash this player has.
 	int m_iShouldHaveCash;
-	
+
 	bool m_bJustKilledTeammate;
 	bool m_bPunishedForTK;
 	int m_iTeamKills;
@@ -579,20 +579,20 @@ public:
 
 	void SetShieldDrawnState( bool bState );
 	void DropShield( void );
-	
+
 	char m_szNewName [MAX_PLAYER_NAME_LENGTH]; // not empty if player requested a namechange
 
 	Vector m_vecTotalBulletForce;	//Accumulator for bullet force in a single frame
-	
+
 	CNetworkVar( float, m_flFlashDuration );
 	CNetworkVar( float, m_flFlashMaxAlpha );
-	
+
 	CNetworkVar( float, m_flProgressBarStartTime );
 	CNetworkVar( int, m_iProgressBarDuration );
 	CNetworkVar( int, m_iThrowGrenadeCounter );	// used to trigger grenade throw animations.
-	
+
 	// Tracks our ragdoll entity.
-	CNetworkHandle( CBaseEntity, m_hRagdoll );	// networked entity handle 
+	CNetworkHandle( CBaseEntity, m_hRagdoll );	// networked entity handle
 
 	// Bots and hostages auto-duck during jumps
 	bool m_duckUntilOnGround;
@@ -639,7 +639,7 @@ protected:
 	BuyResult_e AttemptToBuyDefuser( void );
 	BuyResult_e AttemptToBuyNightVision( void );
 	BuyResult_e AttemptToBuyShield( void );
-	
+
 	BuyResult_e BuyAmmo( int nSlot, bool bBlinkMoney );
 	BuyResult_e BuyGunAmmo( CBaseCombatWeapon *pWeapon, bool bBlinkMoney );
 
@@ -712,7 +712,7 @@ private:
 	CNetworkVar( bool, m_bHasShield );
 	CNetworkVar( bool, m_bShieldDrawn );
 #endif
-	
+
 	// This is a combination of the ADDON_ flags in cs_shareddefs.h.
 	CNetworkVar( int, m_iAddonBits );
 
@@ -784,28 +784,28 @@ inline bool CCSPlayer::IsReloading( void ) const
 }
 
 inline bool CCSPlayer::IsProtectedByShield( void ) const
-{ 
+{
 	return HasShield() && IsShieldDrawn();
 }
 
 inline bool CCSPlayer::IsBlind( void ) const
-{ 
+{
 	return gpGlobals->curtime < m_blindUntilTime;
 }
 
-inline bool CCSPlayer::IsAutoFollowAllowed( void ) const		
-{ 
-	return (gpGlobals->curtime > m_allowAutoFollowTime); 
+inline bool CCSPlayer::IsAutoFollowAllowed( void ) const
+{
+	return (gpGlobals->curtime > m_allowAutoFollowTime);
 }
 
-inline void CCSPlayer::InhibitAutoFollow( float duration )	
-{ 
-	m_allowAutoFollowTime = gpGlobals->curtime + duration; 
+inline void CCSPlayer::InhibitAutoFollow( float duration )
+{
+	m_allowAutoFollowTime = gpGlobals->curtime + duration;
 }
 
-inline void CCSPlayer::AllowAutoFollow( void )	
-{ 
-	m_allowAutoFollowTime = 0.0f; 
+inline void CCSPlayer::AllowAutoFollow( void )
+{
+	m_allowAutoFollowTime = 0.0f;
 }
 
 inline int CCSPlayer::GetClass( void ) const

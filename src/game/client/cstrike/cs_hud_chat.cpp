@@ -67,7 +67,7 @@ void CHudChatInputLine::ApplySchemeSettings(vgui::IScheme *pScheme)
 
 CHudChat::CHudChat( const char *pElementName ) : BaseClass( pElementName )
 {
-	
+
 }
 
 void CHudChat::CreateChatInputLine( void )
@@ -80,7 +80,7 @@ void CHudChat::CreateChatLines( void )
 {
 #ifndef _XBOX
 	m_ChatLine = new CHudChatLine( this, "ChatLine1" );
-	m_ChatLine->SetVisible( false );		
+	m_ChatLine->SetVisible( false );
 
 #endif
 }
@@ -174,8 +174,6 @@ void CHudChat::MsgFunc_SayText2( bf_read &msg )
 		// print raw chat text
 		ChatPrintf( client, iFilter, "%s", ansiString );
 
-		Msg( "%s\n", RemoveColorMarkup(ansiString) );
-
 		CLocalPlayerFilter filter;
 		C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "HudChat.Message" );
 	}
@@ -186,7 +184,7 @@ void CHudChat::MsgFunc_SayText2( bf_read &msg )
 	}
 }
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int CHudChat::GetChatInputOffset( void )
 {
@@ -257,7 +255,7 @@ Color CHudChat::GetClientColor( int clientIndex )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 Color CHudChat::GetTextColorForClient( TextColor colorNum, int clientIndex )
 {
@@ -285,7 +283,7 @@ int CHudChat::GetFilterForString( const char *pString )
 
 	if ( iFilter == CHAT_FILTER_NONE )
 	{
-		if ( !Q_stricmp( pString, "#CStrike_Name_Change" ) ) 
+		if ( !Q_stricmp( pString, "#CStrike_Name_Change" ) )
 		{
 			return CHAT_FILTER_NAMECHANGE;
 		}

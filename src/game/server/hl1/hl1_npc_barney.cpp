@@ -1,7 +1,7 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Bullseyes act as targets for other NPC's to attack and to trigger
-//			events 
+//			events
 //
 // $Workfile:     $
 // $Date:         $
@@ -105,7 +105,7 @@ void CNPC_Barney::Spawn()
 	SetModel( "models/barney.mdl");
 
 	SetRenderColor( 255, 255, 255, 255 );
-	
+
 	SetHullType(HULL_HUMAN);
 	SetHullSizeNormal();
 
@@ -125,9 +125,9 @@ void CNPC_Barney::Spawn()
 	CapabilitiesClear();
 	CapabilitiesAdd( bits_CAP_MOVE_GROUND | bits_CAP_OPEN_DOORS | bits_CAP_AUTO_DOORS | bits_CAP_USE | bits_CAP_DOORS_GROUP);
 	CapabilitiesAdd( bits_CAP_INNATE_RANGE_ATTACK1 | bits_CAP_TURN_HEAD | bits_CAP_ANIMATEDFACE );
-	
+
 	NPCInit();
-	
+
 	SetUse( &CNPC_Barney::FollowerUse );
 }
 
@@ -148,7 +148,7 @@ void CNPC_Barney::Precache()
 	// when a level is loaded, nobody will talk (time is reset to 0)
 	TalkInit();
 	BaseClass::Precache();
-}	
+}
 
 void CNPC_Barney::ModifyOrAppendCriteria( AI_CriteriaSet& criteriaSet )
 {
@@ -171,9 +171,9 @@ void CNPC_Barney::TalkInit()
 
 //=========================================================
 // GetSoundInterests - returns a bit mask indicating which types
-// of sounds this monster regards. 
+// of sounds this monster regards.
 //=========================================================
-int CNPC_Barney::GetSoundInterests ( void) 
+int CNPC_Barney::GetSoundInterests ( void)
 {
 	return	SOUND_WORLD	|
 			SOUND_COMBAT	|
@@ -185,7 +185,7 @@ int CNPC_Barney::GetSoundInterests ( void)
 }
 
 //=========================================================
-// Classify - indicates this monster's place in the 
+// Classify - indicates this monster's place in the
 // relationship table.
 //=========================================================
 Class_T	CNPC_Barney::Classify ( void )
@@ -219,7 +219,7 @@ void CNPC_Barney::SetYawSpeed ( void )
 
 	switch ( GetActivity() )
 	{
-	case ACT_IDLE:		
+	case ACT_IDLE:
 		ys = 70;
 		break;
 	case ACT_WALK:
@@ -244,11 +244,11 @@ bool CNPC_Barney::CheckRangeAttack1 ( float flDot, float flDist )
 	if ( gpGlobals->curtime > m_flCheckAttackTime )
 	{
 		trace_t tr;
-		
+
 		Vector shootOrigin = GetAbsOrigin() + Vector( 0, 0, 55 );
 		CBaseEntity *pEnemy = GetEnemy();
 		Vector shootTarget = ( (pEnemy->BodyTarget( shootOrigin ) - pEnemy->GetAbsOrigin()) + GetEnemyLKP() );
-		
+
 		UTIL_TraceLine ( shootOrigin, shootTarget, MASK_SOLID, this, COLLISION_GROUP_NONE, &tr);
 		m_flCheckAttackTime = gpGlobals->curtime + 1;
 		if ( tr.fraction == 1.0 || ( tr.m_pEnt != NULL && tr.m_pEnt == pEnemy) )
@@ -258,7 +258,7 @@ bool CNPC_Barney::CheckRangeAttack1 ( float flDot, float flDist )
 
 		m_flCheckAttackTime = gpGlobals->curtime + 1.5;
 	}
-	
+
 	return m_fLastAttackCheck;
 }
 
@@ -273,7 +273,7 @@ int CNPC_Barney::RangeAttack1Conditions( float flDot, float flDist )
 	{
 		return( COND_NONE );
 	}
-	
+
 	else if ( flDist > 1024 )
 	{
 		return( COND_TOO_FAR_TO_ATTACK );
@@ -297,20 +297,20 @@ int CNPC_Barney::RangeAttack1Conditions( float flDot, float flDist )
 void CNPC_Barney::BarneyFirePistol ( void )
 {
 	Vector vecShootOrigin;
-	
+
 	vecShootOrigin = GetAbsOrigin() + Vector( 0, 0, 55 );
 	Vector vecShootDir = GetShootEnemyDir( vecShootOrigin );
 
 	QAngle angDir;
-	
+
 	VectorAngles( vecShootDir, angDir );
 //	SetBlending( 0, angDir.x );
 	DoMuzzleFlash();
 
 	FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_2DEGREES, 1024, m_iAmmoType );
-	
+
 	int pitchShift = random->RandomInt( 0, 20 );
-	
+
 	// Only shift about half the time
 	if ( pitchShift > 10 )
 		pitchShift = 0;
@@ -337,7 +337,7 @@ int CNPC_Barney::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 {
 	// make sure friends talk about it if player hurts talkmonsters...
 	int ret = BaseClass::OnTakeDamage_Alive( inputInfo );
-	
+
 	if ( !IsAlive() || m_lifeState == LIFE_DYING )
 		  return ret;
 
@@ -379,7 +379,7 @@ void CNPC_Barney::PainSound( const CTakeDamageInfo &info )
 {
 	if (gpGlobals->curtime < m_flPainTime)
 		return;
-	
+
 	m_flPainTime = gpGlobals->curtime + random->RandomFloat( 0.5, 0.75 );
 
 	CPASAttenuationFilter filter( this );
@@ -396,7 +396,7 @@ void CNPC_Barney::PainSound( const CTakeDamageInfo &info )
 }
 
 //=========================================================
-// DeathSound 
+// DeathSound
 //=========================================================
 void CNPC_Barney::DeathSound( const CTakeDamageInfo &info )
 {
@@ -413,7 +413,7 @@ void CNPC_Barney::DeathSound( const CTakeDamageInfo &info )
 	}
 }
 
-void CNPC_Barney::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr )
+void CNPC_Barney::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
 	CTakeDamageInfo info = inputInfo;
 
@@ -441,7 +441,7 @@ void CNPC_Barney::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 		break;
 	}
 
-	BaseClass::TraceAttack( info, vecDir, ptr );
+	BaseClass::TraceAttack( info, vecDir, ptr, pAccumulator );
 }
 
 void CNPC_Barney::Event_Killed( const CTakeDamageInfo &info )
@@ -456,12 +456,12 @@ void CNPC_Barney::Event_Killed( const CTakeDamageInfo &info )
 		SetBodygroup( 1, BARNEY_BODY_GUNGONE);
 
 		GetAttachment( "0", vecGunPos, angGunAngles );
-		
+
 		angGunAngles.y += 180;
 		pGun = DropItem( "weapon_glock", vecGunPos, angGunAngles );
 	}
 
-	SetUse( NULL );	
+	SetUse( NULL );
 	BaseClass::Event_Killed( info  );
 
 	if ( UTIL_IsLowViolence() )
@@ -503,7 +503,7 @@ void CNPC_Barney::SUB_LVFadeOut( void  )
 		dt = 0.1f;
 	}
 	m_nRenderMode = kRenderTransTexture;
-	int speed = max(3,256*dt); // fade out over 3 seconds
+	int speed = max(3.f,256*dt); // fade out over 3 seconds
 	SetRenderColorA( UTIL_Approach( 0, m_clrRender->a, speed ) );
 	NetworkStateChanged();
 
@@ -519,7 +519,7 @@ void CNPC_Barney::SUB_LVFadeOut( void  )
 
 void CNPC_Barney::StartTask( const Task_t *pTask )
 {
-	BaseClass::StartTask( pTask );	
+	BaseClass::StartTask( pTask );
 }
 
 void CNPC_Barney::RunTask( const Task_t *pTask )
@@ -593,9 +593,9 @@ int CNPC_Barney::TranslateSchedule( int scheduleType )
 			int	baseType;
 
 			// call base class default so that scientist will talk
-			// when 'used' 
+			// when 'used'
 			baseType = BaseClass::TranslateSchedule( scheduleType );
-			
+
 			if ( baseType == SCHED_IDLE_STAND )
 				return SCHED_BARNEY_FACE_TARGET;
 			else
@@ -614,9 +614,9 @@ int CNPC_Barney::TranslateSchedule( int scheduleType )
 			int	baseType;
 
 			// call base class default so that scientist will talk
-			// when 'used' 
+			// when 'used'
 			baseType = BaseClass::TranslateSchedule( scheduleType );
-			
+
 			if ( baseType == SCHED_IDLE_STAND )
 				return SCHED_BARNEY_IDLE_STAND;
 			else
@@ -687,11 +687,11 @@ int CNPC_Barney::SelectSchedule( void )
 			// dead enemy
 			if ( HasCondition( COND_ENEMY_DEAD ) )
 				 return BaseClass::SelectSchedule(); // call base class, all code to handle dead enemies is centralized there.
-		
+
 			// always act surprized with a new enemy
 			if ( HasCondition( COND_NEW_ENEMY ) && HasCondition( COND_LIGHT_DAMAGE) )
 				return SCHED_SMALL_FLINCH;
-				
+
 			if ( HasCondition( COND_HEAVY_DAMAGE ) )
 				 return SCHED_TAKE_COVER_FROM_ENEMY;
 
@@ -712,9 +712,9 @@ int CNPC_Barney::SelectSchedule( void )
 		}
 		break;
 
-	case NPC_STATE_ALERT:	
+	case NPC_STATE_ALERT:
 	case NPC_STATE_IDLE:
-		if ( HasCondition( COND_LIGHT_DAMAGE ) || HasCondition( COND_HEAVY_DAMAGE ) ) 
+		if ( HasCondition( COND_LIGHT_DAMAGE ) || HasCondition( COND_HEAVY_DAMAGE ) )
 		{
 			// flinch if hurt
 			return SCHED_SMALL_FLINCH;
@@ -739,7 +739,7 @@ int CNPC_Barney::SelectSchedule( void )
 		TrySmellTalk();
 		break;
 	}
-	
+
 	return BaseClass::SelectSchedule();
 }
 
@@ -790,7 +790,7 @@ AI_BEGIN_CUSTOM_NPC( monster_barney, CNPC_Barney )
 	DEFINE_SCHEDULE
 	(
 		SCHED_BARNEY_FOLLOW,
-	
+
 		"	Tasks"
 //		"		TASK_SET_FAIL_SCHEDULE			SCHEDULE:SCHED_BARNEY_STOP_FOLLOWING"
 		"		TASK_GET_PATH_TO_TARGET			0"
@@ -804,14 +804,14 @@ AI_BEGIN_CUSTOM_NPC( monster_barney, CNPC_Barney )
 		"			COND_HEAR_DANGER"
 		"			COND_PROVOKED"
 	)
-	
+
 	//=========================================================
 	// > SCHED_BARNEY_ENEMY_DRAW
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
 		SCHED_BARNEY_ENEMY_DRAW,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING			0"
 		"		TASK_FACE_ENEMY				0"
@@ -819,14 +819,14 @@ AI_BEGIN_CUSTOM_NPC( monster_barney, CNPC_Barney )
 		"	"
 		"	Interrupts"
 	)
-	
+
 	//=========================================================
 	// > SCHED_BARNEY_FACE_TARGET
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
 		SCHED_BARNEY_FACE_TARGET,
-	
+
 		"	Tasks"
 		"		TASK_SET_ACTIVITY			ACTIVITY:ACT_IDLE"
 		"		TASK_FACE_TARGET			0"
@@ -841,14 +841,14 @@ AI_BEGIN_CUSTOM_NPC( monster_barney, CNPC_Barney )
 		"		COND_PROVOKED"
 		"		COND_HEAR_DANGER"
 	)
-	
+
 	//=========================================================
 	// > SCHED_BARNEY_IDLE_STAND
 	//=========================================================
 	DEFINE_SCHEDULE
 	(
 		SCHED_BARNEY_IDLE_STAND,
-	
+
 		"	Tasks"
 		"		TASK_STOP_MOVING			0"
 		"		TASK_SET_ACTIVITY			ACTIVITY:ACT_IDLE"
@@ -863,7 +863,7 @@ AI_BEGIN_CUSTOM_NPC( monster_barney, CNPC_Barney )
 		"		COND_HEAR_COMBAT"
 		"		COND_SMELL"
 	)
-		
+
 AI_END_CUSTOM_NPC()
 
 
@@ -891,7 +891,7 @@ public:
 	int	m_iPose;// which sequence to display	-- temporary, don't need to save
 	int m_iDesiredSequence;
 	static char *m_szPoses[3];
-	
+
 	DECLARE_DATADESC();
 };
 
@@ -901,7 +901,7 @@ bool CNPC_DeadBarney::KeyValue( const char *szKeyName, const char *szValue )
 {
 	if ( FStrEq( szKeyName, "pose" ) )
 		m_iPose = atoi( szValue );
-	else 
+	else
 		BaseClass::KeyValue( szKeyName, szValue );
 
 	return true;

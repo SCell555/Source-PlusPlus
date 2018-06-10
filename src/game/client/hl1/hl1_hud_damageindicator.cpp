@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -82,7 +82,7 @@ CHudDamageIndicator::CHudDamageIndicator( const char *pElementName ) : CHudEleme
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudDamageIndicator::Reset( void )
 {
@@ -100,7 +100,7 @@ void CHudDamageIndicator::Init( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CHudDamageIndicator::ShouldDraw( void )
 {
@@ -131,7 +131,7 @@ void CHudDamageIndicator::DrawDamageIndicatorFront( float flFade )
 		int	y = ( ScreenHeight() / 2 ) - icon_up->Height() * 3;
 		icon_up->DrawSelf( x, y, m_clrIndicator );
 
-		m_flAttackFront = max( 0.0, m_flAttackFront - flFade );
+		m_flAttackFront = max( 0.f, m_flAttackFront - flFade );
 	}
 	else
 	{
@@ -157,7 +157,7 @@ void CHudDamageIndicator::DrawDamageIndicatorRear( float flFade )
 		int	y = ( ScreenHeight() / 2 ) + icon_down->Height() * 2;
 		icon_down->DrawSelf( x, y, m_clrIndicator );
 
-		m_flAttackRear = max( 0.0, m_flAttackRear - flFade );
+		m_flAttackRear = max( 0.f, m_flAttackRear - flFade );
 	}
 	else
 	{
@@ -184,7 +184,7 @@ void CHudDamageIndicator::DrawDamageIndicatorLeft( float flFade )
 		int	y = ( ScreenHeight() / 2 ) - icon_left->Height() / 2;
 		icon_left->DrawSelf( x, y, m_clrIndicator );
 
-		m_flAttackLeft = max( 0.0, m_flAttackLeft - flFade );
+		m_flAttackLeft = max( 0.f, m_flAttackLeft - flFade );
 	}
 	else
 	{
@@ -211,7 +211,7 @@ void CHudDamageIndicator::DrawDamageIndicatorRight( float flFade )
 		int	y = ( ScreenHeight() / 2 ) - icon_right->Height() / 2;
 		icon_right->DrawSelf( x, y, m_clrIndicator );
 
-		m_flAttackRight = max( 0.0, m_flAttackRight - flFade );
+		m_flAttackRight = max( 0.f, m_flAttackRight - flFade );
 	}
 	else
 	{
@@ -225,7 +225,7 @@ void CHudDamageIndicator::DrawDamageIndicatorRight( float flFade )
 //-----------------------------------------------------------------------------
 void CHudDamageIndicator::Paint()
 {
-	// draw damage indicators	
+	// draw damage indicators
 	float flFade = gpGlobals->frametime * 2;
 	DrawDamageIndicatorFront( flFade );
 	DrawDamageIndicatorRear( flFade );

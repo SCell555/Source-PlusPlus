@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -21,7 +21,7 @@
 #include "engine/IEngineSound.h"
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 
-acttable_t	unarmedActtable[] = 
+acttable_t	unarmedActtable[] =
 {
 	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_MELEE,					false },
 	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_MELEE,					false },
@@ -53,17 +53,17 @@ Vector CPortal_Player::GetAttackSpread( CBaseCombatWeapon *pWeapon, CBaseEntity 
 {
 	if ( pWeapon )
 		return pWeapon->GetBulletSpread( WEAPON_PROFICIENCY_PERFECT );
-	
+
 	return VECTOR_CONE_15DEGREES;
 }
 
 void CPortal_Player::GetStepSoundVelocities( float *velwalk, float *velrun )
 {
-	// UNDONE: need defined numbers for run, walk, crouch, crouch run velocities!!!!	
+	// UNDONE: need defined numbers for run, walk, crouch, crouch run velocities!!!!
 	if ( ( GetFlags() & FL_DUCKING ) || ( GetMoveType() == MOVETYPE_LADDER ) )
 	{
 		*velwalk = 10;		// These constants should be based on cl_movespeedkey * cl_forwardspeed somehow
-		*velrun = 60;		
+		*velrun = 60;
 	}
 	else
 	{
@@ -73,12 +73,12 @@ void CPortal_Player::GetStepSoundVelocities( float *velwalk, float *velrun )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : step - 
-//			fvol - 
+// Purpose:
+// Input  : step -
+//			fvol -
 //			force - force sound to play
 //-----------------------------------------------------------------------------
-void CPortal_Player::PlayStepSound( Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force )
+void CPortal_Player::PlayStepSound( const Vector &vecOrigin, surfacedata_t *psurface, float fvol, bool force )
 {
 #ifndef CLIENT_DLL
 	IncrementStepsTaken();
@@ -492,7 +492,7 @@ CPlayerAnimState::CPlayerAnimState( CPortal_Player *outer )
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPlayerAnimState::Update()
 {
@@ -511,7 +511,7 @@ void CPlayerAnimState::Update()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPlayerAnimState::ComputePlaybackRate()
 {
@@ -524,7 +524,7 @@ void CPlayerAnimState::ComputePlaybackRate()
 	bool isMoving = ( speed > 0.5f ) ? true : false;
 
 	float maxspeed = GetOuter()->GetSequenceGroundSpeed( GetOuter()->GetSequence() );
-	
+
 	if ( isMoving && ( maxspeed > 0.0f ) )
 	{
 		float flFactor = 1.0f;
@@ -542,7 +542,7 @@ void CPlayerAnimState::ComputePlaybackRate()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : CBasePlayer
 //-----------------------------------------------------------------------------
 CPortal_Player *CPlayerAnimState::GetOuter()
@@ -551,8 +551,8 @@ CPortal_Player *CPlayerAnimState::GetOuter()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : dt - 
+// Purpose:
+// Input  : dt -
 //-----------------------------------------------------------------------------
 void CPlayerAnimState::EstimateYaw( void )
 {
@@ -600,7 +600,7 @@ void CPlayerAnimState::EstimateYaw( void )
 
 //-----------------------------------------------------------------------------
 // Purpose: Override for backpeddling
-// Input  : dt - 
+// Input  : dt -
 //-----------------------------------------------------------------------------
 void CPlayerAnimState::ComputePoseParam_BodyYaw( void )
 {
@@ -609,7 +609,7 @@ void CPlayerAnimState::ComputePoseParam_BodyYaw( void )
 		return;
 
 	// view direction relative to movement
-	float flYaw;	 
+	float flYaw;
 
 	EstimateYaw();
 
@@ -638,7 +638,7 @@ void CPlayerAnimState::ComputePoseParam_BodyYaw( void )
 	{
 		flYaw = flYaw - 360;
 	}
-	
+
 	GetOuter()->SetPoseParameter( iYaw, flYaw );
 
 #ifndef CLIENT_DLL
@@ -648,7 +648,7 @@ void CPlayerAnimState::ComputePoseParam_BodyYaw( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPlayerAnimState::ComputePoseParam_BodyPitch( CStudioHdr *pStudioHdr )
 {
@@ -670,11 +670,11 @@ void CPlayerAnimState::ComputePoseParam_BodyPitch( CStudioHdr *pStudioHdr )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : goal - 
-//			maxrate - 
-//			dt - 
-//			current - 
+// Purpose:
+// Input  : goal -
+//			maxrate -
+//			dt -
+//			current -
 // Output : int
 //-----------------------------------------------------------------------------
 int CPlayerAnimState::ConvergeAngles( float goal,float maxrate, float dt, float& current )
@@ -738,7 +738,7 @@ void CPlayerAnimState::ComputePoseParam_BodyLookYaw( void )
 	float turnrate = 360.0f;
 
 	Vector vel;
-	
+
 	GetOuterAbsVelocity( vel );
 
 	bool isMoving = ( vel.Length() > 1.0f ) ? true : false;
@@ -790,7 +790,7 @@ void CPlayerAnimState::ComputePoseParam_BodyLookYaw( void )
 		// Standing still for a while, rotate feet around to face forward
 		// Or rotated too far
 		// FIXME:  Play an in place turning animation
-		if ( rotated_too_far || 
+		if ( rotated_too_far ||
 			( gpGlobals->curtime > m_flLastTurnTime + mp_facefronttime.GetFloat() ) )
 		{
 			m_flGoalFeetYaw		= GetOuter()->GetAnimEyeAngles().y;
@@ -863,10 +863,10 @@ void CPlayerAnimState::ComputePoseParam_BodyLookYaw( void )
 }
 
 
- 
+
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : activity - 
+// Purpose:
+// Input  : activity -
 // Output : Activity
 //-----------------------------------------------------------------------------
 Activity CPlayerAnimState::BodyYawTranslateActivity( Activity activity )

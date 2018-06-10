@@ -94,27 +94,3 @@ bool ClientModeHLNormal::ShouldDrawCrosshair( void )
 {
 	return ( g_bRollingCredits == false );
 }
-
-void ClientModeHLNormal::OnColorCorrectionWeightsReset()
-{
-	C_ColorCorrection *pNewColorCorrection = NULL;
-	C_ColorCorrection *pOldColorCorrection = m_pCurrentColorCorrection;
-	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
-	if ( pPlayer )
-	{
-		pNewColorCorrection = pPlayer->GetActiveColorCorrection();
-	}
-
-	if ( pNewColorCorrection != pOldColorCorrection )
-	{
-		if ( pOldColorCorrection )
-		{
-			pOldColorCorrection->EnableOnClient( false );
-		}
-		if ( pNewColorCorrection )
-		{
-			pNewColorCorrection->EnableOnClient( true, pOldColorCorrection == NULL );
-		}
-		m_pCurrentColorCorrection = pNewColorCorrection;
-	}
-}

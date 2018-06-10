@@ -197,12 +197,12 @@ static void __MsgFunc_Rumble( bf_read &msg )
 
 static void __MsgFunc_VGUIMenu( bf_read &msg )
 {
-	char panelname[2048]; 
-	
+	char panelname[2048];
+
 	msg.ReadString( panelname, sizeof(panelname) );
 
 	bool  bShow = msg.ReadByte()!=0;
-	
+
 	IViewPortPanel *viewport = gViewPortInterface->FindPanelByName( panelname );
 
 	if ( !viewport )
@@ -276,7 +276,7 @@ static void __MsgFunc_VGUIMenu( bf_read &msg )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 ClientModeShared::ClientModeShared()
 {
@@ -293,11 +293,11 @@ ClientModeShared::ClientModeShared()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 ClientModeShared::~ClientModeShared()
 {
-	delete m_pViewport; 
+	delete m_pViewport;
 }
 
 void ClientModeShared::ReloadScheme( bool flushLowLevel )
@@ -316,7 +316,7 @@ void ClientModeShared::ReloadScheme( bool flushLowLevel )
 //----------------------------------------------------------------------------
 // Purpose: Let the client mode set some vgui conditions
 //-----------------------------------------------------------------------------
-void	ClientModeShared::ComputeVguiResConditions( KeyValues *pkvConditions ) 
+void	ClientModeShared::ComputeVguiResConditions( KeyValues *pkvConditions )
 {
 	if ( UseVR() )
 	{
@@ -327,7 +327,7 @@ void	ClientModeShared::ComputeVguiResConditions( KeyValues *pkvConditions )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ClientModeShared::Init()
 {
@@ -359,7 +359,7 @@ void ClientModeShared::Init()
 
 #if defined( TF_CLIENT_DLL )
 	ListenForGameEvent( "item_found" );
-#endif 
+#endif
 
 #if defined( REPLAY_ENABLED )
 	ListenForGameEvent( "replay_startrecord" );
@@ -396,16 +396,16 @@ void ClientModeShared::VGui_Shutdown()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ClientModeShared::Shutdown()
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : frametime - 
-//			*cmd - 
+// Purpose:
+// Input  : frametime -
+//			*cmd -
 //-----------------------------------------------------------------------------
 bool ClientModeShared::CreateMove( float flInputSampleTime, CUserCmd *cmd )
 {
@@ -419,8 +419,8 @@ bool ClientModeShared::CreateMove( float flInputSampleTime, CUserCmd *cmd )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pSetup - 
+// Purpose:
+// Input  : *pSetup -
 //-----------------------------------------------------------------------------
 void ClientModeShared::OverrideView( CViewSetup *pSetup )
 {
@@ -445,16 +445,16 @@ void ClientModeShared::OverrideView( CViewSetup *pSetup )
 		camAngles[ ROLL ] = 0;
 
 		Vector camForward, camRight, camUp;
-		
+
 
 		if ( g_ThirdPersonManager.IsOverridingThirdPerson() == false )
 		{
 			engine->GetViewAngles( camAngles );
 		}
-			
+
 		// get the forward vector
 		AngleVectors( camAngles, &camForward, &camRight, &camUp );
-	
+
 		VectorMA( pSetup->origin, -cam_ofs_distance[0], camForward, pSetup->origin );
 		VectorMA( pSetup->origin, cam_ofs_distance[1], camRight, pSetup->origin );
 		VectorMA( pSetup->origin, cam_ofs_distance[2], camUp, pSetup->origin );
@@ -477,7 +477,7 @@ void ClientModeShared::OverrideView( CViewSetup *pSetup )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool ClientModeShared::ShouldDrawEntity(C_BaseEntity *pEnt)
 {
@@ -485,7 +485,7 @@ bool ClientModeShared::ShouldDrawEntity(C_BaseEntity *pEnt)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool ClientModeShared::ShouldDrawParticles( )
 {
@@ -511,7 +511,7 @@ void ClientModeShared::OverrideMouseInput( float *x, float *y )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool ClientModeShared::ShouldDrawViewModel()
 {
@@ -537,14 +537,14 @@ bool ClientModeShared::ShouldBlackoutAroundHUD()
 //-----------------------------------------------------------------------------
 // Purpose: Allows the client mode to override mouse control stuff in sourcevr
 //-----------------------------------------------------------------------------
-HeadtrackMovementMode_t ClientModeShared::ShouldOverrideHeadtrackControl() 
+HeadtrackMovementMode_t ClientModeShared::ShouldOverrideHeadtrackControl()
 {
 	return HMM_NOOVERRIDE;
 }
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool ClientModeShared::ShouldDrawCrosshair( void )
@@ -573,21 +573,21 @@ bool ClientModeShared::ShouldDrawFog( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ClientModeShared::AdjustEngineViewport( int& x, int& y, int& width, int& height )
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ClientModeShared::PreRender( CViewSetup *pSetup )
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ClientModeShared::PostRender()
 {
@@ -600,7 +600,7 @@ void ClientModeShared::PostRenderVGui()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ClientModeShared::Update()
 {
@@ -654,7 +654,7 @@ int	ClientModeShared::KeyInput( int down, ButtonCode_t keynum, const char *pszCu
 {
 	if ( engine->Con_IsVisible() )
 		return 1;
-	
+
 	// Should we start typing a message?
 	if ( pszCurrentBinding &&
 		( Q_strcmp( pszCurrentBinding, "messagemode" ) == 0 ||
@@ -676,7 +676,7 @@ int	ClientModeShared::KeyInput( int down, ButtonCode_t keynum, const char *pszCu
 		}
 		return 0;
 	}
-	
+
 	// If we're voting...
 #ifdef VOTING_ENABLED
 	CHudVote *pHudVote = GET_HUDELEMENT( CHudVote );
@@ -780,7 +780,7 @@ int ClientModeShared::HudElementKeyInput( int down, ButtonCode_t keynum, const c
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool ClientModeShared::DoPostScreenSpaceEffects( const CViewSetup *pSetup )
 {
@@ -790,12 +790,12 @@ bool ClientModeShared::DoPostScreenSpaceEffects( const CViewSetup *pSetup )
 		if ( !replay_rendersetting_renderglow.GetBool() )
 			return false;
 	}
-#endif 
+#endif
 	return true;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : vgui::Panel
 //-----------------------------------------------------------------------------
 vgui::Panel *ClientModeShared::GetMessagePanel()
@@ -823,8 +823,8 @@ void ClientModeShared::StartMessageMode( int iMessageModeType )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *newmap - 
+// Purpose:
+// Input  : *newmap -
 //-----------------------------------------------------------------------------
 void ClientModeShared::LevelInit( const char *newmap )
 {
@@ -857,7 +857,7 @@ void ClientModeShared::LevelInit( const char *newmap )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ClientModeShared::LevelShutdown( void )
 {
@@ -1202,7 +1202,7 @@ void ClientModeShared::FireGameEvent( IGameEvent *event )
 					pPlayer->SetNextAchievementAnnounceTime( gpGlobals->curtime + ACHIEVEMENT_ANNOUNCEMENT_MIN_TIME );
 
 					// no particle effect if the local player is the one with the achievement or the player is dead
-					if ( !pPlayer->IsLocalPlayer() && pPlayer->IsAlive() ) 
+					if ( !pPlayer->IsLocalPlayer() && pPlayer->IsAlive() )
 					{
 						//tagES using the "head" attachment won't work for CS and DoD
 						pPlayer->ParticleProp()->Create( "achieved", PATTACH_POINT_FOLLOW, "head" );
@@ -1268,7 +1268,7 @@ void ClientModeShared::FireGameEvent( IGameEvent *event )
 				const CEconItemRarityDefinition* pItemRarity = GetItemSchema()->GetRarityDefinition( pItemDefinition->GetRarity() );
 
 				if ( colorMarker )
-				{	
+				{
 					if ( pItemRarity )
 					{
 						attrib_colors_t colorRarity = pItemRarity->GetAttribColor();
@@ -1291,11 +1291,11 @@ void ClientModeShared::FireGameEvent( IGameEvent *event )
 
 				// TODO: Update the localization strings to only have two format parameters since that's all we need.
 				wchar_t wszLocalizedString[256];
-				g_pVGuiLocalize->ConstructString( 
-					wszLocalizedString, 
-					sizeof( wszLocalizedString ), 
+				g_pVGuiLocalize->ConstructString(
+					wszLocalizedString,
+					sizeof( wszLocalizedString ),
 					LOCCHAR( "%s1" ),
-					1, 
+					1,
 					CEconItemLocalizedFullNameGenerator( GLocalizationProvider(), pItemDefinition, iItemQuality ).GetFullName()
 				);
 
@@ -1335,7 +1335,7 @@ void ClientModeShared::FireGameEvent( IGameEvent *event )
 							LOCCHAR( "%s1 %s2" ),
 							2,
 							g_pVGuiLocalize->Find( "rarity4" ),
-							tempName 
+							tempName
 						);
 					}
 
@@ -1352,7 +1352,7 @@ void ClientModeShared::FireGameEvent( IGameEvent *event )
 						);
 					}
 				}
-				
+
 				loc_scpy_safe( tempName, wszLocalizedString );
 				g_pVGuiLocalize->ConstructString(
 					wszLocalizedString,
@@ -1366,7 +1366,7 @@ void ClientModeShared::FireGameEvent( IGameEvent *event )
 
 				hudChat->ChatPrintf( iPlayerIndex, CHAT_FILTER_SERVERMSG, "%s", szLocalized );
 			}
-		}		
+		}
 	}
 #endif
 #if defined( REPLAY_ENABLED )
@@ -1506,7 +1506,7 @@ void ClientModeShared::DisplayReplayReminder()
 
 
 //-----------------------------------------------------------------------------
-// In-game VGUI context 
+// In-game VGUI context
 //-----------------------------------------------------------------------------
 void ClientModeShared::ActivateInGameVGuiContext( vgui::Panel *pPanel )
 {
@@ -1519,3 +1519,26 @@ void ClientModeShared::DeactivateInGameVGuiContext()
 	vgui::ivgui()->ActivateContext( DEFAULT_VGUI_CONTEXT );
 }
 
+void ClientModeShared::OnColorCorrectionWeightsReset()
+{
+	C_ColorCorrection *pNewColorCorrection = NULL;
+	C_ColorCorrection *pOldColorCorrection = m_pCurrentColorCorrection;
+	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
+	if ( pPlayer )
+	{
+		pNewColorCorrection = pPlayer->GetActiveColorCorrection();
+	}
+
+	if ( pNewColorCorrection != pOldColorCorrection )
+	{
+		if ( pOldColorCorrection )
+		{
+			pOldColorCorrection->EnableOnClient( false );
+		}
+		if ( pNewColorCorrection )
+		{
+			pNewColorCorrection->EnableOnClient( true, pOldColorCorrection == NULL );
+		}
+		m_pCurrentColorCorrection = pNewColorCorrection;
+	}
+}

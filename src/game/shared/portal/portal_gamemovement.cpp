@@ -29,7 +29,7 @@
 #include "tier0/memdbgon.h"
 
 ConVar sv_player_trace_through_portals("sv_player_trace_through_portals", "1", FCVAR_REPLICATED | FCVAR_CHEAT, "Causes player movement traces to trace through portals." );
-ConVar sv_player_funnel_into_portals("sv_player_funnel_into_portals", "1", FCVAR_REPLICATED | FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX, "Causes the player to auto correct toward the center of floor portals." ); 
+ConVar sv_player_funnel_into_portals("sv_player_funnel_into_portals", "1", FCVAR_REPLICATED | FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX, "Causes the player to auto correct toward the center of floor portals." );
 
 class CReservePlayerSpot;
 
@@ -99,14 +99,14 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CPortalGameMovement::CPortalGameMovement()
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 inline CPortal_Player	*CPortalGameMovement::GetPortalPlayer()
 {
@@ -114,8 +114,8 @@ inline CPortal_Player	*CPortalGameMovement::GetPortalPlayer()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pMove - 
+// Purpose:
+// Input  : *pMove -
 //-----------------------------------------------------------------------------
 void CPortalGameMovement::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMove )
 {
@@ -137,7 +137,7 @@ void CPortalGameMovement::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMov
 	player = pPlayer;
 	mv = pMove;
 	mv->m_flMaxSpeed = sv_maxspeed.GetFloat();
-	
+
 	m_bInPortalEnv = (((CPortal_Player *)pPlayer)->m_hPortalEnvironment != NULL);
 
 	g_bAllowForcePortalTrace = m_bInPortalEnv;
@@ -162,7 +162,7 @@ void CPortalGameMovement::ProcessMovement( CBasePlayer *pPlayer, CMoveData *pMov
 
 //-----------------------------------------------------------------------------
 // Purpose: Base jump behavior, plus an anim event
-// Input  :  - 
+// Input  :  -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CPortalGameMovement::CheckJumpButton()
@@ -235,9 +235,9 @@ void CPortalGameMovement::FunnelIntoPortal( CProp_Portal *pPortal, Vector &wishd
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : wishdir - 
-//			accel - 
+// Purpose:
+// Input  : wishdir -
+//			accel -
 //-----------------------------------------------------------------------------
 void CPortalGameMovement::AirAccelerate( Vector& wishdir, float wishspeed, float accel )
 {
@@ -283,7 +283,7 @@ void CPortalGameMovement::AirAccelerate( Vector& wishdir, float wishspeed, float
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPortalGameMovement::AirMove( void )
 {
@@ -304,7 +304,7 @@ void CPortalGameMovement::AirMove( void )
 	forward[2] = 0;
 	right[2]   = 0;
 	VectorNormalize(forward);  // Normalize remainder of vectors
-	VectorNormalize(right);    // 
+	VectorNormalize(right);    //
 
 	for (i=0 ; i<2 ; i++)       // Determine x and y parts of velocity
 		wishvel[i] = forward[i]*fmove + right[i]*smove;
@@ -386,7 +386,7 @@ void CPortalGameMovement::PlayerRoughLandingEffects( float fvol )
 		{
 			EmitSound_t ep( params );
 			ep.m_nPitch = 125.0f - player->m_Local.m_flFallVelocity * 0.03f;					// lower pitch the harder they land
-			ep.m_flVolume = min( player->m_Local.m_flFallVelocity * 0.00075f - 0.38, 1.0f );	// louder the harder they land
+			ep.m_flVolume = min( player->m_Local.m_flFallVelocity * 0.00075f - 0.38f, 1.0f );	// louder the harder they land
 
 			CBaseEntity::EmitSound( filter, player->entindex(), ep );
 		}
@@ -417,7 +417,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 
 	// Check the -x, -y quadrant
 	mins = minsSrc;
-	maxs.Init( min( 0, maxsSrc.x ), min( 0, maxsSrc.y ), maxsSrc.z );
+	maxs.Init( min( 0.f, maxsSrc.x ), min( 0.f, maxsSrc.y ), maxsSrc.z );
 	ray.Init( start, end, mins, maxs );
 
 	if( pPlayerPortal )
@@ -433,7 +433,7 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	}
 
 	// Check the +x, +y quadrant
-	mins.Init( max( 0, minsSrc.x ), max( 0, minsSrc.y ), minsSrc.z );
+	mins.Init( max( 0.f, minsSrc.x ), max( 0.f, minsSrc.y ), minsSrc.z );
 	maxs = maxsSrc;
 	ray.Init( start, end, mins, maxs );
 
@@ -450,8 +450,8 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	}
 
 	// Check the -x, +y quadrant
-	mins.Init( minsSrc.x, max( 0, minsSrc.y ), minsSrc.z );
-	maxs.Init( min( 0, maxsSrc.x ), maxsSrc.y, maxsSrc.z );
+	mins.Init( minsSrc.x, max( 0.f, minsSrc.y ), minsSrc.z );
+	maxs.Init( min( 0.f, maxsSrc.x ), maxsSrc.y, maxsSrc.z );
 	ray.Init( start, end, mins, maxs );
 
 	if( pPlayerPortal )
@@ -467,8 +467,8 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 	}
 
 	// Check the +x, -y quadrant
-	mins.Init( max( 0, minsSrc.x ), minsSrc.y, minsSrc.z );
-	maxs.Init( maxsSrc.x, min( 0, maxsSrc.y ), maxsSrc.z );
+	mins.Init( max( 0.f, minsSrc.x ), minsSrc.y, minsSrc.z );
+	maxs.Init( maxsSrc.x, min( 0.f, maxsSrc.y ), maxsSrc.z );
 	ray.Init( start, end, mins, maxs );
 
 	if( pPlayerPortal )
@@ -488,8 +488,8 @@ void TracePlayerBBoxForGround2( const Vector& start, const Vector& end, const Ve
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &input - 
+// Purpose:
+// Input  : &input -
 //-----------------------------------------------------------------------------
 void CPortalGameMovement::CategorizePosition( void )
 {
@@ -499,7 +499,7 @@ void CPortalGameMovement::CategorizePosition( void )
 	// if the player hull point one unit down is solid, the player
 	// is on ground
 
-	// see if standing on something solid	
+	// see if standing on something solid
 
 	// Doing this before we move may introduce a potential latency in water detection, but
 	// doing it after can get us stuck on the bottom in water if the amount we move up
@@ -522,8 +522,8 @@ void CPortalGameMovement::CategorizePosition( void )
 	// Shooting up really fast.  Definitely not on ground.
 	// On ladder moving up, so not on ground either
 	// NOTE: 145 is a jump.
-	if ( mv->m_vecVelocity[2] > 140 || 
-		( mv->m_vecVelocity[2] > 0.0f && player->GetMoveType() == MOVETYPE_LADDER ) )   
+	if ( mv->m_vecVelocity[2] > 140 ||
+		( mv->m_vecVelocity[2] > 0.0f && player->GetMoveType() == MOVETYPE_LADDER ) )
 	{
 		SetGroundEntity( NULL );
 	}
@@ -682,7 +682,7 @@ void CPortalGameMovement::SetGroundEntity( trace_t *pm )
 void CPortalGameMovement::TracePlayerBBox( const Vector& start, const Vector& end, unsigned int fMask, int collisionGroup, trace_t& pm )
 {
 	VPROF( "CGameMovement::TracePlayerBBox" );
-	
+
 	CPortal_Player *pPortalPlayer = (CPortal_Player *)((CBaseEntity *)mv->m_nPlayerHandle.Get());
 
 	Ray_t ray;
@@ -723,7 +723,7 @@ CBaseHandle CPortalGameMovement::TestPlayerPosition( const Vector& pos, int coll
 #ifdef _DEBUG
 		AssertMsgOnce( false, "The player got stuck on something. Break to investigate." ); //happens enough to just leave in a perma-debugger
 		//this next trace is PURELY for tracking down how the player got stuck. Nothing new is discovered over the same trace about 10 lines up
-        TracePlayerBBox( pos, pos, MASK_PLAYERSOLID, collisionGroup, pm );		
+        TracePlayerBBox( pos, pos, MASK_PLAYERSOLID, collisionGroup, pm );
 #endif
 		return pm.m_pEnt->GetRefEHandle();
 	}
@@ -738,7 +738,7 @@ CBaseHandle CPortalGameMovement::TestPlayerPosition( const Vector& pos, int coll
 	}
 #endif
 	else
-	{	
+	{
 		return INVALID_EHANDLE_INDEX;
 	}
 }
